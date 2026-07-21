@@ -1,0 +1,120 @@
+/**
+ * Trending video reel — full-bleed place photo with a slow ken-burns zoom
+ * (stand-in for video) under a top/bottom scrim. Up/down rail cycles the
+ * trending list; critic/people pills + a scrub bar sit at the bottom.
+ */
+import React from 'react';
+import { View, Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Animated } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
+import { useStore } from '../store/useStore';
+import { TRENDING, byId } from '../store/data';
+import { pctStyle, metaOf } from '../store/helpers';
+import { C } from '../theme/tokens';
+import { photo } from '../assets';
+import { Display, Banner, Serif, Mono } from '../components/Text';
+import { StickerView, StickerPressable } from '../components/Sticker';
+import { MuteIcon, ChevronUp, ChevronDown } from '../components/icons';
+import { useSlowZoom } from '../components/Anim';
+
+export function Reel() {
+  const insets = useSafeAreaInsets();
+  const go = useStore((s) => s.go);
+  const reelIndex = useStore((s) => s.reelIndex);
+  const reelGo = useStore((s) => s.reelGo);
+  const openPlace = useStore((s) => s.openPlace);
+
+  const rp = byId[TRENDING[reelIndex]] || byId[TRENDING[0]];
+  const rank = reelIndex + 1;
+  const total = TRENDING.length;
+  const cs = pctStyle(rp.critic || 0);
+  const ps = pctStyle(rp.people || 0);
+  const scale = useSlowZoom();
+
+  return (
+    <View style={{ flex: 1, backgroundColor: C.inkBlack, overflow: 'hidden' }}>
+      <Animated.View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, transform: [{ scale }] }}>
+        <Image source={photo(rp.photo)} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(42,26,6,0.32)' }} />
+      </Animated.View>
+      <LinearGradient
+        colors={['rgba(42,26,6,0.5)', 'rgba(42,26,6,0)', 'rgba(42,26,6,0)', 'rgba(42,26,6,0.82)']}
+        locations={[0, 0.28, 0.52, 1]}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+      />
+
+      {/* top bar */}
+      <View style={{ position: 'absolute', top: insets.top + 8, left: 16, right: 16, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <StickerView offset="sm" radius={999}>
+          <Pressable onPress={() => go('feed')} style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+            <Display s={17} c={C.ink400}>
+              ←
+            </Display>
+          </Pressable>
+        </StickerView>
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: C.ink400, borderWidth: 1.5, borderColor: C.paper0 }} />
+          <Banner s={10} tk={0.16} c={C.paper0}>
+            Trending · {rank} of {total}
+          </Banner>
+        </View>
+        <MuteIcon size={18} color={C.paper0} />
+      </View>
+
+      {/* right rail */}
+      <View style={{ position: 'absolute', right: 14, top: '50%', marginTop: -50, gap: 12 }}>
+        <StickerPressable offset="sm" radius={999} onPress={() => reelGo(-1)} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(251,245,229,0.9)', borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+          <ChevronUp size={18} color={C.ink400} />
+        </StickerPressable>
+        <StickerPressable offset="sm" radius={999} onPress={() => reelGo(1)} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(251,245,229,0.9)', borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+          <ChevronDown size={18} color={C.ink400} />
+        </StickerPressable>
+      </View>
+
+      {/* bottom */}
+      <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: 18, paddingTop: 18, paddingBottom: insets.bottom + 16 }}>
+        <Banner s={10} tk={0.16} c={C.sun400}>
+          Trending Nº {rank}
+        </Banner>
+        <Display s={30} c={C.paper0} style={{ marginTop: 4, lineHeight: 30 }}>
+          {rp.name}
+        </Display>
+        <Mono s={10} c={C.ink100} style={{ marginTop: 5 }}>
+          {metaOf(rp)}
+        </Mono>
+        <Serif s={13} c={C.paper0} style={{ marginTop: 8, lineHeight: 20, maxWidth: 300 }}>
+          {rp.blurb}
+        </Serif>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: cs.bg, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 5, paddingHorizontal: 11 }}>
+            <Banner s={9} tk={0.1} c={cs.fg}>
+              Critics
+            </Banner>
+            <Display s={13} c={cs.fg}>
+              {rp.critic}%
+            </Display>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: ps.bg, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 5, paddingHorizontal: 11 }}>
+            <Banner s={9} tk={0.1} c={ps.fg}>
+              People
+            </Banner>
+            <Display s={13} c={ps.fg}>
+              {rp.people}%
+            </Display>
+          </View>
+          <View style={{ flex: 1 }} />
+          <StickerPressable offset="sm" radius={999} onPress={() => openPlace(TRENDING[reelIndex])} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper0, paddingVertical: 9, paddingHorizontal: 13 }}>
+            <Banner s={10} tk={0.1} c={C.inkDeep}>
+              See place →
+            </Banner>
+          </StickerPressable>
+        </View>
+        <View style={{ height: 5, marginTop: 14, borderWidth: 1.5, borderColor: C.paper0, backgroundColor: 'rgba(251,245,229,0.25)' }}>
+          <View style={{ height: '100%', width: '42%', backgroundColor: C.sun400 }} />
+        </View>
+      </View>
+    </View>
+  );
+}
