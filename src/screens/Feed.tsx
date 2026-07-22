@@ -3,7 +3,7 @@
  * recs, and (once unlocked) the Dine Club teaser.
  */
 import React from 'react';
-import { View, ScrollView, Pressable, Image } from 'react-native';
+import { View, ScrollView, Pressable, Image, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { FEED, RECS, TRENDING, byId } from '../store/data';
@@ -18,11 +18,13 @@ import { Grain } from '../components/Grain';
 import { ScreenIn } from '../components/Anim';
 import { GlobeMark, MapIcon, ChartIcon, PlayIcon, HeartIcon, CommentIcon, BookmarkIcon } from '../components/icons';
 
-function HeaderIconButton({ onPress, children }: { onPress: () => void; children: React.ReactNode }) {
+function HeaderIconButton({ onPress, label, children }: { onPress: () => void; label?: string; children: React.ReactNode }) {
   return (
     <StickerView offset="sm" radius={999}>
       <Pressable
         onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={label}
         style={{
           width: 34,
           height: 34,
@@ -294,6 +296,11 @@ export function Feed() {
   const goBoard = useStore((s) => s.go);
   const openReel = useStore((s) => s.openReel);
   const clubUnlocked = useStore((s) => s.clubUnlocked);
+  const city = useStore((s) => s.city);
+  const openCitySheet = useStore((s) => s.openCitySheet);
+  const nearby = useStore((s) => s.nearby);
+  const nearbyStatus = useStore((s) => s.nearbyStatus);
+  const openPlaceFromFeed = useStore((s) => s.openPlace);
 
   return (
     <ScreenIn>
@@ -311,14 +318,16 @@ export function Feed() {
             <Display s={15} c={C.inkDeep} numberOfLines={1}>
               NO MAD CORNER
             </Display>
-            <Mono s={9} c={C.ink600} style={{ marginTop: 4 }}>
-              AROUND THE TABLE · CDMX · 24°C
-            </Mono>
+            <Pressable onPress={openCitySheet} hitSlop={8}>
+              <Mono s={9} c={C.ink600} style={{ marginTop: 4 }} numberOfLines={1}>
+                {city.flag} {city.name.toUpperCase()} · {city.weather} ▾
+              </Mono>
+            </Pressable>
           </View>
-          <HeaderIconButton onPress={goMap}>
+          <HeaderIconButton onPress={goMap} label="Nearby map">
             <MapIcon size={16} color={C.ink400} />
           </HeaderIconButton>
-          <HeaderIconButton onPress={() => goBoard('board' as any)}>
+          <HeaderIconButton onPress={() => goBoard('board' as any)} label="Leaderboard">
             <ChartIcon size={16} color={C.ink400} />
           </HeaderIconButton>
         </View>
@@ -341,6 +350,49 @@ export function Feed() {
             ))}
           </ScrollView>
         </View>
+
+        {/* Fresh near you — live places for the selected city */}
+        {nearby.length > 0 ? (
+          <View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <Banner s={11} tk={0.14} c={C.inkDeep}>
+                Fresh near you
+              </Banner>
+              <Pressable onPress={openCitySheet} hitSlop={6}>
+                <Mono s={9} c={C.inkSoft}>
+                  {city.name} · change ▾
+                </Mono>
+              </Pressable>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4 }}>
+              {nearby.slice(0, 12).map((p) => (
+                <StickerPressable
+                  key={p.id}
+                  offset="sm"
+                  onPress={() => openPlaceFromFeed(p.id)}
+                  style={{ width: 128, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
+                >
+                  <Photo source={photo(p.photo)} style={{ width: '100%', height: 84, borderBottomWidth: 2, borderColor: C.inkBlack }} />
+                  <View style={{ padding: 8 }}>
+                    <SerifDisplay s={13} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 14 }}>
+                      {p.name}
+                    </SerifDisplay>
+                    <Mono s={8.5} c={C.inkMuted} numberOfLines={1} style={{ marginTop: 3 }}>
+                      {p.cuisine} · {p.price}
+                    </Mono>
+                  </View>
+                </StickerPressable>
+              ))}
+            </ScrollView>
+          </View>
+        ) : nearbyStatus === 'loading' ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 2 }}>
+            <ActivityIndicator size="small" color={C.ink400} />
+            <Mono s={10} c={C.inkSoft}>
+              Finding fresh spots near {city.name}…
+            </Mono>
+          </View>
+        ) : null}
 
         {FEED.map((it, i) => {
           if (it.kind === 'act') return <ActivityCard key={i} item={it} index={i} />;

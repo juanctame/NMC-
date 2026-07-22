@@ -61,6 +61,31 @@ Nearby map · Trending reel · Onboarding.
 
 ---
 
+## Live restaurant data (per city)
+
+Real restaurants + food stalls load for the **selected city** through a
+swappable provider layer (`src/data/`), so the app "updates constantly" without
+any screen knowing the source:
+
+- **Provider seam** — `PlacesProvider` in `src/data/provider.ts`. Flip
+  `DATA_SOURCE` in `src/data/config.ts` (`overpass` \| `fixture` \| `google`).
+- **OpenStreetMap / Overpass** (`src/data/osm.ts`) — the shipped default: free,
+  keyless, worldwide. `osmNormalize` maps raw OSM elements to the app's `Place`
+  shape; endpoints fall back in order, and CDMX degrades to an offline sample if
+  the network is down.
+- **Google Places** — drops in behind the same interface once
+  `GOOGLE_PLACES_API_KEY` is set (adds photos + ratings). Until then it
+  transparently uses Overpass.
+- **Accurate map** — the Nearby map projects each place's real lat/lon onto the
+  selected city's bounding box (`projectToBox`), so pins sit where the
+  restaurants actually are. City picker in the Feed + map headers; seed set in
+  `src/data/cities.ts` (CDMX, Monterrey, Guadalajara, New York, Tokyo).
+
+OSM carries no photos/ratings, so fresh finds show a brand placeholder photo and
+an honest "no verdict yet — be the first to rank it" state. The app's social
+layer (Critics-vs-People scores, friends, events, Dine Club) stays app-domain —
+no restaurant API provides it.
+
 ## Run it (development)
 
 ```bash

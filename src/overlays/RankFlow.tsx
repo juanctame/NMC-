@@ -6,8 +6,8 @@
 import React from 'react';
 import { View, ScrollView, Pressable, TextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useStore } from '../store/useStore';
-import { CAND, WANT0, byId } from '../store/data';
+import { useStore, resolvePlace } from '../store/useStore';
+import { CAND, WANT0, type Place } from '../store/data';
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { C } from '../theme/tokens';
 import { photo } from '../assets';
@@ -48,6 +48,8 @@ export function RankFlow() {
   const cmpCount = useStore((s) => s.cmpCount);
   const resScore = useStore((s) => s.resScore);
   const resPos = useStore((s) => s.resPos);
+  const nearby = useStore((s) => s.nearby);
+  const nearbyById = useStore((s) => s.nearbyById);
 
   const closeRank = useStore((s) => s.closeRank);
   const setRankSearch = useStore((s) => s.setRankSearch);
@@ -59,12 +61,13 @@ export function RankFlow() {
 
   const rankedSet = new Set(ranked.map((r) => r.id));
   const q = rankSearch.trim().toLowerCase();
-  const pool = [...CAND, ...WANT0].filter((p) => !rankedSet.has(p.id));
+  // Pool = seed candidates + want-to-try + live nearby discoveries, minus ranked.
+  const pool = [...CAND, ...WANT0, ...nearby].filter((p) => !rankedSet.has(p.id));
   const seen = new Set<string>();
   const poolU = pool.filter((p) => (seen.has(p.id) ? false : (seen.add(p.id), true)));
-  const pickList = poolU.filter((p) => !q || p.name.toLowerCase().includes(q));
+  const pickList = poolU.filter((p) => !q || p.name.toLowerCase().includes(q)).slice(0, 40);
 
-  const chosen = rankId ? byId[rankId] : null;
+  const chosen = rankId ? resolvePlace(rankId, nearbyById) ?? null : null;
 
   return (
     <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 50 }}>
@@ -212,8 +215,8 @@ function CompareStep({
   onOld,
   insetBottom,
 }: {
-  chosen: (typeof byId)[string];
-  opp: (typeof byId)[string];
+  chosen: Place;
+  opp: Place;
   cur: number;
   total: number;
   onNew: () => void;
@@ -296,7 +299,7 @@ function ResultStep({
   onSeeLog,
   insetBottom,
 }: {
-  chosen: (typeof byId)[string];
+  chosen: Place;
   score: string;
   band: { bg: string; fg: string };
   pos: number;

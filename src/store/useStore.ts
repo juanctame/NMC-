@@ -16,6 +16,10 @@ import {
   type Place,
 } from './data';
 import { PHOTO_POOL } from '../assets';
+import { DEFAULT_CITY, cityById, type City } from '../data/cities';
+import { getProvider, fixtureFallback } from '../data/provider';
+
+export type NearbyStatus = 'idle' | 'loading' | 'ready' | 'fallback' | 'error';
 
 /** Set false to run the designed first-run onboarding flow on launch. */
 export const SKIP_ONBOARDING = false;
@@ -84,7 +88,7 @@ export type State = {
   clubSeat: boolean;
   clubReq: Record<string, boolean>;
 
-  mapFilter: 'all' | 'event' | 'spot' | 'rec';
+  mapFilter: string;
   selPin: PinRef;
 
   createdTables: any[];
@@ -101,6 +105,13 @@ export type State = {
 
   userPhotos: Record<string, string[]>;
   reelIndex: number;
+
+  // Live restaurant data (per selected city)
+  city: City;
+  nearby: Place[];
+  nearbyById: Record<string, Place>;
+  nearbyStatus: NearbyStatus;
+  citySheetOpen: boolean;
 };
 
 export type Actions = {
@@ -161,7 +172,18 @@ export type Actions = {
   toggleDiet: (name: string) => void;
   // create-table visibility
   setVisibility: (v: 'public' | 'private') => void;
+  // live data
+  loadNearby: () => Promise<void>;
+  setCity: (id: string) => void;
+  openCitySheet: () => void;
+  closeCitySheet: () => void;
 };
+
+/** Resolve a place by id across the seed catalog and live-loaded nearby set. */
+export function resolvePlace(id: string | null, nearbyById: Record<string, Place>): Place | undefined {
+  if (!id) return undefined;
+  return byId[id] || nearbyById[id];
+}
 
 const initialState = (): State => ({
   tab: 'feed',
@@ -214,6 +236,11 @@ const initialState = (): State => ({
   clubSeg: 'events',
   userPhotos: {},
   reelIndex: 0,
+  city: DEFAULT_CITY,
+  nearby: [],
+  nearbyById: {},
+  nearbyStatus: 'idle',
+  citySheetOpen: false,
 });
 
 function findTable(s: State, id: string | null) {
@@ -412,6 +439,34 @@ export const useStore = create<State & Actions>((set, get) => ({
   toggleDiet: (name) =>
     set((s) => ({ diet: s.diet.includes(name) ? s.diet.filter((d) => d !== name) : [...s.diet, name] })),
   setVisibility: (v) => set({ cVisibility: v }),
+
+  // ── live restaurant data ──
+  loadNearby: async () => {
+    const city = get().city;
+    set({ nearbyStatus: 'loading' });
+    try {
+      const places = await getProvider().searchNearby(city);
+      const map: Record<string, Place> = {};
+      places.forEach((p) => (map[p.id] = p));
+      set({ nearby: places, nearbyById: map, nearbyStatus: 'ready' });
+    } catch {
+      // Graceful degradation: keep CDMX populated from the offline sample.
+      const fb = city.id === 'cdmx' ? fixtureFallback(city) : [];
+      const map: Record<string, Place> = {};
+      fb.forEach((p) => (map[p.id] = p));
+      set({ nearby: fb, nearbyById: map, nearbyStatus: fb.length ? 'fallback' : 'error' });
+    }
+  },
+  setCity: (id) => {
+    if (get().city.id === id) {
+      set({ citySheetOpen: false });
+      return;
+    }
+    set({ city: cityById(id), selPin: null, citySheetOpen: false, nearby: [], nearbyById: {}, nearbyStatus: 'idle' });
+    get().loadNearby();
+  },
+  openCitySheet: () => set({ citySheetOpen: true }),
+  closeCitySheet: () => set({ citySheetOpen: false }),
 }));
 
 // ── rank-engine internals (kept outside the object to share set/get) ──
@@ -436,7 +491,8 @@ function finalize(
   if (score > 10) score = 10;
   if (score < 3) score = 3;
   const s = get();
-  const base = byId[s.rankId!];
+  const base = resolvePlace(s.rankId, s.nearbyById);
+  if (!base) return;
   const placed = { ...base, score };
   ranked.splice(idx, 0, placed);
   set({

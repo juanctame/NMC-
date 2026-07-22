@@ -3,11 +3,12 @@
  * the persistent bottom tab bar on the five root tabs, and the overlay layer
  * (rank flow, attach sheet, create-table sheet) above everything.
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { useStore, type Screen } from './store/useStore';
 import { C } from './theme/tokens';
 import { TabBar } from './components/TabBar';
+import { CitySheet } from './overlays/CitySheet';
 
 import { Feed } from './screens/Feed';
 import { Log } from './screens/Log';
@@ -50,9 +51,18 @@ export function Root() {
   const rankOpen = useStore((s) => s.rankOpen);
   const attachOpen = useStore((s) => s.attachOpen);
   const createOpen = useStore((s) => s.createOpen);
+  const citySheetOpen = useStore((s) => s.citySheetOpen);
+  const nearbyStatus = useStore((s) => s.nearbyStatus);
+  const loadNearby = useStore((s) => s.loadNearby);
+
+  // Pull live places for the selected city on first launch.
+  useEffect(() => {
+    if (nearbyStatus === 'idle') loadNearby();
+  }, [nearbyStatus, loadNearby]);
 
   const Active = SCREENS[screen] ?? Feed;
-  const showTabBar = ROOT_TABS.includes(screen) && !rankOpen && !attachOpen && !createOpen;
+  const anyOverlay = rankOpen || attachOpen || createOpen || citySheetOpen;
+  const showTabBar = ROOT_TABS.includes(screen) && !anyOverlay;
 
   return (
     <View style={{ flex: 1, backgroundColor: C.paper50 }}>
@@ -61,6 +71,7 @@ export function Root() {
       {rankOpen ? <RankFlow /> : null}
       {attachOpen ? <AttachSheet /> : null}
       {createOpen ? <CreateTable /> : null}
+      {citySheetOpen ? <CitySheet /> : null}
     </View>
   );
 }

@@ -22,6 +22,12 @@ export type Place = {
   by?: string;
   critic?: number;
   people?: number;
+  // Real-data fields (populated by live providers; absent on seed data).
+  lat?: number;
+  lon?: number;
+  source?: 'seed' | 'osm' | 'google';
+  website?: string;
+  rated?: boolean; // false for freshly-discovered places with no ratings yet
 };
 
 const P = (

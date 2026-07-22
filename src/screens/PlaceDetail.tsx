@@ -5,10 +5,10 @@
  * CTAs.
  */
 import React from 'react';
-import { View, ScrollView, Pressable } from 'react-native';
+import { View, ScrollView, Pressable, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useStore } from '../store/useStore';
-import { byId, FRIENDS, FRIENDS_AT, RANK } from '../store/data';
+import { useStore, resolvePlace } from '../store/useStore';
+import { FRIENDS, FRIENDS_AT, RANK } from '../store/data';
 import { scoreStyle, pctStyle, fmt, metaOf } from '../store/helpers';
 import { C, col } from '../theme/tokens';
 import { photo, PHOTO_POOL } from '../assets';
@@ -103,20 +103,25 @@ export function PlaceDetail() {
   const wantIds = useStore((s) => s.wantIds);
   const saved = useStore((s) => s.saved);
   const userPhotos = useStore((s) => s.userPhotos);
+  const nearbyById = useStore((s) => s.nearbyById);
 
   if (!activePlaceId) return <View style={{ flex: 1, backgroundColor: C.paper50 }} />;
-  const base = byId[activePlaceId];
+  const base = resolvePlace(activePlaceId, nearbyById);
+  if (!base) return <View style={{ flex: 1, backgroundColor: C.paper50 }} />;
   const rIdx = ranked.findIndex((r) => r.id === activePlaceId);
   const rr = rIdx < 0 ? null : { idx: rIdx, item: ranked[rIdx] };
   const been = !!rr;
   const ss = been ? scoreStyle(rr!.item.score!) : { bg: C.paper0, fg: C.inkDeep };
   const wanted = wantIds.includes(activePlaceId) || !!saved[activePlaceId];
 
-  const frRaw = FRIENDS_AT[activePlaceId] || [
-    ['DF', 'var(--stamp-blue)', 8.2],
-    ['SR', 'var(--stamp-pink)', 7.9],
-  ];
+  // Seed places carry critic/people scores; freshly-discovered (OSM) ones don't.
+  const isRated = base.critic != null && base.people != null;
+  const frRaw = FRIENDS_AT[activePlaceId] || null;
   const cu = base.cuisine;
+  const mapsUrl =
+    base.lat != null
+      ? `https://www.google.com/maps/search/?api=1&query=${base.lat},${base.lon}`
+      : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(base.name + ' ' + base.hood)}`;
 
   const off = activePlaceId.length % PHOTO_POOL.length;
   const seedG = [base.photo, PHOTO_POOL[off], PHOTO_POOL[(off + 3) % PHOTO_POOL.length]];
@@ -169,58 +174,60 @@ export function PlaceDetail() {
           {base.blurb}
         </Serif>
 
-        {/* rankings panel */}
+        {/* rankings panel — dual verdict for rated places, "be the first" for fresh finds */}
         <View style={{ marginTop: 16 }}>
-          <StickerView offset="lg" style={{ borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.paper0 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 9, paddingHorizontal: 13, borderBottomWidth: 2, borderColor: C.inkBlack, backgroundColor: C.ink700 }}>
-              <Banner s={10} tk={0.14} c={C.paper0}>
-                The rankings
-              </Banner>
-              <Mono s={9.5} c={C.sun300}>
-                of {RANK.total} places
-              </Mono>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-              <SealColumn
-                label="Critics' ranking"
-                pct={base.critic || 0}
-                rot="-5deg"
-                overall={RANK.critO[base.id] || '—'}
-                cuisineRank={RANK.critC[base.id] || '—'}
-                cuisine={cu}
-                rightBorder
-              />
-              <SealColumn
-                label="People's ranking"
-                pct={base.people || 0}
-                rot="4deg"
-                overall={RANK.popO[base.id] || '—'}
-                cuisineRank={RANK.popC[base.id] || '—'}
-                cuisine={cu}
-              />
-            </View>
-          </StickerView>
-        </View>
-
-        {/* google maps card */}
-        <View style={{ marginTop: 18 }}>
-          <AppCard dot={C.stampGreen} app="Google Maps" cta="Open in Google Maps →" ctaColor={C.stampGreen}>
-            <View style={{ paddingVertical: 11, paddingHorizontal: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: C.stampGreen, borderWidth: 2, borderColor: C.greenFg, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-5deg' }] }}>
-                <Display s={18} c={C.greenFg}>
-                  ↓
-                </Display>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Serif s={13.5} c={C.inkDeep}>
-                  {base.addr}
-                </Serif>
-                <Mono s={9.5} c={C.inkMuted} style={{ marginTop: 2 }}>
-                  {base.hood} · {base.openInfo}
+          {isRated ? (
+            <StickerView offset="lg" style={{ borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.paper0 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 9, paddingHorizontal: 13, borderBottomWidth: 2, borderColor: C.inkBlack, backgroundColor: C.ink700 }}>
+                <Banner s={10} tk={0.14} c={C.paper0}>
+                  The rankings
+                </Banner>
+                <Mono s={9.5} c={C.sun300}>
+                  of {RANK.total} places
                 </Mono>
               </View>
-            </View>
-          </AppCard>
+              <View style={{ flexDirection: 'row' }}>
+                <SealColumn label="Critics' ranking" pct={base.critic || 0} rot="-5deg" overall={RANK.critO[base.id] || '—'} cuisineRank={RANK.critC[base.id] || '—'} cuisine={cu} rightBorder />
+                <SealColumn label="People's ranking" pct={base.people || 0} rot="4deg" overall={RANK.popO[base.id] || '—'} cuisineRank={RANK.popC[base.id] || '—'} cuisine={cu} />
+              </View>
+            </StickerView>
+          ) : (
+            <StickerView offset="lg" style={{ borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.paper0, padding: 16, alignItems: 'center', gap: 8 }}>
+              <View style={{ transform: [{ rotate: '-4deg' }] }}>
+                <Roundel size={58} bg={C.paper100} fg={C.inkSoft} text="?" textSize={26} dashInset={6} />
+              </View>
+              <Banner s={11} tk={0.12} c={C.inkDeep}>
+                No verdict yet
+              </Banner>
+              <Serif s={13} style={{ textAlign: 'center', color: C.inkMuted, lineHeight: 19 }}>
+                Fresh off the map — no Critics or People score yet. Be the first of us to rank it.
+              </Serif>
+            </StickerView>
+          )}
+        </View>
+
+        {/* google maps card — opens the real location */}
+        <View style={{ marginTop: 18 }}>
+          <Pressable onPress={() => Linking.openURL(mapsUrl)}>
+            <AppCard dot={C.stampGreen} app="Google Maps" cta="Open in Google Maps →" ctaColor={C.stampGreen}>
+              <View style={{ paddingVertical: 11, paddingHorizontal: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: C.stampGreen, borderWidth: 2, borderColor: C.greenFg, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-5deg' }] }}>
+                  <Display s={18} c={C.greenFg}>
+                    ↓
+                  </Display>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Serif s={13.5} c={C.inkDeep}>
+                    {base.addr || base.name}
+                  </Serif>
+                  <Mono s={9.5} c={C.inkMuted} style={{ marginTop: 2 }}>
+                    {base.hood}
+                    {base.openInfo ? ` · ${base.openInfo}` : ''}
+                  </Mono>
+                </View>
+              </View>
+            </AppCard>
+          </Pressable>
         </View>
 
         {/* photo gallery */}
@@ -260,24 +267,32 @@ export function PlaceDetail() {
         <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginTop: 20, marginBottom: 10 }}>
           Friends who've been
         </Banner>
-        <View style={{ gap: 8 }}>
-          {frRaw.map(([ini, color, sc], i) => {
-            const fs = scoreStyle(sc as number);
-            return (
-              <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 11, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 8, paddingHorizontal: 12 }}>
-                <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: col(color as string), borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
-                  <Banner s={10} c={C.paper0}>
-                    {ini}
-                  </Banner>
+        {frRaw ? (
+          <View style={{ gap: 8 }}>
+            {frRaw.map(([ini, color, sc], i) => {
+              const fs = scoreStyle(sc as number);
+              return (
+                <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 11, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 8, paddingHorizontal: 12 }}>
+                  <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: col(color as string), borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+                    <Banner s={10} c={C.paper0}>
+                      {ini}
+                    </Banner>
+                  </View>
+                  <Serif s={13.5} style={{ flex: 1, color: C.inkBlack }}>
+                    {nameByInit[ini as string] || (ini as string)}
+                  </Serif>
+                  <Roundel size={34} bg={fs.bg} fg={fs.fg} text={fmt(sc as number)} textSize={12} border={2} rot="-4deg" />
                 </View>
-                <Serif s={13.5} style={{ flex: 1, color: C.inkBlack }}>
-                  {nameByInit[ini as string] || (ini as string)}
-                </Serif>
-                <Roundel size={34} bg={fs.bg} fg={fs.fg} text={fmt(sc as number)} textSize={12} border={2} rot="-4deg" />
-              </View>
-            );
-          })}
-        </View>
+              );
+            })}
+          </View>
+        ) : (
+          <View style={{ backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, borderStyle: 'dashed', paddingVertical: 14, paddingHorizontal: 14, alignItems: 'center' }}>
+            <Serif s={13} style={{ color: C.inkMuted, textAlign: 'center' }}>
+              No one from your table yet. Rank it and put it on the map.
+            </Serif>
+          </View>
+        )}
 
         {/* resy card */}
         <View style={{ marginTop: 18 }}>
