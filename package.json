@@ -1,0 +1,38 @@
+{
+  "name": "nmcapp",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "@expo-google-fonts/dm-serif-display": "^0.4.2",
+    "@expo-google-fonts/fraunces": "^0.4.1",
+    "@expo-google-fonts/jetbrains-mono": "^0.4.1",
+    "@expo-google-fonts/oswald": "^0.4.2",
+    "@expo-google-fonts/space-grotesk": "^0.4.1",
+    "expo": "~57.0.7",
+    "expo-asset": "^57.0.6",
+    "expo-font": "^57.0.1",
+    "expo-image": "^57.0.1",
+    "expo-linear-gradient": "^57.0.1",
+    "expo-splash-screen": "^57.0.4",
+    "expo-status-bar": "~57.0.1",
+    "react": "19.2.3",
+    "react-native": "0.86.0",
+    "react-native-safe-area-context": "^5.7.0",
+    "react-native-svg": "^15.15.4",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/pngjs": "^6.0.5",
+    "@types/react": "~19.2.2",
+    "babel-preset-expo": "~57.0.3",
+    "pngjs": "^7.0.0",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "private": true
+}

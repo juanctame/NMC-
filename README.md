@@ -1,2 +1,130 @@
-# NMC-
-NO MAD CORNER 
+# NO MAD CORNER
+
+A community-driven dining app for Mexico City (CDMX). It fuses a Beli-style
+**rank-everything-you-eat** engine, social discovery, Playtomic-style **group
+table reservations**, a hidden **Dine Club** membership tier, a printed-paper
+**Nearby map**, Rotten-Tomatoes-style **dual ratings** (Critics + People), a
+community **photo gallery**, and a **trending video reel**.
+
+The visual language is the NO MAD CORNER design system — a vintage travel-sticker
+aesthetic: warm cream paper, sun-yellow + vermillion inks, thick black printed
+outlines, hard "stamp" offset shadows, and passport-stamp roundels.
+
+Built with **Expo (React Native)** + **TypeScript**, implemented pixel-faithfully
+from the high-fidelity design handoff.
+
+---
+
+## Stack
+
+| Concern | Choice |
+|---|---|
+| Framework | Expo SDK 57 · React Native 0.86 · React 19 |
+| Language | TypeScript (strict) |
+| State | Zustand (single store mirroring the design's view-model) |
+| Graphics | react-native-svg (icons, printed map, seals) |
+| Fonts | Megazoid + Roquen (brand, bundled) · Fraunces, DM Serif Display, Oswald, Space Grotesk, JetBrains Mono (Google) |
+| Motion | Core `Animated` (screenIn, stampIn, sheetUp, ken-burns) |
+| Safe areas | react-native-safe-area-context |
+
+## Project layout
+
+```
+App.tsx                 Font loading + splash + safe-area provider
+src/
+  Root.tsx              Screen router + tab bar + overlay layer
+  theme/                tokens (colors/spacing/shadows) · fonts · typography
+  store/                data (all sample records + derived RANK) · useStore (state + rank engine) · helpers
+  components/           Sticker, Roundel, Photo, Grain, Segmented, Text, icons, TabBar, MessageCard, Anim
+  screens/              Feed, Log, Leaderboard, Passport, PlaceDetail, Onboarding,
+                        Table, EventDetail, Ticket, Thread, DineClub, NearbyMap, Reel
+  overlays/             RankFlow, AttachSheet, CreateTable
+assets/                 brand logo, photos, fonts, app icon + splash
+```
+
+## Screens (14)
+
+Feed · Your Log (Been / Want / Recs) · Leaderboard · Passport · Place detail ·
+Rank flow (Pick → Bucket → Compare → Result) · The Table (events + community) ·
+Create-a-table · Event detail · Ticket · Community thread · Dine Club (hidden) ·
+Nearby map · Trending reel · Onboarding.
+
+**Bottom tabs:** Corner · Guide · ⊕ Rank · Table · You.
+
+### Two things to try
+- **Rank flow:** tap the center ⊕ (or "Rank it" on any place) → gut-check bucket →
+  a couple of "which was better?" comparisons → a stamped 0–10 score that splices
+  into your log.
+- **Dine Club (hidden):** tap the corner **logo 5× quickly** on the Feed to unlock
+  the members-only dark space; a vermillion dot marks it unlocked and a single tap
+  re-enters.
+
+---
+
+## Run it (development)
+
+```bash
+npm install
+npx expo start          # then press i (iOS), a (Android), or scan in Expo Go
+```
+
+Type-check and produce a production JS bundle:
+
+```bash
+npx tsc --noEmit
+npx expo export --platform ios      # or android
+```
+
+## Build for a test pilot (TestFlight / Play internal)
+
+Uses **EAS Build**. Profiles are in `eas.json`.
+
+```bash
+npm i -g eas-cli
+eas login
+eas build:configure                 # first time: links/creates the EAS project
+
+# Internal testers (TestFlight-style ad-hoc / Play internal APK)
+eas build --profile preview --platform ios
+eas build --profile preview --platform android
+
+# Store-track builds
+eas build --profile production --platform ios
+eas submit  --profile production --platform ios      # -> App Store Connect / TestFlight
+eas build --profile production --platform android
+eas submit  --profile production --platform android  # -> Play internal testing
+```
+
+Identifiers (change to your own org before submitting):
+`ios.bundleIdentifier` = `com.nomadcorner.app`, `android.package` = `com.nomadcorner.app`
+(in `app.json`).
+
+---
+
+## Fidelity & production notes
+
+This app recreates the design's **look, layout, copy, and interaction** exactly.
+The sample data (places, dual critic/people scores + rankings, friends graph,
+events, tables, club, map coordinates, threads) is hardcoded in
+`src/store/data.ts` and is meant to become API/models.
+
+Before a public release:
+
+- **Photography & video** — the food/place images are design-system stand-ins.
+  Replace with licensed CDMX venue photography and real short-form **video** for
+  the trending reel.
+- **Fonts** — Megazoid and Roquen ship as "Testing/DEMO" files. License the
+  production faces before shipping.
+- **Photo upload** — "Add yours" currently appends from a local pool (faithful to
+  the prototype). Wire `expo-image-picker` + upload, and add the camera/library
+  usage strings, when you make it real.
+- **Backend** — needs: places; per-place critic vs. people scores + rankings; the
+  user's log; friends graph (with mutual-follow); events + RSVPs/tickets; tables
+  with visibility; club membership + events + threads; geolocation for the map;
+  media upload; a trending feed.
+- **Onboarding** — runs on launch (`SKIP_ONBOARDING = false` in
+  `src/store/useStore.ts`). Set `true` to open straight on the Feed, or wire
+  persistence so it only shows on first run.
+
+The prototype/design source lives in the handoff bundle; `NO MAD CORNER.dc.html`
+was the reference for layout, copy, and behavior.
