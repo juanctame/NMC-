@@ -20,7 +20,25 @@ export type TrendingVideo = {
   handle: string;
   caption: string;
   sourceUrl: string;
+  /** Platform video/reel/short id — enables in-app embedded playback. A real
+   *  gather pipeline supplies this; without it the reel deep-links out. */
+  embedId?: string;
 };
+
+/** Build the platform embed-player URL for in-app playback (WebView / iframe). */
+export function embedUrlFor(v: TrendingVideo): string | null {
+  if (!v.embedId) return null;
+  switch (v.platform) {
+    case 'youtube':
+      return `https://www.youtube.com/embed/${v.embedId}?playsinline=1&rel=0&modestbranding=1`;
+    case 'tiktok':
+      return `https://www.tiktok.com/embed/v2/${v.embedId}`;
+    case 'instagram':
+      return `https://www.instagram.com/reel/${v.embedId}/embed`;
+    default:
+      return null;
+  }
+}
 
 export const TRENDING_VIDEOS: TrendingVideo[] = [
   { id: 'tv-1', placeId: 'orinoco', platform: 'tiktok', creator: 'Ana Sol', handle: '@anasolcomes', caption: 'POV: the 2am chicharrón crunch you needed to hear 🌮🔊', sourceUrl: 'https://www.tiktok.com/@anasolcomes' },

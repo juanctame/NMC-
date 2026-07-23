@@ -446,6 +446,7 @@ export const useStore = create<State & Actions>((set, get) => ({
     const t = {
       id,
       mine: true,
+      placeId: place.id,
       d: when.d,
       mo: when.mo,
       wd: when.wd,

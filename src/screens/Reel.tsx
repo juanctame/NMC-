@@ -3,7 +3,7 @@
  * (stand-in for video) under a top/bottom scrim. Up/down rail cycles the
  * trending list; critic/people pills + a scrub bar sit at the bottom.
  */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Pressable, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Animated } from 'react-native';
@@ -11,15 +11,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { useStore } from '../store/useStore';
 import { byId } from '../store/data';
-import { TRENDING_VIDEOS } from '../data/videos';
+import { TRENDING_VIDEOS, embedUrlFor } from '../data/videos';
 import { PLATFORM_LABEL } from '../data/creators';
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { C } from '../theme/tokens';
 import { photo } from '../assets';
 import { Display, Banner, Serif, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
-import { MuteIcon, ChevronUp, ChevronDown } from '../components/icons';
+import { MuteIcon, ChevronUp, ChevronDown, PlayIcon } from '../components/icons';
 import { useSlowZoom } from '../components/Anim';
+import { VideoEmbed } from '../components/VideoEmbed';
 
 export function Reel() {
   const insets = useSafeAreaInsets();
@@ -37,20 +38,41 @@ export function Reel() {
   const ps = scoreStyle(rp.people || 0);
   const scale = useSlowZoom();
 
+  const embedUrl = embedUrlFor(video);
+  const [playing, setPlaying] = useState(false);
+  useEffect(() => setPlaying(false), [reelIndex]);
+  const onPlay = () => (embedUrl ? setPlaying(true) : Linking.openURL(video.sourceUrl));
+
   return (
     <View style={{ flex: 1, backgroundColor: C.inkBlack, overflow: 'hidden' }}>
-      <Animated.View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, transform: [{ scale }] }}>
-        <Image source={photo(rp.photo)} style={{ width: '100%', height: '100%' }} contentFit="cover" />
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(42,26,6,0.32)' }} />
-      </Animated.View>
-      <LinearGradient
-        colors={['rgba(42,26,6,0.5)', 'rgba(42,26,6,0)', 'rgba(42,26,6,0)', 'rgba(42,26,6,0.82)']}
-        locations={[0, 0.28, 0.52, 1]}
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-      />
+      {playing && embedUrl ? (
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 20 }}>
+          <VideoEmbed url={embedUrl} />
+        </View>
+      ) : (
+        <>
+          <Animated.View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, transform: [{ scale }] }}>
+            <Image source={photo(rp.photo)} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+            <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(42,26,6,0.32)' }} />
+          </Animated.View>
+          <LinearGradient
+            colors={['rgba(42,26,6,0.5)', 'rgba(42,26,6,0)', 'rgba(42,26,6,0)', 'rgba(42,26,6,0.82)']}
+            locations={[0, 0.28, 0.52, 1]}
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+          />
+          {/* center play */}
+          <View pointerEvents="box-none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
+            <StickerPressable offset="lg" radius={999} onPress={onPlay} style={{ width: 76, height: 76, borderRadius: 38, backgroundColor: 'rgba(251,245,229,0.95)', borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ marginLeft: 4 }}>
+                <PlayIcon size={30} color={C.ink400} />
+              </View>
+            </StickerPressable>
+          </View>
+        </>
+      )}
 
       {/* top bar */}
-      <View style={{ position: 'absolute', top: insets.top + 8, left: 16, right: 16, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+      <View style={{ position: 'absolute', top: insets.top + 8, left: 16, right: 16, zIndex: 30, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <StickerView offset="sm" radius={999}>
           <Pressable onPress={() => go('feed')} style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
             <Display s={17} c={C.ink400}>
@@ -64,7 +86,15 @@ export function Reel() {
             {platform} · {rank} of {total}
           </Banner>
         </View>
-        <MuteIcon size={18} color={C.paper0} />
+        {playing ? (
+          <StickerPressable offset="sm" radius={999} onPress={() => setPlaying(false)} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper0, paddingVertical: 5, paddingHorizontal: 11 }}>
+            <Banner s={9} tk={0.1} c={C.inkDeep}>
+              ✕ Stop
+            </Banner>
+          </StickerPressable>
+        ) : (
+          <MuteIcon size={18} color={C.paper0} />
+        )}
       </View>
 
       {/* right rail */}

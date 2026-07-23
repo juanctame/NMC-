@@ -1,15 +1,18 @@
 /**
- * Nearby map — real restaurants + food stalls for the selected city, plotted by
- * their true GPS coordinates (projected onto the city's bounding box) on the
- * brand's printed-paper map. Places the user has ranked show a green score
- * roundel; everything else shows its price tier. Tap a pin for the detail card.
+ * Nearby map — one map for everything happening around you: restaurant
+ * **Grades** (rated spots show their 0–10, fresh ones show price), community
+ * **Events**, and open **Tables**, all plotted by real coordinates on the
+ * brand's printed-paper map and toggled with one filter row. Tap a pin for the
+ * detail card.
  */
 import React from 'react';
 import { View, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Line, Ellipse, G } from 'react-native-svg';
 import { useStore } from '../store/useStore';
-import { projectToBox } from '../data/cities';
+import { projectToBox, type City } from '../data/cities';
+import { EVENTS, OPEN, EVENT_PHOTO, byId } from '../store/data';
+import { PLACE_COORDS, PIN_COORDS, coordForId, type LatLon } from '../data/geo';
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { C } from '../theme/tokens';
 import { photo } from '../assets';
@@ -17,8 +20,6 @@ import { Display, Banner, SerifItalic, SerifDisplay, Mono } from '../components/
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
 import { ScreenIn } from '../components/Anim';
-import type { Place } from '../store/data';
-import type { City } from '../data/cities';
 
 const CDMX_HOODS = [
   { name: 'Centro', x: 72, y: 14, rot: '-3deg' },
@@ -29,12 +30,22 @@ const CDMX_HOODS = [
   { name: 'Narvarte', x: 70, y: 82, rot: '-2deg' },
 ];
 
-const PRICE_FILTERS = [
+const FILTERS = [
   { key: 'all', label: 'All' },
-  { key: '$', label: '$' },
-  { key: '$$', label: '$$' },
-  { key: '$$$', label: '$$$' },
+  { key: 'grade', label: 'Grades' },
+  { key: 'event', label: 'Events' },
+  { key: 'table', label: 'Tables' },
 ];
+
+type Pin = {
+  kind: 'grade' | 'event' | 'table';
+  id: string;
+  coord: LatLon;
+  bg: string;
+  fg: string;
+  metric: string;
+  dashed: boolean;
+};
 
 function distanceMin(city: City, lat: number, lon: number): string {
   const R = 6371000;
@@ -43,11 +54,10 @@ function distanceMin(city: City, lat: number, lon: number): string {
   const a =
     Math.sin(dLat / 2) ** 2 +
     Math.cos((city.center.lat * Math.PI) / 180) * Math.cos((lat * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
-  const m = 2 * R * Math.asin(Math.sqrt(a));
-  const min = Math.round(m / 80); // ~80 m/min walking
+  const min = Math.round((2 * R * Math.asin(Math.sqrt(a))) / 80);
   if (min <= 2) return 'right here';
   if (min <= 25) return `~${min} min walk`;
-  return `~${(m / 1000).toFixed(1)} km`;
+  return `~${((2 * R * Math.asin(Math.sqrt(a))) / 1000).toFixed(1)} km`;
 }
 
 export function NearbyMap() {
@@ -62,23 +72,52 @@ export function NearbyMap() {
   const selPin = useStore((s) => s.selPin);
   const selectPin = useStore((s) => s.selectPin);
   const openPlace = useStore((s) => s.openPlace);
+  const openEvent = useStore((s) => s.openEvent);
   const openCitySheet = useStore((s) => s.openCitySheet);
   const ranked = useStore((s) => s.ranked);
+  const createdTables = useStore((s) => s.createdTables);
 
-  const rankedById: Record<string, number> = {};
+  const rankedScore: Record<string, number> = {};
   ranked.forEach((r) => {
-    if (r.score != null) rankedById[r.id] = r.score;
+    if (r.score != null) rankedScore[r.id] = r.score;
   });
 
-  const priceSel = mapFilter as string;
-  const pins = nearby
-    .filter((p) => p.lat != null && p.lon != null)
-    .filter((p) => priceSel === 'all' || p.price === priceSel)
-    .map((p) => ({ p, pr: projectToBox(p.lat!, p.lon!, city.bbox) }))
-    .filter((x) => x.pr.inside)
-    .slice(0, 60);
+  const pins: Pin[] = [];
+  // GRADES — curated scored places
+  Object.entries(PLACE_COORDS).forEach(([id, coord]) => {
+    const p = byId[id];
+    if (!p || p.critic == null || p.people == null) return;
+    const overall = (p.critic + p.people) / 2;
+    const ss = scoreStyle(overall);
+    pins.push({ kind: 'grade', id, coord, bg: ss.bg, fg: ss.fg, metric: fmt(overall), dashed: true });
+  });
+  // GRADES — live nearby (ranked → score, else price)
+  nearby.forEach((p) => {
+    if (p.lat == null || p.lon == null) return;
+    const r = rankedScore[p.id];
+    if (r != null) {
+      const ss = scoreStyle(r);
+      pins.push({ kind: 'grade', id: p.id, coord: { lat: p.lat, lon: p.lon }, bg: ss.bg, fg: ss.fg, metric: fmt(r), dashed: true });
+    } else {
+      pins.push({ kind: 'grade', id: p.id, coord: { lat: p.lat, lon: p.lon }, bg: C.ink400, fg: C.paper0, metric: p.price, dashed: false });
+    }
+  });
+  // EVENTS
+  EVENTS.forEach((ev) => {
+    const coord = PIN_COORDS[ev.id];
+    if (coord) pins.push({ kind: 'event', id: ev.id, coord, bg: C.sun400, fg: C.inkDeep, metric: ev.d, dashed: false });
+  });
+  // TABLES (created + open)
+  [...createdTables, ...OPEN].forEach((t: any) => {
+    const coord = coordForId(t.id, t.placeId);
+    if (coord) pins.push({ kind: 'table', id: t.id, coord, bg: C.stampBlue, fg: C.paper0, metric: t.d, dashed: false });
+  });
 
-  const selected = selPin ? nearby.find((p) => p.id === selPin.id) : null;
+  const shown = pins
+    .filter((p) => mapFilter === 'all' || p.kind === mapFilter)
+    .map((p) => ({ p, pr: projectToBox(p.coord.lat, p.coord.lon, city.bbox) }))
+    .filter((x) => x.pr.inside)
+    .slice(0, 70);
 
   return (
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
@@ -107,8 +146,8 @@ export function NearbyMap() {
           </StickerView>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingTop: 12, paddingBottom: 2 }}>
-          {PRICE_FILTERS.map((f) => {
-            const on = mapFilter === (f.key as any);
+          {FILTERS.map((f) => {
+            const on = mapFilter === f.key;
             return (
               <Pressable key={f.key} onPress={() => setMapFilter(f.key as any)} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 14, backgroundColor: on ? C.ink400 : C.paper0 }}>
                 <Banner s={10} tk={0.12} c={on ? C.paper0 : C.inkDeep}>
@@ -120,7 +159,7 @@ export function NearbyMap() {
           <View style={{ flex: 1 }} />
           <View style={{ justifyContent: 'center' }}>
             <Mono s={9} c={C.inkSoft}>
-              {status === 'loading' ? 'loading…' : `${pins.length} places`}
+              {status === 'loading' ? 'loading…' : `${shown.length} pins`}
             </Mono>
           </View>
         </ScrollView>
@@ -157,7 +196,7 @@ export function NearbyMap() {
             ))
           : null}
 
-        {/* You marker (city center) */}
+        {/* You marker */}
         <View pointerEvents="none" style={{ position: 'absolute', left: '50%', top: '50%', marginLeft: -22, marginTop: -22, alignItems: 'center' }}>
           <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(216,80,26,0.16)', alignItems: 'center', justifyContent: 'center' }}>
             <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: C.ink400, borderWidth: 2.5, borderColor: C.paper0 }} />
@@ -169,26 +208,17 @@ export function NearbyMap() {
           </View>
         </View>
 
-        {/* real restaurant pins */}
-        {pins.map(({ p, pr }) => {
-          const isSel = !!selPin && selPin.id === p.id;
-          const ranked = rankedById[p.id];
-          const isRanked = ranked != null;
-          const ss = isRanked ? scoreStyle(ranked) : null;
-          const size = isSel ? 40 : 30;
-          const metric = isRanked ? fmt(ranked) : p.price;
+        {/* pins */}
+        {shown.map(({ p, pr }) => {
+          const isSel = !!selPin && selPin.kind === p.kind && selPin.id === p.id;
+          const size = isSel ? 42 : p.kind === 'grade' && p.dashed ? 34 : 32;
           return (
-            <View key={p.id} style={{ position: 'absolute', left: `${pr.x}%`, top: `${pr.y}%`, marginLeft: -size / 2, marginTop: -size / 2, zIndex: isSel ? 30 : isRanked ? 14 : 10 }}>
+            <View key={p.kind + p.id} style={{ position: 'absolute', left: `${pr.x}%`, top: `${pr.y}%`, marginLeft: -size / 2, marginTop: -size / 2, zIndex: isSel ? 30 : p.kind === 'event' ? 14 : p.kind === 'table' ? 13 : 12 }}>
               <StickerView offset="sm" radius={999} style={{ transform: [{ rotate: '-4deg' }] }}>
-                <Pressable
-                  onPress={() => selectPin({ kind: isRanked ? 'spot' : 'place', id: p.id })}
-                  style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: isRanked ? ss!.bg : C.ink400, borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}
-                >
-                  {isRanked ? (
-                    <View pointerEvents="none" style={{ position: 'absolute', top: 4, left: 4, right: 4, bottom: 4, borderRadius: size / 2, borderWidth: 2, borderColor: ss!.fg, borderStyle: 'dashed' }} />
-                  ) : null}
-                  <Display s={isSel ? 13 : 11} c={isRanked ? ss!.fg : C.paper0}>
-                    {metric}
+                <Pressable onPress={() => selectPin({ kind: p.kind, id: p.id })} style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: p.bg, borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+                  {p.dashed ? <View pointerEvents="none" style={{ position: 'absolute', top: 4, left: 4, right: 4, bottom: 4, borderRadius: size / 2, borderWidth: 2, borderColor: p.fg, borderStyle: 'dashed' }} /> : null}
+                  <Display s={isSel ? 13 : 11} c={p.fg}>
+                    {p.metric}
                   </Display>
                 </Pressable>
               </StickerView>
@@ -198,23 +228,24 @@ export function NearbyMap() {
 
         {/* legend */}
         <View style={{ position: 'absolute', left: 14, bottom: 14, zIndex: 5 }}>
-          <StickerView offset="sm" style={{ flexDirection: 'row', gap: 12, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 7, paddingHorizontal: 11 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-              <View style={{ width: 11, height: 11, borderRadius: 6, backgroundColor: C.ink400, borderWidth: 1.5, borderColor: C.inkBlack }} />
-              <Mono s={9} c={C.inkMuted}>
-                Places
-              </Mono>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-              <View style={{ width: 11, height: 11, borderRadius: 6, backgroundColor: C.stampGreen, borderWidth: 1.5, borderColor: C.inkBlack }} />
-              <Mono s={9} c={C.inkMuted}>
-                Your ranked
-              </Mono>
-            </View>
+          <StickerView offset="sm" style={{ flexDirection: 'row', gap: 11, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 7, paddingHorizontal: 11 }}>
+            {[
+              { c: C.stampGreen, l: 'Grades', dashed: true },
+              { c: C.sun400, l: 'Events', dashed: false },
+              { c: C.stampBlue, l: 'Tables', dashed: false },
+            ].map((x) => (
+              <View key={x.l} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: x.c, borderWidth: 1.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+                  {x.dashed ? <View style={{ width: 7, height: 7, borderRadius: 4, borderWidth: 1, borderColor: C.paper0, borderStyle: 'dashed' }} /> : null}
+                </View>
+                <Mono s={9} c={C.inkMuted}>
+                  {x.l}
+                </Mono>
+              </View>
+            ))}
           </StickerView>
         </View>
 
-        {/* status overlays */}
         {status === 'loading' ? (
           <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
             <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, paddingVertical: 16, paddingHorizontal: 22, alignItems: 'center', gap: 10 }}>
@@ -222,74 +253,125 @@ export function NearbyMap() {
               <Banner s={11} tk={0.14} c={C.inkDeep}>
                 Reading the streets…
               </Banner>
-              <Mono s={9} c={C.inkMuted}>
-                {city.name} · {city.defaultHood}
-              </Mono>
             </StickerView>
           </View>
         ) : null}
 
-        {status === 'error' ? (
-          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30 }}>
-            <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, padding: 18, alignItems: 'center', gap: 8 }}>
-              <Banner s={11} tk={0.14} c={C.inkDeep}>
-                Couldn't reach the map
-              </Banner>
-              <SerifItalic s={12.5} c={C.inkMuted} style={{ textAlign: 'center' }}>
-                No live places for {city.name} right now.
-              </SerifItalic>
-              <StickerPressable offset="sm" radius={999} onPress={() => loadNearby()} style={{ marginTop: 4, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink400, paddingVertical: 9, paddingHorizontal: 16 }}>
-                <Banner s={11} tk={0.1} c={C.paper0}>
-                  Try again
-                </Banner>
-              </StickerPressable>
-            </StickerView>
-          </View>
-        ) : null}
-
-        {/* select card */}
-        {selected ? (
-          <View style={{ position: 'absolute', left: 14, right: 14, bottom: 14, zIndex: 25 }}>
-            <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 10 }}>
-              <Photo source={photo(selected.photo)} style={{ width: 56, height: 56, borderWidth: 2, borderColor: C.inkBlack }} />
-              <View style={{ flex: 1, minWidth: 0 }}>
-                <SerifDisplay s={16} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 16 }}>
-                  {selected.name}
-                </SerifDisplay>
-                <Mono s={9} c={C.inkMuted} numberOfLines={1} style={{ marginTop: 3 }}>
-                  {metaOf(selected)}
-                </Mono>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 }}>
-                  <View style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 8, backgroundColor: rankedById[selected.id] != null ? scoreStyle(rankedById[selected.id]).bg : C.sun400 }}>
-                    <Banner s={9} tk={0.08} c={rankedById[selected.id] != null ? scoreStyle(rankedById[selected.id]).fg : C.inkDeep}>
-                      {rankedById[selected.id] != null ? `Nº your ${fmt(rankedById[selected.id])}` : 'Not yet ranked'}
-                    </Banner>
-                  </View>
-                  {selected.lat != null ? (
-                    <Mono s={9} c={C.inkSoft}>
-                      {distanceMin(city, selected.lat, selected.lon!)}
-                    </Mono>
-                  ) : null}
-                </View>
-              </View>
-              <StickerPressable offset="sm" radius={999} onPress={() => openPlace(selected.id)} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink400, paddingVertical: 9, paddingHorizontal: 12 }}>
-                <Banner s={10} tk={0.1} c={C.paper0}>
-                  See place →
-                </Banner>
-              </StickerPressable>
-              <View style={{ position: 'absolute', top: -10, right: -8 }}>
-                <StickerView offset="sm" radius={999}>
-                  <Pressable onPress={() => selectPin(null)} style={{ width: 26, height: 26, borderRadius: 13, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
-                    <Display s={12} c={C.ink400}>
-                      ✕
-                    </Display>
-                  </Pressable>
-                </StickerView>
-              </View>
-            </StickerView>
-          </View>
-        ) : null}
+        {selPin ? <SelectCard onEvent={openEvent} onPlace={openPlace} onClose={() => selectPin(null)} createdTables={createdTables} city={city} nearby={nearby} rankedScore={rankedScore} /> : null}
       </View>
     </ScreenIn>
+  );
+}
+
+function SelectCard({
+  onEvent,
+  onPlace,
+  onClose,
+  createdTables,
+  city,
+  nearby,
+  rankedScore,
+}: {
+  onEvent: (id: string) => void;
+  onPlace: (id: string) => void;
+  onClose: () => void;
+  createdTables: any[];
+  city: City;
+  nearby: any[];
+  rankedScore: Record<string, number>;
+}) {
+  const sel = useStore((s) => s.selPin)!;
+
+  let content: { photo: string; name: string; meta: string; badge: string; badgeBg: string; badgeFg: string; walk: string; cta: string; onPress: () => void };
+
+  if (sel.kind === 'event') {
+    const ev = EVENTS.find((e) => e.id === sel.id)!;
+    const left = ev.spots - ev.taken;
+    const c = PIN_COORDS[ev.id];
+    content = {
+      photo: EVENT_PHOTO[ev.id] || 'chef-plating',
+      name: ev.title,
+      meta: `${ev.wd} ${ev.mo} ${ev.d} · ${ev.route}`,
+      badge: left <= 0 ? 'Full · waitlist' : `${left} spots left`,
+      badgeBg: left <= 0 ? C.stampPink : C.sun400,
+      badgeFg: left <= 0 ? C.pinkFg : C.inkDeep,
+      walk: c ? distanceMin(city, c.lat, c.lon) : '',
+      cta: 'See event →',
+      onPress: () => onEvent(ev.id),
+    };
+  } else if (sel.kind === 'table') {
+    const t = [...createdTables, ...OPEN].find((x: any) => x.id === sel.id);
+    const c = coordForId(t.id, t.placeId);
+    content = {
+      photo: t.photo || 'italian-deli',
+      name: t.title,
+      meta: t.host,
+      badge: `${t.taken}/${t.spots} seats`,
+      badgeBg: C.stampBlue,
+      badgeFg: C.paper0,
+      walk: c ? distanceMin(city, c.lat, c.lon) : '',
+      cta: 'See table →',
+      onPress: () => onEvent(t.id),
+    };
+  } else {
+    const base = byId[sel.id] || nearby.find((p) => p.id === sel.id);
+    const r = rankedScore[sel.id];
+    const overall = base.critic != null && base.people != null ? (base.critic + base.people) / 2 : null;
+    const shownScore = r != null ? r : overall;
+    const ss = shownScore != null ? scoreStyle(shownScore) : { bg: C.ink400, fg: C.paper0 };
+    const c = PLACE_COORDS[sel.id] || (base.lat != null ? { lat: base.lat, lon: base.lon } : null);
+    content = {
+      photo: base.photo,
+      name: base.name,
+      meta: metaOf(base),
+      badge: shownScore != null ? `Grade ${fmt(shownScore)}` : base.price,
+      badgeBg: shownScore != null ? ss.bg : C.sun400,
+      badgeFg: shownScore != null ? ss.fg : C.inkDeep,
+      walk: c ? distanceMin(city, c.lat, c.lon) : '',
+      cta: 'See place →',
+      onPress: () => onPlace(sel.id),
+    };
+  }
+
+  return (
+    <View style={{ position: 'absolute', left: 14, right: 14, bottom: 14, zIndex: 25 }}>
+      <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 10 }}>
+        <Photo source={photo(content.photo)} style={{ width: 56, height: 56, borderWidth: 2, borderColor: C.inkBlack }} />
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <SerifDisplay s={16} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 16 }}>
+            {content.name}
+          </SerifDisplay>
+          <Mono s={9} c={C.inkMuted} numberOfLines={1} style={{ marginTop: 3 }}>
+            {content.meta}
+          </Mono>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 }}>
+            <View style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 8, backgroundColor: content.badgeBg }}>
+              <Banner s={9} tk={0.08} c={content.badgeFg}>
+                {content.badge}
+              </Banner>
+            </View>
+            {content.walk ? (
+              <Mono s={9} c={C.inkSoft}>
+                {content.walk}
+              </Mono>
+            ) : null}
+          </View>
+        </View>
+        <StickerPressable offset="sm" radius={999} onPress={content.onPress} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink400, paddingVertical: 9, paddingHorizontal: 12 }}>
+          <Banner s={10} tk={0.1} c={C.paper0}>
+            {content.cta}
+          </Banner>
+        </StickerPressable>
+        <View style={{ position: 'absolute', top: -10, right: -8 }}>
+          <StickerView offset="sm" radius={999}>
+            <Pressable onPress={onClose} style={{ width: 26, height: 26, borderRadius: 13, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+              <Display s={12} c={C.ink400}>
+                ✕
+              </Display>
+            </Pressable>
+          </StickerView>
+        </View>
+      </StickerView>
+    </View>
   );
 }
