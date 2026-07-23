@@ -24,16 +24,25 @@ function Bar() {
 
 export default function App() {
   const [loaded, error] = useFonts(FONT_ASSETS);
+  const hydrate = useStore((s) => s.hydrate);
+  const hydrated = useStore((s) => s.hydrated);
+
+  // Load any stored account before the first paint (decides onboarding vs feed).
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
+
+  const ready = (loaded || !!error) && hydrated;
 
   useEffect(() => {
-    if (loaded || error) SplashScreen.hideAsync().catch(() => {});
-  }, [loaded, error]);
+    if (ready) SplashScreen.hideAsync().catch(() => {});
+  }, [ready]);
 
   const onLayout = useCallback(() => {
-    if (loaded || error) SplashScreen.hideAsync().catch(() => {});
-  }, [loaded, error]);
+    if (ready) SplashScreen.hideAsync().catch(() => {});
+  }, [ready]);
 
-  if (!loaded && !error) return null;
+  if (!ready) return null;
 
   return (
     <SafeAreaProvider>

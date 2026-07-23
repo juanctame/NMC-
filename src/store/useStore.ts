@@ -19,6 +19,8 @@ import { PHOTO_POOL } from '../assets';
 import { DEFAULT_CITY, cityById, type City } from '../data/cities';
 import { getProvider, fixtureFallback } from '../data/provider';
 import { REVIEWS, type Review } from '../data/reviews';
+import { makeProfile, identity, type Profile } from '../data/profile';
+import { loadProfile, saveProfile, clearProfile } from '../data/storage';
 
 export type NearbyStatus = 'idle' | 'loading' | 'ready' | 'fallback' | 'error';
 export type ReviewSort = 'popular' | 'recent';
@@ -146,6 +148,10 @@ export type State = {
   reviewPlaceId: string | null;
   reviewDraftScore: number;
   reviewDraftText: string;
+
+  // Account (local profile)
+  profile: Profile | null;
+  hydrated: boolean;
 };
 
 export type Actions = {
@@ -220,6 +226,10 @@ export type Actions = {
   setReviewDraftScore: (n: number) => void;
   setReviewDraftText: (t: string) => void;
   postReview: () => void;
+  // account
+  hydrate: () => Promise<void>;
+  createProfile: (input: { name: string; handle: string; cityId: string; color: string }) => void;
+  signOut: () => void;
 };
 
 /** Resolve a place by id across the seed catalog and live-loaded nearby set. */
@@ -292,6 +302,8 @@ const initialState = (): State => ({
   reviewPlaceId: null,
   reviewDraftScore: 8,
   reviewDraftText: '',
+  profile: null,
+  hydrated: false,
 });
 
 function findTable(s: State, id: string | null) {
@@ -532,13 +544,14 @@ export const useStore = create<State & Actions>((set, get) => ({
     const placeId = s.reviewPlaceId;
     if (!placeId) return;
     const text = s.reviewDraftText.trim();
+    const idn = identity(s.profile);
     const rev: Review = {
       id: 'ur-' + (s.userReviews.length + 1) + '-' + Date.now().toString(36),
       placeId,
       authorId: 'me',
-      author: 'You · June',
-      initials: 'JO',
-      color: 'var(--sun-400)',
+      author: `You · ${idn.name.split(' ')[0]}`,
+      initials: idn.initials,
+      color: idn.color,
       score: s.reviewDraftScore,
       text: text || 'Logged it.',
       date: 'now',
@@ -546,6 +559,23 @@ export const useStore = create<State & Actions>((set, get) => ({
       friend: false,
     };
     set({ userReviews: [rev, ...s.userReviews], reviewOpen: false, reviewDraftText: '' });
+  },
+
+  // ── account (local profile) ──
+  hydrate: async () => {
+    const p = await loadProfile();
+    if (p) set({ profile: p, city: cityById(p.cityId), screen: 'feed', nearbyStatus: 'idle' });
+    else set({ screen: SKIP_ONBOARDING ? 'feed' : 'onboard' });
+    set({ hydrated: true });
+  },
+  createProfile: (input) => {
+    const p = makeProfile(input);
+    saveProfile(p);
+    set({ profile: p, city: cityById(p.cityId), nearby: [], nearbyById: {}, nearbyStatus: 'idle' });
+  },
+  signOut: () => {
+    clearProfile();
+    set({ profile: null, screen: 'onboard', obStep: 0, tastes: [], stamped: false });
   },
 }));
 

@@ -10,6 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { FRIENDS, byId, type Place } from '../store/data';
 import { pctStyle, metaOf } from '../store/helpers';
+import { identity } from '../data/profile';
 import { C, col } from '../theme/tokens';
 import { photo } from '../assets';
 import { Display, Banner, Serif, SerifItalic, SerifDisplay, Mono } from '../components/Text';
@@ -29,8 +30,10 @@ function DinersBoard() {
   const insets = useSafeAreaInsets();
   const follows = useStore((s) => s.follows);
   const toggleFollow = useStore((s) => s.toggleFollow);
+  const profile = useStore((s) => s.profile);
+  const idn = identity(profile);
 
-  const me = { id: 'me', name: 'You · June', initials: 'JO', color: C.sun400, year: 41, match: 'your log', isMe: true };
+  const me = { id: 'me', name: `You · ${idn.name.split(' ')[0]}`, initials: idn.initials, color: idn.color, year: 41, match: 'your log', isMe: true };
   const all = [...FRIENDS, me].slice().sort((a, b) => b.year - a.year);
   const podium = all.slice(0, 3);
 

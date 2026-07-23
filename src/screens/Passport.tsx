@@ -3,13 +3,15 @@
  * passport card + stat strip, recent stamps, cuisine standings, taste tags.
  */
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { scoreStyle, fmt } from '../store/helpers';
-import { C } from '../theme/tokens';
+import { C, col } from '../theme/tokens';
+import { identity } from '../data/profile';
+import { cityById } from '../data/cities';
 import { Display, Banner, Mono } from '../components/Text';
-import { StickerView } from '../components/Sticker';
+import { StickerView, StickerPressable } from '../components/Sticker';
 import { Roundel } from '../components/Roundel';
 import { Grain } from '../components/Grain';
 import { ScreenIn } from '../components/Anim';
@@ -39,6 +41,10 @@ function StatCell({ value, label, last }: { value: string | number; label: strin
 export function Passport() {
   const insets = useSafeAreaInsets();
   const ranked = useStore((s) => s.ranked);
+  const profile = useStore((s) => s.profile);
+  const signOut = useStore((s) => s.signOut);
+  const me = identity(profile);
+  const homeCity = cityById(me.cityId);
   const beenTotal = ranked.length;
 
   const scores = ranked.map((r) => r.score!);
@@ -59,18 +65,18 @@ export function Passport() {
             <Grain opacity={0.08} />
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
               <StickerView offset="sm" radius={999} style={{ transform: [{ rotate: '-4deg' }] }}>
-                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: C.sun400, borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
-                  <Banner s={18} c={C.inkDeep}>
-                    JO
+                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: col(me.color), borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+                  <Banner s={18} c={C.paper0}>
+                    {me.initials}
                   </Banner>
                 </View>
               </StickerView>
               <View style={{ flex: 1 }}>
-                <Display s={22} c={C.paper0}>
-                  June Ozawa
+                <Display s={22} c={C.paper0} numberOfLines={1}>
+                  {me.name}
                 </Display>
                 <Mono s={9.5} c={C.sun300} style={{ marginTop: 4 }}>
-                  PASSPORT Nº 4,102 · EST. MAR 2026 · CDMX
+                  PASSPORT Nº {me.passportNo.toLocaleString()} · EST. {me.joined} · {homeCity.name.toUpperCase()}
                 </Mono>
               </View>
             </View>
@@ -128,7 +134,7 @@ export function Passport() {
         </View>
 
         {/* taste tags */}
-        <View style={{ paddingTop: 22, paddingHorizontal: 16, paddingBottom: 34 }}>
+        <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
           <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
             What you chase
           </Banner>
@@ -140,6 +146,28 @@ export function Passport() {
                 </Banner>
               </StickerView>
             ))}
+          </View>
+        </View>
+
+        {/* account */}
+        <View style={{ paddingTop: 24, paddingHorizontal: 16, paddingBottom: 34 }}>
+          <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
+            Account
+          </Banner>
+          <View style={{ backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 10, paddingHorizontal: 13, flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ flex: 1 }}>
+              <Banner s={11} tk={0.06} c={C.inkDeep}>
+                {me.handle}
+              </Banner>
+              <Mono s={9} c={C.inkMuted} style={{ marginTop: 2 }}>
+                {profile ? 'Local account · this device' : 'Guest · demo identity'}
+              </Mono>
+            </View>
+            <StickerPressable offset="sm" radius={999} onPress={signOut} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper0, paddingVertical: 7, paddingHorizontal: 13 }}>
+              <Banner s={9.5} tk={0.1} c={C.ink400}>
+                {profile ? 'Sign out' : 'Create account'}
+              </Banner>
+            </StickerPressable>
           </View>
         </View>
       </ScrollView>

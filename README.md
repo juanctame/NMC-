@@ -97,6 +97,20 @@ no restaurant API provides it.
   Diners**. Restaurants ranks the city's places by a blended Critics+People
   score and is **filterable by cuisine**; Diners keeps the friends board.
 
+## Accounts & onboarding (local, for the pilot)
+
+First launch runs an account-creation onboarding so a tester can make a user and
+start using the app: cover → **create account** (name, @handle, home city, stamp
+colour) → taste picker (≥3) → house rules → an ADMITTED stamp with their new
+passport №, into the Feed. The profile **persists on-device** (AsyncStorage →
+localStorage on web), so returning testers skip straight in; Passport →
+**Sign out** resets it. The identity threads through Passport, the Leaderboard
+"You" row, and review authorship.
+
+This is a **local** account (`src/data/profile.ts` + `src/data/storage.ts`),
+shaped to swap for real auth: replace the three functions in `storage.ts` with
+API calls (email/OAuth + server) and carry a session token.
+
 ## Run it (development)
 
 ```bash
