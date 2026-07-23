@@ -86,6 +86,17 @@ an honest "no verdict yet — be the first to rank it" state. The app's social
 layer (Critics-vs-People scores, friends, events, Dine Club) stays app-domain —
 no restaurant API provides it.
 
+## Reviews & rankings (Letterboxd-style)
+
+- **Public reviews per place** — every review written in the app is public. On a
+  place, reviews sort by **popularity** (likes) with a **Recent** toggle and an
+  **Everyone / Friends** audience filter; friend and critic voices are tagged.
+  Data + selector in `src/data/reviews.ts` + `reviewsFor()`; write one via the
+  composer (`src/overlays/ReviewComposer.tsx`).
+- **Restaurant leaderboard** — the Leaderboard screen toggles **Restaurants /
+  Diners**. Restaurants ranks the city's places by a blended Critics+People
+  score and is **filterable by cuisine**; Diners keeps the friends board.
+
 ## Run it (development)
 
 ```bash

@@ -18,8 +18,32 @@ import {
 import { PHOTO_POOL } from '../assets';
 import { DEFAULT_CITY, cityById, type City } from '../data/cities';
 import { getProvider, fixtureFallback } from '../data/provider';
+import { REVIEWS, type Review } from '../data/reviews';
 
 export type NearbyStatus = 'idle' | 'loading' | 'ready' | 'fallback' | 'error';
+export type ReviewSort = 'popular' | 'recent';
+export type ScoredReview = Review & { likes: number; likedByMe: boolean };
+
+/** Public reviews for a place: seed ∪ user, like-counted, filtered, sorted. */
+export function reviewsFor(
+  placeId: string,
+  userReviews: Review[],
+  reviewLikes: Record<string, boolean>,
+  opts: { friendsOnly: boolean; sort: ReviewSort },
+): ScoredReview[] {
+  const raw = [
+    ...userReviews.filter((r) => r.placeId === placeId),
+    ...REVIEWS.filter((r) => r.placeId === placeId),
+  ];
+  let list: ScoredReview[] = raw.map((r) => ({
+    ...r,
+    likes: r.baseLikes + (reviewLikes[r.id] ? 1 : 0),
+    likedByMe: !!reviewLikes[r.id],
+  }));
+  if (opts.friendsOnly) list = list.filter((r) => r.friend);
+  if (opts.sort === 'popular') list = list.slice().sort((a, b) => b.likes - a.likes);
+  return list;
+}
 
 /** Set false to run the designed first-run onboarding flow on launch. */
 export const SKIP_ONBOARDING = false;
@@ -112,6 +136,16 @@ export type State = {
   nearbyById: Record<string, Place>;
   nearbyStatus: NearbyStatus;
   citySheetOpen: boolean;
+
+  // Reviews (public, Letterboxd-style)
+  userReviews: Review[];
+  reviewLikes: Record<string, boolean>;
+  reviewSort: ReviewSort;
+  reviewFriendsOnly: boolean;
+  reviewOpen: boolean;
+  reviewPlaceId: string | null;
+  reviewDraftScore: number;
+  reviewDraftText: string;
 };
 
 export type Actions = {
@@ -177,6 +211,15 @@ export type Actions = {
   setCity: (id: string) => void;
   openCitySheet: () => void;
   closeCitySheet: () => void;
+  // reviews
+  toggleReviewLike: (id: string) => void;
+  setReviewSort: (s: ReviewSort) => void;
+  setReviewFriendsOnly: (v: boolean) => void;
+  openReviewComposer: (placeId: string) => void;
+  closeReviewComposer: () => void;
+  setReviewDraftScore: (n: number) => void;
+  setReviewDraftText: (t: string) => void;
+  postReview: () => void;
 };
 
 /** Resolve a place by id across the seed catalog and live-loaded nearby set. */
@@ -241,6 +284,14 @@ const initialState = (): State => ({
   nearbyById: {},
   nearbyStatus: 'idle',
   citySheetOpen: false,
+  userReviews: [],
+  reviewLikes: {},
+  reviewSort: 'popular',
+  reviewFriendsOnly: false,
+  reviewOpen: false,
+  reviewPlaceId: null,
+  reviewDraftScore: 8,
+  reviewDraftText: '',
 });
 
 function findTable(s: State, id: string | null) {
@@ -467,6 +518,35 @@ export const useStore = create<State & Actions>((set, get) => ({
   },
   openCitySheet: () => set({ citySheetOpen: true }),
   closeCitySheet: () => set({ citySheetOpen: false }),
+
+  // ── reviews ──
+  toggleReviewLike: (id) => set((s) => ({ reviewLikes: { ...s.reviewLikes, [id]: !s.reviewLikes[id] } })),
+  setReviewSort: (sort) => set({ reviewSort: sort }),
+  setReviewFriendsOnly: (v) => set({ reviewFriendsOnly: v }),
+  openReviewComposer: (placeId) => set({ reviewOpen: true, reviewPlaceId: placeId, reviewDraftScore: 8, reviewDraftText: '' }),
+  closeReviewComposer: () => set({ reviewOpen: false }),
+  setReviewDraftScore: (n) => set({ reviewDraftScore: n }),
+  setReviewDraftText: (t) => set({ reviewDraftText: t }),
+  postReview: () => {
+    const s = get();
+    const placeId = s.reviewPlaceId;
+    if (!placeId) return;
+    const text = s.reviewDraftText.trim();
+    const rev: Review = {
+      id: 'ur-' + (s.userReviews.length + 1) + '-' + Date.now().toString(36),
+      placeId,
+      authorId: 'me',
+      author: 'You · June',
+      initials: 'JO',
+      color: 'var(--sun-400)',
+      score: s.reviewDraftScore,
+      text: text || 'Logged it.',
+      date: 'now',
+      baseLikes: 0,
+      friend: false,
+    };
+    set({ userReviews: [rev, ...s.userReviews], reviewOpen: false, reviewDraftText: '' });
+  },
 }));
 
 // ── rank-engine internals (kept outside the object to share set/get) ──

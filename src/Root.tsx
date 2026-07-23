@@ -9,6 +9,7 @@ import { useStore, type Screen } from './store/useStore';
 import { C } from './theme/tokens';
 import { TabBar } from './components/TabBar';
 import { CitySheet } from './overlays/CitySheet';
+import { ReviewComposer } from './overlays/ReviewComposer';
 
 import { Feed } from './screens/Feed';
 import { Log } from './screens/Log';
@@ -52,6 +53,7 @@ export function Root() {
   const attachOpen = useStore((s) => s.attachOpen);
   const createOpen = useStore((s) => s.createOpen);
   const citySheetOpen = useStore((s) => s.citySheetOpen);
+  const reviewOpen = useStore((s) => s.reviewOpen);
   const nearbyStatus = useStore((s) => s.nearbyStatus);
   const loadNearby = useStore((s) => s.loadNearby);
 
@@ -61,7 +63,7 @@ export function Root() {
   }, [nearbyStatus, loadNearby]);
 
   const Active = SCREENS[screen] ?? Feed;
-  const anyOverlay = rankOpen || attachOpen || createOpen || citySheetOpen;
+  const anyOverlay = rankOpen || attachOpen || createOpen || citySheetOpen || reviewOpen;
   const showTabBar = ROOT_TABS.includes(screen) && !anyOverlay;
 
   return (
@@ -72,6 +74,7 @@ export function Root() {
       {attachOpen ? <AttachSheet /> : null}
       {createOpen ? <CreateTable /> : null}
       {citySheetOpen ? <CitySheet /> : null}
+      {reviewOpen ? <ReviewComposer /> : null}
     </View>
   );
 }

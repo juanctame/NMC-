@@ -7,8 +7,8 @@
 import React from 'react';
 import { View, ScrollView, Pressable, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useStore, resolvePlace } from '../store/useStore';
-import { FRIENDS, FRIENDS_AT, RANK } from '../store/data';
+import { useStore, resolvePlace, reviewsFor, type ScoredReview } from '../store/useStore';
+import { RANK } from '../store/data';
 import { scoreStyle, pctStyle, fmt, metaOf } from '../store/helpers';
 import { C, col } from '../theme/tokens';
 import { photo, PHOTO_POOL } from '../assets';
@@ -16,13 +16,65 @@ import { Display, Banner, Serif, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
 import { Roundel } from '../components/Roundel';
-import { PlusIcon, BookmarkIcon } from '../components/icons';
+import { PlusIcon, BookmarkIcon, HeartIcon } from '../components/icons';
 import { ScreenIn } from '../components/Anim';
 
-const nameByInit: Record<string, string> = {};
-FRIENDS.forEach((f) => {
-  nameByInit[f.initials] = f.name;
-});
+function TogglePill({ on, label, onPress }: { on: boolean; label: string; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 13, backgroundColor: on ? C.ink400 : C.paper0 }}>
+      <Banner s={10} tk={0.1} c={on ? C.paper0 : C.inkDeep}>
+        {label}
+      </Banner>
+    </Pressable>
+  );
+}
+
+function ReviewCard({ r, onLike }: { r: ScoredReview; onLike: () => void }) {
+  const ss = scoreStyle(r.score);
+  const tag = r.authorId === 'me' ? 'You' : r.critic ? 'Critic' : r.friend ? 'Friend' : null;
+  const tagBg = r.authorId === 'me' ? C.sun400 : r.critic ? C.ink400 : C.stampGreen;
+  const tagFg = r.authorId === 'me' ? C.inkDeep : C.paper0;
+  return (
+    <StickerView offset="sm" style={{ backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, padding: 12 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: col(r.color), borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+          <Banner s={11} c={C.paper0}>
+            {r.initials}
+          </Banner>
+        </View>
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Banner s={11} tk={0.06} c={C.inkDeep} numberOfLines={1}>
+              {r.author}
+            </Banner>
+            {tag ? (
+              <View style={{ backgroundColor: tagBg, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 1, paddingHorizontal: 6 }}>
+                <Banner s={7.5} tk={0.08} c={tagFg}>
+                  {tag}
+                </Banner>
+              </View>
+            ) : null}
+          </View>
+          <Mono s={9} c={C.inkSoft} style={{ marginTop: 2 }}>
+            {r.date}
+          </Mono>
+        </View>
+        <Roundel size={36} bg={ss.bg} fg={ss.fg} text={fmt(r.score)} textSize={13} border={2} rot="-4deg" />
+      </View>
+      <Serif s={13.5} style={{ marginTop: 9, lineHeight: 20 }}>
+        {r.text}
+      </Serif>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 9 }}>
+        <Pressable onPress={onLike} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 2 }} hitSlop={6}>
+          <HeartIcon size={16} color={r.likedByMe ? C.ink400 : C.inkMuted} filled={r.likedByMe} />
+          <Mono s={11} c={r.likedByMe ? C.ink400 : C.inkMuted}>
+            {r.likes}
+          </Mono>
+        </Pressable>
+      </View>
+    </StickerView>
+  );
+}
 
 function SealColumn({
   label,
@@ -104,6 +156,14 @@ export function PlaceDetail() {
   const saved = useStore((s) => s.saved);
   const userPhotos = useStore((s) => s.userPhotos);
   const nearbyById = useStore((s) => s.nearbyById);
+  const userReviews = useStore((s) => s.userReviews);
+  const reviewLikes = useStore((s) => s.reviewLikes);
+  const reviewSort = useStore((s) => s.reviewSort);
+  const reviewFriendsOnly = useStore((s) => s.reviewFriendsOnly);
+  const setReviewSort = useStore((s) => s.setReviewSort);
+  const setReviewFriendsOnly = useStore((s) => s.setReviewFriendsOnly);
+  const toggleReviewLike = useStore((s) => s.toggleReviewLike);
+  const openReviewComposer = useStore((s) => s.openReviewComposer);
 
   if (!activePlaceId) return <View style={{ flex: 1, backgroundColor: C.paper50 }} />;
   const base = resolvePlace(activePlaceId, nearbyById);
@@ -116,7 +176,10 @@ export function PlaceDetail() {
 
   // Seed places carry critic/people scores; freshly-discovered (OSM) ones don't.
   const isRated = base.critic != null && base.people != null;
-  const frRaw = FRIENDS_AT[activePlaceId] || null;
+  const reviews = reviewsFor(activePlaceId, userReviews, reviewLikes, {
+    friendsOnly: reviewFriendsOnly,
+    sort: reviewSort,
+  });
   const cu = base.cuisine;
   const mapsUrl =
     base.lat != null
@@ -263,36 +326,49 @@ export function PlaceDetail() {
           ))}
         </View>
 
-        {/* friends who've been */}
-        <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginTop: 20, marginBottom: 10 }}>
-          Friends who've been
-        </Banner>
-        {frRaw ? (
-          <View style={{ gap: 8 }}>
-            {frRaw.map(([ini, color, sc], i) => {
-              const fs = scoreStyle(sc as number);
-              return (
-                <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 11, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 8, paddingHorizontal: 12 }}>
-                  <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: col(color as string), borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
-                    <Banner s={10} c={C.paper0}>
-                      {ini}
-                    </Banner>
-                  </View>
-                  <Serif s={13.5} style={{ flex: 1, color: C.inkBlack }}>
-                    {nameByInit[ini as string] || (ini as string)}
-                  </Serif>
-                  <Roundel size={34} bg={fs.bg} fg={fs.fg} text={fmt(sc as number)} textSize={12} border={2} rot="-4deg" />
-                </View>
-              );
-            })}
+        {/* reviews — public, Letterboxd-style */}
+        <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginTop: 22, marginBottom: 10 }}>
+          <Banner s={10} tk={0.16} c={C.inkMuted}>
+            Reviews
+          </Banner>
+          <Mono s={9.5} c={C.inkSoft}>
+            {reviews.length} · public
+          </Mono>
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <TogglePill on={!reviewFriendsOnly} label="Everyone" onPress={() => setReviewFriendsOnly(false)} />
+          <TogglePill on={reviewFriendsOnly} label="Friends" onPress={() => setReviewFriendsOnly(true)} />
+          <View style={{ flex: 1 }} />
+          <Pressable onPress={() => setReviewSort(reviewSort === 'popular' ? 'recent' : 'popular')} hitSlop={6}>
+            <Mono s={9.5} c={C.ink400}>
+              {reviewSort === 'popular' ? 'Popular ⇅' : 'Recent ⇅'}
+            </Mono>
+          </Pressable>
+        </View>
+        {reviews.length ? (
+          <View style={{ gap: 10 }}>
+            {reviews.map((r) => (
+              <ReviewCard key={r.id} r={r} onLike={() => toggleReviewLike(r.id)} />
+            ))}
           </View>
         ) : (
           <View style={{ backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, borderStyle: 'dashed', paddingVertical: 14, paddingHorizontal: 14, alignItems: 'center' }}>
             <Serif s={13} style={{ color: C.inkMuted, textAlign: 'center' }}>
-              No one from your table yet. Rank it and put it on the map.
+              {reviewFriendsOnly ? 'None of your friends have reviewed this yet.' : 'No reviews yet. Be the first to write one.'}
             </Serif>
           </View>
         )}
+        <StickerPressable
+          offset="sm"
+          radius={999}
+          onPress={() => openReviewComposer(activePlaceId)}
+          style={{ marginTop: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.sun400, paddingVertical: 12 }}
+        >
+          <PlusIcon size={15} color={C.inkDeep} sw={2.6} />
+          <Banner s={12} tk={0.1} c={C.inkDeep}>
+            Write a review
+          </Banner>
+        </StickerPressable>
 
         {/* resy card */}
         <View style={{ marginTop: 18 }}>
