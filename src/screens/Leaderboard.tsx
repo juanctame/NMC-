@@ -9,7 +9,7 @@ import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { FRIENDS, byId, type Place } from '../store/data';
-import { pctStyle, metaOf } from '../store/helpers';
+import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { identity } from '../data/profile';
 import { C, col } from '../theme/tokens';
 import { photo } from '../assets';
@@ -24,7 +24,7 @@ const MEDALS = ['①', '②', '③'];
 
 const SCORED: (Place & { overall: number })[] = Object.values(byId)
   .filter((p) => p.critic != null && p.people != null)
-  .map((p) => ({ ...p, overall: Math.round((p.critic! + p.people!) / 2) }));
+  .map((p) => ({ ...p, overall: Math.round(((p.critic! + p.people!) / 2) * 10) / 10 }));
 
 function DinersBoard() {
   const insets = useSafeAreaInsets();
@@ -139,7 +139,7 @@ function RestaurantsBoard() {
           {cuisine === 'All' ? 'The whole city, by the blended verdict.' : `Best ${cuisine.toLowerCase()} in the city.`}
         </SerifItalic>
         {ranked.map((p, i) => {
-          const st = pctStyle(p.overall);
+          const st = scoreStyle(p.overall);
           return (
             <StickerPressable key={p.id} offset="sm" onPress={() => openPlace(p.id)} style={{ flexDirection: 'row', alignItems: 'center', gap: 11, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, paddingVertical: 9, paddingHorizontal: 11 }}>
               <View style={{ width: 26, alignItems: 'center' }}>
@@ -156,10 +156,10 @@ function RestaurantsBoard() {
                   {metaOf(p)}
                 </Mono>
                 <Mono s={9} c={C.inkSoft} style={{ marginTop: 2 }}>
-                  Critics {p.critic}% · People {p.people}%
+                  Critics {fmt(p.critic!)} · People {fmt(p.people!)}
                 </Mono>
               </View>
-              <Roundel size={44} bg={st.bg} fg={st.fg} text={`${p.overall}`} textSize={15} rot="-5deg" />
+              <Roundel size={44} bg={st.bg} fg={st.fg} text={fmt(p.overall)} textSize={15} rot="-5deg" />
             </StickerPressable>
           );
         })}

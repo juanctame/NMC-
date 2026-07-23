@@ -4,14 +4,16 @@
  * trending list; critic/people pills + a scrub bar sit at the bottom.
  */
 import React from 'react';
-import { View, Pressable } from 'react-native';
+import { View, Pressable, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { useStore } from '../store/useStore';
-import { TRENDING, byId } from '../store/data';
-import { pctStyle, metaOf } from '../store/helpers';
+import { byId } from '../store/data';
+import { TRENDING_VIDEOS } from '../data/videos';
+import { PLATFORM_LABEL } from '../data/creators';
+import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { C } from '../theme/tokens';
 import { photo } from '../assets';
 import { Display, Banner, Serif, Mono } from '../components/Text';
@@ -26,11 +28,13 @@ export function Reel() {
   const reelGo = useStore((s) => s.reelGo);
   const openPlace = useStore((s) => s.openPlace);
 
-  const rp = byId[TRENDING[reelIndex]] || byId[TRENDING[0]];
+  const video = TRENDING_VIDEOS[reelIndex] || TRENDING_VIDEOS[0];
+  const rp = byId[video.placeId];
   const rank = reelIndex + 1;
-  const total = TRENDING.length;
-  const cs = pctStyle(rp.critic || 0);
-  const ps = pctStyle(rp.people || 0);
+  const total = TRENDING_VIDEOS.length;
+  const platform = PLATFORM_LABEL[video.platform];
+  const cs = scoreStyle(rp.critic || 0);
+  const ps = scoreStyle(rp.people || 0);
   const scale = useSlowZoom();
 
   return (
@@ -57,7 +61,7 @@ export function Reel() {
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
           <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: C.ink400, borderWidth: 1.5, borderColor: C.paper0 }} />
           <Banner s={10} tk={0.16} c={C.paper0}>
-            Trending · {rank} of {total}
+            {platform} · {rank} of {total}
           </Banner>
         </View>
         <MuteIcon size={18} color={C.paper0} />
@@ -75,17 +79,24 @@ export function Reel() {
 
       {/* bottom */}
       <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: 18, paddingTop: 18, paddingBottom: insets.bottom + 16 }}>
-        <Banner s={10} tk={0.16} c={C.sun400}>
-          Trending Nº {rank}
-        </Banner>
-        <Display s={30} c={C.paper0} style={{ marginTop: 4, lineHeight: 30 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <Banner s={10} tk={0.16} c={C.sun400}>
+            Trending Nº {rank}
+          </Banner>
+          <View style={{ backgroundColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 }}>
+            <Banner s={8} tk={0.1} c={C.paper0}>
+              {platform}
+            </Banner>
+          </View>
+        </View>
+        <Display s={30} c={C.paper0} style={{ marginTop: 5, lineHeight: 30 }}>
           {rp.name}
         </Display>
         <Mono s={10} c={C.ink100} style={{ marginTop: 5 }}>
-          {metaOf(rp)}
+          {video.creator} · {video.handle} · {metaOf(rp)}
         </Mono>
-        <Serif s={13} c={C.paper0} style={{ marginTop: 8, lineHeight: 20, maxWidth: 300 }}>
-          {rp.blurb}
+        <Serif s={13.5} c={C.paper0} style={{ marginTop: 8, lineHeight: 20, maxWidth: 320 }}>
+          {video.caption}
         </Serif>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: cs.bg, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 5, paddingHorizontal: 11 }}>
@@ -93,7 +104,7 @@ export function Reel() {
               Critics
             </Banner>
             <Display s={13} c={cs.fg}>
-              {rp.critic}%
+              {fmt(rp.critic || 0)}
             </Display>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: ps.bg, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 5, paddingHorizontal: 11 }}>
@@ -101,12 +112,18 @@ export function Reel() {
               People
             </Banner>
             <Display s={13} c={ps.fg}>
-              {rp.people}%
+              {fmt(rp.people || 0)}
             </Display>
           </View>
-          <View style={{ flex: 1 }} />
-          <StickerPressable offset="sm" radius={999} onPress={() => openPlace(TRENDING[reelIndex])} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper0, paddingVertical: 9, paddingHorizontal: 13 }}>
-            <Banner s={10} tk={0.1} c={C.inkDeep}>
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12 }}>
+          <StickerPressable offset="sm" radius={999} onPress={() => Linking.openURL(video.sourceUrl)} style={{ flex: 1, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.sun400, paddingVertical: 11 }}>
+            <Banner s={11} tk={0.1} c={C.inkDeep}>
+              ▶ Watch on {platform}
+            </Banner>
+          </StickerPressable>
+          <StickerPressable offset="sm" radius={999} onPress={() => openPlace(video.placeId)} style={{ alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper0, paddingVertical: 11, paddingHorizontal: 16 }}>
+            <Banner s={11} tk={0.1} c={C.inkDeep}>
               See place →
             </Banner>
           </StickerPressable>

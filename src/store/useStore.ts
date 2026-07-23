@@ -21,6 +21,7 @@ import { getProvider, fixtureFallback } from '../data/provider';
 import { REVIEWS, type Review } from '../data/reviews';
 import { makeProfile, identity, type Profile } from '../data/profile';
 import { loadProfile, saveProfile, clearProfile } from '../data/storage';
+import { TRENDING_VIDEOS } from '../data/videos';
 
 export type NearbyStatus = 'idle' | 'loading' | 'ready' | 'fallback' | 'error';
 export type ReviewSort = 'popular' | 'recent';
@@ -329,7 +330,11 @@ export const useStore = create<State & Actions>((set, get) => ({
   openEvent: (id) => set({ screen: 'event', activeEventId: id, diet: [] }),
   goClub: () => set({ screen: 'club' }),
   openReel: (i) => set({ screen: 'reel', reelIndex: i || 0 }),
-  reelGo: (d) => set((s) => ({ reelIndex: (s.reelIndex + d + 5) % 5 })),
+  reelGo: (d) =>
+    set((s) => {
+      const n = TRENDING_VIDEOS.length;
+      return { reelIndex: (s.reelIndex + d + n) % n };
+    }),
 
   // ── onboarding ──
   obNext: () => set((s) => ({ obStep: s.obStep + 1 })),

@@ -333,9 +333,11 @@ export const byId: Record<string, Place> = {};
 });
 
 const sids = Object.keys(SCORES).filter((id) => byId[id]);
+// Critics/People are stored as 0–100 but exposed on the 0–10 scale so every
+// score in the app shares one consistent format (the Beli rank scale).
 sids.forEach((id) => {
-  byId[id].critic = SCORES[id][0];
-  byId[id].people = SCORES[id][1];
+  byId[id].critic = Math.round(SCORES[id][0]) / 10;
+  byId[id].people = Math.round(SCORES[id][1]) / 10;
 });
 
 const rankBy = (arr: string[], k: 0 | 1): Record<string, number> => {

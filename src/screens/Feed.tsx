@@ -2,11 +2,15 @@
  * Feed (home) — social home: trending strip, friends' activity, personalized
  * recs, and (once unlocked) the Dine Club teaser.
  */
-import React from 'react';
-import { View, ScrollView, Pressable, Image, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { View, ScrollView, Pressable, Image, ActivityIndicator, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
-import { FEED, RECS, TRENDING, byId } from '../store/data';
+import { FEED, RECS, byId } from '../store/data';
+import { CREATOR_REVIEWS, PLATFORM_LABEL } from '../data/creators';
+import { TRENDING_VIDEOS, type TrendingVideo } from '../data/videos';
+
+const PLATFORM_TAG: Record<string, string> = { tiktok: 'TT', instagram: 'IG', youtube: 'YT' };
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { C } from '../theme/tokens';
 import { col } from '../theme/tokens';
@@ -42,8 +46,8 @@ function HeaderIconButton({ onPress, label, children }: { onPress: () => void; l
   );
 }
 
-function TrendingThumb({ id, rank, onPress }: { id: string; rank: number; onPress: () => void }) {
-  const p = byId[id];
+function TrendingThumb({ video, rank, onPress }: { video: TrendingVideo; rank: number; onPress: () => void }) {
+  const p = byId[video.placeId];
   return (
     <StickerPressable
       offset="sm"
@@ -57,44 +61,25 @@ function TrendingThumb({ id, rank, onPress }: { id: string; rank: number; onPres
       }}
     >
       <Photo source={photo(p.photo)} style={{ width: '100%', height: 120 }} darken={0.16} warm={0.06} />
-      <View
-        style={{
-          position: 'absolute',
-          top: 6,
-          left: 6,
-          width: 20,
-          height: 20,
-          borderRadius: 10,
-          backgroundColor: C.sun400,
-          borderWidth: 2,
-          borderColor: C.inkBlack,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      <View style={{ position: 'absolute', top: 6, left: 6, width: 20, height: 20, borderRadius: 10, backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
         <Display s={10} c={C.inkDeep}>
           {rank}
         </Display>
       </View>
+      {/* platform badge */}
+      <View style={{ position: 'absolute', top: 6, right: 6, backgroundColor: C.inkBlack, borderRadius: 999, paddingVertical: 1, paddingHorizontal: 5 }}>
+        <Banner s={7.5} tk={0.06} c={C.paper0}>
+          {PLATFORM_TAG[video.platform]}
+        </Banner>
+      </View>
       <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
-        <View
-          style={{
-            width: 30,
-            height: 30,
-            borderRadius: 15,
-            backgroundColor: 'rgba(251,245,229,0.92)',
-            borderWidth: 2,
-            borderColor: C.inkBlack,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+        <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(251,245,229,0.92)', borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
           <PlayIcon size={12} color={C.ink400} />
         </View>
       </View>
       <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingVertical: 5, paddingHorizontal: 6, backgroundColor: C.inkBlack }}>
         <Banner s={8} tk={0.06} c={C.paper0} numberOfLines={1}>
-          {p.name}
+          {video.handle}
         </Banner>
       </View>
     </StickerPressable>
@@ -289,6 +274,79 @@ function ClubTeaser() {
   );
 }
 
+function CreatorCard({ cr }: { cr: (typeof CREATOR_REVIEWS)[number] }) {
+  const openPlace = useStore((s) => s.openPlace);
+  const [following, setFollowing] = useState(false);
+  const p = byId[cr.placeId];
+  const ss = scoreStyle(cr.score);
+  return (
+    <StickerView offset="lg" style={{ width: 300, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 11, paddingHorizontal: 12 }}>
+        <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: col(cr.color), borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+          <Banner s={12} c={C.paper0}>
+            {cr.initials}
+          </Banner>
+        </View>
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <Banner s={11} tk={0.04} c={C.inkDeep} numberOfLines={1}>
+              {cr.creator}
+            </Banner>
+            {cr.verified ? (
+              <View style={{ width: 13, height: 13, borderRadius: 7, backgroundColor: C.ink400, borderWidth: 1.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+                <Display s={7} c={C.paper0}>
+                  ✓
+                </Display>
+              </View>
+            ) : null}
+          </View>
+          <Mono s={9} c={C.inkSoft} style={{ marginTop: 1 }}>
+            {cr.handle} · {cr.followers}
+          </Mono>
+        </View>
+        <StickerPressable offset="sm" radius={999} onPress={() => setFollowing((v) => !v)} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: following ? C.stampGreen : C.ink400, paddingVertical: 6, paddingHorizontal: 11 }}>
+          <Banner s={9} tk={0.1} c={C.paper0}>
+            {following ? 'Following' : 'Follow'}
+          </Banner>
+        </StickerPressable>
+      </View>
+      <Pressable onPress={() => openPlace(cr.placeId)} style={{ borderTopWidth: 2, borderBottomWidth: 2, borderColor: C.inkBlack }}>
+        <Photo source={photo(p.photo)} style={{ width: '100%', height: 120 }} />
+        <View style={{ position: 'absolute', left: 10, bottom: 10 }}>
+          <StickerView offset="sm" style={{ backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 4, paddingHorizontal: 9 }}>
+            <SerifDisplay s={13} c={C.inkDeep}>
+              {p.name}
+            </SerifDisplay>
+          </StickerView>
+        </View>
+        <View style={{ position: 'absolute', right: 10, bottom: 10, transform: [{ rotate: '-6deg' }] }}>
+          <StickerView offset="sm" radius={999}>
+            <View style={{ width: 46, height: 46, borderRadius: 23, backgroundColor: ss.bg, borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+              <Display s={16} c={ss.fg}>
+                {fmt(cr.score)}
+              </Display>
+            </View>
+          </StickerView>
+        </View>
+      </Pressable>
+      <Serif s={13} style={{ paddingHorizontal: 13, paddingTop: 10, paddingBottom: 6, lineHeight: 19 }}>
+        {cr.text}
+      </Serif>
+      <Pressable onPress={() => Linking.openURL(cr.sourceUrl)} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 13, paddingBottom: 12 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 9 }}>
+          <PlayIcon size={9} color={C.paper0} />
+          <Banner s={8.5} tk={0.1} c={C.paper0}>
+            {PLATFORM_LABEL[cr.platform]}
+          </Banner>
+        </View>
+        <Banner s={9.5} tk={0.1} c={C.ink400}>
+          Watch the clip →
+        </Banner>
+      </Pressable>
+    </StickerView>
+  );
+}
+
 export function Feed() {
   const insets = useSafeAreaInsets();
   const tapLogo = useStore((s) => s.tapLogo);
@@ -341,12 +399,29 @@ export function Feed() {
               Trending now
             </Banner>
             <Mono s={9} c={C.inkSoft}>
-              tap to watch →
+              TikTok · Reels · Shorts →
             </Mono>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4 }}>
-            {TRENDING.map((id, i) => (
-              <TrendingThumb key={id} id={id} rank={i + 1} onPress={() => openReel(i)} />
+            {TRENDING_VIDEOS.map((v, i) => (
+              <TrendingThumb key={v.id} video={v} rank={i + 1} onPress={() => openReel(i)} />
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Tastemakers — featured creators, the content we promote */}
+        <View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+            <Banner s={11} tk={0.14} c={C.inkDeep}>
+              Tastemakers to follow
+            </Banner>
+            <Mono s={9} c={C.inkSoft}>
+              creators we love →
+            </Mono>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 4, paddingRight: 4 }}>
+            {CREATOR_REVIEWS.map((cr) => (
+              <CreatorCard key={cr.id} cr={cr} />
             ))}
           </ScrollView>
         </View>

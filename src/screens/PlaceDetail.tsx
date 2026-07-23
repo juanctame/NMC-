@@ -9,7 +9,7 @@ import { View, ScrollView, Pressable, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore, resolvePlace, reviewsFor, type ScoredReview } from '../store/useStore';
 import { RANK } from '../store/data';
-import { scoreStyle, pctStyle, fmt, metaOf } from '../store/helpers';
+import { scoreStyle, verdictOf, fmt, metaOf } from '../store/helpers';
 import { C, col } from '../theme/tokens';
 import { photo, PHOTO_POOL } from '../assets';
 import { Display, Banner, Serif, SerifDisplay, Mono } from '../components/Text';
@@ -78,7 +78,7 @@ function ReviewCard({ r, onLike }: { r: ScoredReview; onLike: () => void }) {
 
 function SealColumn({
   label,
-  pct,
+  score,
   rot,
   overall,
   cuisineRank,
@@ -86,24 +86,24 @@ function SealColumn({
   rightBorder,
 }: {
   label: string;
-  pct: number;
+  score: number;
   rot: string;
   overall: number | string;
   cuisineRank: number | string;
   cuisine: string;
   rightBorder?: boolean;
 }) {
-  const st = pctStyle(pct);
+  const st = scoreStyle(score);
   return (
     <View style={{ flex: 1, paddingVertical: 14, paddingHorizontal: 10, alignItems: 'center', gap: 6, borderRightWidth: rightBorder ? 2 : 0, borderColor: C.inkBlack }}>
       <Banner s={9} tk={0.16} c={C.inkMuted}>
         {label}
       </Banner>
       <StickerView offset="sm" radius={999} style={{ transform: [{ rotate: rot }] }}>
-        <Roundel size={62} bg={st.bg} fg={st.fg} text={`${pct}%`} textSize={19} dashInset={6} />
+        <Roundel size={62} bg={st.bg} fg={st.fg} text={fmt(score)} textSize={20} dashInset={6} />
       </StickerView>
       <Banner s={9} tk={0.1} c={C.inkDeep}>
-        {st.seal}
+        {verdictOf(score)}
       </Banner>
       <Mono s={9.5} c={C.inkMuted} style={{ textAlign: 'center', lineHeight: 14 }}>
         Nº {overall} overall{'\n'}Nº {cuisineRank} in {cuisine}
@@ -250,8 +250,8 @@ export function PlaceDetail() {
                 </Mono>
               </View>
               <View style={{ flexDirection: 'row' }}>
-                <SealColumn label="Critics' ranking" pct={base.critic || 0} rot="-5deg" overall={RANK.critO[base.id] || '—'} cuisineRank={RANK.critC[base.id] || '—'} cuisine={cu} rightBorder />
-                <SealColumn label="People's ranking" pct={base.people || 0} rot="4deg" overall={RANK.popO[base.id] || '—'} cuisineRank={RANK.popC[base.id] || '—'} cuisine={cu} />
+                <SealColumn label="Critics' ranking" score={base.critic || 0} rot="-5deg" overall={RANK.critO[base.id] || '—'} cuisineRank={RANK.critC[base.id] || '—'} cuisine={cu} rightBorder />
+                <SealColumn label="People's ranking" score={base.people || 0} rot="4deg" overall={RANK.popO[base.id] || '—'} cuisineRank={RANK.popC[base.id] || '—'} cuisine={cu} />
               </View>
             </StickerView>
           ) : (

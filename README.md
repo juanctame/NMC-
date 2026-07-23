@@ -111,6 +111,22 @@ This is a **local** account (`src/data/profile.ts` + `src/data/storage.ts`),
 shaped to swap for real auth: replace the three functions in `storage.ts` with
 API calls (email/OAuth + server) and carry a session token.
 
+## One 0–10 scale, creators & trending video
+
+- **Consistent ranking** — every score in the app is the same **0–10** Beli
+  scale (the rank engine, Critics, People, friends, creators, reviews) with one
+  band set (Loved 8+, Fine 6–7.9, Not it <6) and a verdict word. No percentages
+  anywhere (`scoreStyle` + `verdictOf` in `src/store/helpers.ts`).
+- **Tastemakers in the Feed** — a strip of featured creator reviews (verified,
+  follower counts, 0–10 verdict, link to the clip) modelling the content to
+  promote (`src/data/creators.ts`).
+- **Trending short-form video** — the Trending corner + reel feature clips from
+  **TikTok / Instagram / YouTube** (platform badge, creator, caption, deep-link
+  to the post). `src/data/videos.ts` is the shape a real "gather" pipeline fills
+  (platform APIs — TikTok Display, Instagram Graph/oEmbed, YouTube Data — or a
+  backend aggregator); in-app playback later swaps the deep-link for each
+  platform's embed player (WebView / iframe).
+
 ## Run it (development)
 
 ```bash
