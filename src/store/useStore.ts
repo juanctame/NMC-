@@ -18,7 +18,7 @@ import {
 import { PHOTO_POOL } from '../assets';
 import { DEFAULT_CITY, cityById, type City } from '../data/cities';
 import { getProvider, fixtureFallback } from '../data/provider';
-import { REVIEWS, type Review } from '../data/reviews';
+import { REVIEWS, DISH_PHOTOS, type Review } from '../data/reviews';
 import { makeProfile, identity, type Profile } from '../data/profile';
 import { loadProfile, saveProfile, clearProfile } from '../data/storage';
 import { TRENDING_VIDEOS } from '../data/videos';
@@ -46,6 +46,50 @@ export function reviewsFor(
   if (opts.friendsOnly) list = list.filter((r) => r.friend);
   if (opts.sort === 'popular') list = list.slice().sort((a, b) => b.likes - a.likes);
   return list;
+}
+
+export type PopularDish = {
+  name: string;
+  count: number;
+  photo: string;
+  score: number; // average rating among the diners who chose it
+  fans: { initials: string; color: string }[];
+};
+
+/** The most-named favourite dish for a place, across every review (seed ∪ user),
+ *  tie-broken by total likes. Independent of the friends filter — it's the
+ *  whole table's favourite. */
+export function popularDishFor(placeId: string, userReviews: Review[]): PopularDish | null {
+  const withDish = [
+    ...userReviews.filter((r) => r.placeId === placeId),
+    ...REVIEWS.filter((r) => r.placeId === placeId),
+  ].filter((r) => r.dish && r.dish.trim());
+  if (!withDish.length) return null;
+
+  const groups: Record<string, Review[]> = {};
+  const label: Record<string, string> = {};
+  withDish.forEach((r) => {
+    const key = r.dish!.trim().toLowerCase();
+    (groups[key] = groups[key] || []).push(r);
+    if (!label[key]) label[key] = r.dish!.trim();
+  });
+
+  const top = Object.keys(groups).sort((a, b) => {
+    const g = groups[b].length - groups[a].length;
+    if (g !== 0) return g;
+    const likes = (k: string) => groups[k].reduce((n, r) => n + r.baseLikes, 0);
+    return likes(b) - likes(a);
+  })[0];
+
+  const revs = groups[top];
+  const withPhoto = revs.find((r) => r.dishPhoto);
+  return {
+    name: label[top],
+    count: revs.length,
+    photo: withPhoto?.dishPhoto || 'chef-plating',
+    score: revs.reduce((n, r) => n + r.score, 0) / revs.length,
+    fans: revs.slice(0, 5).map((r) => ({ initials: r.initials, color: r.color })),
+  };
 }
 
 /** Set false to run the designed first-run onboarding flow on launch. */
@@ -149,6 +193,8 @@ export type State = {
   reviewPlaceId: string | null;
   reviewDraftScore: number;
   reviewDraftText: string;
+  reviewDraftDish: string;
+  reviewDraftDishPhoto: string;
 
   // Account (local profile)
   profile: Profile | null;
@@ -226,6 +272,8 @@ export type Actions = {
   closeReviewComposer: () => void;
   setReviewDraftScore: (n: number) => void;
   setReviewDraftText: (t: string) => void;
+  setReviewDraftDish: (t: string) => void;
+  setReviewDraftDishPhoto: (k: string) => void;
   postReview: () => void;
   // account
   hydrate: () => Promise<void>;
@@ -303,6 +351,8 @@ const initialState = (): State => ({
   reviewPlaceId: null,
   reviewDraftScore: 8,
   reviewDraftText: '',
+  reviewDraftDish: '',
+  reviewDraftDishPhoto: DISH_PHOTOS[0],
   profile: null,
   hydrated: false,
 });
@@ -541,15 +591,18 @@ export const useStore = create<State & Actions>((set, get) => ({
   toggleReviewLike: (id) => set((s) => ({ reviewLikes: { ...s.reviewLikes, [id]: !s.reviewLikes[id] } })),
   setReviewSort: (sort) => set({ reviewSort: sort }),
   setReviewFriendsOnly: (v) => set({ reviewFriendsOnly: v }),
-  openReviewComposer: (placeId) => set({ reviewOpen: true, reviewPlaceId: placeId, reviewDraftScore: 8, reviewDraftText: '' }),
+  openReviewComposer: (placeId) => set({ reviewOpen: true, reviewPlaceId: placeId, reviewDraftScore: 8, reviewDraftText: '', reviewDraftDish: '', reviewDraftDishPhoto: DISH_PHOTOS[0] }),
   closeReviewComposer: () => set({ reviewOpen: false }),
   setReviewDraftScore: (n) => set({ reviewDraftScore: n }),
   setReviewDraftText: (t) => set({ reviewDraftText: t }),
+  setReviewDraftDish: (t) => set({ reviewDraftDish: t }),
+  setReviewDraftDishPhoto: (k) => set({ reviewDraftDishPhoto: k }),
   postReview: () => {
     const s = get();
     const placeId = s.reviewPlaceId;
     if (!placeId) return;
     const text = s.reviewDraftText.trim();
+    const dish = s.reviewDraftDish.trim();
     const idn = identity(s.profile);
     const rev: Review = {
       id: 'ur-' + (s.userReviews.length + 1) + '-' + Date.now().toString(36),
@@ -563,8 +616,9 @@ export const useStore = create<State & Actions>((set, get) => ({
       date: 'now',
       baseLikes: 0,
       friend: false,
+      ...(dish ? { dish, dishPhoto: s.reviewDraftDishPhoto } : {}),
     };
-    set({ userReviews: [rev, ...s.userReviews], reviewOpen: false, reviewDraftText: '' });
+    set({ userReviews: [rev, ...s.userReviews], reviewOpen: false, reviewDraftText: '', reviewDraftDish: '' });
   },
 
   // ── account (local profile) ──

@@ -3,13 +3,16 @@
  * and write your take; posting publishes it to the place's public review list.
  */
 import React from 'react';
-import { View, Pressable, TextInput } from 'react-native';
+import { View, Pressable, TextInput, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore, resolvePlace } from '../store/useStore';
 import { scoreStyle } from '../store/helpers';
 import { C } from '../theme/tokens';
+import { photo } from '../assets';
+import { DISH_PHOTOS } from '../data/reviews';
 import { Display, Banner, SerifItalic, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
+import { Photo } from '../components/Photo';
 import { SheetUp } from '../components/Anim';
 
 const SCORES = [3, 4, 5, 6, 7, 8, 9, 10];
@@ -20,8 +23,12 @@ export function ReviewComposer() {
   const nearbyById = useStore((s) => s.nearbyById);
   const score = useStore((s) => s.reviewDraftScore);
   const text = useStore((s) => s.reviewDraftText);
+  const dish = useStore((s) => s.reviewDraftDish);
+  const dishPhoto = useStore((s) => s.reviewDraftDishPhoto);
   const setScore = useStore((s) => s.setReviewDraftScore);
   const setText = useStore((s) => s.setReviewDraftText);
+  const setDish = useStore((s) => s.setReviewDraftDish);
+  const setDishPhoto = useStore((s) => s.setReviewDraftDishPhoto);
   const post = useStore((s) => s.postReview);
   const close = useStore((s) => s.closeReviewComposer);
 
@@ -84,7 +91,47 @@ export function ReviewComposer() {
             style={{ minHeight: 90, textAlignVertical: 'top', fontFamily: 'Fraunces_400Regular', fontSize: 14.5, lineHeight: 21, padding: 12, borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.paper0, color: C.inkBlack }}
           />
 
-          <StickerPressable offset="sm" radius={999} onPress={post} style={{ marginTop: 16, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.stampGreen, paddingVertical: 14 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 16, marginBottom: 8 }}>
+            <Banner s={10} tk={0.16} c={C.inkMuted}>
+              Your favourite dish
+            </Banner>
+            <Mono s={9} c={C.inkSoft}>
+              optional · feeds the table favourite
+            </Mono>
+          </View>
+          <TextInput
+            value={dish}
+            onChangeText={setDish}
+            placeholder="e.g. Tuna tostada"
+            placeholderTextColor={C.inkSoft}
+            style={{ fontFamily: 'Fraunces_400Regular', fontSize: 14.5, paddingVertical: 11, paddingHorizontal: 12, borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.paper0, color: C.inkBlack }}
+          />
+          {dish.trim() ? (
+            <>
+              <Mono s={9} c={C.inkSoft} style={{ marginTop: 10, marginBottom: 7 }}>
+                PICK A PHOTO FOR IT
+              </Mono>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingRight: 8, paddingBottom: 2 }}>
+                {DISH_PHOTOS.map((key) => {
+                  const on = dishPhoto === key;
+                  return (
+                    <Pressable key={key} onPress={() => setDishPhoto(key)} style={{ width: 58, height: 58, borderWidth: on ? 3 : 2, borderColor: on ? C.ink400 : C.inkBlack, overflow: 'hidden' }}>
+                      <Photo source={photo(key)} style={{ width: '100%', height: '100%' }} />
+                      {on ? (
+                        <View style={{ position: 'absolute', top: 2, right: 2, width: 16, height: 16, borderRadius: 8, backgroundColor: C.ink400, borderWidth: 1.5, borderColor: C.paper0, alignItems: 'center', justifyContent: 'center' }}>
+                          <Banner s={8} c={C.paper0}>
+                            ✓
+                          </Banner>
+                        </View>
+                      ) : null}
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+            </>
+          ) : null}
+
+          <StickerPressable offset="sm" radius={999} onPress={post} style={{ marginTop: 18, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.stampGreen, paddingVertical: 14 }}>
             <Banner s={14} tk={0.1} c={C.paper0}>
               Post review
             </Banner>

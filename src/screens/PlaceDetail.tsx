@@ -7,7 +7,7 @@
 import React from 'react';
 import { View, ScrollView, Pressable, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useStore, resolvePlace, reviewsFor, type ScoredReview } from '../store/useStore';
+import { useStore, resolvePlace, reviewsFor, popularDishFor, type ScoredReview } from '../store/useStore';
 import { RANK } from '../store/data';
 import { scoreStyle, verdictOf, fmt, metaOf } from '../store/helpers';
 import { C, col } from '../theme/tokens';
@@ -64,6 +64,16 @@ function ReviewCard({ r, onLike }: { r: ScoredReview; onLike: () => void }) {
       <Serif s={13.5} style={{ marginTop: 9, lineHeight: 20 }}>
         {r.text}
       </Serif>
+      {r.dish ? (
+        <View style={{ flexDirection: 'row', marginTop: 9 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: C.paper100, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 9 }}>
+            {r.dishPhoto ? <Photo source={photo(r.dishPhoto)} style={{ width: 18, height: 18, borderRadius: 9, borderWidth: 1, borderColor: C.inkBlack }} /> : null}
+            <Mono s={9.5} c={C.inkDeep}>
+              orders the {r.dish}
+            </Mono>
+          </View>
+        </View>
+      ) : null}
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 9 }}>
         <Pressable onPress={onLike} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 2 }} hitSlop={6}>
           <HeartIcon size={16} color={r.likedByMe ? C.ink400 : C.inkMuted} filled={r.likedByMe} />
@@ -180,6 +190,7 @@ export function PlaceDetail() {
     friendsOnly: reviewFriendsOnly,
     sort: reviewSort,
   });
+  const topDish = popularDishFor(activePlaceId, userReviews);
   const cu = base.cuisine;
   const mapsUrl =
     base.lat != null
@@ -268,6 +279,55 @@ export function PlaceDetail() {
             </StickerView>
           )}
         </View>
+
+        {/* table favourite — the most-named dish across everyone's reviews */}
+        {topDish ? (
+          <View style={{ marginTop: 18 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+              <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.ink400 }} />
+              <Banner s={10} tk={0.16} c={C.inkMuted}>
+                The table favourite
+              </Banner>
+              <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+            </View>
+            <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, flexDirection: 'row', overflow: 'hidden' }}>
+              <View>
+                <Photo source={photo(topDish.photo)} style={{ width: 118, height: 118, borderRightWidth: 2.5, borderColor: C.inkBlack }} />
+                <View style={{ position: 'absolute', top: 6, left: 6, backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8, transform: [{ rotate: '-5deg' }] }}>
+                  <Banner s={8} tk={0.08} c={C.inkDeep}>
+                    Nº 1 order
+                  </Banner>
+                </View>
+              </View>
+              <View style={{ flex: 1, padding: 12, justifyContent: 'center', gap: 6 }}>
+                <SerifDisplay s={19} c={C.inkDeep} style={{ lineHeight: 21 }}>
+                  {topDish.name}
+                </SerifDisplay>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Roundel size={24} bg={scoreStyle(topDish.score).bg} fg={scoreStyle(topDish.score).fg} text={fmt(topDish.score)} textSize={9} border={1.5} rot="-4deg" />
+                  <Mono s={9.5} c={C.inkMuted}>
+                    {topDish.count === 1 ? 'named by 1 diner' : `named by ${topDish.count} diners`}
+                  </Mono>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  {topDish.fans.map((f, i) => (
+                    <View
+                      key={i}
+                      style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: col(f.color), borderWidth: 1.5, borderColor: C.paper0, alignItems: 'center', justifyContent: 'center', marginLeft: i === 0 ? 0 : -7 }}
+                    >
+                      <Banner s={7.5} c={C.paper0}>
+                        {f.initials}
+                      </Banner>
+                    </View>
+                  ))}
+                  <Mono s={9} c={C.inkSoft} style={{ marginLeft: 8 }}>
+                    swear by it
+                  </Mono>
+                </View>
+              </View>
+            </StickerView>
+          </View>
+        ) : null}
 
         {/* google maps card — opens the real location */}
         <View style={{ marginTop: 18 }}>
