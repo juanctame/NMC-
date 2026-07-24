@@ -1,19 +1,23 @@
 /**
- * Passport (You) — the profile rendered as a vintage travel passport: dark
- * passport card + stat strip, recent stamps, cuisine standings, taste tags.
+ * Passport (You) — the profile rendered as a vintage travel document. Regular
+ * diners get a NOMAD passport (stamps, cuisine standings, taste tags). Verified
+ * CRITICS get a distinct CRITIC'S PASS: a press-seal header, critic stats
+ * (verdicts, events hosted, followers), and a Critic's Desk that lets them host
+ * curated events at restaurants — something regular users can't do.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { scoreStyle, fmt } from '../store/helpers';
 import { C, col } from '../theme/tokens';
-import { identity } from '../data/profile';
+import { identity, isCritic, formatFollowers, CRITIC_BEATS } from '../data/profile';
 import { cityById } from '../data/cities';
-import { Display, Banner, Mono } from '../components/Text';
+import { Display, Banner, Serif, SerifItalic, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Roundel } from '../components/Roundel';
 import { Grain } from '../components/Grain';
+import { PlusIcon } from '../components/icons';
 import { ScreenIn } from '../components/Anim';
 
 const CUISINE_TOP: [string, number][] = [
@@ -38,12 +42,82 @@ function StatCell({ value, label, last }: { value: string | number; label: strin
   );
 }
 
+/** Small vermillion verified seal used next to a critic's name. */
+function CriticSeal() {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: C.ink400, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 }}>
+      <Banner s={9} c={C.paper0}>
+        ✓
+      </Banner>
+      <Banner s={8} tk={0.12} c={C.paper0}>
+        CRITIC
+      </Banner>
+    </View>
+  );
+}
+
+function BecomeCriticCard({ onVerify }: { onVerify: (beat: string) => void }) {
+  const [beat, setBeat] = useState(CRITIC_BEATS[0]);
+  return (
+    <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, padding: 15, gap: 10 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: C.ink400, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-6deg' }] }}>
+          <Banner s={13} c={C.paper0}>
+            ✓
+          </Banner>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Banner s={13} tk={0.04} c={C.inkDeep}>
+            Become a verified Critic
+          </Banner>
+          <Mono s={9} c={C.inkMuted} style={{ marginTop: 2 }}>
+            A verified profile · host events at restaurants
+          </Mono>
+        </View>
+      </View>
+      <Serif s={12.5} c={C.inkMuted} style={{ lineHeight: 18 }}>
+        Critics carry a press seal, their verdicts stand out, and they can put curated events on the community calendar.
+      </Serif>
+      <Mono s={9} c={C.inkSoft}>
+        YOUR BEAT
+      </Mono>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 7 }}>
+        {CRITIC_BEATS.map((b) => {
+          const on = beat === b;
+          return (
+            <Pressable key={b} onPress={() => setBeat(b)} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 11, backgroundColor: on ? C.sun400 : C.paper0 }}>
+              <Banner s={9.5} tk={0.06} c={C.inkDeep}>
+                {b}
+              </Banner>
+            </Pressable>
+          );
+        })}
+      </View>
+      <StickerPressable offset="sm" radius={999} onPress={() => onVerify(beat)} style={{ marginTop: 4, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink400, paddingVertical: 13 }}>
+        <Banner s={12.5} tk={0.1} c={C.paper0}>
+          Get verified as a Critic
+        </Banner>
+      </StickerPressable>
+      <Mono s={8.5} c={C.inkSoft} style={{ textAlign: 'center' }}>
+        Pilot: instant for testers · real verification lands with the backend
+      </Mono>
+    </StickerView>
+  );
+}
+
 export function Passport() {
   const insets = useSafeAreaInsets();
   const ranked = useStore((s) => s.ranked);
   const profile = useStore((s) => s.profile);
   const signOut = useStore((s) => s.signOut);
+  const becomeCritic = useStore((s) => s.becomeCritic);
+  const stepDownCritic = useStore((s) => s.stepDownCritic);
+  const openCreate = useStore((s) => s.openCreate);
+  const go = useStore((s) => s.go);
+  const createdTables = useStore((s) => s.createdTables);
+
   const me = identity(profile);
+  const critic = isCritic(profile);
   const homeCity = cityById(me.cityId);
   const beenTotal = ranked.length;
 
@@ -53,46 +127,105 @@ export function Passport() {
   ranked.forEach((r) => {
     cuisineCount[r.cuisine] = (cuisineCount[r.cuisine] || 0) + 1;
   });
-  const stats = { year: 41, cuisines: Object.keys(cuisineCount).length + 4, avg };
+  const cuisines = Object.keys(cuisineCount).length + 4;
+  const eventsHosted = createdTables.filter((t: any) => t.critic).length;
   const recentStamps = ranked.slice(0, 6);
+
+  const hostEvent = () => {
+    go('table');
+    openCreate('event');
+  };
 
   return (
     <ScreenIn>
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 100 }} showsVerticalScrollIndicator={false}>
-        {/* passport card */}
+        {/* pass card */}
         <View style={{ paddingTop: insets.top + 8, paddingHorizontal: 16 }}>
           <StickerView offset="lg" style={{ backgroundColor: C.ink700, borderWidth: 2.5, borderColor: C.inkBlack, padding: 18, overflow: 'hidden' }}>
             <Grain opacity={0.08} />
+            {critic ? (
+              <View style={{ position: 'absolute', top: 12, right: -30, backgroundColor: C.ink400, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 3, paddingHorizontal: 34, transform: [{ rotate: '38deg' }] }}>
+                <Banner s={8.5} tk={0.16} c={C.paper0}>
+                  PRESS
+                </Banner>
+              </View>
+            ) : null}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
               <StickerView offset="sm" radius={999} style={{ transform: [{ rotate: '-4deg' }] }}>
-                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: col(me.color), borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: col(me.color), borderWidth: 2.5, borderColor: critic ? C.sun400 : C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
                   <Banner s={18} c={C.paper0}>
                     {me.initials}
                   </Banner>
                 </View>
               </StickerView>
               <View style={{ flex: 1 }}>
-                <Display s={22} c={C.paper0} numberOfLines={1}>
-                  {me.name}
-                </Display>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <Display s={22} c={C.paper0} numberOfLines={1} style={{ flexShrink: 1 }}>
+                    {me.name}
+                  </Display>
+                  {critic ? <CriticSeal /> : null}
+                </View>
                 <Mono s={9.5} c={C.sun300} style={{ marginTop: 4 }}>
-                  PASSPORT Nº {me.passportNo.toLocaleString()} · EST. {me.joined} · {homeCity.name.toUpperCase()}
+                  {critic ? "CRITIC'S PASS" : 'PASSPORT'} Nº {me.passportNo.toLocaleString()} · EST. {me.joined}
+                </Mono>
+                <Mono s={9.5} c={C.ink100} style={{ marginTop: 2 }}>
+                  {critic ? `Verified Critic · ${me.beat || 'CDMX dining'}` : `${homeCity.name} · Nomad`}
                 </Mono>
               </View>
             </View>
             <View style={{ flexDirection: 'row', marginTop: 16, borderWidth: 2, borderColor: C.paper0 }}>
-              <StatCell value={beenTotal} label="Ranked" />
-              <StatCell value={stats.year} label="This year" />
-              <StatCell value={stats.cuisines} label="Cuisines" />
-              <StatCell value={stats.avg} label="Avg score" last />
+              {critic ? (
+                <>
+                  <StatCell value={beenTotal} label="Verdicts" />
+                  <StatCell value={eventsHosted} label="Events" />
+                  <StatCell value={formatFollowers(me.followers || 0)} label="Followers" />
+                  <StatCell value={avg} label="Avg score" last />
+                </>
+              ) : (
+                <>
+                  <StatCell value={beenTotal} label="Ranked" />
+                  <StatCell value={41} label="This year" />
+                  <StatCell value={cuisines} label="Cuisines" />
+                  <StatCell value={avg} label="Avg score" last />
+                </>
+              )}
             </View>
           </StickerView>
         </View>
 
+        {/* critic's desk — only verified critics can host events */}
+        {critic ? (
+          <View style={{ paddingTop: 20, paddingHorizontal: 16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+              <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.ink400 }} />
+              <Banner s={10} tk={0.16} c={C.inkMuted}>
+                Critic’s desk
+              </Banner>
+              <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+            </View>
+            <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, padding: 15, gap: 11 }}>
+              <Serif s={13.5} c={C.inkDeep} style={{ lineHeight: 19 }}>
+                You’re verified on the <Serif s={13.5} c={C.ink400}>{me.beat || 'CDMX dining'}</Serif> beat. Host curated events at any restaurant — they publish to the community calendar with your critic seal.
+              </Serif>
+              <StickerPressable offset="sm" radius={999} onPress={hostEvent} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink700, paddingVertical: 13 }}>
+                <PlusIcon size={15} color={C.sun400} sw={2.6} />
+                <Banner s={12} tk={0.1} c={C.paper0}>
+                  Host an event
+                </Banner>
+              </StickerPressable>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Mono s={9.5} c={C.inkSoft}>
+                  {eventsHosted === 0 ? 'No events yet — host your first.' : `${eventsHosted} event${eventsHosted > 1 ? 's' : ''} hosted · your reviews now carry a Critic seal`}
+                </Mono>
+              </View>
+            </StickerView>
+          </View>
+        ) : null}
+
         {/* recent stamps */}
         <View style={{ paddingTop: 20, paddingHorizontal: 16 }}>
           <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
-            Recent stamps
+            {critic ? 'Recent verdicts' : 'Recent stamps'}
           </Banner>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 4 }}>
             {recentStamps.map((r, i) => {
@@ -149,6 +282,16 @@ export function Passport() {
           </View>
         </View>
 
+        {/* become a critic — signed-in nomads only */}
+        {profile && !critic ? (
+          <View style={{ paddingTop: 24, paddingHorizontal: 16 }}>
+            <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
+              Critic access
+            </Banner>
+            <BecomeCriticCard onVerify={becomeCritic} />
+          </View>
+        ) : null}
+
         {/* account */}
         <View style={{ paddingTop: 24, paddingHorizontal: 16, paddingBottom: 34 }}>
           <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
@@ -160,9 +303,16 @@ export function Passport() {
                 {me.handle}
               </Banner>
               <Mono s={9} c={C.inkMuted} style={{ marginTop: 2 }}>
-                {profile ? 'Local account · this device' : 'Guest · demo identity'}
+                {critic ? 'Verified Critic · this device' : profile ? 'Local account · this device' : 'Guest · demo identity'}
               </Mono>
             </View>
+            {critic ? (
+              <StickerPressable offset="sm" radius={999} onPress={stepDownCritic} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper0, paddingVertical: 7, paddingHorizontal: 13, marginRight: 8 }}>
+                <Banner s={9.5} tk={0.1} c={C.inkMuted}>
+                  Step down
+                </Banner>
+              </StickerPressable>
+            ) : null}
             <StickerPressable offset="sm" radius={999} onPress={signOut} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper0, paddingVertical: 7, paddingHorizontal: 13 }}>
               <Banner s={9.5} tk={0.1} c={C.ink400}>
                 {profile ? 'Sign out' : 'Create account'}

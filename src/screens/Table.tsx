@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { EVENTS, OPEN, PARTY, THREADS, type EventT } from '../store/data';
 import { C, col } from '../theme/tokens';
+import { isCritic } from '../data/profile';
 import { Display, Banner, SerifItalic, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Segmented } from '../components/Segmented';
@@ -61,6 +62,17 @@ function TableCard({ t }: { t: any }) {
               Yours
             </Banner>
           </StickerView>
+        </View>
+      ) : null}
+      {t.critic ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: C.ink400, borderBottomWidth: 2, borderColor: C.inkBlack, paddingVertical: 5, paddingHorizontal: 13 }}>
+          <Banner s={8.5} tk={0.14} c={C.paper0}>
+            ✓ CRITIC EVENT
+          </Banner>
+          <View style={{ flex: 1 }} />
+          <Banner s={8} tk={0.1} c={C.sun300}>
+            VERIFIED HOST
+          </Banner>
         </View>
       ) : null}
       <Pressable onPress={() => openEvent(t.id)} style={{ flexDirection: 'row', borderBottomWidth: 2, borderColor: C.inkBlack }}>
@@ -175,6 +187,8 @@ export function Table() {
   const createdTables = useStore((s) => s.createdTables);
   const openCreate = useStore((s) => s.openCreate);
   const openMap = useStore((s) => s.openMap);
+  const profile = useStore((s) => s.profile);
+  const critic = isCritic(profile);
 
   const seedTables: EventT[] = [...createdTables, ...OPEN, ...EVENTS];
 
@@ -206,15 +220,33 @@ export function Table() {
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 100, gap: 14 }} showsVerticalScrollIndicator={false}>
         {tableSeg === 'events' ? (
           <>
+            {critic ? (
+              <StickerPressable
+                offset="sm"
+                radius={999}
+                onPress={() => openCreate('event')}
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.ink700, borderRadius: 999, paddingVertical: 14 }}
+              >
+                <PlusIcon size={16} color={C.sun400} sw={2.6} />
+                <Banner s={12.5} tk={0.1} c={C.paper0}>
+                  Host an event
+                </Banner>
+                <View style={{ backgroundColor: C.ink400, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 7 }}>
+                  <Banner s={7.5} tk={0.12} c={C.paper0}>
+                    CRITIC
+                  </Banner>
+                </View>
+              </StickerPressable>
+            ) : null}
             <View style={{ flexDirection: 'row', gap: 10 }}>
               <StickerPressable
                 offset="sm"
                 radius={999}
-                onPress={openCreate}
-                style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 2, borderColor: C.inkBlack, backgroundColor: C.ink400, borderRadius: 999, paddingVertical: 13 }}
+                onPress={() => openCreate('table')}
+                style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 2, borderColor: C.inkBlack, backgroundColor: critic ? C.paper0 : C.ink400, borderRadius: 999, paddingVertical: 13 }}
               >
-                <PlusIcon size={16} color={C.paper0} sw={2.6} />
-                <Banner s={12} tk={0.1} c={C.paper0}>
+                <PlusIcon size={16} color={critic ? C.ink400 : C.paper0} sw={2.6} />
+                <Banner s={12} tk={0.1} c={critic ? C.inkDeep : C.paper0}>
                   Open a table
                 </Banner>
               </StickerPressable>

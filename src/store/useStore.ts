@@ -164,10 +164,13 @@ export type State = {
 
   createdTables: any[];
   createOpen: boolean;
+  createMode: 'table' | 'event';
   cPlaceId: string;
   cWhen: string;
   cSeats: number;
   cVisibility: 'public' | 'private';
+  cTitle: string;
+  cDesc: string;
 
   clubUnlocked: boolean;
   logoTaps: number;
@@ -238,7 +241,7 @@ export type Actions = {
   setLogSeg: (seg: 'been' | 'want' | 'recs') => void;
   joinTable: (id: string, full: boolean) => void;
   rsvp: () => void;
-  openCreate: () => void;
+  openCreate: (mode?: 'table' | 'event') => void;
   closeCreate: () => void;
   setCreate: (patch: Partial<State>) => void;
   createTable: () => void;
@@ -278,6 +281,8 @@ export type Actions = {
   // account
   hydrate: () => Promise<void>;
   createProfile: (input: { name: string; handle: string; cityId: string; color: string }) => void;
+  becomeCritic: (beat: string) => void;
+  stepDownCritic: () => void;
   signOut: () => void;
 };
 
@@ -328,10 +333,13 @@ const initialState = (): State => ({
   selPin: null,
   createdTables: [],
   createOpen: false,
+  createMode: 'table',
   cPlaceId: 'lardo',
   cWhen: 'Sat 14:00',
   cSeats: 6,
   cVisibility: 'public',
+  cTitle: '',
+  cDesc: '',
   clubUnlocked: false,
   logoTaps: 0,
   lastTap: 0,
@@ -485,14 +493,18 @@ export const useStore = create<State & Actions>((set, get) => ({
     }
     set({ rsvped: { ...s.rsvped, [ev.id]: true }, ticketId: ev.id, screen: 'ticket' });
   },
-  openCreate: () => set({ createOpen: true }),
+  openCreate: (mode = 'table') => set({ createOpen: true, createMode: mode, cTitle: '', cDesc: '' }),
   closeCreate: () => set({ createOpen: false }),
   setCreate: (patch) => set(patch as any),
   createTable: () => {
     const s = get();
     const place = byId[s.cPlaceId] || CAND[0];
     const when = WHEN_OPTS.find((w) => w.label === s.cWhen) || WHEN_OPTS[0];
-    const id = 'ct' + (s.createdTables.length + 1);
+    const idn = identity(s.profile);
+    const opener: [string, string] = [idn.initials, idn.color];
+    const isEvent = s.createMode === 'event';
+    const id = (isEvent ? 'ce' : 'ct') + (s.createdTables.length + 1);
+    const first = idn.name.split(' ')[0];
     const t = {
       id,
       mine: true,
@@ -501,18 +513,23 @@ export const useStore = create<State & Actions>((set, get) => ({
       mo: when.mo,
       wd: when.wd,
       time: when.time,
-      title: place.name,
-      route: place.hood + ' · you host',
+      title: isEvent ? s.cTitle.trim() || `${place.name} — a critic's table` : place.name,
+      route: isEvent ? `${place.name} · ${place.hood}` : place.hood + ' · you host',
       meet: place.name,
-      host: 'You opened this table',
-      opener: ['JO', 'var(--sun-400)'],
+      host: isEvent ? `Hosted by ${first} · Critic` : 'You opened this table',
+      opener,
+      critic: isEvent,
       visibility: s.cVisibility,
       spots: s.cSeats,
       taken: 1,
       photo: place.photo,
-      menu: ['Order for the table', 'Split the bill, no math', 'Meet your neighbors'],
-      note: 'You opened this table. Invite friends or let the community fill the seats.',
-      joined: [['JO', 'var(--sun-400)']],
+      menu: isEvent
+        ? [s.cDesc.trim() || 'A curated evening, guided by a verified critic.', 'Seats are limited — first come, first stamped.', `On the beat: ${idn.beat || 'CDMX dining'}`]
+        : ['Order for the table', 'Split the bill, no math', 'Meet your neighbors'],
+      note: isEvent
+        ? s.cDesc.trim() || 'A curated event hosted by a verified NO MAD CORNER critic. Reserve a seat and come hungry.'
+        : 'You opened this table. Invite friends or let the community fill the seats.',
+      joined: [opener],
     };
     set((st) => ({ createdTables: [t, ...st.createdTables], createOpen: false, tableSeg: 'events' }));
   },
@@ -616,6 +633,7 @@ export const useStore = create<State & Actions>((set, get) => ({
       date: 'now',
       baseLikes: 0,
       friend: false,
+      ...(idn.role === 'critic' ? { critic: true } : {}),
       ...(dish ? { dish, dishPhoto: s.reviewDraftDishPhoto } : {}),
     };
     set({ userReviews: [rev, ...s.userReviews], reviewOpen: false, reviewDraftText: '', reviewDraftDish: '' });
@@ -632,6 +650,22 @@ export const useStore = create<State & Actions>((set, get) => ({
     const p = makeProfile(input);
     saveProfile(p);
     set({ profile: p, city: cityById(p.cityId), nearby: [], nearbyById: {}, nearbyStatus: 'idle' });
+  },
+  becomeCritic: (beat) => {
+    const s = get();
+    if (!s.profile) return;
+    // Stable seeded audience for the pilot (real critics carry their platform following).
+    const seeded = 900 + (s.profile.passportNo % 40) * 63;
+    const p: Profile = { ...s.profile, role: 'critic', beat, followers: s.profile.followers ?? seeded };
+    saveProfile(p);
+    set({ profile: p });
+  },
+  stepDownCritic: () => {
+    const s = get();
+    if (!s.profile) return;
+    const p: Profile = { ...s.profile, role: 'nomad' };
+    saveProfile(p);
+    set({ profile: p });
   },
   signOut: () => {
     clearProfile();

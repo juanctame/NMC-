@@ -3,7 +3,7 @@
  * (Public / Friends only) → summary → open it (you host).
  */
 import React from 'react';
-import { View, ScrollView, Pressable } from 'react-native';
+import { View, ScrollView, Pressable, TextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { byId, WHEN_OPTS } from '../store/data';
@@ -25,16 +25,22 @@ function Label({ children }: { children: React.ReactNode }) {
 export function CreateTable() {
   const insets = useSafeAreaInsets();
   const closeCreate = useStore((s) => s.closeCreate);
+  const mode = useStore((s) => s.createMode);
   const cPlaceId = useStore((s) => s.cPlaceId);
   const cWhen = useStore((s) => s.cWhen);
   const cSeats = useStore((s) => s.cSeats);
   const cVisibility = useStore((s) => s.cVisibility);
+  const cTitle = useStore((s) => s.cTitle);
+  const cDesc = useStore((s) => s.cDesc);
   const setCreate = useStore((s) => s.setCreate);
   const setVisibility = useStore((s) => s.setVisibility);
   const createTable = useStore((s) => s.createTable);
 
+  const isEvent = mode === 'event';
   const cPlace = byId[cPlaceId];
-  const summary = `Table for ${cSeats} · ${cPlace ? cPlace.name : ''} · ${cWhen} · ${cVisibility === 'private' ? 'friends only' : 'public'}`;
+  const summary = isEvent
+    ? `${cTitle.trim() || 'Untitled event'} · ${cPlace ? cPlace.name : ''} · ${cWhen} · ${cSeats} seats`
+    : `Table for ${cSeats} · ${cPlace ? cPlace.name : ''} · ${cWhen} · ${cVisibility === 'private' ? 'friends only' : 'public'}`;
 
   return (
     <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 55 }}>
@@ -43,9 +49,18 @@ export function CreateTable() {
         <SheetUp style={{ maxHeight: '88%', backgroundColor: C.paper50, borderTopWidth: 2.5, borderColor: C.inkBlack }}>
           <ScrollView contentContainerStyle={{ paddingHorizontal: 18, paddingTop: 18, paddingBottom: insets.bottom + 24 }} showsVerticalScrollIndicator={false}>
             <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
-              <Display s={24} c={C.inkDeep}>
-                Open a table
-              </Display>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Display s={24} c={C.inkDeep}>
+                  {isEvent ? 'Host an event' : 'Open a table'}
+                </Display>
+                {isEvent ? (
+                  <View style={{ backgroundColor: C.ink400, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8, transform: [{ rotate: '-3deg' }] }}>
+                    <Banner s={8} tk={0.12} c={C.paper0}>
+                      CRITIC
+                    </Banner>
+                  </View>
+                ) : null}
+              </View>
               <Pressable onPress={closeCreate}>
                 <Mono s={12} c={C.inkMuted}>
                   Close ✕
@@ -53,8 +68,32 @@ export function CreateTable() {
               </Pressable>
             </View>
             <SerifItalic s={13} c={C.inkMuted} style={{ marginTop: 3 }}>
-              Pick a spot, a time, and how many seats. The community fills the rest.
+              {isEvent
+                ? 'Curate a night at a restaurant — your verified event goes on the community calendar.'
+                : 'Pick a spot, a time, and how many seats. The community fills the rest.'}
             </SerifItalic>
+
+            {isEvent ? (
+              <>
+                <Label>Event name</Label>
+                <TextInput
+                  value={cTitle}
+                  onChangeText={(v) => setCreate({ cTitle: v } as any)}
+                  placeholder="e.g. Late-night suadero crawl"
+                  placeholderTextColor={C.inkSoft}
+                  style={{ fontFamily: 'Fraunces_400Regular', fontSize: 15, paddingVertical: 11, paddingHorizontal: 12, borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.paper0, color: C.inkBlack }}
+                />
+                <Label>What’s the night about?</Label>
+                <TextInput
+                  value={cDesc}
+                  onChangeText={(v) => setCreate({ cDesc: v } as any)}
+                  placeholder="Tell diners what to expect — the menu, the vibe, why you’re hosting."
+                  placeholderTextColor={C.inkSoft}
+                  multiline
+                  style={{ minHeight: 76, textAlignVertical: 'top', fontFamily: 'Fraunces_400Regular', fontSize: 14, lineHeight: 20, padding: 12, borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.paper0, color: C.inkBlack }}
+                />
+              </>
+            ) : null}
 
             <Label>Where</Label>
             <View style={{ gap: 8 }}>
@@ -157,9 +196,9 @@ export function CreateTable() {
             <Mono s={10.5} c={C.inkMuted} style={{ textAlign: 'center', marginTop: 16, marginBottom: 10 }}>
               {summary}
             </Mono>
-            <StickerPressable offset="sm" radius={999} onPress={createTable} style={{ alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 14, backgroundColor: C.stampGreen }}>
+            <StickerPressable offset="sm" radius={999} onPress={createTable} style={{ alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 14, backgroundColor: isEvent ? C.ink400 : C.stampGreen }}>
               <Banner s={14} tk={0.1} c={C.paper0}>
-                Open it → you host
+                {isEvent ? 'Publish event → you host' : 'Open it → you host'}
               </Banner>
             </StickerPressable>
           </ScrollView>
