@@ -7,6 +7,18 @@
 
 export type LatLon = { lat: number; lon: number };
 
+/** A single plotted point on the Nearby map — a restaurant grade, a community
+ *  event, or an open table — shared by the native (SVG) and web (Google) map. */
+export type Pin = {
+  kind: 'grade' | 'event' | 'table';
+  id: string;
+  coord: LatLon;
+  bg: string;
+  fg: string;
+  metric: string;
+  dashed: boolean;
+};
+
 export const PLACE_COORDS: Record<string, LatLon> = {
   vilsito: { lat: 19.398, lon: -99.155 },
   rosetta: { lat: 19.419, lon: -99.161 },
