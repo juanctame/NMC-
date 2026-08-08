@@ -202,7 +202,7 @@ function SelectCard({
 }) {
   const sel = useStore((s) => s.selPin)!;
 
-  let content: { photo: string; name: string; meta: string; badge: string; badgeBg: string; badgeFg: string; walk: string; cta: string; onPress: () => void };
+  let content: { photo: string; name: string; meta: string; badge: string; badgeBg: string; badgeFg: string; walk: string; cta: string; onPress: () => void; google?: string };
 
   if (sel.kind === 'event') {
     const ev = EVENTS.find((e) => e.id === sel.id)!;
@@ -240,6 +240,10 @@ function SelectCard({
     const shownScore = r != null ? r : overall;
     const ss = shownScore != null ? scoreStyle(shownScore) : { bg: C.ink400, fg: C.paper0 };
     const c = PLACE_COORDS[sel.id] || (base.lat != null ? { lat: base.lat, lon: base.lon } : null);
+    const gRating =
+      base.source === 'google' && base.rating != null
+        ? `★ ${base.rating.toFixed(1)}${base.reviews ? ` · ${base.reviews > 999 ? (base.reviews / 1000).toFixed(1) + 'k' : base.reviews}` : ''}`
+        : undefined;
     content = {
       photo: base.photo,
       name: base.name,
@@ -250,6 +254,7 @@ function SelectCard({
       walk: c ? distanceMin(city, c.lat, c.lon) : '',
       cta: 'See place →',
       onPress: () => onPlace(sel.id),
+      google: gRating,
     };
   }
 
@@ -270,6 +275,13 @@ function SelectCard({
                 {content.badge}
               </Banner>
             </View>
+            {content.google ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                <Mono s={9} c={C.sun600}>
+                  {content.google}
+                </Mono>
+              </View>
+            ) : null}
             {content.walk ? (
               <Mono s={9} c={C.inkSoft}>
                 {content.walk}

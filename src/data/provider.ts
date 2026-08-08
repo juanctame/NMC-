@@ -8,6 +8,7 @@ import type { Place } from '../store/data';
 import type { City } from './cities';
 import { fetchOsmNearby, osmNormalize } from './osm';
 import { CDMX_FIXTURE } from './fixtures';
+import { googleSearchNearby } from './placesGoogle';
 import { DATA_SOURCE, GOOGLE_PLACES_API_KEY } from './config';
 
 export type PlacesProvider = {
@@ -32,10 +33,8 @@ const fixtureProvider: PlacesProvider = {
 const googleProvider: PlacesProvider = {
   id: 'google',
   label: 'Google Places',
-  searchNearby: async () => {
-    // Implemented behind the same interface once a key/proxy is available.
-    throw new Error('Google Places provider not configured — set GOOGLE_PLACES_API_KEY');
-  },
+  // Web: live Google Places Nearby Search. Native: OSM (Places JS is web-only).
+  searchNearby: (city) => googleSearchNearby(city),
 };
 
 export function getProvider(): PlacesProvider {

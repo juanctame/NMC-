@@ -276,6 +276,16 @@ export function PlaceDetail() {
               <Serif s={13} style={{ textAlign: 'center', color: C.inkMuted, lineHeight: 19 }}>
                 Fresh off the map — no Critics or People score yet. Be the first of us to rank it.
               </Serif>
+              {base.source === 'google' && base.rating != null ? (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4, backgroundColor: C.paper100, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 11 }}>
+                  <Banner s={10} tk={0.06} c={C.sun600}>
+                    ★ {base.rating.toFixed(1)}
+                  </Banner>
+                  <Mono s={9} c={C.inkMuted}>
+                    {base.reviews ? `${base.reviews.toLocaleString()} Google reviews` : 'on Google'}
+                  </Mono>
+                </View>
+              ) : null}
             </StickerView>
           )}
         </View>

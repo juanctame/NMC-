@@ -11,7 +11,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import type { City } from '../data/cities';
 import type { Pin } from '../data/geo';
 import { C, col } from '../theme/tokens';
-import { GOOGLE_MAPS_API_KEY, GOOGLE_MAPS_MAP_ID } from '../config';
+import { GOOGLE_MAPS_MAP_ID } from '../config';
+import { loadGoogleMaps } from '../data/googleMaps';
 
 type Props = {
   pins: Pin[];
@@ -20,25 +21,7 @@ type Props = {
   onSelect: (p: { kind: string; id: string }) => void;
 };
 
-let mapsPromise: Promise<any> | null = null;
-
-function loadMaps(): Promise<any> {
-  const w = window as any;
-  if (w.google?.maps?.marker) return Promise.resolve(w.google.maps);
-  if (mapsPromise) return mapsPromise;
-  mapsPromise = new Promise((resolve, reject) => {
-    const cb = '__nmcGmapsReady';
-    w[cb] = () => resolve(w.google.maps);
-    const s = document.createElement('script');
-    s.async = true;
-    s.src =
-      `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}` +
-      `&libraries=maps,marker&v=weekly&loading=async&callback=${cb}`;
-    s.onerror = () => reject(new Error('Google Maps failed to load'));
-    document.head.appendChild(s);
-  });
-  return mapsPromise;
-}
+const loadMaps = loadGoogleMaps;
 
 /** A sticker roundel matching the native pin, as a DOM node for the marker. */
 function markerEl(pin: Pin, selected: boolean): HTMLElement {

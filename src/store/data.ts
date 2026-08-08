@@ -28,6 +28,8 @@ export type Place = {
   source?: 'seed' | 'osm' | 'google';
   website?: string;
   rated?: boolean; // false for freshly-discovered places with no ratings yet
+  rating?: number; // Google's 0–5 community rating (live places)
+  reviews?: number; // Google review count
 };
 
 const P = (
