@@ -32,4 +32,5 @@ export const GOOGLE_MAPS_MAP_ID = 'DEMO_MAP_ID';
  * meant to live in the client, so it is safe to commit.
  */
 export const SUPABASE_URL = 'https://psbxxcupbbgwcjzqkygb.supabase.co';
-export const SUPABASE_ANON_KEY = ''; // paste the "anon public" key (Settings → API) to turn sharing on
+export const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzYnh4Y3VwYmJnd2NqenFreWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzNjU5NjgsImV4cCI6MjEwMTk0MTk2OH0.3KWMp-rnIMKnDYsixj0bXZ_R9FQyyoGBYQZdg881eOM';
