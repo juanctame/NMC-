@@ -19,6 +19,7 @@ import { PHOTO_POOL } from '../assets';
 import { DEFAULT_CITY, cityById, type City } from '../data/cities';
 import { getProvider, fixtureFallback } from '../data/provider';
 import { REVIEWS, DISH_PHOTOS, type Review } from '../data/reviews';
+import { fetchSharedReviews, pushSharedReview } from '../data/shared';
 import { makeProfile, identity, type Profile } from '../data/profile';
 import { loadProfile, saveProfile, clearProfile } from '../data/storage';
 import { TRENDING_VIDEOS } from '../data/videos';
@@ -33,11 +34,15 @@ export function reviewsFor(
   userReviews: Review[],
   reviewLikes: Record<string, boolean>,
   opts: { friendsOnly: boolean; sort: ReviewSort },
+  sharedReviews: Review[] = [],
 ): ScoredReview[] {
-  const raw = [
-    ...userReviews.filter((r) => r.placeId === placeId),
-    ...REVIEWS.filter((r) => r.placeId === placeId),
-  ];
+  const seen = new Set<string>();
+  const raw: Review[] = [];
+  for (const r of [...userReviews, ...sharedReviews, ...REVIEWS]) {
+    if (r.placeId !== placeId || seen.has(r.id)) continue;
+    seen.add(r.id);
+    raw.push(r);
+  }
   let list: ScoredReview[] = raw.map((r) => ({
     ...r,
     likes: r.baseLikes + (reviewLikes[r.id] ? 1 : 0),
@@ -59,11 +64,15 @@ export type PopularDish = {
 /** The most-named favourite dish for a place, across every review (seed ∪ user),
  *  tie-broken by total likes. Independent of the friends filter — it's the
  *  whole table's favourite. */
-export function popularDishFor(placeId: string, userReviews: Review[]): PopularDish | null {
-  const withDish = [
-    ...userReviews.filter((r) => r.placeId === placeId),
-    ...REVIEWS.filter((r) => r.placeId === placeId),
-  ].filter((r) => r.dish && r.dish.trim());
+export function popularDishFor(placeId: string, userReviews: Review[], sharedReviews: Review[] = []): PopularDish | null {
+  const seen = new Set<string>();
+  const forPlace: Review[] = [];
+  for (const r of [...userReviews, ...sharedReviews, ...REVIEWS]) {
+    if (r.placeId !== placeId || seen.has(r.id)) continue;
+    seen.add(r.id);
+    forPlace.push(r);
+  }
+  const withDish = forPlace.filter((r) => r.dish && r.dish.trim());
   if (!withDish.length) return null;
 
   const groups: Record<string, Review[]> = {};
@@ -189,6 +198,7 @@ export type State = {
 
   // Reviews (public, Letterboxd-style)
   userReviews: Review[];
+  sharedReviews: Review[]; // reviews from other testers (Supabase), when enabled
   reviewLikes: Record<string, boolean>;
   reviewSort: ReviewSort;
   reviewFriendsOnly: boolean;
@@ -278,6 +288,7 @@ export type Actions = {
   setReviewDraftDish: (t: string) => void;
   setReviewDraftDishPhoto: (k: string) => void;
   postReview: () => void;
+  loadSharedReviews: (placeId: string) => Promise<void>;
   // account
   hydrate: () => Promise<void>;
   createProfile: (input: { name: string; handle: string; cityId: string; color: string }) => void;
@@ -352,6 +363,7 @@ const initialState = (): State => ({
   nearbyStatus: 'idle',
   citySheetOpen: false,
   userReviews: [],
+  sharedReviews: [],
   reviewLikes: {},
   reviewSort: 'popular',
   reviewFriendsOnly: false,
@@ -637,6 +649,17 @@ export const useStore = create<State & Actions>((set, get) => ({
       ...(dish ? { dish, dishPhoto: s.reviewDraftDishPhoto } : {}),
     };
     set({ userReviews: [rev, ...s.userReviews], reviewOpen: false, reviewDraftText: '', reviewDraftDish: '' });
+    // Publish to the shared backend so other testers see it (no-op if disabled).
+    void pushSharedReview(rev);
+  },
+  loadSharedReviews: async (placeId) => {
+    const incoming = await fetchSharedReviews(placeId);
+    if (!incoming.length) return;
+    set((s) => {
+      const have = new Set(s.sharedReviews.map((r) => r.id));
+      const add = incoming.filter((r) => !have.has(r.id));
+      return add.length ? { sharedReviews: [...add, ...s.sharedReviews] } : {};
+    });
   },
 
   // ── account (local profile) ──

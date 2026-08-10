@@ -4,7 +4,7 @@
  * gallery with upload, friends who've been, a reservation card, and want/rank
  * CTAs.
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, ScrollView, Pressable, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore, resolvePlace, reviewsFor, popularDishFor, type ScoredReview } from '../store/useStore';
@@ -174,6 +174,13 @@ export function PlaceDetail() {
   const setReviewFriendsOnly = useStore((s) => s.setReviewFriendsOnly);
   const toggleReviewLike = useStore((s) => s.toggleReviewLike);
   const openReviewComposer = useStore((s) => s.openReviewComposer);
+  const sharedReviews = useStore((s) => s.sharedReviews);
+  const loadSharedReviews = useStore((s) => s.loadSharedReviews);
+
+  // Pull other testers' reviews for this place from the shared backend (if on).
+  useEffect(() => {
+    if (activePlaceId) loadSharedReviews(activePlaceId);
+  }, [activePlaceId, loadSharedReviews]);
 
   if (!activePlaceId) return <View style={{ flex: 1, backgroundColor: C.paper50 }} />;
   const base = resolvePlace(activePlaceId, nearbyById);
@@ -186,11 +193,14 @@ export function PlaceDetail() {
 
   // Seed places carry critic/people scores; freshly-discovered (OSM) ones don't.
   const isRated = base.critic != null && base.people != null;
-  const reviews = reviewsFor(activePlaceId, userReviews, reviewLikes, {
-    friendsOnly: reviewFriendsOnly,
-    sort: reviewSort,
-  });
-  const topDish = popularDishFor(activePlaceId, userReviews);
+  const reviews = reviewsFor(
+    activePlaceId,
+    userReviews,
+    reviewLikes,
+    { friendsOnly: reviewFriendsOnly, sort: reviewSort },
+    sharedReviews,
+  );
+  const topDish = popularDishFor(activePlaceId, userReviews, sharedReviews);
   const cu = base.cuisine;
   const mapsUrl =
     base.lat != null

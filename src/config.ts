@@ -23,3 +23,13 @@ export const GOOGLE_MAPS_API_KEY = 'AIzaSyCxWK3IkX7wxgEtyrxRuAU1k2f7jbOEo9Q';
  * "printed paper" style that matches the brand.
  */
 export const GOOGLE_MAPS_MAP_ID = 'DEMO_MAP_ID';
+
+/**
+ * Shared demo backend (Supabase) — makes usernames + reviews visible to every
+ * tester instead of only their own device. Leave both blank to keep the app
+ * local-only; paste your project's values to turn sharing on (see SHARED_DEMO.md
+ * for the 3-step setup). The anon key is a public, row-level-security-gated key
+ * meant to live in the client, so it is safe to commit.
+ */
+export const SUPABASE_URL = '';
+export const SUPABASE_ANON_KEY = '';
