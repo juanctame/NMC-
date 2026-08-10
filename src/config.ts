@@ -31,5 +31,5 @@ export const GOOGLE_MAPS_MAP_ID = 'DEMO_MAP_ID';
  * for the 3-step setup). The anon key is a public, row-level-security-gated key
  * meant to live in the client, so it is safe to commit.
  */
-export const SUPABASE_URL = '';
-export const SUPABASE_ANON_KEY = '';
+export const SUPABASE_URL = 'https://psbxxcupbbgwcjzqkygb.supabase.co';
+export const SUPABASE_ANON_KEY = ''; // paste the "anon public" key (Settings → API) to turn sharing on
