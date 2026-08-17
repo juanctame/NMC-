@@ -1,7 +1,7 @@
 /**
  * Selectable cities. Each carries a real center + a dining-core bounding box
  * [south, west, north, east] used to (a) query a provider for nearby places and
- * (b) project real lat/lon onto the stylized map. NO MAD CORNER is a global,
+ * (b) project real lat/lon onto the stylized map. CRTQ is a global,
  * "around the world" brand, so the seed set spans its home base and the cities
  * its dossier name-checks.
  */

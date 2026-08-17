@@ -366,15 +366,15 @@ export function Feed() {
       <View style={{ paddingTop: insets.top + 12, paddingHorizontal: 20, paddingBottom: 12, backgroundColor: C.sun400, borderBottomWidth: 2.5, borderBottomColor: C.inkBlack }}>
         <Grain opacity={0.06} />
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <Pressable onPress={tapLogo} accessibilityLabel="NO MAD CORNER">
+          <Pressable onPress={tapLogo} accessibilityLabel="CRTQ">
             <Image source={BRAND.logo} style={{ width: 46, height: 46, transform: [{ rotate: '-6deg' }] }} resizeMode="contain" />
             {clubUnlocked ? (
               <View style={{ position: 'absolute', top: -1, right: 1, width: 11, height: 11, borderRadius: 6, backgroundColor: C.ink400, borderWidth: 2, borderColor: C.paper0 }} />
             ) : null}
           </Pressable>
           <View style={{ flex: 1, minWidth: 0 }}>
-            <Display s={15} c={C.inkDeep} numberOfLines={1}>
-              NO MAD CORNER
+            <Display s={19} c={C.inkDeep} numberOfLines={1}>
+              CRTQ
             </Display>
             <Pressable onPress={openCitySheet} hitSlop={8}>
               <Mono s={9} c={C.ink600} style={{ marginTop: 4 }} numberOfLines={1}>

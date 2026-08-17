@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "NO MAD CORNER",
-    "slug": "no-mad-corner",
+    "name": "CRTQ",
+    "slug": "crtq",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "nomadcorner",
+    "scheme": "crtq",
     "userInterfaceStyle": "light",
     "backgroundColor": "#FBF5E5",
     "primaryColor": "#D8501A",

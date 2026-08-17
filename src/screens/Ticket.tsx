@@ -36,7 +36,7 @@ export function Ticket() {
   const seed: EventT[] = [...createdTables, ...OPEN, ...EVENTS];
   const ev = seed.find((e) => e.id === ticketId) || EVENTS[0];
   const when = `${ev.wd} ${ev.mo} ${ev.d} · ${ev.time}`;
-  const code = `NMC-${ev.mo}${ev.d}-JUNE`;
+  const code = `CRTQ-${ev.mo}${ev.d}-JUNE`;
 
   return (
     <View style={{ flex: 1, backgroundColor: C.sun400 }}>
@@ -59,7 +59,7 @@ export function Ticket() {
           <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack }}>
             <View style={{ padding: 16, borderBottomWidth: 2.5, borderColor: C.inkBlack, borderStyle: 'dashed' }}>
               <Banner s={10} tk={0.18} c={C.ink400}>
-                NO MAD CORNER · admit one
+                CRTQ · admit one
               </Banner>
               <SerifDisplay s={22} c={C.inkDeep} style={{ marginTop: 4, lineHeight: 24 }}>
                 {ev.title}

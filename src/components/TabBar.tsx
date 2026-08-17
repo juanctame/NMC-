@@ -61,7 +61,7 @@ export function TabBar() {
         paddingBottom: Math.max(insets.bottom, 12) + 8,
       }}
     >
-      <TabButton active={isActive('feed')} label="Corner" onPress={() => go('feed')}>
+      <TabButton active={isActive('feed')} label="CRTQ" onPress={() => go('feed')}>
         {(color) => <TabFeed color={color} />}
       </TabButton>
       <TabButton active={isActive('log')} label="Guide" onPress={() => go('log')}>

@@ -1,5 +1,5 @@
 /**
- * NO MAD CORNER — design tokens
+ * CRTQ — design tokens
  * Ported 1:1 from the design system (`_ds/.../colors_and_type.css`).
  * Vintage travel-sticker aesthetic: warm cream paper, sun-yellow + vermillion
  * inks, thick black printed outlines, hard "stamp" offset shadows.

@@ -539,7 +539,7 @@ export const useStore = create<State & Actions>((set, get) => ({
         ? [s.cDesc.trim() || 'A curated evening, guided by a verified critic.', 'Seats are limited — first come, first stamped.', `On the beat: ${idn.beat || 'CDMX dining'}`]
         : ['Order for the table', 'Split the bill, no math', 'Meet your neighbors'],
       note: isEvent
-        ? s.cDesc.trim() || 'A curated event hosted by a verified NO MAD CORNER critic. Reserve a seat and come hungry.'
+        ? s.cDesc.trim() || 'A curated event hosted by a verified CRTQ critic. Reserve a seat and come hungry.'
         : 'You opened this table. Invite friends or let the community fill the seats.',
       joined: [opener],
     };

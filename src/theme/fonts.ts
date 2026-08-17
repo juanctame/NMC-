@@ -1,5 +1,5 @@
 /**
- * Font families for NO MAD CORNER.
+ * Font families for CRTQ.
  *
  * In React Native each weight/style is registered as its own family name
  * (fontWeight does not reliably switch between separately-loaded faces on

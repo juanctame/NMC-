@@ -178,7 +178,7 @@ export function Leaderboard() {
       <View style={{ paddingTop: insets.top + 12, paddingHorizontal: 20, paddingBottom: 4, borderBottomWidth: mode === 'places' ? 0 : 2.5, borderBottomColor: C.inkBlack }}>
         <Pressable onPress={() => go('feed')} style={{ paddingBottom: 8 }}>
           <Banner s={11} tk={0.14} c={C.ink400}>
-            ← Corner
+            ← CRTQ
           </Banner>
         </Pressable>
         <Display s={30} c={C.inkDeep}>

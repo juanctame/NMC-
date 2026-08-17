@@ -1,5 +1,5 @@
 /**
- * Sample data for NO MAD CORNER, ported verbatim from the prototype's component
+ * Sample data for CRTQ, ported verbatim from the prototype's component
  * constructor. In a production build this becomes API/models (places, dual
  * critic/people scores + rankings, user log, friends graph, events/RSVPs,
  * tables with visibility, club membership, geolocation, media, trending feed).
@@ -225,7 +225,7 @@ export const CLUB_THREADS: Thread[] = [
     { who: 'Rosa Méndez', whoColor: 'var(--sun-600)', time: '20:22', text: 'Counting the days. Bringing a bottle of the good mezcal.' },
   ] },
   { id: 'dct2', name: 'Openings & scoops', initials: '!', color: 'var(--stamp-blue)', sub: 'before anyone else', last: 'New omakase counter in Juárez — 6 seats', unread: 1, club: true, msgs: [
-    { who: 'NO MAD CORNER', whoColor: 'var(--stamp-blue)', time: '09:30', card: { app: 'Scoop · members first', dot: 'var(--stamp-blue)', title: 'Kaito — omakase counter, Juárez', sub: 'Soft-opens Thu · 6 seats a night · members book first', cta: 'Claim a seat →', ctaColor: 'var(--stamp-blue)' } },
+    { who: 'CRTQ', whoColor: 'var(--stamp-blue)', time: '09:30', card: { app: 'Scoop · members first', dot: 'var(--stamp-blue)', title: 'Kaito — omakase counter, Juárez', sub: 'Soft-opens Thu · 6 seats a night · members book first', cta: 'Claim a seat →', ctaColor: 'var(--stamp-blue)' } },
     { who: 'Andrés Vega', whoColor: 'var(--ink-400)', time: '09:41', text: 'Grabbing Thursday. Who’s in?' },
   ] },
 ];
@@ -254,7 +254,7 @@ export const THREADS: Thread[] = [
   { id: 'ann', name: 'Announcements', initials: '!', color: 'var(--ink-400)', sub: 'only hosts can post', last: 'Chef Maria: Mole Nº 04 books Thursday', unread: 1, msgs: [
     { who: 'House rules', pinned: true, text: 'Real recs, real photos. No hate, no spam, no creeps. Hosts hold your seat — honor it.' },
     { who: 'Chef Maria', host: true, whoColor: INK4, time: '10:02', text: 'Mole Negro Study Nº 04 — ten seats open Thursday 10:00, members first. Secret address in Juárez, shared 24h before.' },
-    { who: 'NO MAD CORNER', whoColor: BLUE, time: '10:03', card: { app: 'Google Calendar · this week', dot: BLUE, cta: 'Sync all to Calendar →', ctaColor: BLUE, rows: [['Taco Crawl Nº 12', 'FRI 19:30'], ['Private Tasting', 'SUN · full'], ['Mercado Walk', 'THU 09:00']] } },
+    { who: 'CRTQ', whoColor: BLUE, time: '10:03', card: { app: 'Google Calendar · this week', dot: BLUE, cta: 'Sync all to Calendar →', ctaColor: BLUE, rows: [['Taco Crawl Nº 12', 'FRI 19:30'], ['Private Tasting', 'SUN · full'], ['Mercado Walk', 'THU 09:00']] } },
   ] },
   { id: 'crawl12', name: 'Taco Crawl Nº 12', initials: '12', color: 'var(--sun-500)', sub: '9 going · Chef Maria hosts', last: 'Maria dropped a pin · Cibeles', unread: 3, msgs: [
     { who: 'Chef Maria', host: true, whoColor: INK4, time: '17:41', text: 'Tonight! Meet 19:30 at Cibeles. Three stops, we split each bill at the table. Pin below →' },

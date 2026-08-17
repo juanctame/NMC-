@@ -1,7 +1,7 @@
 /**
  * Featured creators — the aspirational voices we want to promote in the Feed.
  * Each carries a real short-form post (platform + source URL) and a 0–10
- * verdict, modelling the kind of content NO MAD CORNER surfaces. Seeded now;
+ * verdict, modelling the kind of content CRTQ surfaces. Seeded now;
  * later this becomes a curated/creator-partnership feed.
  */
 

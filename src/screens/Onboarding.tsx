@@ -90,8 +90,8 @@ export function Onboarding() {
           <Banner s={11} tk={0.22} c={C.ink500} style={{ textAlign: 'center' }}>
             Around the world · around the table
           </Banner>
-          <Display s={46} c={C.inkDeep} style={{ textAlign: 'center', lineHeight: 42 }}>
-            NO MAD{'\n'}CORNER
+          <Display s={88} c={C.inkDeep} style={{ textAlign: 'center', lineHeight: 82 }}>
+            CRTQ
           </Display>
           <Serif s={16} style={{ textAlign: 'center', maxWidth: 282, lineHeight: 25 }}>
             Rank every place you eat, keep a passport of your city, and find your next table through the friends you actually trust.
