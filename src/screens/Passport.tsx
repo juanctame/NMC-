@@ -21,13 +21,13 @@ import { PlusIcon } from '../components/icons';
 import { ScreenIn } from '../components/Anim';
 
 const CUISINE_TOP: [string, number][] = [
-  ['Tacos', 24],
-  ['Mariscos', 15],
-  ['Panaderías', 11],
-  ['Mole', 8],
+  ['Mexican', 24],
+  ['Seafood', 15],
+  ['Bakery', 11],
+  ['Contemporary', 8],
 ];
 const CMAX = 24;
-const TASTE_TAGS = ['Tacos al pastor', 'Mariscos', 'Panaderías', 'Mezcal', 'Antojitos'];
+const TASTE_TAGS = ['Mexican', 'Seafood', 'Bakery', 'Street Food', 'Bar'];
 
 function StatCell({ value, label, last }: { value: string | number; label: string; last?: boolean }) {
   return (

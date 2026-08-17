@@ -10,6 +10,7 @@ import { View, ScrollView, Pressable, Image, TextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { CITIES } from '../data/cities';
+import { TASTE_CUISINES } from '../data/cuisines';
 import { AVATAR_COLORS, initialsOf, suggestHandle } from '../data/profile';
 import { C, col } from '../theme/tokens';
 import { BRAND } from '../assets';
@@ -19,20 +20,7 @@ import { Roundel } from '../components/Roundel';
 import { Grain } from '../components/Grain';
 import { StampIn } from '../components/Anim';
 
-const TASTES = [
-  'Tacos al pastor',
-  'Mole',
-  'Mariscos',
-  'Street food',
-  'Vegetariano',
-  'Mezcal',
-  'Café de olla',
-  'Panaderías',
-  'Cantinas',
-  'Antojitos',
-  'Natural wine',
-  'Fine dining',
-];
+const TASTES = TASTE_CUISINES;
 
 const RULES = [
   'Be generous — real recs, real photos, real addresses.',

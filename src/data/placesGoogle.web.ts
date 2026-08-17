@@ -12,28 +12,14 @@ import type { Place } from '../store/data';
 import type { City } from './cities';
 import { loadGoogleMaps } from './googleMaps';
 import { PHOTO_POOL } from '../assets';
+import { cuisineFromGoogleTypes } from './cuisines';
 
 const PRICE = ['$', '$', '$$', '$$$', '$$$$']; // Google price_level 0–4
-
-const CUISINE_BY_TYPE: Record<string, string> = {
-  bakery: 'Panadería',
-  cafe: 'Café',
-  bar: 'Cantina',
-  meal_takeaway: 'Street food',
-  meal_delivery: 'Street food',
-  restaurant: 'Restaurant',
-  food: 'Restaurant',
-};
 
 function hash(s: string): number {
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
   return h;
-}
-
-function cuisineOf(types: string[] = []): string {
-  for (const t of types) if (CUISINE_BY_TYPE[t]) return CUISINE_BY_TYPE[t];
-  return 'Restaurant';
 }
 
 export function googleSearchNearby(city: City): Promise<Place[]> {
@@ -55,7 +41,7 @@ export function googleSearchNearby(city: City): Promise<Place[]> {
             .filter((r) => r.geometry?.location && (!r.business_status || r.business_status === 'OPERATIONAL'))
             .map((r) => {
               const id = 'g-' + r.place_id;
-              const cuisine = cuisineOf(r.types);
+              const cuisine = cuisineFromGoogleTypes(r.types);
               const hood = r.vicinity ? r.vicinity.split(',').slice(-1)[0].trim() || city.defaultHood : city.defaultHood;
               const priceLvl = typeof r.price_level === 'number' ? r.price_level : 1;
               return {

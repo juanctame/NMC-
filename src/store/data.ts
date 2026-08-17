@@ -45,26 +45,26 @@ const P = (
 ): Place => ({ id, name, cuisine, hood, price, photo, addr, blurb, openInfo });
 
 export const RANKED0: Place[] = [
-  { ...P('vilsito', 'El Vilsito', 'Tacos', 'Narvarte', '$', 'butcher-sandwich', 'Av. Universidad 1900', 'Suadero and al pastor straight off the trompo until 2am — a body-shop by day, a taquería institution by night.', 'open till 02:00'), score: 9.4 },
-  { ...P('rosetta', 'Panadería Rosetta', 'Panadería', 'Roma Nte', '$$', 'brioche-toast', 'Colima 179', 'Guava-and-cream rolls and concha french toast in a townhouse. Get there before the window empties.', '07:00–21:00'), score: 9.1 },
-  { ...P('contramar', 'Contramar', 'Mariscos', 'Roma Nte', '$$$', 'french-dip', 'Durango 200', 'The tuna tostada and pescado a la talla that launched a thousand imitators. Long lunches only.', '13:00–18:30'), score: 8.8 },
-  { ...P('medellin', 'Mercado de Medellín', 'Mercado', 'Roma Sur', '$', 'beijing-stall', 'Campeche 101', 'Blue-corn tlacoyos, second aisle past the flowers. Cash only, no seats, all worth it.', '08:00–18:00'), score: 8.3 },
-  { ...P('opera', 'La Ópera', 'Cantina', 'Centro', '$$', 'elder-at-bar', '5 de Mayo 10', 'Belle-époque cantina with vermouth, botanas, and the bullet hole Pancho Villa (allegedly) left in the ceiling.', '13:00–24:00'), score: 7.6 },
-  { ...P('moro', 'Churrería El Moro', 'Postres', 'Centro', '$', 'hot-honey', 'Eje Central 42', 'Churros and four kinds of thick chocolate, open around the clock since 1935.', '24 hours'), score: 7.1 },
-  { ...P('delirio', 'Delirio', 'Deli', 'Roma Nte', '$$', 'italian-deli', 'Monterrey 116', 'Enrique Olvera’s corner deli — grab a coffee, a sandwich, and something from the case.', '08:00–20:00'), score: 6.4 },
-  { ...P('corazon', 'Corazón de Maguey', 'Mole', 'Coyoacán', '$$', 'chef-plating', 'Plaza Jardín Centenario 9A', 'Plaza-side Oaxacan cooking with a mezcal list longer than the menu. Touristy, still good.', '13:00–23:00'), score: 5.8 },
+  { ...P('vilsito', 'El Vilsito', 'Mexican', 'Narvarte', '$', 'butcher-sandwich', 'Av. Universidad 1900', 'Suadero and al pastor straight off the trompo until 2am — a body-shop by day, a taquería institution by night.', 'open till 02:00'), score: 9.4 },
+  { ...P('rosetta', 'Panadería Rosetta', 'Bakery', 'Roma Nte', '$$', 'brioche-toast', 'Colima 179', 'Guava-and-cream rolls and concha french toast in a townhouse. Get there before the window empties.', '07:00–21:00'), score: 9.1 },
+  { ...P('contramar', 'Contramar', 'Seafood', 'Roma Nte', '$$$', 'french-dip', 'Durango 200', 'The tuna tostada and pescado a la talla that launched a thousand imitators. Long lunches only.', '13:00–18:30'), score: 8.8 },
+  { ...P('medellin', 'Mercado de Medellín', 'Street Food', 'Roma Sur', '$', 'beijing-stall', 'Campeche 101', 'Blue-corn tlacoyos, second aisle past the flowers. Cash only, no seats, all worth it.', '08:00–18:00'), score: 8.3 },
+  { ...P('opera', 'La Ópera', 'Bar', 'Centro', '$$', 'elder-at-bar', '5 de Mayo 10', 'Belle-époque cantina with vermouth, botanas, and the bullet hole Pancho Villa (allegedly) left in the ceiling.', '13:00–24:00'), score: 7.6 },
+  { ...P('moro', 'Churrería El Moro', 'Desserts', 'Centro', '$', 'hot-honey', 'Eje Central 42', 'Churros and four kinds of thick chocolate, open around the clock since 1935.', '24 hours'), score: 7.1 },
+  { ...P('delirio', 'Delirio', 'Café', 'Roma Nte', '$$', 'italian-deli', 'Monterrey 116', 'Enrique Olvera’s corner deli — grab a coffee, a sandwich, and something from the case.', '08:00–20:00'), score: 6.4 },
+  { ...P('corazon', 'Corazón de Maguey', 'Mexican', 'Coyoacán', '$$', 'chef-plating', 'Plaza Jardín Centenario 9A', 'Plaza-side Oaxacan cooking with a mezcal list longer than the menu. Touristy, still good.', '13:00–23:00'), score: 5.8 },
 ];
 
 export const WANT0: Place[] = [
-  { ...P('pujol', 'Pujol', 'Tasting', 'Polanco', '$$$', 'chef-plating', 'Tennyson 133', 'Mole madre, aged for years and counting. The reservation is the hard part.', '13:30–22:30'), by: 'Rosa ranks it 9.6' },
+  { ...P('pujol', 'Pujol', 'Fine Dining', 'Polanco', '$$$', 'chef-plating', 'Tennyson 133', 'Mole madre, aged for years and counting. The reservation is the hard part.', '13:30–22:30'), by: 'Rosa ranks it 9.6' },
   { ...P('maximo', 'Máximo Bistrot', 'Contemporary', 'Roma Nte', '$$$', 'storefront-green', 'Anatole France 40', 'Market-driven tasting from Eduardo García. Book weeks out.', '13:00–22:00'), by: '3 friends want this' },
-  { ...P('expendio', 'Expendio de Maíz', 'Antojitos', 'Roma Nte', '$', 'beijing-stall', 'Yucatán 84', 'No menu — they cook heirloom corn at you until you tap out. Standing room.', '13:00–19:00'), by: 'Mariana’s top save' },
-  { ...P('turix', 'El Turix', 'Yucateca', 'Polanco', '$', 'french-dip', 'Emilio Castelar 212', 'Cochinita and panuchos from a hole in the wall, till the pib runs out.', '11:00–18:00'), by: 'Diego ranks it 9.0' },
+  { ...P('expendio', 'Expendio de Maíz', 'Street Food', 'Roma Nte', '$', 'beijing-stall', 'Yucatán 84', 'No menu — they cook heirloom corn at you until you tap out. Standing room.', '13:00–19:00'), by: 'Mariana’s top save' },
+  { ...P('turix', 'El Turix', 'Mexican', 'Polanco', '$', 'french-dip', 'Emilio Castelar 212', 'Cochinita and panuchos from a hole in the wall, till the pib runs out.', '11:00–18:00'), by: 'Diego ranks it 9.0' },
 ];
 
 export const CAND: Place[] = [
-  P('orinoco', 'Taquería Orinoco', 'Tacos', 'Roma Nte', '$', 'butcher-sandwich', 'Álvaro Obregón 179', 'Northern-style tacos and the famous chicharrón, late into the night.', '18:00–03:00'),
-  P('lardo', 'Lardo', 'Mediterránea', 'Condesa', '$$', 'italian-deli', 'Agustín Melgar 6', 'Elena Reygadas’ all-day Condesa spot — wood-oven everything.', '09:00–23:00'),
+  P('orinoco', 'Taquería Orinoco', 'Mexican', 'Roma Nte', '$', 'butcher-sandwich', 'Álvaro Obregón 179', 'Northern-style tacos and the famous chicharrón, late into the night.', '18:00–03:00'),
+  P('lardo', 'Lardo', 'Mediterranean', 'Condesa', '$$', 'italian-deli', 'Agustín Melgar 6', 'Elena Reygadas’ all-day Condesa spot — wood-oven everything.', '09:00–23:00'),
   P('blanco', 'Blanco Colima', 'Contemporary', 'Roma Nte', '$$$', 'chef-plating', 'Colima 168', 'A restored mansion with courtyards, cocktails, and a see-and-be-seen crowd.', '13:00–01:00'),
   P('nin', 'Café Nin', 'Café', 'Juárez', '$$', 'brioche-toast', 'Havre 73', 'Rosetta’s café sibling — brunch, pastries, and a leafy patio.', '07:30–22:00'),
 ];
@@ -116,18 +116,18 @@ export type FeedItem =
   | { kind: 'club' };
 
 export const FEED: FeedItem[] = [
-  { kind: 'act', who: 'Rosa Méndez', initials: 'RM', color: 'var(--sun-500)', verb: 'ranked a new spot', time: '2h', placeId: 'vilsito', score: 9.1, meta: 'Tacos · Narvarte', caption: 'Back for the suadero at 1am. Still the one I measure every other taco against.', likes: 14, comments: 3 },
-  { kind: 'rec', placeId: 'orinoco', reason: 'Because you rank Tacos high · Rosa & 2 others love it', match: '94%' },
-  { kind: 'act', who: 'Mariana López', initials: 'ML', color: 'var(--stamp-green)', verb: 'ranked a new spot', time: '5h', placeId: 'medellin', score: 8.6, meta: 'Mercado · Roma Sur', caption: 'The tlacoyo lady deserves a star. Blue corn, requesón, second aisle from the flowers.', likes: 22, comments: 5 },
+  { kind: 'act', who: 'Rosa Méndez', initials: 'RM', color: 'var(--sun-500)', verb: 'ranked a new spot', time: '2h', placeId: 'vilsito', score: 9.1, meta: 'Mexican · Narvarte', caption: 'Back for the suadero at 1am. Still the one I measure every other taco against.', likes: 14, comments: 3 },
+  { kind: 'rec', placeId: 'orinoco', reason: 'Because you rank Mexican high · Rosa & 2 others love it', match: '94%' },
+  { kind: 'act', who: 'Mariana López', initials: 'ML', color: 'var(--stamp-green)', verb: 'ranked a new spot', time: '5h', placeId: 'medellin', score: 8.6, meta: 'Street Food · Roma Sur', caption: 'The tlacoyo lady deserves a star. Blue corn, requesón, second aisle from the flowers.', likes: 22, comments: 5 },
   { kind: 'club' },
-  { kind: 'act', who: 'Diego Fuentes', initials: 'DF', color: 'var(--stamp-blue)', verb: 'saved a spot to want-to-try', time: '1d', placeId: 'contramar', score: null, meta: 'Mariscos · Roma Nte', caption: 'Adding this to the list for when my parents visit. Everyone says the tostada.', likes: 8, comments: 1 },
+  { kind: 'act', who: 'Diego Fuentes', initials: 'DF', color: 'var(--stamp-blue)', verb: 'saved a spot to want-to-try', time: '1d', placeId: 'contramar', score: null, meta: 'Seafood · Roma Nte', caption: 'Adding this to the list for when my parents visit. Everyone says the tostada.', likes: 8, comments: 1 },
 ];
 
 export type Rec = { placeId: string; match: string; reason: string };
 export const RECS: Rec[] = [
   { placeId: 'orinoco', match: '94%', reason: 'Rosa & 2 others rank it 9+' },
   { placeId: 'maximo', match: '89%', reason: 'Matches your Roma Nte splurges' },
-  { placeId: 'turix', match: '86%', reason: 'You rank Yucateca high' },
+  { placeId: 'turix', match: '86%', reason: 'You rank Mexican high' },
   { placeId: 'lardo', match: '81%', reason: '3 friends went this month' },
 ];
 
