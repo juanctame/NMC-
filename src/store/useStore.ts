@@ -21,8 +21,10 @@ import { getProvider, fixtureFallback } from '../data/provider';
 import { REVIEWS, DISH_PHOTOS, type Review } from '../data/reviews';
 import { fetchSharedReviews, pushSharedReview } from '../data/shared';
 import { makeProfile, identity, type Profile } from '../data/profile';
-import { loadProfile, saveProfile, clearProfile } from '../data/storage';
+import { loadProfile, saveProfile, clearProfile, loadLang, saveLang } from '../data/storage';
+import { registerProfile, fetchProfileByHandle } from '../data/accounts';
 import { TRENDING_VIDEOS } from '../data/videos';
+import type { Lang } from '../i18n';
 
 export type NearbyStatus = 'idle' | 'loading' | 'ready' | 'fallback' | 'error';
 export type ReviewSort = 'popular' | 'recent';
@@ -212,6 +214,9 @@ export type State = {
   // Account (local profile)
   profile: Profile | null;
   hydrated: boolean;
+
+  // Language (flag-picked i18n)
+  lang: Lang;
 };
 
 export type Actions = {
@@ -295,6 +300,9 @@ export type Actions = {
   becomeCritic: (beat: string) => void;
   stepDownCritic: () => void;
   signOut: () => void;
+  connectAccount: (handle: string) => Promise<boolean>;
+  // language
+  setLang: (lang: Lang) => void;
 };
 
 /** Resolve a place by id across the seed catalog and live-loaded nearby set. */
@@ -375,6 +383,7 @@ const initialState = (): State => ({
   reviewDraftDishPhoto: DISH_PHOTOS[0],
   profile: null,
   hydrated: false,
+  lang: 'en',
 });
 
 function findTable(s: State, id: string | null) {
@@ -664,7 +673,8 @@ export const useStore = create<State & Actions>((set, get) => ({
 
   // ── account (local profile) ──
   hydrate: async () => {
-    const p = await loadProfile();
+    const [p, lang] = await Promise.all([loadProfile(), loadLang()]);
+    if (lang) set({ lang });
     if (p) set({ profile: p, city: cityById(p.cityId), screen: 'feed', nearbyStatus: 'idle' });
     else set({ screen: SKIP_ONBOARDING ? 'feed' : 'onboard' });
     set({ hydrated: true });
@@ -672,6 +682,8 @@ export const useStore = create<State & Actions>((set, get) => ({
   createProfile: (input) => {
     const p = makeProfile(input);
     saveProfile(p);
+    // Register the username in the central directory (no-op if backend off).
+    void registerProfile(p);
     set({ profile: p, city: cityById(p.cityId), nearby: [], nearbyById: {}, nearbyStatus: 'idle' });
   },
   becomeCritic: (beat) => {
@@ -681,6 +693,7 @@ export const useStore = create<State & Actions>((set, get) => ({
     const seeded = 900 + (s.profile.passportNo % 40) * 63;
     const p: Profile = { ...s.profile, role: 'critic', beat, followers: s.profile.followers ?? seeded };
     saveProfile(p);
+    void registerProfile(p);
     set({ profile: p });
   },
   stepDownCritic: () => {
@@ -688,11 +701,33 @@ export const useStore = create<State & Actions>((set, get) => ({
     if (!s.profile) return;
     const p: Profile = { ...s.profile, role: 'nomad' };
     saveProfile(p);
+    void registerProfile(p);
     set({ profile: p });
   },
   signOut: () => {
     clearProfile();
     set({ profile: null, screen: 'onboard', obStep: 0, tastes: [], stamped: false });
+  },
+  connectAccount: async (handle) => {
+    const found = await fetchProfileByHandle(handle);
+    if (!found) return false;
+    saveProfile(found);
+    set({
+      profile: found,
+      city: cityById(found.cityId),
+      screen: 'feed',
+      obStep: 0,
+      nearby: [],
+      nearbyById: {},
+      nearbyStatus: 'idle',
+    });
+    return true;
+  },
+
+  // ── language ──
+  setLang: (lang) => {
+    saveLang(lang);
+    set({ lang });
   },
 }));
 

@@ -7,6 +7,7 @@ import React from 'react';
 import { View, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
+import { useT } from '../i18n';
 import { C } from '../theme/tokens';
 import { Banner } from './Text';
 import { StickerView } from './Sticker';
@@ -40,8 +41,9 @@ export function TabBar() {
   const screen = useStore((s) => s.screen);
   const go = useStore((s) => s.go);
   const startRank = useStore((s) => s.startRank);
+  const t = useT();
 
-  const isActive = (t: string) => tab === t && screen === t;
+  const isActive = (tt: string) => tab === tt && screen === tt;
 
   return (
     <View
@@ -64,7 +66,7 @@ export function TabBar() {
       <TabButton active={isActive('feed')} label="CRTQ" onPress={() => go('feed')}>
         {(color) => <TabFeed color={color} />}
       </TabButton>
-      <TabButton active={isActive('log')} label="Guide" onPress={() => go('log')}>
+      <TabButton active={isActive('log')} label={t('nav.guide')} onPress={() => go('log')}>
         {(color) => <TabGuide color={color} />}
       </TabButton>
 
@@ -89,10 +91,10 @@ export function TabBar() {
         </StickerView>
       </View>
 
-      <TabButton active={isActive('table')} label="Table" onPress={() => go('table')}>
+      <TabButton active={isActive('table')} label={t('nav.table')} onPress={() => go('table')}>
         {(color) => <TabTable color={color} />}
       </TabButton>
-      <TabButton active={isActive('you')} label="You" onPress={() => go('you')}>
+      <TabButton active={isActive('you')} label={t('nav.you')} onPress={() => go('you')}>
         {(color) => <TabYou color={color} />}
       </TabButton>
     </View>

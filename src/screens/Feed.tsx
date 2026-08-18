@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { View, ScrollView, Pressable, Image, ActivityIndicator, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
+import { useT } from '../i18n';
 import { FEED, RECS, byId } from '../store/data';
 import { CREATOR_REVIEWS, PLATFORM_LABEL } from '../data/creators';
 import { TRENDING_VIDEOS, type TrendingVideo } from '../data/videos';
@@ -359,6 +360,7 @@ export function Feed() {
   const nearby = useStore((s) => s.nearby);
   const nearbyStatus = useStore((s) => s.nearbyStatus);
   const openPlaceFromFeed = useStore((s) => s.openPlace);
+  const t = useT();
 
   return (
     <ScreenIn>
@@ -396,7 +398,7 @@ export function Feed() {
         <View>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
             <Banner s={11} tk={0.14} c={C.inkDeep}>
-              Trending now
+              {t('feed.trending')}
             </Banner>
             <Mono s={9} c={C.inkSoft}>
               TikTok · Reels · Shorts →
@@ -413,7 +415,7 @@ export function Feed() {
         <View>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
             <Banner s={11} tk={0.14} c={C.inkDeep}>
-              Tastemakers to follow
+              {t('feed.tastemakers')}
             </Banner>
             <Mono s={9} c={C.inkSoft}>
               creators we love →
@@ -431,7 +433,7 @@ export function Feed() {
           <View>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
               <Banner s={11} tk={0.14} c={C.inkDeep}>
-                Fresh near you
+                {t('feed.fresh')}
               </Banner>
               <Pressable onPress={openCitySheet} hitSlop={6}>
                 <Mono s={9} c={C.inkSoft}>

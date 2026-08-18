@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
+import { useT } from '../i18n';
 import { FRIENDS, byId, type Place } from '../store/data';
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { identity } from '../data/profile';
@@ -172,6 +173,7 @@ export function Leaderboard() {
   const insets = useSafeAreaInsets();
   const go = useStore((s) => s.go);
   const [mode, setMode] = useState('places');
+  const t = useT();
 
   return (
     <ScreenIn>
@@ -182,7 +184,7 @@ export function Leaderboard() {
           </Banner>
         </Pressable>
         <Display s={30} c={C.inkDeep}>
-          Leaderboard
+          {t('board.title')}
         </Display>
         <SerifItalic s={13} c={C.inkMuted} style={{ marginTop: 3 }}>
           {mode === 'places' ? "The city's tables, ranked." : "Who's eaten the city this year."}
@@ -190,8 +192,8 @@ export function Leaderboard() {
         <View style={{ marginTop: 12 }}>
           <Segmented
             items={[
-              { key: 'places', label: 'Restaurants' },
-              { key: 'diners', label: 'Diners' },
+              { key: 'places', label: t('board.restaurants') },
+              { key: 'diners', label: t('board.diners') },
             ]}
             value={mode}
             onChange={setMode}

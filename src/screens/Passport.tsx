@@ -9,12 +9,14 @@ import React, { useState } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
+import { useT } from '../i18n';
 import { scoreStyle, fmt } from '../store/helpers';
 import { C, col } from '../theme/tokens';
 import { identity, isCritic, formatFollowers, CRITIC_BEATS } from '../data/profile';
 import { cityById } from '../data/cities';
 import { Display, Banner, Serif, SerifItalic, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
+import { LangPicker } from '../components/LangPicker';
 import { Roundel } from '../components/Roundel';
 import { Grain } from '../components/Grain';
 import { PlusIcon } from '../components/icons';
@@ -115,6 +117,7 @@ export function Passport() {
   const openCreate = useStore((s) => s.openCreate);
   const go = useStore((s) => s.go);
   const createdTables = useStore((s) => s.createdTables);
+  const t = useT();
 
   const me = identity(profile);
   const critic = isCritic(profile);
@@ -176,17 +179,17 @@ export function Passport() {
             <View style={{ flexDirection: 'row', marginTop: 16, borderWidth: 2, borderColor: C.paper0 }}>
               {critic ? (
                 <>
-                  <StatCell value={beenTotal} label="Verdicts" />
-                  <StatCell value={eventsHosted} label="Events" />
-                  <StatCell value={formatFollowers(me.followers || 0)} label="Followers" />
-                  <StatCell value={avg} label="Avg score" last />
+                  <StatCell value={beenTotal} label={t('stat.verdicts')} />
+                  <StatCell value={eventsHosted} label={t('stat.events')} />
+                  <StatCell value={formatFollowers(me.followers || 0)} label={t('stat.followers')} />
+                  <StatCell value={avg} label={t('stat.avg')} last />
                 </>
               ) : (
                 <>
-                  <StatCell value={beenTotal} label="Ranked" />
-                  <StatCell value={41} label="This year" />
-                  <StatCell value={cuisines} label="Cuisines" />
-                  <StatCell value={avg} label="Avg score" last />
+                  <StatCell value={beenTotal} label={t('stat.ranked')} />
+                  <StatCell value={41} label={t('stat.thisYear')} />
+                  <StatCell value={cuisines} label={t('stat.cuisines')} />
+                  <StatCell value={avg} label={t('stat.avg')} last />
                 </>
               )}
             </View>
@@ -225,7 +228,7 @@ export function Passport() {
         {/* recent stamps */}
         <View style={{ paddingTop: 20, paddingHorizontal: 16 }}>
           <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
-            {critic ? 'Recent verdicts' : 'Recent stamps'}
+            {critic ? t('you.verdicts') : t('you.stamps')}
           </Banner>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 4 }}>
             {recentStamps.map((r, i) => {
@@ -247,7 +250,7 @@ export function Passport() {
         {/* cuisine standings */}
         <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
           <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 12 }}>
-            Where you rank cuisines
+            {t('you.rankCuisines')}
           </Banner>
           <View style={{ gap: 9 }}>
             {CUISINE_TOP.map(([name, count]) => (
@@ -269,7 +272,7 @@ export function Passport() {
         {/* taste tags */}
         <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
           <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
-            What you chase
+            {t('you.chase')}
           </Banner>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {TASTE_TAGS.map((name) => (
@@ -286,16 +289,24 @@ export function Passport() {
         {profile && !critic ? (
           <View style={{ paddingTop: 24, paddingHorizontal: 16 }}>
             <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
-              Critic access
+              {t('you.criticAccess')}
             </Banner>
             <BecomeCriticCard onVerify={becomeCritic} />
           </View>
         ) : null}
 
+        {/* language */}
+        <View style={{ paddingTop: 24, paddingHorizontal: 16 }}>
+          <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 12 }}>
+            {t('you.language')}
+          </Banner>
+          <LangPicker showLabels size={44} />
+        </View>
+
         {/* account */}
         <View style={{ paddingTop: 24, paddingHorizontal: 16, paddingBottom: 34 }}>
           <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
-            Account
+            {t('you.account')}
           </Banner>
           <View style={{ backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 10, paddingHorizontal: 13, flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ flex: 1 }}>
@@ -315,7 +326,7 @@ export function Passport() {
             ) : null}
             <StickerPressable offset="sm" radius={999} onPress={signOut} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper0, paddingVertical: 7, paddingHorizontal: 13 }}>
               <Banner s={9.5} tk={0.1} c={C.ink400}>
-                {profile ? 'Sign out' : 'Create account'}
+                {profile ? t('you.signout') : t('you.create')}
               </Banner>
             </StickerPressable>
           </View>

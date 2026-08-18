@@ -5,10 +5,13 @@
  * then into the Feed. The account persists locally, so returning testers skip
  * straight to the app.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Pressable, Image, TextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
+import { useT } from '../i18n';
+import { sharedEnabled } from '../data/shared';
+import { handleAvailable } from '../data/accounts';
 import { CITIES } from '../data/cities';
 import { TASTE_CUISINES } from '../data/cuisines';
 import { AVATAR_COLORS, initialsOf, suggestHandle } from '../data/profile';
@@ -16,6 +19,7 @@ import { C, col } from '../theme/tokens';
 import { BRAND } from '../assets';
 import { Display, Banner, Serif, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
+import { LangPicker } from '../components/LangPicker';
 import { Roundel } from '../components/Roundel';
 import { Grain } from '../components/Grain';
 import { StampIn } from '../components/Anim';
@@ -50,6 +54,8 @@ export function Onboarding() {
   const toggleTaste = useStore((s) => s.toggleTaste);
   const stampMe = useStore((s) => s.stampMe);
   const createProfile = useStore((s) => s.createProfile);
+  const connectAccount = useStore((s) => s.connectAccount);
+  const t = useT();
 
   // Account draft (kept in local state across the step switch).
   const [name, setName] = useState('');
@@ -58,10 +64,45 @@ export function Onboarding() {
   const [cityId, setCityId] = useState('cdmx');
   const [colorIdx, setColorIdx] = useState(0);
 
+  // Connect-an-existing-account panel (central users directory).
+  const [connecting, setConnecting] = useState(false);
+  const [connHandle, setConnHandle] = useState('');
+  const [connErr, setConnErr] = useState('');
+  const [connBusy, setConnBusy] = useState(false);
+
+  const doConnect = async () => {
+    if (!connHandle.trim() || connBusy) return;
+    setConnBusy(true);
+    setConnErr('');
+    const ok = await connectAccount(connHandle);
+    setConnBusy(false);
+    if (!ok) setConnErr(t('you.notFound'));
+  };
+
   const handleVal = handleEdited ? handleRaw : suggestHandle(name);
   const initials = initialsOf(name || '');
   const avatarColor = AVATAR_COLORS[colorIdx];
   const needTaste = Math.max(0, 3 - tastes.length);
+
+  // Live username availability against the central directory (debounced).
+  const [handleStatus, setHandleStatus] = useState<'idle' | 'checking' | 'free' | 'taken'>('idle');
+  useEffect(() => {
+    const h = handleVal.trim();
+    if (!sharedEnabled() || h.length < 2) {
+      setHandleStatus('idle');
+      return;
+    }
+    setHandleStatus('checking');
+    let alive = true;
+    const timer = setTimeout(async () => {
+      const free = await handleAvailable(h);
+      if (alive) setHandleStatus(free ? 'free' : 'taken');
+    }, 450);
+    return () => {
+      alive = false;
+      clearTimeout(timer);
+    };
+  }, [handleVal]);
 
   const submit = () => {
     createProfile({ name, handle: handleVal, cityId, color: avatarColor });
@@ -76,24 +117,71 @@ export function Onboarding() {
         <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', gap: 16, paddingTop: insets.top + 40, paddingBottom: insets.bottom + 40, paddingHorizontal: 30 }}>
           <Image source={BRAND.logo} style={{ width: 138, height: 138, transform: [{ rotate: '-6deg' }] }} resizeMode="contain" />
           <Banner s={11} tk={0.22} c={C.ink500} style={{ textAlign: 'center' }}>
-            Around the world · around the table
+            {t('ob.tagline')}
           </Banner>
           <Display s={88} c={C.inkDeep} style={{ textAlign: 'center', lineHeight: 82 }}>
             CRTQ
           </Display>
           <Serif s={16} style={{ textAlign: 'center', maxWidth: 282, lineHeight: 25 }}>
-            Rank every place you eat, keep a passport of your city, and find your next table through the friends you actually trust.
+            {t('ob.blurb')}
           </Serif>
-          <StickerPressable offset="sm" radius={999} onPress={obNext} style={{ marginTop: 6, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink400, paddingVertical: 14, paddingHorizontal: 30 }}>
-            <Banner s={14} tk={0.1} c={C.paper0}>
-              Create my passport →
-            </Banner>
-          </StickerPressable>
-          <Pressable onPress={obSkip}>
-            <Mono s={11} c={C.ink600} style={{ textDecorationLine: 'underline' }}>
-              Just let me look around
-            </Mono>
-          </Pressable>
+          {connecting ? (
+            <View style={{ width: '100%', maxWidth: 320, gap: 10, alignItems: 'center' }}>
+              <Banner s={12} tk={0.1} c={C.ink600} style={{ textAlign: 'center' }}>
+                {t('you.connect')}
+              </Banner>
+              <TextInput
+                value={connHandle}
+                onChangeText={(v) => setConnHandle(v.startsWith('@') || v === '' ? v : '@' + v)}
+                placeholder={t('you.enterHandle')}
+                placeholderTextColor={C.inkSoft}
+                autoCapitalize="none"
+                autoCorrect={false}
+                onSubmitEditing={doConnect}
+                style={{ ...inputStyle, width: '100%', textAlign: 'center' }}
+              />
+              {connErr ? (
+                <Mono s={10} c={C.ink600} style={{ textAlign: 'center' }}>
+                  {connErr}
+                </Mono>
+              ) : null}
+              <StickerPressable offset="sm" radius={999} onPress={doConnect} disabled={connBusy || !connHandle.trim()} style={{ width: '100%', alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.stampGreen, paddingVertical: 13, opacity: connBusy || !connHandle.trim() ? 0.5 : 1 }}>
+                <Banner s={13} tk={0.1} c={C.paper0}>
+                  {connBusy ? t('you.checking') : t('you.connectCta')}
+                </Banner>
+              </StickerPressable>
+              <Pressable onPress={() => { setConnecting(false); setConnErr(''); }}>
+                <Mono s={11} c={C.ink600} style={{ textDecorationLine: 'underline' }}>
+                  {t('common.back')}
+                </Mono>
+              </Pressable>
+            </View>
+          ) : (
+            <>
+              <StickerPressable offset="sm" radius={999} onPress={obNext} style={{ marginTop: 6, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink400, paddingVertical: 14, paddingHorizontal: 30 }}>
+                <Banner s={14} tk={0.1} c={C.paper0}>
+                  {t('ob.create')}
+                </Banner>
+              </StickerPressable>
+              <Pressable onPress={obSkip}>
+                <Mono s={11} c={C.ink600} style={{ textDecorationLine: 'underline' }}>
+                  {t('ob.look')}
+                </Mono>
+              </Pressable>
+              {sharedEnabled() ? (
+                <Pressable onPress={() => setConnecting(true)} style={{ marginTop: 2 }}>
+                  <Mono s={11} c={C.ink600}>
+                    {t('you.have')}{'  '}
+                    <Mono s={11} c={C.ink400} style={{ textDecorationLine: 'underline' }}>
+                      {t('you.connectCta')}
+                    </Mono>
+                  </Mono>
+                </Pressable>
+              ) : null}
+            </>
+          )}
+          <View style={{ height: 8 }} />
+          <LangPicker showLabels size={38} />
         </ScrollView>
       </View>
     );
@@ -138,15 +226,25 @@ export function Onboarding() {
           <Field label="Handle">
             <TextInput
               value={handleVal}
-              onChangeText={(t) => {
+              onChangeText={(v) => {
                 setHandleEdited(true);
-                setHandleRaw(t.startsWith('@') ? t : '@' + t);
+                setHandleRaw(v.startsWith('@') ? v : '@' + v);
               }}
               placeholder="@you"
               placeholderTextColor={C.inkSoft}
               autoCapitalize="none"
+              autoCorrect={false}
               style={inputStyle}
             />
+            {handleStatus !== 'idle' ? (
+              <Mono
+                s={10}
+                c={handleStatus === 'taken' ? C.ink500 : handleStatus === 'free' ? C.stampGreen : C.inkSoft}
+                style={{ marginTop: 6 }}
+              >
+                {handleStatus === 'checking' ? t('ob.handleChecking') : handleStatus === 'free' ? t('ob.handleFree') : t('ob.handleTaken')}
+              </Mono>
+            ) : null}
           </Field>
           <Field label="Home city">
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
@@ -184,12 +282,12 @@ export function Onboarding() {
           <StickerPressable
             offset="sm"
             radius={999}
-            onPress={() => (name.trim() ? obNext() : undefined)}
-            disabled={!name.trim()}
-            style={{ marginTop: 24, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink400, paddingVertical: 14, opacity: name.trim() ? 1 : 0.45 }}
+            onPress={() => (name.trim() && handleStatus !== 'taken' ? obNext() : undefined)}
+            disabled={!name.trim() || handleStatus === 'taken'}
+            style={{ marginTop: 24, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink400, paddingVertical: 14, opacity: name.trim() && handleStatus !== 'taken' ? 1 : 0.45 }}
           >
             <Banner s={14} tk={0.1} c={C.paper0}>
-              {name.trim() ? 'Continue →' : 'Add your name'}
+              {!name.trim() ? 'Add your name' : handleStatus === 'taken' ? t('ob.handleTaken') : 'Continue →'}
             </Banner>
           </StickerPressable>
         </ScrollView>

@@ -6,8 +6,10 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Profile } from './profile';
+import type { Lang } from '../i18n';
 
 const KEY = 'nmc.profile.v1';
+const LANG_KEY = 'nmc.lang.v1';
 
 export async function loadProfile(): Promise<Profile | null> {
   try {
@@ -31,5 +33,24 @@ export async function clearProfile(): Promise<void> {
     await AsyncStorage.removeItem(KEY);
   } catch {
     // ignore
+  }
+}
+
+const LANGS: Lang[] = ['en', 'es', 'fr'];
+
+export async function loadLang(): Promise<Lang | null> {
+  try {
+    const raw = await AsyncStorage.getItem(LANG_KEY);
+    return raw && (LANGS as string[]).includes(raw) ? (raw as Lang) : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveLang(lang: Lang): Promise<void> {
+  try {
+    await AsyncStorage.setItem(LANG_KEY, lang);
+  } catch {
+    // non-fatal: language still applies for this session
   }
 }

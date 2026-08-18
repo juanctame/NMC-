@@ -7,6 +7,7 @@ import React from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
+import { useT } from '../i18n';
 import { EVENTS, OPEN, PARTY, THREADS, type EventT } from '../store/data';
 import { C, col } from '../theme/tokens';
 import { isCritic } from '../data/profile';
@@ -189,6 +190,7 @@ export function Table() {
   const openMap = useStore((s) => s.openMap);
   const profile = useStore((s) => s.profile);
   const critic = isCritic(profile);
+  const tr = useT();
 
   const seedTables: EventT[] = [...createdTables, ...OPEN, ...EVENTS];
 
@@ -197,7 +199,7 @@ export function Table() {
       <View style={{ paddingTop: insets.top + 12, paddingHorizontal: 20, backgroundColor: C.sun400, borderBottomWidth: 2.5, borderBottomColor: C.inkBlack }}>
         <Grain opacity={0.06} />
         <Display s={30} c={C.inkDeep}>
-          The Table
+          {tr('table.header')}
         </Display>
         <SerifItalic s={13} c={C.ink700} style={{ marginTop: 3 }}>
           Eat together — events, community, and the club.
@@ -205,8 +207,8 @@ export function Table() {
         <View style={{ marginTop: 14 }}>
           <Segmented
             items={[
-              { key: 'events', label: 'Events' },
-              { key: 'community', label: 'Community' },
+              { key: 'events', label: tr('table.events') },
+              { key: 'community', label: tr('table.community') },
             ]}
             value={tableSeg}
             onChange={(k) => setTableSeg(k as any)}

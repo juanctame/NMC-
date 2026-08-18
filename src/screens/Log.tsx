@@ -8,6 +8,7 @@ import React, { useMemo } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
+import { useT } from '../i18n';
 import { byId, RECS, type Place } from '../store/data';
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { C } from '../theme/tokens';
@@ -328,6 +329,7 @@ export function Log() {
   const setLogSeg = useStore((s) => s.setLogSeg);
   const ranked = useStore((s) => s.ranked); // stable ref — derive lists below
   const wantIds = useStore((s) => s.wantIds);
+  const t = useT();
 
   const scored = ranked.filter((r) => r.score != null);
   const podium = scored.slice(0, 3);
@@ -338,7 +340,7 @@ export function Log() {
       <View style={{ paddingTop: insets.top + 12, paddingHorizontal: 20, backgroundColor: C.paper50, borderBottomWidth: 2.5, borderBottomColor: C.inkBlack }}>
         <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <Display s={30} c={C.inkDeep}>
-            Your guide
+            {t('log.title')}
           </Display>
           <Mono s={10} c={C.inkMuted}>
             {scored.length} stamped
@@ -350,9 +352,9 @@ export function Log() {
         <View style={{ marginTop: 14 }}>
           <Segmented
             items={[
-              { key: 'been', label: 'Been' },
-              { key: 'want', label: 'Want to try' },
-              { key: 'recs', label: 'Recs' },
+              { key: 'been', label: t('log.been') },
+              { key: 'want', label: t('log.want') },
+              { key: 'recs', label: t('log.recs') },
             ]}
             value={logSeg}
             onChange={(k) => setLogSeg(k as any)}
