@@ -75,27 +75,6 @@ export function computePalate(ranked: Place[], tastes: string[] = [], reviews: R
   const distinct = Object.keys(cuisineCount).length;
   raw.mundo += distinct * 0.5; // variety feeds the "world" axis
 
-  // Normalize each axis to 0..1 relative to the strongest, so the shape fills.
-  const max = Math.max(...PALATE_AXES.map((k) => raw[k]), 0.001);
-  const axes: PalateAxis[] = PALATE_AXES.map((k) => ({ key: k, value: clamp(0.12 + 0.88 * (raw[k] / max), 0.12, 1) }));
-
-  // Archetype: the strongest axis, unless the profile is flat / very varied.
-  const total = PALATE_AXES.reduce((s, k) => s + raw[k], 0) || 1;
-  let topKey: AxisKey = 'mundo';
-  let topVal = -1;
-  PALATE_AXES.forEach((k) => {
-    if (raw[k] > topVal) {
-      topVal = raw[k];
-      topKey = k;
-    }
-  });
-  const dominance = topVal / total;
-  let archId: string;
-  if (ranked.length === 0) archId = 'nuevo';
-  else if (distinct >= 6 && dominance < 0.34) archId = 'trotamundos';
-  else if (dominance < 0.26) archId = 'todoterreno';
-  else archId = ARCH_FOR_AXIS[topKey];
-
   const topCuisines = Object.entries(cuisineCount)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
@@ -118,7 +97,7 @@ export function computePalate(ranked: Place[], tastes: string[] = [], reviews: R
 
   const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
 
-  return { archId, axes, topCuisines, goToDishes, sampleSize: ranked.length, distinct, avg };
+  return finalizePalate(raw, { sampleSize: ranked.length, distinct, topCuisines, goToDishes, avg });
 }
 
 const ARCH_FOR_AXIS: Record<AxisKey, string> = {
@@ -129,6 +108,75 @@ const ARCH_FOR_AXIS: Record<AxisKey, string> = {
   fuego: 'fuego',
   mundo: 'trotamundos',
 };
+
+/** Shared tail: normalize the raw axis weights into a shape + pick an archetype. */
+function finalizePalate(
+  raw: Record<AxisKey, number>,
+  opts: { sampleSize: number; distinct: number; topCuisines: Palate['topCuisines']; goToDishes: string[]; avg: number }
+): Palate {
+  const { sampleSize, distinct, topCuisines, goToDishes, avg } = opts;
+  const max = Math.max(...PALATE_AXES.map((k) => raw[k]), 0.001);
+  const axes: PalateAxis[] = PALATE_AXES.map((k) => ({ key: k, value: clamp(0.12 + 0.88 * (raw[k] / max), 0.12, 1) }));
+
+  const total = PALATE_AXES.reduce((s, k) => s + raw[k], 0) || 1;
+  let topKey: AxisKey = 'mundo';
+  let topVal = -1;
+  PALATE_AXES.forEach((k) => {
+    if (raw[k] > topVal) {
+      topVal = raw[k];
+      topKey = k;
+    }
+  });
+  const dominance = topVal / total;
+  let archId: string;
+  if (sampleSize === 0) archId = 'nuevo';
+  else if (distinct >= 6 && dominance < 0.34) archId = 'trotamundos';
+  else if (dominance < 0.26) archId = 'todoterreno';
+  else archId = ARCH_FOR_AXIS[topKey];
+
+  return { archId, axes, topCuisines, goToDishes, sampleSize, distinct, avg };
+}
+
+/** Each seeded friend's taste lean, so their palate + archetype are distinct. */
+type Lean = { primary: AxisKey; secondary: AxisKey; cuisines: string[] };
+const FRIEND_LEANS: Record<string, Lean> = {
+  rm: { primary: 'mar', secondary: 'mantel', cuisines: ['Seafood', 'Contemporary', 'Mexican', 'Mediterranean'] },
+  df: { primary: 'fuego', secondary: 'calle', cuisines: ['Mexican', 'Bar', 'Street Food', 'Desserts'] },
+  ml: { primary: 'dulce', secondary: 'mundo', cuisines: ['Bakery', 'Café', 'Desserts', 'Contemporary'] },
+  sr: { primary: 'mantel', secondary: 'mundo', cuisines: ['Fine Dining', 'Contemporary', 'Mediterranean', 'Seafood'] },
+  av: { primary: 'calle', secondary: 'fuego', cuisines: ['Street Food', 'Mexican', 'Bakery', 'Bar'] },
+};
+
+/** A palate for a friend (who has no ranked list) from their taste lean + id. */
+export function friendPalate(f: { id: string; total?: number }): Palate {
+  const lean = FRIEND_LEANS[f.id] || { primary: 'mundo', secondary: 'fuego', cuisines: ['Mexican', 'Seafood', 'Bakery'] };
+  const raw: Record<AxisKey, number> = { calle: 0.2, mantel: 0.2, mar: 0.2, dulce: 0.2, fuego: 0.2, mundo: 0.2 };
+  let h = 0;
+  for (let i = 0; i < f.id.length; i++) h = (Math.imul(h, 31) + f.id.charCodeAt(i)) >>> 0;
+  PALATE_AXES.forEach((k, i) => (raw[k] += ((h >> (i * 3)) & 7) / 22)); // deterministic jitter
+  raw[lean.primary] += 1.4;
+  raw[lean.secondary] += 0.7;
+  const cuisines = lean.cuisines.slice(0, 5);
+  const total = cuisines.reduce((s, _, i) => s + (6 - i), 0);
+  const topCuisines = cuisines.map((name, i) => ({ name, count: 6 - i, pct: (6 - i) / total, color: cuisineColor(name) }));
+  return finalizePalate(raw, { sampleSize: f.total || 40, distinct: cuisines.length + 2, topCuisines, goToDishes: [], avg: 0 });
+}
+
+/** The palate's shape as a plain vector (for comparisons). */
+export function axisVector(p: Palate): number[] {
+  return p.axes.map((a) => a.value);
+}
+
+/** Taste compatibility 0–100 between two palates (closer shape = higher). */
+export function tasteMatch(a: Palate, b: Palate): number {
+  const va = axisVector(a);
+  const vb = axisVector(b);
+  let d = 0;
+  for (let i = 0; i < va.length; i++) d += (va[i] - vb[i]) ** 2;
+  d = Math.sqrt(d);
+  const maxD = 0.88 * Math.sqrt(PALATE_AXES.length);
+  return Math.max(0, Math.min(100, Math.round(100 * (1 - d / maxD))));
+}
 
 /** Archetype ids (copy resolved via i18n: arch.<id>.t / arch.<id>.b). */
 export const ARCHETYPES = ['banqueta', 'mantel', 'mar', 'dulce', 'fuego', 'trotamundos', 'todoterreno', 'nuevo'] as const;

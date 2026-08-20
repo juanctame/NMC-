@@ -12,6 +12,7 @@ import { useT } from '../i18n';
 import { FRIENDS, byId, type Place } from '../store/data';
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { identity } from '../data/profile';
+import { computePalate, friendPalate, tasteMatch } from '../data/palate';
 import { C, col } from '../theme/tokens';
 import { photo } from '../assets';
 import { Display, Banner, Serif, SerifItalic, SerifDisplay, Mono } from '../components/Text';
@@ -32,7 +33,16 @@ function DinersBoard() {
   const follows = useStore((s) => s.follows);
   const toggleFollow = useStore((s) => s.toggleFollow);
   const profile = useStore((s) => s.profile);
+  const ranked = useStore((s) => s.ranked);
+  const tastes = useStore((s) => s.tastes);
+  const userReviews = useStore((s) => s.userReviews);
+  const openFoodie = useStore((s) => s.openFoodie);
+  const t = useT();
   const idn = identity(profile);
+
+  // My palate → taste-match against each friend.
+  const myPalate = computePalate(ranked, tastes, userReviews);
+  const matchOf = (id: string) => tasteMatch(myPalate, friendPalate({ id }));
 
   const me = { id: 'me', name: `You · ${idn.name.split(' ')[0]}`, initials: idn.initials, color: idn.color, year: 41, match: 'your log', isMe: true };
   const all = [...FRIENDS, me].slice().sort((a, b) => b.year - a.year);
@@ -44,8 +54,9 @@ function DinersBoard() {
         {podium.map((p, i) => {
           const size = i === 0 ? 68 : 56;
           const rot = i === 0 ? '-5deg' : i === 1 ? '4deg' : '-3deg';
+          const isMe = 'isMe' in p && (p as any).isMe;
           return (
-            <View key={p.id} style={{ flex: 1, alignItems: 'center', gap: 6 }}>
+            <Pressable key={p.id} onPress={() => (isMe ? undefined : openFoodie(p.id))} style={{ flex: 1, alignItems: 'center', gap: 6 }}>
               <StickerView offset="sm" radius={999} style={{ transform: [{ rotate: rot }] }}>
                 <View style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: col(p.color), borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
                   <Banner s={14} c={C.paper0}>
@@ -60,9 +71,9 @@ function DinersBoard() {
                 {p.name.replace('You · ', '')}
               </Banner>
               <Mono s={9} c={C.inkMuted}>
-                {p.year} places
+                {isMe ? `${p.year} places` : `${matchOf(p.id)}% ${t('foodie.matchShort')}`}
               </Mono>
-            </View>
+            </Pressable>
           );
         })}
       </View>
@@ -82,14 +93,14 @@ function DinersBoard() {
                   {p.initials}
                 </Banner>
               </View>
-              <View style={{ flex: 1, minWidth: 0 }}>
+              <Pressable disabled={isMe} onPress={() => openFoodie(p.id)} style={{ flex: 1, minWidth: 0 }}>
                 <Banner s={12} tk={0.04} c={C.inkDeep} numberOfLines={1}>
                   {p.name}
                 </Banner>
                 <Mono s={9.5} c={C.inkMuted} style={{ marginTop: 2 }}>
-                  {p.year} this year · {isMe ? 'your log' : (p as (typeof FRIENDS)[number]).match + ' taste match'}
+                  {p.year} this year · {isMe ? 'your log' : `${matchOf(p.id)}% ${t('foodie.matchShort')}`}
                 </Mono>
-              </View>
+              </Pressable>
               {isMe ? (
                 <View style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.sun400, paddingVertical: 6, paddingHorizontal: 11 }}>
                   <Banner s={9} tk={0.1} c={C.inkDeep}>

@@ -14,7 +14,8 @@ import { useT } from '../i18n';
 import { scoreStyle, fmt } from '../store/helpers';
 import { C, col } from '../theme/tokens';
 import { identity, isCritic, formatFollowers, CRITIC_BEATS } from '../data/profile';
-import { computePalate, PALATE_AXES } from '../data/palate';
+import { computePalate, friendPalate, tasteMatch, PALATE_AXES } from '../data/palate';
+import { FRIENDS } from '../store/data';
 import { cityById } from '../data/cities';
 import { Display, Banner, Serif, SerifItalic, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
@@ -114,6 +115,8 @@ export function Passport() {
   const tastes = useStore((s) => s.tastes);
   const userReviews = useStore((s) => s.userReviews);
   const setBio = useStore((s) => s.setBio);
+  const openFoodie = useStore((s) => s.openFoodie);
+  const openTasteCard = useStore((s) => s.openTasteCard);
   const t = useT();
 
   const me = identity(profile);
@@ -137,6 +140,9 @@ export function Passport() {
   const chase = tastes.length ? tastes : palate.topCuisines.map((c) => c.name);
   const archBlurb = t('arch.' + palate.archId + '.b');
   const dnaTotal = palate.topCuisines.reduce((sum, c) => sum + c.count, 0) || 1;
+  const closest = FRIENDS.map((f) => ({ f, m: tasteMatch(palate, friendPalate(f)) }))
+    .sort((a, b) => b.m - a.m)
+    .slice(0, 3);
 
   // Manifesto (the foodie's "ideas", in their own words) — inline editor.
   const [editingBio, setEditingBio] = useState(false);
@@ -218,9 +224,16 @@ export function Passport() {
 
         {/* taste identity — the foodie's unique palate, derived from their log */}
         <View style={{ paddingTop: 20, paddingHorizontal: 16 }}>
-          <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
-            {t('you.tasteId')}
-          </Banner>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+            <Banner s={10} tk={0.16} c={C.inkMuted}>
+              {t('you.tasteId')}
+            </Banner>
+            <Pressable onPress={openTasteCard}>
+              <Banner s={9.5} tk={0.1} c={C.ink400}>
+                ⤴ {t('you.shareCard')}
+              </Banner>
+            </Pressable>
+          </View>
           <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, padding: 16, overflow: 'hidden' }}>
             <Grain opacity={0.05} />
             <Display s={25} c={C.ink400} style={{ lineHeight: 26 }}>
@@ -294,6 +307,48 @@ export function Passport() {
             )}
           </StickerView>
         </View>
+
+        {/* palates like yours — friends ranked by taste match */}
+        {closest.length ? (
+          <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
+            <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
+              {t('you.closest')}
+            </Banner>
+            <View style={{ gap: 8 }}>
+              {closest.map(({ f, m }) => {
+                const fp = friendPalate(f);
+                const mc = m >= 80 ? C.stampGreen : m >= 60 ? C.sun500 : C.ink400;
+                return (
+                  <StickerPressable
+                    key={f.id}
+                    offset="sm"
+                    onPress={() => openFoodie(f.id)}
+                    style={{ flexDirection: 'row', alignItems: 'center', gap: 11, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 9, paddingHorizontal: 12 }}
+                  >
+                    <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: col(f.color), borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-4deg' }] }}>
+                      <Banner s={11} c={C.paper0}>
+                        {f.initials}
+                      </Banner>
+                    </View>
+                    <View style={{ flex: 1, minWidth: 0 }}>
+                      <Banner s={11.5} tk={0.04} c={C.inkDeep} numberOfLines={1}>
+                        {f.name}
+                      </Banner>
+                      <SerifItalic s={12} c={C.inkMuted} numberOfLines={1}>
+                        {t('arch.' + fp.archId + '.t')}
+                      </SerifItalic>
+                    </View>
+                    <View style={{ alignItems: 'center', backgroundColor: mc, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 10 }}>
+                      <Banner s={12} c={C.paper0}>
+                        {m}%
+                      </Banner>
+                    </View>
+                  </StickerPressable>
+                );
+              })}
+            </View>
+          </View>
+        ) : null}
 
         {/* critic's desk — only verified critics can host events */}
         {critic ? (

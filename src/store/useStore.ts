@@ -153,6 +153,7 @@ export type Screen =
   | 'thread'
   | 'club'
   | 'channel'
+  | 'foodie'
   | 'map'
   | 'reel';
 
@@ -273,6 +274,10 @@ export type State = {
   channelComposerOpen: boolean;
   channelDraftKind: string;
   channelDraft: Record<string, string>;
+
+  // Taste identity: viewing another foodie, and the shareable taste card.
+  activeFoodieId: string | null;
+  tasteCardOpen: boolean;
 };
 
 export type Actions = {
@@ -374,6 +379,10 @@ export type Actions = {
   setChannelDraftKind: (kind: string) => void;
   setChannelDraftField: (key: string, value: string) => void;
   postToChannel: () => void;
+  // taste identity
+  openFoodie: (id: string) => void;
+  openTasteCard: () => void;
+  closeTasteCard: () => void;
 };
 
 /** Resolve a place by id across the seed catalog and live-loaded nearby set. */
@@ -468,6 +477,8 @@ const initialState = (): State => ({
   channelComposerOpen: false,
   channelDraftKind: '',
   channelDraft: {},
+  activeFoodieId: null,
+  tasteCardOpen: false,
 });
 
 function findTable(s: State, id: string | null) {
@@ -1014,6 +1025,11 @@ export const useStore = create<State & Actions>((set, get) => ({
     saveChannelPosts(next);
     set({ channelUserPosts: next, channelComposerOpen: false, channelDraft: {}, channelDraftKind: '' });
   },
+
+  // ── taste identity ──
+  openFoodie: (id) => set({ activeFoodieId: id, screen: 'foodie' }),
+  openTasteCard: () => set({ tasteCardOpen: true }),
+  closeTasteCard: () => set({ tasteCardOpen: false }),
 }));
 
 // ── rank-engine internals (kept outside the object to share set/get) ──

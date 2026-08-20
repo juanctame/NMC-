@@ -15,10 +15,14 @@ export function PalateRadar({
   axes,
   labels,
   size = 220,
+  showLabels = true,
+  fill = C.sun400,
 }: {
   axes: PalateAxis[];
   labels: string[];
   size?: number;
+  showLabels?: boolean;
+  fill?: string;
 }) {
   const cx = size / 2;
   const cy = size / 2;
@@ -48,14 +52,14 @@ export function PalateRadar({
           return <Line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke={C.inkBlack} strokeOpacity={0.14} strokeWidth={1.5} />;
         })}
         {/* value shape */}
-        <Polygon points={valuePts} fill={C.sun400} fillOpacity={0.6} stroke={C.inkBlack} strokeWidth={2.5} strokeLinejoin="round" />
+        <Polygon points={valuePts} fill={fill} fillOpacity={0.6} stroke={C.inkBlack} strokeWidth={2.5} strokeLinejoin="round" />
         {axes.map((ax, i) => {
           const [x, y] = vertex(i, R * ax.value);
           return <Circle key={i} cx={x} cy={y} r={3.5} fill={C.ink400} stroke={C.inkBlack} strokeWidth={1.5} />;
         })}
       </Svg>
       {/* axis labels floated just outside the rim */}
-      {axes.map((_, i) => {
+      {showLabels && axes.map((_, i) => {
         const a = angleAt(i);
         const outX = cx + R * 1.16 * Math.cos(a);
         const outY = cy + R * 1.16 * Math.sin(a);

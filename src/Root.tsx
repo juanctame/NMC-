@@ -23,6 +23,7 @@ import { Ticket } from './screens/Ticket';
 import { Thread } from './screens/Thread';
 import { DineClub } from './screens/DineClub';
 import { Channel } from './screens/Channel';
+import { FoodieProfile } from './screens/FoodieProfile';
 import { NearbyMap } from './screens/NearbyMap';
 import { Reel } from './screens/Reel';
 
@@ -30,6 +31,7 @@ import { RankFlow } from './overlays/RankFlow';
 import { AttachSheet } from './overlays/AttachSheet';
 import { CreateTable } from './overlays/CreateTable';
 import { ChannelComposer } from './overlays/ChannelComposer';
+import { TasteCard } from './overlays/TasteCard';
 import { VideoOverlay } from './components/VideoOverlay';
 
 const SCREENS: Record<Screen, React.ComponentType> = {
@@ -45,6 +47,7 @@ const SCREENS: Record<Screen, React.ComponentType> = {
   thread: Thread,
   club: DineClub,
   channel: Channel,
+  foodie: FoodieProfile,
   map: NearbyMap,
   reel: Reel,
 };
@@ -60,6 +63,7 @@ export function Root() {
   const reviewOpen = useStore((s) => s.reviewOpen);
   const videoOpen = useStore((s) => !!s.videoUrl);
   const channelComposerOpen = useStore((s) => s.channelComposerOpen);
+  const tasteCardOpen = useStore((s) => s.tasteCardOpen);
   const nearbyStatus = useStore((s) => s.nearbyStatus);
   const loadNearby = useStore((s) => s.loadNearby);
 
@@ -69,7 +73,7 @@ export function Root() {
   }, [nearbyStatus, loadNearby]);
 
   const Active = SCREENS[screen] ?? Feed;
-  const anyOverlay = rankOpen || attachOpen || createOpen || citySheetOpen || reviewOpen || videoOpen || channelComposerOpen;
+  const anyOverlay = rankOpen || attachOpen || createOpen || citySheetOpen || reviewOpen || videoOpen || channelComposerOpen || tasteCardOpen;
   const showTabBar = ROOT_TABS.includes(screen) && !anyOverlay;
 
   return (
@@ -82,6 +86,7 @@ export function Root() {
       {citySheetOpen ? <CitySheet /> : null}
       {reviewOpen ? <ReviewComposer /> : null}
       {channelComposerOpen ? <ChannelComposer /> : null}
+      {tasteCardOpen ? <TasteCard /> : null}
       <VideoOverlay />
     </View>
   );
