@@ -17,6 +17,10 @@ export type Profile = {
   role: Role; // regular diner vs verified critic
   beat?: string; // critic's specialty ("Tacos & antojitos")
   followers?: number; // critic audience (seeded starter for the pilot)
+  // Set when the account is backed by a real Supabase Auth user (Google sign-in).
+  userId?: string; // Supabase auth.users id (uuid)
+  email?: string; // from the Google identity
+  avatarUrl?: string; // Google profile photo
 };
 
 export const AVATAR_COLORS = [
@@ -74,6 +78,48 @@ export function makeProfile(input: { name: string; handle: string; cityId: strin
     joined: `${MONTHS[d.getMonth()]} ${d.getFullYear()}`,
     role: 'nomad',
   };
+}
+
+/** Stable avatar color from a string (so a Google account keeps its color). */
+function colorFor(seed: string): string {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+
+/**
+ * Build a profile from a Google (Supabase Auth) identity. The handle is derived
+ * from the caller (deduped upstream); color/passport are stable per user.
+ */
+export function makeProfileFromAuth(input: {
+  userId: string;
+  email: string;
+  name: string;
+  handle: string;
+  avatarUrl?: string;
+  cityId?: string;
+}): Profile {
+  const d = new Date();
+  const name = input.name.trim() || (input.email ? input.email.split('@')[0] : 'New Nomad');
+  return {
+    name,
+    handle: input.handle,
+    cityId: input.cityId || 'cdmx',
+    initials: initialsOf(name),
+    color: colorFor(input.userId || input.email || name),
+    passportNo: 1000 + (Math.abs(hashStr(input.userId || input.email)) % 8999),
+    joined: `${MONTHS[d.getMonth()]} ${d.getFullYear()}`,
+    role: 'nomad',
+    userId: input.userId,
+    email: input.email,
+    avatarUrl: input.avatarUrl,
+  };
+}
+
+function hashStr(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (Math.imul(h, 31) + s.charCodeAt(i)) | 0;
+  return h;
 }
 
 /** Demo identity used as a fallback before an account exists. */

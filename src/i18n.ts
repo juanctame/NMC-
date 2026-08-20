@@ -120,6 +120,11 @@ const STRINGS: Record<string, [string, string, string]> = {
     'Connectez-vous avec votre identifiant pour synchroniser votre passeport.',
   ],
   'you.have': ['Already have a passport?', '¿Ya tienes pasaporte?', 'Déjà un passeport ?'],
+  // ── auth (Google sign-in) ──
+  'auth.google': ['Continue with Google', 'Continúa con Google', 'Continuer avec Google'],
+  'auth.or': ['or', 'o', 'ou'],
+  'auth.failed': ['Sign-in failed — please try again.', 'Error al iniciar sesión — inténtalo de nuevo.', 'Échec de la connexion — réessayez.'],
+  'you.googleAccount': ['Google account', 'Cuenta de Google', 'Compte Google'],
   'you.connectCta': ['Connect →', 'Conectar →', 'Se connecter →'],
   'you.enterHandle': ['Your handle (e.g. @june)', 'Tu usuario (ej. @june)', 'Votre identifiant (ex. @june)'],
   'you.notFound': [

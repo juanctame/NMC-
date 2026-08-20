@@ -20,9 +20,33 @@ import { DEFAULT_CITY, cityById, type City } from '../data/cities';
 import { getProvider, fixtureFallback } from '../data/provider';
 import { REVIEWS, DISH_PHOTOS, type Review } from '../data/reviews';
 import { fetchSharedReviews, pushSharedReview } from '../data/shared';
-import { makeProfile, identity, type Profile } from '../data/profile';
-import { loadProfile, saveProfile, clearProfile, loadLang, saveLang } from '../data/storage';
-import { registerProfile, fetchProfileByHandle } from '../data/accounts';
+import { makeProfile, makeProfileFromAuth, identity, type Profile } from '../data/profile';
+import {
+  loadProfile,
+  saveProfile,
+  clearProfile,
+  loadLang,
+  saveLang,
+  loadSession,
+  saveSession,
+  clearSession,
+} from '../data/storage';
+import {
+  registerProfile,
+  fetchProfileByHandle,
+  fetchProfileByEmail,
+  handleFromEmail,
+  uniqueHandle,
+} from '../data/accounts';
+import {
+  signInWithGoogle as authSignInWithGoogle,
+  consumeAuthRedirect,
+  fetchAuthUser,
+  refreshSession,
+  signOutRemote,
+  type Session,
+  type AuthUser,
+} from '../data/auth';
 import { TRENDING_VIDEOS, type TrendingVideo } from '../data/videos';
 import { searchPlaceVideos } from '../data/videosLive';
 import type { Lang } from '../i18n';
@@ -217,6 +241,11 @@ export type State = {
   profile: Profile | null;
   hydrated: boolean;
 
+  // Auth (Supabase — Google sign-in)
+  authUser: AuthUser | null;
+  session: Session | null;
+  authError: string | null;
+
   // Language (flag-picked i18n)
   lang: Lang;
 
@@ -308,6 +337,7 @@ export type Actions = {
   stepDownCritic: () => void;
   signOut: () => void;
   connectAccount: (handle: string) => Promise<boolean>;
+  signInWithGoogle: () => void;
   // language
   setLang: (lang: Lang) => void;
   // hashtag videos
@@ -394,6 +424,9 @@ const initialState = (): State => ({
   reviewDraftDishPhoto: DISH_PHOTOS[0],
   profile: null,
   hydrated: false,
+  authUser: null,
+  session: null,
+  authError: null,
   lang: 'en',
   placeVideos: {},
   placeVideosStatus: {},
@@ -407,6 +440,35 @@ function findTable(s: State, id: string | null) {
 function rankRow(s: State, id: string) {
   const idx = s.ranked.findIndex((r) => r.id === id);
   return idx < 0 ? null : { idx, item: s.ranked[idx] };
+}
+
+/**
+ * Resolve the app profile for a signed-in Google user: reuse their existing
+ * account (matched by email) or create a fresh one from their Google identity
+ * with a unique handle. Always returns a usable profile, even offline.
+ */
+async function profileForAuthUser(user: AuthUser): Promise<Profile> {
+  const existing = user.email ? await fetchProfileByEmail(user.email) : null;
+  if (existing) {
+    const merged: Profile = {
+      ...existing,
+      userId: existing.userId || user.id,
+      email: existing.email || user.email,
+      avatarUrl: user.avatarUrl || existing.avatarUrl,
+    };
+    void registerProfile(merged);
+    return merged;
+  }
+  const handle = await uniqueHandle(handleFromEmail(user.email, user.name));
+  const p = makeProfileFromAuth({
+    userId: user.id,
+    email: user.email,
+    name: user.name,
+    handle,
+    avatarUrl: user.avatarUrl,
+  });
+  void registerProfile(p);
+  return p;
 }
 
 export const useStore = create<State & Actions>((set, get) => ({
@@ -687,8 +749,47 @@ export const useStore = create<State & Actions>((set, get) => ({
 
   // ── account (local profile) ──
   hydrate: async () => {
-    const [p, lang] = await Promise.all([loadProfile(), loadLang()]);
+    const lang = await loadLang();
     if (lang) set({ lang });
+
+    // 1) Returning from a Google sign-in? Implicit-flow tokens arrive in the URL hash.
+    const redirect = consumeAuthRedirect();
+    if (redirect.error) set({ authError: redirect.error });
+    let session: Session | null = redirect.session || null;
+
+    // 2) Otherwise restore a stored session (refresh it if it has expired).
+    if (!session) {
+      const stored = await loadSession();
+      if (stored) {
+        session = stored.expires_at > Date.now() + 60_000 ? stored : await refreshSession(stored.refresh_token);
+      }
+    }
+
+    // 3) With a valid session, resolve the Google user + their app profile.
+    if (session) {
+      const user = await fetchAuthUser(session.access_token);
+      if (user && user.id) {
+        const full: Session = { ...session, user };
+        await saveSession(full);
+        const prof = await profileForAuthUser(user);
+        saveProfile(prof);
+        set({
+          authUser: user,
+          session: full,
+          profile: prof,
+          city: cityById(prof.cityId),
+          screen: 'feed',
+          nearbyStatus: 'idle',
+          hydrated: true,
+        });
+        return;
+      }
+      // Token no longer valid — drop it and fall through to local/guest.
+      await clearSession();
+    }
+
+    // 4) No auth session: fall back to the local (handle-based) profile as before.
+    const p = await loadProfile();
     if (p) set({ profile: p, city: cityById(p.cityId), screen: 'feed', nearbyStatus: 'idle' });
     else set({ screen: SKIP_ONBOARDING ? 'feed' : 'onboard' });
     set({ hydrated: true });
@@ -719,8 +820,15 @@ export const useStore = create<State & Actions>((set, get) => ({
     set({ profile: p });
   },
   signOut: () => {
+    const s = get();
+    if (s.session) void signOutRemote(s.session.access_token);
     clearProfile();
-    set({ profile: null, screen: 'onboard', obStep: 0, tastes: [], stamped: false });
+    clearSession();
+    set({ profile: null, authUser: null, session: null, authError: null, screen: 'onboard', obStep: 0, tastes: [], stamped: false });
+  },
+  signInWithGoogle: () => {
+    set({ authError: null });
+    authSignInWithGoogle(); // navigates the browser to Google (web); no-op on native
   },
   connectAccount: async (handle) => {
     const found = await fetchProfileByHandle(handle);

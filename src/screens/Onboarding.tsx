@@ -12,6 +12,7 @@ import { useStore } from '../store/useStore';
 import { useT } from '../i18n';
 import { sharedEnabled } from '../data/shared';
 import { handleAvailable } from '../data/accounts';
+import { googleAuthEnabled } from '../data/auth';
 import { CITIES } from '../data/cities';
 import { TASTE_CUISINES } from '../data/cuisines';
 import { AVATAR_COLORS, initialsOf, suggestHandle } from '../data/profile';
@@ -31,6 +32,17 @@ const RULES = [
   'Be kind — no hate, no spam, no creeps at the table.',
   'Show up — hosts hold your seat. Honor it.',
 ];
+
+/** The Google "G" mark, drawn simply from text so it needs no image asset. */
+function GoogleG({ size = 20 }: { size?: number }) {
+  return (
+    <View style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: '#FFFFFF', borderWidth: 1.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+      <Banner s={size * 0.62} c="#4285F4" style={{ marginTop: -1 }}>
+        G
+      </Banner>
+    </View>
+  );
+}
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -55,6 +67,8 @@ export function Onboarding() {
   const stampMe = useStore((s) => s.stampMe);
   const createProfile = useStore((s) => s.createProfile);
   const connectAccount = useStore((s) => s.connectAccount);
+  const signInWithGoogle = useStore((s) => s.signInWithGoogle);
+  const authError = useStore((s) => s.authError);
   const t = useT();
 
   // Account draft (kept in local state across the step switch).
@@ -158,7 +172,34 @@ export function Onboarding() {
             </View>
           ) : (
             <>
-              <StickerPressable offset="sm" radius={999} onPress={obNext} style={{ marginTop: 6, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink400, paddingVertical: 14, paddingHorizontal: 30 }}>
+              {googleAuthEnabled() ? (
+                <View style={{ width: '100%', maxWidth: 320, alignItems: 'center', gap: 10 }}>
+                  <StickerPressable
+                    offset="sm"
+                    radius={999}
+                    onPress={signInWithGoogle}
+                    style={{ marginTop: 6, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper0, paddingVertical: 13 }}
+                  >
+                    <GoogleG size={20} />
+                    <Banner s={13} tk={0.08} c={C.inkDeep}>
+                      {t('auth.google')}
+                    </Banner>
+                  </StickerPressable>
+                  {authError ? (
+                    <Mono s={10} c={C.ink600} style={{ textAlign: 'center' }}>
+                      {t('auth.failed')}
+                    </Mono>
+                  ) : null}
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, width: '70%' }}>
+                    <View style={{ flex: 1, height: 1.5, backgroundColor: 'rgba(42,26,6,0.25)' }} />
+                    <Mono s={10} c={C.ink600}>
+                      {t('auth.or')}
+                    </Mono>
+                    <View style={{ flex: 1, height: 1.5, backgroundColor: 'rgba(42,26,6,0.25)' }} />
+                  </View>
+                </View>
+              ) : null}
+              <StickerPressable offset="sm" radius={999} onPress={obNext} style={{ marginTop: googleAuthEnabled() ? 0 : 6, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink400, paddingVertical: 14, paddingHorizontal: 30 }}>
                 <Banner s={14} tk={0.1} c={C.paper0}>
                   {t('ob.create')}
                 </Banner>

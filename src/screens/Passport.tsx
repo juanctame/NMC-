@@ -7,6 +7,7 @@
  */
 import React, { useState } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { useT } from '../i18n';
@@ -155,10 +156,14 @@ export function Passport() {
             ) : null}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
               <StickerView offset="sm" radius={999} style={{ transform: [{ rotate: '-4deg' }] }}>
-                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: col(me.color), borderWidth: 2.5, borderColor: critic ? C.sun400 : C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
-                  <Banner s={18} c={C.paper0}>
-                    {me.initials}
-                  </Banner>
+                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: col(me.color), borderWidth: 2.5, borderColor: critic ? C.sun400 : C.inkBlack, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                  {me.avatarUrl ? (
+                    <Image source={{ uri: me.avatarUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                  ) : (
+                    <Banner s={18} c={C.paper0}>
+                      {me.initials}
+                    </Banner>
+                  )}
                 </View>
               </StickerView>
               <View style={{ flex: 1 }}>
@@ -313,8 +318,14 @@ export function Passport() {
               <Banner s={11} tk={0.06} c={C.inkDeep}>
                 {me.handle}
               </Banner>
-              <Mono s={9} c={C.inkMuted} style={{ marginTop: 2 }}>
-                {critic ? 'Verified Critic · this device' : profile ? 'Local account · this device' : 'Guest · demo identity'}
+              <Mono s={9} c={C.inkMuted} style={{ marginTop: 2 }} numberOfLines={1}>
+                {profile && me.email
+                  ? `${t('you.googleAccount')} · ${me.email}`
+                  : critic
+                  ? 'Verified Critic · this device'
+                  : profile
+                  ? 'Local account · this device'
+                  : 'Guest · demo identity'}
               </Mono>
             </View>
             {critic ? (

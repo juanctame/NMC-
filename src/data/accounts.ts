@@ -39,6 +39,9 @@ type ProfileRow = {
   role: string | null;
   beat: string | null;
   followers: number | string | null;
+  user_id: string | null;
+  email: string | null;
+  avatar_url: string | null;
 };
 
 function rowToProfile(row: ProfileRow): Profile {
@@ -53,6 +56,9 @@ function rowToProfile(row: ProfileRow): Profile {
     role: (row.role as Role) || 'nomad',
     ...(row.beat ? { beat: row.beat } : {}),
     ...(row.followers != null ? { followers: Number(row.followers) } : {}),
+    ...(row.user_id ? { userId: row.user_id } : {}),
+    ...(row.email ? { email: row.email } : {}),
+    ...(row.avatar_url ? { avatarUrl: row.avatar_url } : {}),
   };
 }
 
@@ -68,6 +74,9 @@ function profileToRow(p: Profile): ProfileRow {
     role: p.role,
     beat: p.beat ?? null,
     followers: p.followers ?? null,
+    user_id: p.userId ?? null,
+    email: p.email ?? null,
+    avatar_url: p.avatarUrl ?? null,
   };
 }
 
@@ -124,4 +133,40 @@ export async function fetchProfileByHandle(handle: string): Promise<Profile | nu
   } catch {
     return null;
   }
+}
+
+/** Find an existing account by its Google email (used to restore on sign-in). */
+export async function fetchProfileByEmail(email: string): Promise<Profile | null> {
+  const key = email.trim().toLowerCase();
+  if (!key || !sharedEnabled()) return null;
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(key)}&select=*&limit=1`;
+    const res = await fetch(url, { headers: headers() });
+    if (!res.ok) return null;
+    const rows = (await res.json()) as ProfileRow[];
+    return Array.isArray(rows) && rows.length ? rowToProfile(rows[0]) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** A first-guess handle from a Google email/name, e.g. "june.ozawa@gmail" → "@juneozawa". */
+export function handleFromEmail(email: string, name?: string): string {
+  const base = (email.split('@')[0] || name || 'nomad').toLowerCase().replace(/[^a-z0-9]/g, '');
+  return '@' + (base.slice(0, 16) || 'nomad');
+}
+
+/**
+ * Turn a desired handle into one that's actually free, appending a number if
+ * taken. Falls back to the base handle if the directory can't be reached.
+ */
+export async function uniqueHandle(desired: string): Promise<string> {
+  const base = normalizeHandle(desired) || '@nomad';
+  if (await handleAvailable(base)) return base;
+  for (let n = 2; n <= 9; n++) {
+    const candidate = `${base}${n}`;
+    if (await handleAvailable(candidate)) return candidate;
+  }
+  // Last resort: suffix with a short random tag.
+  return `${base}${Math.floor(Math.random() * 900 + 100)}`;
 }
