@@ -28,6 +28,7 @@ import { Reel } from './screens/Reel';
 import { RankFlow } from './overlays/RankFlow';
 import { AttachSheet } from './overlays/AttachSheet';
 import { CreateTable } from './overlays/CreateTable';
+import { VideoOverlay } from './components/VideoOverlay';
 
 const SCREENS: Record<Screen, React.ComponentType> = {
   feed: Feed,
@@ -54,6 +55,7 @@ export function Root() {
   const createOpen = useStore((s) => s.createOpen);
   const citySheetOpen = useStore((s) => s.citySheetOpen);
   const reviewOpen = useStore((s) => s.reviewOpen);
+  const videoOpen = useStore((s) => !!s.videoUrl);
   const nearbyStatus = useStore((s) => s.nearbyStatus);
   const loadNearby = useStore((s) => s.loadNearby);
 
@@ -63,7 +65,7 @@ export function Root() {
   }, [nearbyStatus, loadNearby]);
 
   const Active = SCREENS[screen] ?? Feed;
-  const anyOverlay = rankOpen || attachOpen || createOpen || citySheetOpen || reviewOpen;
+  const anyOverlay = rankOpen || attachOpen || createOpen || citySheetOpen || reviewOpen || videoOpen;
   const showTabBar = ROOT_TABS.includes(screen) && !anyOverlay;
 
   return (
@@ -75,6 +77,7 @@ export function Root() {
       {createOpen ? <CreateTable /> : null}
       {citySheetOpen ? <CitySheet /> : null}
       {reviewOpen ? <ReviewComposer /> : null}
+      <VideoOverlay />
     </View>
   );
 }

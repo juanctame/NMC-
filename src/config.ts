@@ -25,6 +25,23 @@ export const GOOGLE_MAPS_API_KEY = 'AIzaSyCxWK3IkX7wxgEtyrxRuAU1k2f7jbOEo9Q';
 export const GOOGLE_MAPS_MAP_ID = 'DEMO_MAP_ID';
 
 /**
+ * YouTube Data API key — powers the in-app "On the reel" strip: real, current
+ * videos found by each restaurant's hashtag, played through YouTube's embeddable
+ * player. YouTube is the one platform whose hashtag/keyword search AND embed
+ * work from a browser with just an API key (no OAuth), so it's what loads clips
+ * inside the app; TikTok / Instagram are reached via hashtag deep-links.
+ *
+ * It reuses the Maps browser key by default. To turn the in-app strip on:
+ *   1. Google Cloud console → APIs & Services → Library → enable
+ *      "YouTube Data API v3" on the SAME project as the Maps key.
+ *   2. Credentials → this key → API restrictions → also allow
+ *      "YouTube Data API v3" (keep the Websites referrer restriction).
+ * Leave it as the Maps key, or paste a dedicated browser key here. Blank turns
+ * the in-app strip off — the hashtag deep-links to TikTok/IG/YouTube still work.
+ */
+export const YOUTUBE_API_KEY = GOOGLE_MAPS_API_KEY;
+
+/**
  * Shared demo backend (Supabase) — makes usernames + reviews visible to every
  * tester instead of only their own device. Leave both blank to keep the app
  * local-only; paste your project's values to turn sharing on (see SHARED_DEMO.md

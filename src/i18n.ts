@@ -65,6 +65,15 @@ const STRINGS: Record<string, [string, string, string]> = {
   'feed.fresh': ['Fresh near you', 'Nuevo cerca de ti', 'Nouveau près de vous'],
   'feed.reels': ['On the reel', 'En video', 'En vidéo'],
 
+  // ── hashtag videos (place detail) ──
+  'reel.section': ['On the reel', 'En video', 'En vidéo'],
+  'reel.finding': ['Finding videos…', 'Buscando videos…', 'Recherche de vidéos…'],
+  'reel.none': [
+    'No in-app clips yet — open the live hashtag feed on any platform below.',
+    'Aún no hay clips en la app — abre el feed del hashtag en cualquier plataforma abajo.',
+    'Pas encore de clips dans l’app — ouvrez le fil du hashtag sur une plateforme ci-dessous.',
+  ],
+
   // ── leaderboard / board ──
   'board.title': ['Leaderboard', 'Clasificación', 'Classement'],
   'board.sub': ['Ranked by the critics’ table', 'Clasificado por la mesa de críticos', 'Classé par la table des critiques'],

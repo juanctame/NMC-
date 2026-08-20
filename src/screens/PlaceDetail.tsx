@@ -5,18 +5,24 @@
  * CTAs.
  */
 import React, { useEffect } from 'react';
-import { View, ScrollView, Pressable, Linking } from 'react-native';
+import { View, ScrollView, Pressable, Linking, ActivityIndicator } from 'react-native';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore, resolvePlace, reviewsFor, popularDishFor, type ScoredReview } from '../store/useStore';
 import { RANK } from '../store/data';
 import { scoreStyle, verdictOf, fmt, metaOf } from '../store/helpers';
+import { embedUrlFor, type TrendingVideo } from '../data/videos';
+import { hashtagOf, hashtagLinks, TAG_PLATFORMS } from '../data/hashtags';
+import { PLATFORM_LABEL } from '../data/creators';
+import { youtubeEnabled } from '../data/videosLive';
+import { useT } from '../i18n';
 import { C, col } from '../theme/tokens';
 import { photo, PHOTO_POOL } from '../assets';
 import { Display, Banner, Serif, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
 import { Roundel } from '../components/Roundel';
-import { PlusIcon, BookmarkIcon, HeartIcon } from '../components/icons';
+import { PlusIcon, BookmarkIcon, HeartIcon, PlayIcon } from '../components/icons';
 import { ScreenIn } from '../components/Anim';
 
 function TogglePill({ on, label, onPress }: { on: boolean; label: string; onPress: () => void }) {
@@ -153,6 +159,41 @@ function AppCard({
   );
 }
 
+/** A live hashtag clip: poster thumbnail + play badge, title, and creator. */
+function VideoThumb({ v, onPress }: { v: TrendingVideo; onPress: () => void }) {
+  return (
+    <StickerPressable
+      offset="sm"
+      onPress={onPress}
+      style={{ width: 148, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
+    >
+      <View style={{ width: '100%', height: 96, backgroundColor: C.ink700 }}>
+        {v.thumb ? (
+          <Image source={{ uri: v.thumb }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+        ) : null}
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(216,80,26,0.92)', borderWidth: 2, borderColor: C.paper0, alignItems: 'center', justifyContent: 'center' }}>
+            <PlayIcon size={14} color={C.paper0} />
+          </View>
+        </View>
+        <View style={{ position: 'absolute', top: 5, left: 5, backgroundColor: C.inkBlack, borderRadius: 3, paddingVertical: 1, paddingHorizontal: 5 }}>
+          <Banner s={7} tk={0.1} c={C.paper0}>
+            YouTube
+          </Banner>
+        </View>
+      </View>
+      <View style={{ padding: 8, gap: 3 }}>
+        <Serif s={11} c={C.inkDeep} numberOfLines={2} style={{ lineHeight: 15 }}>
+          {v.caption}
+        </Serif>
+        <Mono s={8} c={C.inkSoft} numberOfLines={1}>
+          {v.creator}
+        </Mono>
+      </View>
+    </StickerPressable>
+  );
+}
+
 export function PlaceDetail() {
   const insets = useSafeAreaInsets();
   const activePlaceId = useStore((s) => s.activePlaceId);
@@ -176,11 +217,21 @@ export function PlaceDetail() {
   const openReviewComposer = useStore((s) => s.openReviewComposer);
   const sharedReviews = useStore((s) => s.sharedReviews);
   const loadSharedReviews = useStore((s) => s.loadSharedReviews);
+  const placeVideosMap = useStore((s) => s.placeVideos);
+  const placeVideosStatusMap = useStore((s) => s.placeVideosStatus);
+  const loadPlaceVideos = useStore((s) => s.loadPlaceVideos);
+  const openVideo = useStore((s) => s.openVideo);
+  const t = useT();
 
   // Pull other testers' reviews for this place from the shared backend (if on).
   useEffect(() => {
     if (activePlaceId) loadSharedReviews(activePlaceId);
   }, [activePlaceId, loadSharedReviews]);
+
+  // Pull real hashtag videos for this place (YouTube; no-op if key/API off).
+  useEffect(() => {
+    if (activePlaceId) loadPlaceVideos(activePlaceId);
+  }, [activePlaceId, loadPlaceVideos]);
 
   if (!activePlaceId) return <View style={{ flex: 1, backgroundColor: C.paper50 }} />;
   const base = resolvePlace(activePlaceId, nearbyById);
@@ -214,6 +265,12 @@ export function PlaceDetail() {
     ...seedG.map((src) => ({ src, mine: false })),
     ...mine.map((src) => ({ src, mine: true })),
   ];
+
+  // Hashtag videos: the venue's tag, its live clips, and platform feed links.
+  const tag = hashtagOf(base);
+  const links = hashtagLinks(tag);
+  const videos = placeVideosMap[activePlaceId] || [];
+  const videosStatus = placeVideosStatusMap[activePlaceId] || 'idle';
 
   return (
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
@@ -404,6 +461,60 @@ export function PlaceDetail() {
               ) : null}
             </View>
           ))}
+        </View>
+
+        {/* on the reel — real videos found by this restaurant's hashtag */}
+        <View style={{ marginTop: 22 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <Banner s={10} tk={0.16} c={C.inkMuted}>
+              {t('reel.section')}
+            </Banner>
+            <StickerView offset="sm" radius={999} style={{ backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 10 }}>
+              <Banner s={9.5} tk={0.04} c={C.inkDeep}>
+                #{tag}
+              </Banner>
+            </StickerView>
+          </View>
+
+          {videosStatus === 'loading' ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 6 }}>
+              <ActivityIndicator size="small" color={C.ink400} />
+              <Mono s={10} c={C.inkMuted}>
+                {t('reel.finding')}
+              </Mono>
+            </View>
+          ) : null}
+
+          {videos.length ? (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+              {videos.map((v) => {
+                const url = embedUrlFor(v);
+                return <VideoThumb key={v.id} v={v} onPress={() => url && openVideo(url + '&autoplay=1')} />;
+              })}
+            </ScrollView>
+          ) : videosStatus === 'empty' || videosStatus === 'idle' || !youtubeEnabled() ? (
+            <Mono s={11} c={C.inkMuted} style={{ lineHeight: 17 }}>
+              {t('reel.none')}
+            </Mono>
+          ) : null}
+
+          {/* live hashtag feeds on each platform (always available) */}
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+            {TAG_PLATFORMS.map((p) => (
+              <StickerPressable
+                key={p}
+                offset="sm"
+                radius={999}
+                onPress={() => Linking.openURL(links[p])}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper0, paddingVertical: 8, paddingHorizontal: 13 }}
+              >
+                <PlayIcon size={11} color={C.ink400} />
+                <Banner s={9.5} tk={0.08} c={C.inkDeep}>
+                  {PLATFORM_LABEL[p]}
+                </Banner>
+              </StickerPressable>
+            ))}
+          </View>
         </View>
 
         {/* reviews — public, Letterboxd-style */}

@@ -23,10 +23,12 @@ import { fetchSharedReviews, pushSharedReview } from '../data/shared';
 import { makeProfile, identity, type Profile } from '../data/profile';
 import { loadProfile, saveProfile, clearProfile, loadLang, saveLang } from '../data/storage';
 import { registerProfile, fetchProfileByHandle } from '../data/accounts';
-import { TRENDING_VIDEOS } from '../data/videos';
+import { TRENDING_VIDEOS, type TrendingVideo } from '../data/videos';
+import { searchPlaceVideos } from '../data/videosLive';
 import type { Lang } from '../i18n';
 
 export type NearbyStatus = 'idle' | 'loading' | 'ready' | 'fallback' | 'error';
+export type VideoStatus = 'idle' | 'loading' | 'ready' | 'empty';
 export type ReviewSort = 'popular' | 'recent';
 export type ScoredReview = Review & { likes: number; likedByMe: boolean };
 
@@ -217,6 +219,11 @@ export type State = {
 
   // Language (flag-picked i18n)
   lang: Lang;
+
+  // Hashtag videos: real clips per place (YouTube), + the embed playing now
+  placeVideos: Record<string, TrendingVideo[]>;
+  placeVideosStatus: Record<string, VideoStatus>;
+  videoUrl: string | null;
 };
 
 export type Actions = {
@@ -303,6 +310,10 @@ export type Actions = {
   connectAccount: (handle: string) => Promise<boolean>;
   // language
   setLang: (lang: Lang) => void;
+  // hashtag videos
+  loadPlaceVideos: (placeId: string) => Promise<void>;
+  openVideo: (url: string) => void;
+  closeVideo: () => void;
 };
 
 /** Resolve a place by id across the seed catalog and live-loaded nearby set. */
@@ -384,6 +395,9 @@ const initialState = (): State => ({
   profile: null,
   hydrated: false,
   lang: 'en',
+  placeVideos: {},
+  placeVideosStatus: {},
+  videoUrl: null,
 });
 
 function findTable(s: State, id: string | null) {
@@ -729,6 +743,29 @@ export const useStore = create<State & Actions>((set, get) => ({
     saveLang(lang);
     set({ lang });
   },
+
+  // ── hashtag videos ──
+  loadPlaceVideos: async (placeId) => {
+    const s = get();
+    const status = s.placeVideosStatus[placeId];
+    // Fetch once per place per session (ready/empty are terminal; loading in-flight).
+    if (status === 'loading' || status === 'ready') return;
+    const place = resolvePlace(placeId, s.nearbyById);
+    if (!place) return;
+    set({ placeVideosStatus: { ...s.placeVideosStatus, [placeId]: 'loading' } });
+    let vids: TrendingVideo[] = [];
+    try {
+      vids = await searchPlaceVideos(place, get().city);
+    } catch {
+      vids = [];
+    }
+    set((st) => ({
+      placeVideos: { ...st.placeVideos, [placeId]: vids },
+      placeVideosStatus: { ...st.placeVideosStatus, [placeId]: vids.length ? 'ready' : 'empty' },
+    }));
+  },
+  openVideo: (url) => set({ videoUrl: url }),
+  closeVideo: () => set({ videoUrl: null }),
 }));
 
 // ── rank-engine internals (kept outside the object to share set/get) ──

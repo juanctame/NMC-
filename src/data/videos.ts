@@ -23,6 +23,10 @@ export type TrendingVideo = {
   /** Platform video/reel/short id — enables in-app embedded playback. A real
    *  gather pipeline supplies this; without it the reel deep-links out. */
   embedId?: string;
+  /** Poster thumbnail URL (set by the live hashtag search). */
+  thumb?: string;
+  /** ISO publish date (set by the live hashtag search) for a "3d ago" note. */
+  publishedAt?: string;
 };
 
 /** Build the platform embed-player URL for in-app playback (WebView / iframe). */
