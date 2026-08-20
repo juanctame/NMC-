@@ -22,12 +22,14 @@ import { EventDetail } from './screens/EventDetail';
 import { Ticket } from './screens/Ticket';
 import { Thread } from './screens/Thread';
 import { DineClub } from './screens/DineClub';
+import { Channel } from './screens/Channel';
 import { NearbyMap } from './screens/NearbyMap';
 import { Reel } from './screens/Reel';
 
 import { RankFlow } from './overlays/RankFlow';
 import { AttachSheet } from './overlays/AttachSheet';
 import { CreateTable } from './overlays/CreateTable';
+import { ChannelComposer } from './overlays/ChannelComposer';
 import { VideoOverlay } from './components/VideoOverlay';
 
 const SCREENS: Record<Screen, React.ComponentType> = {
@@ -42,6 +44,7 @@ const SCREENS: Record<Screen, React.ComponentType> = {
   ticket: Ticket,
   thread: Thread,
   club: DineClub,
+  channel: Channel,
   map: NearbyMap,
   reel: Reel,
 };
@@ -56,6 +59,7 @@ export function Root() {
   const citySheetOpen = useStore((s) => s.citySheetOpen);
   const reviewOpen = useStore((s) => s.reviewOpen);
   const videoOpen = useStore((s) => !!s.videoUrl);
+  const channelComposerOpen = useStore((s) => s.channelComposerOpen);
   const nearbyStatus = useStore((s) => s.nearbyStatus);
   const loadNearby = useStore((s) => s.loadNearby);
 
@@ -65,7 +69,7 @@ export function Root() {
   }, [nearbyStatus, loadNearby]);
 
   const Active = SCREENS[screen] ?? Feed;
-  const anyOverlay = rankOpen || attachOpen || createOpen || citySheetOpen || reviewOpen || videoOpen;
+  const anyOverlay = rankOpen || attachOpen || createOpen || citySheetOpen || reviewOpen || videoOpen || channelComposerOpen;
   const showTabBar = ROOT_TABS.includes(screen) && !anyOverlay;
 
   return (
@@ -77,6 +81,7 @@ export function Root() {
       {createOpen ? <CreateTable /> : null}
       {citySheetOpen ? <CitySheet /> : null}
       {reviewOpen ? <ReviewComposer /> : null}
+      {channelComposerOpen ? <ChannelComposer /> : null}
       <VideoOverlay />
     </View>
   );

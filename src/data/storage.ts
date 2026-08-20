@@ -9,11 +9,13 @@ import type { Profile } from './profile';
 import type { Lang } from '../i18n';
 import type { Session } from './auth';
 import type { BuzzResult } from './trending';
+import type { ChannelPost } from './channels';
 
 const KEY = 'nmc.profile.v1';
 const LANG_KEY = 'nmc.lang.v1';
 const SESSION_KEY = 'nmc.session.v1';
 const TREND_KEY = 'nmc.trending.'; // + cityId
+const CHANNEL_KEY = 'nmc.channels.v1';
 
 export async function loadProfile(): Promise<Profile | null> {
   try {
@@ -107,5 +109,25 @@ export async function saveTrendingCache(cityId: string, data: BuzzResult[]): Pro
     await AsyncStorage.setItem(TREND_KEY + cityId, JSON.stringify({ ts: Date.now(), data }));
   } catch {
     // non-fatal: we just recompute next time
+  }
+}
+
+// ── Channel posts written by this member (merged with the seed at read) ──────
+
+export async function loadChannelPosts(): Promise<Record<string, ChannelPost[]>> {
+  try {
+    const raw = await AsyncStorage.getItem(CHANNEL_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+export async function saveChannelPosts(posts: Record<string, ChannelPost[]>): Promise<void> {
+  try {
+    await AsyncStorage.setItem(CHANNEL_KEY, JSON.stringify(posts));
+  } catch {
+    // non-fatal: the post still shows for this session
   }
 }

@@ -33,6 +33,8 @@ import {
   clearSession,
   loadTrendingCache,
   saveTrendingCache,
+  loadChannelPosts,
+  saveChannelPosts,
 } from '../data/storage';
 import {
   registerProfile,
@@ -54,6 +56,7 @@ import { TRENDING_VIDEOS, type TrendingVideo } from '../data/videos';
 import { searchPlaceVideos } from '../data/videosLive';
 import { computeMonthlyTrending } from '../data/trendingLive';
 import type { BuzzResult } from '../data/trending';
+import { channelForm, SEED_CHANNEL_POSTS, type ChannelPost } from '../data/channels';
 import type { Lang } from '../i18n';
 
 export type NearbyStatus = 'idle' | 'loading' | 'ready' | 'fallback' | 'error';
@@ -149,6 +152,7 @@ export type Screen =
   | 'ticket'
   | 'thread'
   | 'club'
+  | 'channel'
   | 'map'
   | 'reel';
 
@@ -262,6 +266,13 @@ export type State = {
   // Monthly trending: restaurants ranked by last-30d social buzz (YouTube)
   monthlyTrending: BuzzResult[];
   monthlyTrendingStatus: VideoStatus;
+
+  // Club channels (structured chats). User posts merge over the seed.
+  activeChannel: string | null;
+  channelUserPosts: Record<string, ChannelPost[]>;
+  channelComposerOpen: boolean;
+  channelDraftKind: string;
+  channelDraft: Record<string, string>;
 };
 
 export type Actions = {
@@ -355,6 +366,13 @@ export type Actions = {
   closeVideo: () => void;
   // monthly trending
   loadMonthlyTrending: (force?: boolean) => Promise<void>;
+  // club channels
+  openChannel: (tag: string) => void;
+  openChannelComposer: () => void;
+  closeChannelComposer: () => void;
+  setChannelDraftKind: (kind: string) => void;
+  setChannelDraftField: (key: string, value: string) => void;
+  postToChannel: () => void;
 };
 
 /** Resolve a place by id across the seed catalog and live-loaded nearby set. */
@@ -444,6 +462,11 @@ const initialState = (): State => ({
   videoUrl: null,
   monthlyTrending: [],
   monthlyTrendingStatus: 'idle',
+  activeChannel: null,
+  channelUserPosts: {},
+  channelComposerOpen: false,
+  channelDraftKind: '',
+  channelDraft: {},
 });
 
 function findTable(s: State, id: string | null) {
@@ -765,6 +788,10 @@ export const useStore = create<State & Actions>((set, get) => ({
     const lang = await loadLang();
     if (lang) set({ lang });
 
+    // Restore this member's channel posts (merged over the seed in the screen).
+    const channelPosts = await loadChannelPosts();
+    if (channelPosts && Object.keys(channelPosts).length) set({ channelUserPosts: channelPosts });
+
     // 1) Returning from a Google sign-in? Implicit-flow tokens arrive in the URL hash.
     const redirect = consumeAuthRedirect();
     if (redirect.error) set({ authError: redirect.error });
@@ -934,6 +961,50 @@ export const useStore = create<State & Actions>((set, get) => ({
     } else {
       set({ monthlyTrending: [], monthlyTrendingStatus: 'empty' });
     }
+  },
+
+  // ── club channels (structured chats) ──
+  openChannel: (tag) => set({ activeChannel: tag, screen: 'channel' }),
+  openChannelComposer: () => {
+    const tag = get().activeChannel;
+    if (!tag) return;
+    const kindField = channelForm(tag).find((f) => f.key === 'kind');
+    set({
+      channelComposerOpen: true,
+      channelDraftKind: kindField?.options?.length ? kindField.options[0] : '',
+      channelDraft: {},
+    });
+  },
+  closeChannelComposer: () => set({ channelComposerOpen: false }),
+  setChannelDraftKind: (kind) => set({ channelDraftKind: kind }),
+  setChannelDraftField: (key, value) => set((s) => ({ channelDraft: { ...s.channelDraft, [key]: value } })),
+  postToChannel: () => {
+    const s = get();
+    const tag = s.activeChannel;
+    if (!tag) return;
+    const me = identity(s.profile);
+    const fields = channelForm(tag)
+      .filter((f) => f.key !== 'kind')
+      .map((f) => ({ label: f.label, value: (s.channelDraft[f.key] || '').trim() }))
+      .filter((f) => f.value);
+    if (!fields.length) {
+      set({ channelComposerOpen: false });
+      return;
+    }
+    const post: ChannelPost = {
+      id: 'u-' + tag + '-' + Date.now(),
+      channel: tag,
+      author: me.name,
+      handle: me.handle,
+      initials: me.initials,
+      color: me.color,
+      kind: s.channelDraftKind || undefined,
+      fields,
+      createdAt: Date.now(),
+    };
+    const next = { ...s.channelUserPosts, [tag]: [post, ...(s.channelUserPosts[tag] || [])] };
+    saveChannelPosts(next);
+    set({ channelUserPosts: next, channelComposerOpen: false, channelDraft: {}, channelDraftKind: '' });
   },
 }));
 

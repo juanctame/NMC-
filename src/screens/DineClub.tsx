@@ -7,7 +7,9 @@ import React from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
-import { CLUB_EVENTS, CLUB_THREADS } from '../store/data';
+import { CLUB_EVENTS } from '../store/data';
+import { CHANNELS } from '../data/charter';
+import { SEED_CHANNEL_POSTS } from '../data/channels';
 import { C, col } from '../theme/tokens';
 import { photo } from '../assets';
 import { Display, Banner, Serif, SerifItalic, Mono } from '../components/Text';
@@ -18,6 +20,29 @@ import { Grain } from '../components/Grain';
 import { Segmented } from '../components/Segmented';
 import { Charter } from '../components/Charter';
 import { ScreenIn } from '../components/Anim';
+
+/** One card in the channel directory (the club's structured chats). */
+function ChannelRow({ tag, count, onPress }: { tag: string; count: number; onPress: () => void }) {
+  const ch = CHANNELS.find((c) => c.tag === tag)!;
+  return (
+    <StickerPressable offset="sm" onPress={onPress} style={{ backgroundColor: C.ink700, borderWidth: 2.5, borderColor: C.paper0, paddingVertical: 13, paddingHorizontal: 15 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Display s={18} c={C.sun400}>
+          {ch.tag}
+        </Display>
+        <Banner s={9.5} tk={0.06} c={C.paper0} style={{ flex: 1 }} numberOfLines={1}>
+          {ch.name}
+        </Banner>
+        <Mono s={9} c={C.sun300}>
+          {count} →
+        </Mono>
+      </View>
+      <SerifItalic s={12} c={C.ink100} style={{ marginTop: 5, lineHeight: 18 }} numberOfLines={2}>
+        {ch.intro}
+      </SerifItalic>
+    </StickerPressable>
+  );
+}
 
 function ClubEventCard({ ev }: { ev: (typeof CLUB_EVENTS)[number] }) {
   const requestClub = useStore((s) => s.requestClub);
@@ -64,7 +89,11 @@ export function DineClub() {
   const go = useStore((s) => s.go);
   const clubSeg = useStore((s) => s.clubSeg);
   const setClubSeg = useStore((s) => s.setClubSeg);
-  const openThread = useStore((s) => s.openThread);
+  const openChannel = useStore((s) => s.openChannel);
+  const channelUserPosts = useStore((s) => s.channelUserPosts);
+
+  const channelCount = (tag: string) =>
+    SEED_CHANNEL_POSTS.filter((p) => p.channel === tag).length + (channelUserPosts[tag]?.length || 0);
 
   return (
     <ScreenIn style={{ backgroundColor: C.inkBlack }}>
@@ -122,37 +151,14 @@ export function DineClub() {
           </>
         ) : (
           <>
-            {CLUB_THREADS.map((t) => (
-              <StickerPressable
-                key={t.id}
-                offset="sm"
-                onPress={() => openThread(t.id)}
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.ink700, borderWidth: 2.5, borderColor: C.paper0, paddingVertical: 12, paddingHorizontal: 14 }}
-              >
-                <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: col(t.color), borderWidth: 2, borderColor: C.paper0, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-4deg' }] }}>
-                  <Display s={15} c={C.paper0}>
-                    {t.initials}
-                  </Display>
-                </View>
-                <View style={{ flex: 1, minWidth: 0 }}>
-                  <Banner s={12} tk={0.08} c={C.paper0}>
-                    {t.name}
-                  </Banner>
-                  <Mono s={10.5} c={C.sun300} style={{ marginTop: 3 }} numberOfLines={1}>
-                    {t.last}
-                  </Mono>
-                </View>
-                {t.unread > 0 ? (
-                  <View style={{ backgroundColor: C.sun400, borderWidth: 2, borderColor: C.paper0, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 }}>
-                    <Banner s={9} c={C.inkDeep}>
-                      {t.unread}
-                    </Banner>
-                  </View>
-                ) : null}
-              </StickerPressable>
+            <Mono s={10} c={C.ink200} style={{ marginBottom: 2, lineHeight: 16 }}>
+              Los canales de la comunidad. Cada uno con sus reglas y su plantilla.
+            </Mono>
+            {CHANNELS.map((ch) => (
+              <ChannelRow key={ch.tag} tag={ch.tag} count={channelCount(ch.tag)} onPress={() => openChannel(ch.tag)} />
             ))}
             <Mono s={10} c={C.ink200} style={{ textAlign: 'center', marginTop: 4 }}>
-              Members-only threads. What’s said at the table stays at the table.
+              Lo que se dice en CRTQ se queda en CRTQ.
             </Mono>
           </>
         )}
