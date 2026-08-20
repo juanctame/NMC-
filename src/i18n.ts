@@ -61,6 +61,11 @@ const STRINGS: Record<string, [string, string, string]> = {
 
   // ── feed ──
   'feed.trending': ['Trending now', 'Tendencia ahora', 'Tendances du moment'],
+  'feed.trendingSub': ['Most mentioned this month', 'Lo más mencionado del mes', 'Le plus mentionné ce mois'],
+  'feed.clips': ['clips', 'clips', 'clips'],
+  'feed.views': ['views', 'vistas', 'vues'],
+  'feed.via': ['via', 'por', 'par'],
+  'feed.onCrtq': ['On CRTQ', 'En CRTQ', 'Sur CRTQ'],
   'feed.tastemakers': ['Tastemakers to follow', 'Referentes a seguir', 'Prescripteurs à suivre'],
   'feed.fresh': ['Fresh near you', 'Nuevo cerca de ti', 'Nouveau près de vous'],
   'feed.reels': ['On the reel', 'En video', 'En vidéo'],

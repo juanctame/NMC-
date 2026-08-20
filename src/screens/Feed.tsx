@@ -2,14 +2,15 @@
  * Feed (home) — social home: trending strip, friends' activity, personalized
  * recs, and (once unlocked) the Dine Club teaser.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Pressable, Image, ActivityIndicator, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { useT } from '../i18n';
 import { FEED, RECS, byId } from '../store/data';
 import { CREATOR_REVIEWS, PLATFORM_LABEL } from '../data/creators';
-import { TRENDING_VIDEOS, type TrendingVideo } from '../data/videos';
+import { TRENDING_VIDEOS, embedUrlFor, type TrendingVideo } from '../data/videos';
+import type { BuzzResult } from '../data/trending';
 
 const PLATFORM_TAG: Record<string, string> = { tiktok: 'TT', instagram: 'IG', youtube: 'YT' };
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
@@ -84,6 +85,82 @@ function TrendingThumb({ video, rank, onPress }: { video: TrendingVideo; rank: n
         </Banner>
       </View>
     </StickerPressable>
+  );
+}
+
+/** Compact count: 1234 → "1.2k", 2_400_000 → "2.4M". */
+function compact(n: number): string {
+  if (n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace('.0', '') + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(n >= 1e4 ? 0 : 1).replace('.0', '') + 'k';
+  return String(n);
+}
+
+/**
+ * A "most mentioned this month" card: the hero creator clip (tap to play),
+ * rank + buzz stats, the venue, and — when the creator is one of our
+ * tastemakers — an "On CRTQ" link into their in-app presence.
+ */
+function MonthlyTrendCard({ item, rank }: { item: BuzzResult; rank: number }) {
+  const openVideo = useStore((s) => s.openVideo);
+  const openPlace = useStore((s) => s.openPlace);
+  const t = useT();
+  const url = embedUrlFor(item.video);
+  return (
+    <View style={{ width: 168, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack }}>
+      {/* hero clip */}
+      <Pressable
+        onPress={() => url && openVideo(url + '&autoplay=1')}
+        accessibilityRole="button"
+        accessibilityLabel={`Play ${item.name}`}
+        style={{ width: '100%', height: 110, backgroundColor: C.ink700 }}
+      >
+        {item.video.thumb ? (
+          <Image source={{ uri: item.video.thumb }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+        ) : null}
+        <View style={{ position: 'absolute', top: 6, left: 6, minWidth: 20, height: 20, paddingHorizontal: 4, borderRadius: 10, backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+          <Display s={10} c={C.inkDeep}>
+            {rank}
+          </Display>
+        </View>
+        <View style={{ position: 'absolute', top: 6, right: 6, backgroundColor: C.inkBlack, borderRadius: 3, paddingVertical: 1, paddingHorizontal: 5 }}>
+          <Banner s={7} tk={0.06} c={C.paper0}>
+            YouTube
+          </Banner>
+        </View>
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(216,80,26,0.92)', borderWidth: 2, borderColor: C.paper0, alignItems: 'center', justifyContent: 'center' }}>
+            <PlayIcon size={13} color={C.paper0} />
+          </View>
+        </View>
+      </Pressable>
+      {/* meta */}
+      <View style={{ padding: 9, gap: 4 }}>
+        <Pressable onPress={() => openPlace(item.placeId)}>
+          <SerifDisplay s={15} c={C.inkDeep} numberOfLines={1}>
+            {item.name}
+          </SerifDisplay>
+        </Pressable>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+          <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: C.ink400 }} />
+          <Mono s={8.5} c={C.inkMuted} numberOfLines={1}>
+            {item.mentions} {t('feed.clips')} · {compact(item.totalViews)} {t('feed.views')}
+          </Mono>
+        </View>
+        <Mono s={8.5} c={C.inkSoft} numberOfLines={1}>
+          {t('feed.via')} {item.creator.name}
+        </Mono>
+        {item.appCreatorId && item.appCreatorPlaceId ? (
+          <Pressable
+            onPress={() => openPlace(item.appCreatorPlaceId!)}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', marginTop: 1, backgroundColor: C.sun400, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 7 }}
+          >
+            <Banner s={7.5} tk={0.06} c={C.inkDeep}>
+              ✦ {t('feed.onCrtq')}
+            </Banner>
+          </Pressable>
+        ) : null}
+      </View>
+    </View>
   );
 }
 
@@ -360,7 +437,17 @@ export function Feed() {
   const nearby = useStore((s) => s.nearby);
   const nearbyStatus = useStore((s) => s.nearbyStatus);
   const openPlaceFromFeed = useStore((s) => s.openPlace);
+  const monthlyTrending = useStore((s) => s.monthlyTrending);
+  const monthlyTrendingStatus = useStore((s) => s.monthlyTrendingStatus);
+  const loadMonthlyTrending = useStore((s) => s.loadMonthlyTrending);
   const t = useT();
+
+  // Rank the most-mentioned restaurants this month (cached; recomputes ~daily).
+  useEffect(() => {
+    loadMonthlyTrending();
+  }, [loadMonthlyTrending, city.id]);
+
+  const trendLive = monthlyTrendingStatus === 'ready' && monthlyTrending.length > 0;
 
   return (
     <ScreenIn>
@@ -400,15 +487,27 @@ export function Feed() {
             <Banner s={11} tk={0.14} c={C.inkDeep}>
               {t('feed.trending')}
             </Banner>
-            <Mono s={9} c={C.inkSoft}>
-              TikTok · Reels · Shorts →
-            </Mono>
+            {monthlyTrendingStatus === 'loading' ? (
+              <ActivityIndicator size="small" color={C.ink400} />
+            ) : (
+              <Mono s={9} c={C.inkSoft}>
+                {trendLive ? t('feed.trendingSub') : 'TikTok · Reels · Shorts →'}
+              </Mono>
+            )}
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4 }}>
-            {TRENDING_VIDEOS.map((v, i) => (
-              <TrendingThumb key={v.id} video={v} rank={i + 1} onPress={() => openReel(i)} />
-            ))}
-          </ScrollView>
+          {trendLive ? (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+              {monthlyTrending.map((it, i) => (
+                <MonthlyTrendCard key={it.placeId} item={it} rank={i + 1} />
+              ))}
+            </ScrollView>
+          ) : (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4 }}>
+              {TRENDING_VIDEOS.map((v, i) => (
+                <TrendingThumb key={v.id} video={v} rank={i + 1} onPress={() => openReel(i)} />
+              ))}
+            </ScrollView>
+          )}
         </View>
 
         {/* Tastemakers — featured creators, the content we promote */}

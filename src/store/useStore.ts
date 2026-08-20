@@ -13,6 +13,7 @@ import {
   CAND,
   EVENTS,
   OPEN,
+  TRENDING,
   type Place,
 } from './data';
 import { PHOTO_POOL } from '../assets';
@@ -30,6 +31,8 @@ import {
   loadSession,
   saveSession,
   clearSession,
+  loadTrendingCache,
+  saveTrendingCache,
 } from '../data/storage';
 import {
   registerProfile,
@@ -49,6 +52,8 @@ import {
 } from '../data/auth';
 import { TRENDING_VIDEOS, type TrendingVideo } from '../data/videos';
 import { searchPlaceVideos } from '../data/videosLive';
+import { computeMonthlyTrending } from '../data/trendingLive';
+import type { BuzzResult } from '../data/trending';
 import type { Lang } from '../i18n';
 
 export type NearbyStatus = 'idle' | 'loading' | 'ready' | 'fallback' | 'error';
@@ -253,6 +258,10 @@ export type State = {
   placeVideos: Record<string, TrendingVideo[]>;
   placeVideosStatus: Record<string, VideoStatus>;
   videoUrl: string | null;
+
+  // Monthly trending: restaurants ranked by last-30d social buzz (YouTube)
+  monthlyTrending: BuzzResult[];
+  monthlyTrendingStatus: VideoStatus;
 };
 
 export type Actions = {
@@ -344,6 +353,8 @@ export type Actions = {
   loadPlaceVideos: (placeId: string) => Promise<void>;
   openVideo: (url: string) => void;
   closeVideo: () => void;
+  // monthly trending
+  loadMonthlyTrending: (force?: boolean) => Promise<void>;
 };
 
 /** Resolve a place by id across the seed catalog and live-loaded nearby set. */
@@ -431,6 +442,8 @@ const initialState = (): State => ({
   placeVideos: {},
   placeVideosStatus: {},
   videoUrl: null,
+  monthlyTrending: [],
+  monthlyTrendingStatus: 'idle',
 });
 
 function findTable(s: State, id: string | null) {
@@ -874,6 +887,54 @@ export const useStore = create<State & Actions>((set, get) => ({
   },
   openVideo: (url) => set({ videoUrl: url }),
   closeVideo: () => set({ videoUrl: null }),
+
+  // ── monthly trending (most mentioned this month) ──
+  loadMonthlyTrending: async (force) => {
+    const s = get();
+    if (s.monthlyTrendingStatus === 'loading') return;
+    if (!force && s.monthlyTrendingStatus === 'ready') return;
+    const cityId = s.city.id;
+    const TTL = 12 * 60 * 60 * 1000; // recompute at most ~twice a day per city
+
+    // Serve a fresh cache instantly; keep a stale one on screen while we refresh.
+    const cached = await loadTrendingCache(cityId);
+    if (cached && !force && Date.now() - cached.ts < TTL) {
+      set({ monthlyTrending: cached.data, monthlyTrendingStatus: cached.data.length ? 'ready' : 'empty' });
+      return;
+    }
+    if (cached && cached.data.length) set({ monthlyTrending: cached.data });
+    set({ monthlyTrendingStatus: 'loading' });
+
+    // Candidate pool: the city's curated places, TRENDING first, capped in the
+    // provider. These are the venues we can also link back to in-app creators.
+    const seen = new Set<string>();
+    const candidates: Place[] = [];
+    const push = (id: string) => {
+      const p = byId[id];
+      if (p && !seen.has(id)) {
+        seen.add(id);
+        candidates.push(p);
+      }
+    };
+    TRENDING.forEach(push);
+    Object.keys(byId).forEach(push);
+
+    let results: BuzzResult[] = [];
+    try {
+      results = await computeMonthlyTrending(candidates, get().city);
+    } catch {
+      results = [];
+    }
+
+    if (results.length) {
+      saveTrendingCache(cityId, results);
+      set({ monthlyTrending: results, monthlyTrendingStatus: 'ready' });
+    } else if (cached && cached.data.length) {
+      set({ monthlyTrending: cached.data, monthlyTrendingStatus: 'ready' });
+    } else {
+      set({ monthlyTrending: [], monthlyTrendingStatus: 'empty' });
+    }
+  },
 }));
 
 // ── rank-engine internals (kept outside the object to share set/get) ──

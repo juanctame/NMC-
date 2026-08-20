@@ -8,10 +8,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Profile } from './profile';
 import type { Lang } from '../i18n';
 import type { Session } from './auth';
+import type { BuzzResult } from './trending';
 
 const KEY = 'nmc.profile.v1';
 const LANG_KEY = 'nmc.lang.v1';
 const SESSION_KEY = 'nmc.session.v1';
+const TREND_KEY = 'nmc.trending.'; // + cityId
 
 export async function loadProfile(): Promise<Profile | null> {
   try {
@@ -81,5 +83,29 @@ export async function clearSession(): Promise<void> {
     await AsyncStorage.removeItem(SESSION_KEY);
   } catch {
     // ignore
+  }
+}
+
+// ── Monthly-trending cache (per city) ───────────────────────────────────────
+// The buzz ranking is expensive (a YouTube search per candidate place), so we
+// cache it per city with a timestamp and only recompute past the TTL. This is
+// what keeps the client comfortably inside the daily API quota.
+
+export async function loadTrendingCache(cityId: string): Promise<{ ts: number; data: BuzzResult[] } | null> {
+  try {
+    const raw = await AsyncStorage.getItem(TREND_KEY + cityId);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed && Array.isArray(parsed.data) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveTrendingCache(cityId: string, data: BuzzResult[]): Promise<void> {
+  try {
+    await AsyncStorage.setItem(TREND_KEY + cityId, JSON.stringify({ ts: Date.now(), data }));
+  } catch {
+    // non-fatal: we just recompute next time
   }
 }

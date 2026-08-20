@@ -48,9 +48,53 @@ it, the referrer isn't whitelisted, or no embeddable videos matched the tag.
 Leaving `YOUTUBE_API_KEY` blank turns the in-app strip off entirely while
 keeping the TikTok/Instagram/YouTube hashtag links.
 
+## Trending now — "most mentioned this month"
+
+The home Feed's **Trending now** strip ranks restaurants by how much they're
+being talked about on social video **in the last 30 days**, and pairs each with
+a real clip from a popular creator.
+
+### The algorithm (`src/data/trendingLive.web.ts`)
+For up to ten candidate places in the current city:
+
+1. **Recent mentions.** One YouTube search per place, restricted to the last 30
+   days (`publishedAfter`), embeddable videos only, ordered by view count.
+2. **Popularity.** One batched `videos.list` call attaches each clip's view
+   count.
+3. **Buzz score.** Each place scores
+   `Σ log10(views + 10) × (0.55 + 0.45 · recency)  +  0.4 × mentions`,
+   where `recency = e^(−ageDays/21)` — so a place with many recent, high-view
+   clips ranks above one with a single old video. Places are sorted by buzz;
+   the **most-viewed** clip becomes the card's hero, and its creator is shown.
+4. **Creator link.** If the hero clip's channel matches one of the app's
+   tastemakers (`CREATOR_REVIEWS`), the card shows an **"On CRTQ"** chip that
+   opens that creator in-app. Matching is by channel name/handle; for an exact
+   tie, add the creator's YouTube `channelId` to `CREATOR_YT_CHANNELS` in
+   `src/data/trending.ts`.
+
+### Quota & caching
+Each refresh costs ~10 search calls (100 units each) + 1 stats call, so the
+result is **cached per city in the browser for 12 hours** (`nmc.trending.<city>`)
+and only recomputed past that TTL. That keeps a client comfortably inside the
+free **10,000 units/day**. For production, move this to a small daily server job
+so every visitor shares one computed ranking instead of each spending quota.
+
+### Platform scope
+The live buzz signal is **YouTube** (the only social platform whose search +
+embed work from a browser with just a key). TikTok/Instagram mention volume
+needs a backend or OAuth — the ranking returns the same `BuzzResult[]` shape, so
+an aggregator that adds those platforms drops straight in. Per-restaurant
+TikTok/Instagram feeds are still one tap away via the hashtag deep-links on each
+place page.
+
+### If it's empty
+When the YouTube key/API isn't enabled (or nothing recent matched), the strip
+falls back to the **seeded** "Trending now" list — the app never shows an empty
+section.
+
 ## What's real vs. seeded
-- **Real & live:** the YouTube search results (titles, channels, thumbnails,
-  playable video) and every hashtag deep-link.
-- **Still seeded:** the "Trending now" strip on the home Feed (a curated pilot
-  list). It plugs into the same `TrendingVideo` shape when you wire a gather
-  pipeline later.
+- **Real & live:** the YouTube hashtag search results (titles, channels,
+  thumbnails, playable video), the monthly buzz ranking, and every hashtag
+  deep-link.
+- **Seeded fallback:** the original "Trending now" list, shown only until the
+  live ranking is available.
