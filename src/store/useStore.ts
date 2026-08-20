@@ -217,7 +217,7 @@ export type State = {
   clubUnlocked: boolean;
   logoTaps: number;
   lastTap: number;
-  clubSeg: 'events' | 'community';
+  clubSeg: 'events' | 'community' | 'code';
 
   userPhotos: Record<string, string[]>;
   reelIndex: number;

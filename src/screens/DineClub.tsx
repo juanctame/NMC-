@@ -16,6 +16,7 @@ import { Photo } from '../components/Photo';
 import { GlobeMark } from '../components/icons';
 import { Grain } from '../components/Grain';
 import { Segmented } from '../components/Segmented';
+import { Charter } from '../components/Charter';
 import { ScreenIn } from '../components/Anim';
 
 function ClubEventCard({ ev }: { ev: (typeof CLUB_EVENTS)[number] }) {
@@ -95,6 +96,7 @@ export function DineClub() {
             items={[
               { key: 'events', label: 'Events' },
               { key: 'community', label: 'Community' },
+              { key: 'code', label: 'El código' },
             ]}
             value={clubSeg}
             onChange={(k) => setClubSeg(k as any)}
@@ -107,7 +109,9 @@ export function DineClub() {
       </View>
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 18, paddingTop: 16, paddingBottom: insets.bottom + 30, gap: 14 }} showsVerticalScrollIndicator={false}>
-        {clubSeg === 'events' ? (
+        {clubSeg === 'code' ? (
+          <Charter />
+        ) : clubSeg === 'events' ? (
           <>
             {CLUB_EVENTS.map((ev) => (
               <ClubEventCard key={ev.id} ev={ev} />
