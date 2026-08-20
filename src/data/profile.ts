@@ -21,6 +21,7 @@ export type Profile = {
   userId?: string; // Supabase auth.users id (uuid)
   email?: string; // from the Google identity
   avatarUrl?: string; // Google profile photo
+  bio?: string; // the foodie's own "manifesto" — their taste in their words
 };
 
 export const AVATAR_COLORS = [

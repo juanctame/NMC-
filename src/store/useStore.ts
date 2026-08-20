@@ -355,6 +355,7 @@ export type Actions = {
   createProfile: (input: { name: string; handle: string; cityId: string; color: string }) => void;
   becomeCritic: (beat: string) => void;
   stepDownCritic: () => void;
+  setBio: (text: string) => void;
   signOut: () => void;
   connectAccount: (handle: string) => Promise<boolean>;
   signInWithGoogle: () => void;
@@ -857,6 +858,13 @@ export const useStore = create<State & Actions>((set, get) => ({
     const p: Profile = { ...s.profile, role: 'nomad' };
     saveProfile(p);
     void registerProfile(p);
+    set({ profile: p });
+  },
+  setBio: (text) => {
+    const s = get();
+    if (!s.profile) return;
+    const p: Profile = { ...s.profile, bio: text.trim() || undefined };
+    saveProfile(p); // kept local; not synced to the directory row
     set({ profile: p });
   },
   signOut: () => {

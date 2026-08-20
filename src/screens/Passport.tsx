@@ -6,7 +6,7 @@
  * curated events at restaurants — something regular users can't do.
  */
 import React, { useState } from 'react';
-import { View, ScrollView, Pressable } from 'react-native';
+import { View, ScrollView, Pressable, TextInput } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
@@ -14,23 +14,16 @@ import { useT } from '../i18n';
 import { scoreStyle, fmt } from '../store/helpers';
 import { C, col } from '../theme/tokens';
 import { identity, isCritic, formatFollowers, CRITIC_BEATS } from '../data/profile';
+import { computePalate, PALATE_AXES } from '../data/palate';
 import { cityById } from '../data/cities';
 import { Display, Banner, Serif, SerifItalic, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { LangPicker } from '../components/LangPicker';
+import { PalateRadar } from '../components/PalateRadar';
 import { Roundel } from '../components/Roundel';
 import { Grain } from '../components/Grain';
 import { PlusIcon } from '../components/icons';
 import { ScreenIn } from '../components/Anim';
-
-const CUISINE_TOP: [string, number][] = [
-  ['Mexican', 24],
-  ['Seafood', 15],
-  ['Bakery', 11],
-  ['Contemporary', 8],
-];
-const CMAX = 24;
-const TASTE_TAGS = ['Mexican', 'Seafood', 'Bakery', 'Street Food', 'Bar'];
 
 function StatCell({ value, label, last }: { value: string | number; label: string; last?: boolean }) {
   return (
@@ -118,6 +111,9 @@ export function Passport() {
   const openCreate = useStore((s) => s.openCreate);
   const go = useStore((s) => s.go);
   const createdTables = useStore((s) => s.createdTables);
+  const tastes = useStore((s) => s.tastes);
+  const userReviews = useStore((s) => s.userReviews);
+  const setBio = useStore((s) => s.setBio);
   const t = useT();
 
   const me = identity(profile);
@@ -134,6 +130,25 @@ export function Passport() {
   const cuisines = Object.keys(cuisineCount).length + 4;
   const eventsHosted = createdTables.filter((t: any) => t.critic).length;
   const recentStamps = ranked.slice(0, 6);
+
+  // Derive this foodie's unique taste identity from their own activity.
+  const palate = computePalate(ranked, tastes, userReviews);
+  const axisLabels = PALATE_AXES.map((k) => t('axis.' + k));
+  const chase = tastes.length ? tastes : palate.topCuisines.map((c) => c.name);
+  const archBlurb = t('arch.' + palate.archId + '.b');
+  const dnaTotal = palate.topCuisines.reduce((sum, c) => sum + c.count, 0) || 1;
+
+  // Manifesto (the foodie's "ideas", in their own words) — inline editor.
+  const [editingBio, setEditingBio] = useState(false);
+  const [bioDraft, setBioDraft] = useState('');
+  const startEditBio = () => {
+    setBioDraft(me.bio || '');
+    setEditingBio(true);
+  };
+  const saveBio = () => {
+    setBio(bioDraft);
+    setEditingBio(false);
+  };
 
   const hostEvent = () => {
     go('table');
@@ -201,6 +216,85 @@ export function Passport() {
           </StickerView>
         </View>
 
+        {/* taste identity — the foodie's unique palate, derived from their log */}
+        <View style={{ paddingTop: 20, paddingHorizontal: 16 }}>
+          <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
+            {t('you.tasteId')}
+          </Banner>
+          <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, padding: 16, overflow: 'hidden' }}>
+            <Grain opacity={0.05} />
+            <Display s={25} c={C.ink400} style={{ lineHeight: 26 }}>
+              {t('arch.' + palate.archId + '.t')}
+            </Display>
+            <SerifItalic s={13.5} c={C.inkMuted} style={{ marginTop: 5, lineHeight: 20 }}>
+              {archBlurb}
+            </SerifItalic>
+            <View style={{ alignItems: 'center', marginTop: 6 }}>
+              <PalateRadar axes={palate.axes} labels={axisLabels} size={232} />
+            </View>
+            <Mono s={9.5} c={C.inkMuted} style={{ textAlign: 'center', marginTop: 4 }}>
+              {palate.sampleSize} {t('stat.ranked').toLowerCase()} · {palate.distinct} {t('stat.cuisines').toLowerCase()} · {t('stat.avg')} {avg}
+            </Mono>
+          </StickerView>
+        </View>
+
+        {/* my manifesto — the foodie's own words (their ideas) */}
+        <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+            <Banner s={10} tk={0.16} c={C.inkMuted}>
+              {t('you.manifesto')}
+            </Banner>
+            {profile && !editingBio ? (
+              <Pressable onPress={startEditBio}>
+                <Banner s={9.5} tk={0.1} c={C.ink400}>
+                  {me.bio ? t('you.edit') : t('you.write')}
+                </Banner>
+              </Pressable>
+            ) : null}
+          </View>
+          <StickerView offset="sm" style={{ backgroundColor: C.sun50, borderWidth: 2.5, borderColor: C.inkBlack, padding: 15 }}>
+            {editingBio ? (
+              <>
+                <TextInput
+                  value={bioDraft}
+                  onChangeText={setBioDraft}
+                  placeholder={t('you.manifestoPrompt')}
+                  placeholderTextColor={C.inkSoft}
+                  multiline
+                  autoFocus
+                  maxLength={280}
+                  style={{ minHeight: 76, textAlignVertical: 'top', fontFamily: 'Fraunces_400Regular', fontSize: 14.5, lineHeight: 21, color: C.inkBlack }}
+                />
+                <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
+                  <StickerPressable offset="sm" radius={999} onPress={saveBio} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.stampGreen, paddingVertical: 8, paddingHorizontal: 16 }}>
+                    <Banner s={10} tk={0.1} c={C.paper0}>
+                      {t('common.save')}
+                    </Banner>
+                  </StickerPressable>
+                  <Pressable onPress={() => setEditingBio(false)} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper0, paddingVertical: 8, paddingHorizontal: 16, justifyContent: 'center' }}>
+                    <Banner s={10} tk={0.1} c={C.inkMuted}>
+                      {t('common.cancel')}
+                    </Banner>
+                  </Pressable>
+                </View>
+              </>
+            ) : me.bio ? (
+              <Serif s={15} c={C.inkDeep} style={{ lineHeight: 23 }}>
+                “{me.bio}”
+              </Serif>
+            ) : (
+              <Pressable onPress={profile ? startEditBio : undefined}>
+                <SerifItalic s={14} c={C.inkMuted} style={{ lineHeight: 21 }}>
+                  {archBlurb}
+                </SerifItalic>
+                <Mono s={9.5} c={C.ink400} style={{ marginTop: 8 }}>
+                  {profile ? t('you.manifestoPrompt') : t('you.create')}
+                </Mono>
+              </Pressable>
+            )}
+          </StickerView>
+        </View>
+
         {/* critic's desk — only verified critics can host events */}
         {critic ? (
           <View style={{ paddingTop: 20, paddingHorizontal: 16 }}>
@@ -252,43 +346,76 @@ export function Passport() {
           </ScrollView>
         </View>
 
-        {/* cuisine standings */}
-        <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
-          <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 12 }}>
-            {t('you.rankCuisines')}
-          </Banner>
-          <View style={{ gap: 9 }}>
-            {CUISINE_TOP.map(([name, count]) => (
-              <View key={name} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                <Banner s={10} tk={0.06} c={C.inkDeep} style={{ width: 76 }}>
-                  {name}
-                </Banner>
-                <View style={{ flex: 1, height: 14, borderWidth: 2, borderColor: C.inkBlack, backgroundColor: C.paper100 }}>
-                  <View style={{ height: '100%', width: `${Math.round((count / CMAX) * 100)}%`, backgroundColor: C.sun400 }} />
+        {/* flavor DNA — the real cuisines across this foodie's log */}
+        {palate.topCuisines.length ? (
+          <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
+            <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 12 }}>
+              {t('you.flavorDna')}
+            </Banner>
+            <View style={{ flexDirection: 'row', height: 18, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
+              {palate.topCuisines.map((c, i) => (
+                <View
+                  key={c.name}
+                  style={{
+                    width: `${(c.count / dnaTotal) * 100}%`,
+                    backgroundColor: c.color,
+                    borderRightWidth: i < palate.topCuisines.length - 1 ? 2 : 0,
+                    borderColor: C.inkBlack,
+                  }}
+                />
+              ))}
+            </View>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 11 }}>
+              {palate.topCuisines.map((c) => (
+                <View key={c.name} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <View style={{ width: 11, height: 11, borderRadius: 3, backgroundColor: c.color, borderWidth: 1.5, borderColor: C.inkBlack }} />
+                  <Banner s={9.5} tk={0.04} c={C.inkDeep}>
+                    {c.name}
+                  </Banner>
+                  <Mono s={9} c={C.inkMuted}>
+                    {c.count}
+                  </Mono>
                 </View>
-                <Mono s={10} c={C.inkMuted} style={{ width: 30, textAlign: 'right' }}>
-                  {count}
-                </Mono>
-              </View>
-            ))}
+              ))}
+            </View>
           </View>
-        </View>
+        ) : null}
 
-        {/* taste tags */}
-        <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
-          <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
-            {t('you.chase')}
-          </Banner>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-            {TASTE_TAGS.map((name) => (
-              <StickerView key={name} offset="sm" radius={999} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.sun400, paddingVertical: 6, paddingHorizontal: 12 }}>
-                <Banner s={10} tk={0.1} c={C.inkDeep}>
-                  {name}
-                </Banner>
-              </StickerView>
-            ))}
+        {/* what you chase — the foodie's actual tastes */}
+        {chase.length ? (
+          <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
+            <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
+              {t('you.chase')}
+            </Banner>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {chase.map((name) => (
+                <StickerView key={name} offset="sm" radius={999} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.sun400, paddingVertical: 6, paddingHorizontal: 12 }}>
+                  <Banner s={10} tk={0.1} c={C.inkDeep}>
+                    {name}
+                  </Banner>
+                </StickerView>
+              ))}
+            </View>
           </View>
-        </View>
+        ) : null}
+
+        {/* go-to order — the dishes this foodie names most */}
+        {palate.goToDishes.length ? (
+          <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
+            <Banner s={10} tk={0.16} c={C.inkMuted} style={{ marginBottom: 10 }}>
+              {t('you.goto')}
+            </Banner>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {palate.goToDishes.map((d) => (
+                <StickerView key={d} offset="sm" style={{ borderWidth: 2, borderColor: C.inkBlack, backgroundColor: C.paper0, paddingVertical: 7, paddingHorizontal: 12, transform: [{ rotate: '-1deg' }] }}>
+                  <SerifItalic s={13} c={C.inkDeep}>
+                    {d}
+                  </SerifItalic>
+                </StickerView>
+              ))}
+            </View>
+          </View>
+        ) : null}
 
         {/* become a critic — signed-in nomads only */}
         {profile && !critic ? (
