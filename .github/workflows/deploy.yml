@@ -1,10 +1,14 @@
 name: Deploy site (GitHub Pages)
 
-# Builds the Expo web bundle and publishes it to GitHub Pages on every push to
-# the app branch — so the public site at https://juanctame.github.io/NMC-/ stays
-# current automatically (no hand-built deploys). `configure-pages` with
-# enablement turns Pages on if it isn't already, so this also *activates* the
-# site the first time it runs.
+# Builds the Expo web bundle and publishes it to the `gh-pages` branch on every
+# push to the app branch — so the public site at https://juanctame.github.io/NMC-/
+# stays current automatically (no hand-built deploys).
+#
+# This uses classic branch-based Pages (Settings → Pages → Source =
+# "Deploy from a branch" → gh-pages / root) rather than the Actions "environment"
+# deploy, because that environment restricts deployments to the default branch —
+# this repo's work lives on a feature branch, so the branch-push approach is the
+# one that actually deploys here.
 
 on:
   push:
@@ -14,19 +18,16 @@ on:
       - 'supabase/**'
   workflow_dispatch:
 
-# Least-privilege token that can still publish Pages.
+# The built-in token needs write access to push the built site to gh-pages.
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
-# One live deploy at a time; let a newer push supersede an in-flight build.
 concurrency:
-  group: pages
+  group: pages-deploy
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,21 +38,15 @@ jobs:
       - run: npm ci
       - name: Export web bundle
         run: npx expo export -p web
-      - name: Jekyll-proof the _expo/ dir
-        run: touch dist/.nojekyll
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Publish to gh-pages
+        run: |
+          touch dist/.nojekyll        # keep GitHub Pages from hiding the _expo/ dir
+          cd dist
+          git init -q
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Deploy ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

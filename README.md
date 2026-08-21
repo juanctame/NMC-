@@ -20,10 +20,11 @@ from the high-fidelity design handoff.
 The web build is public at **<https://juanctame.github.io/NMC-/>**.
 
 Deployment is automated: [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
-builds the Expo web bundle (`npx expo export -p web`) and publishes it to GitHub
-Pages on every push to the app branch, so the site stays current with no manual
-step. The workflow enables Pages on first run; if Pages isn't on yet, confirm it
-under **Settings → Pages → Build and deployment → Source = GitHub Actions**.
+builds the Expo web bundle (`npx expo export -p web`) and publishes it to the
+`gh-pages` branch on every push to the app branch, so the site stays current with
+no manual step. Pages must be set to serve that branch: **Settings → Pages →
+Build and deployment → Source = "Deploy from a branch" → Branch: `gh-pages` /
+`(root)`**.
 
 Restaurant data loads live from Google Places, and — once the optional shared
 cache is set up — from one server-swept index so visitors don't each spend
