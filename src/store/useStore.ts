@@ -19,6 +19,7 @@ import {
 import { PHOTO_POOL } from '../assets';
 import { DEFAULT_CITY, cityById, type City } from '../data/cities';
 import { getProvider, fixtureFallback } from '../data/provider';
+import { fetchCachedPlaces } from '../data/placesCache';
 import { REVIEWS, DISH_PHOTOS, type Review } from '../data/reviews';
 import { fetchSharedReviews, pushSharedReview } from '../data/shared';
 import { makeProfile, makeProfileFromAuth, identity, type Profile } from '../data/profile';
@@ -59,7 +60,7 @@ import type { BuzzResult } from '../data/trending';
 import { channelForm, SEED_CHANNEL_POSTS, type ChannelPost } from '../data/channels';
 import type { Lang } from '../i18n';
 
-export type NearbyStatus = 'idle' | 'loading' | 'ready' | 'fallback' | 'error';
+export type NearbyStatus = 'idle' | 'loading' | 'cached' | 'ready' | 'fallback' | 'error';
 export type VideoStatus = 'idle' | 'loading' | 'ready' | 'empty';
 export type ReviewSort = 'popular' | 'recent';
 export type ScoredReview = Review & { likes: number; likedByMe: boolean };
@@ -725,8 +726,23 @@ export const useStore = create<State & Actions>((set, get) => ({
   loadNearby: async () => {
     const city = get().city;
     set({ nearbyStatus: 'loading' });
+    // 1) Cache-first: read the shared, pre-swept city index (Supabase). Every
+    //    visitor reads this one table, so nobody spends Google quota on load.
     try {
-      // Stream results in as the city sweep progresses so the map/feed fill fast.
+      const cached = await fetchCachedPlaces(city.id);
+      if (get().city.id !== city.id) return; // city changed mid-read — drop stale
+      if (cached.length) {
+        const map: Record<string, Place> = {};
+        cached.forEach((p) => (map[p.id] = p));
+        set({ nearby: cached, nearbyById: map, nearbyStatus: 'cached' });
+        return;
+      }
+    } catch {
+      // Cache unreachable — fall through to the live sweep below.
+    }
+    // 2) No cache (unconfigured/empty/offline): sweep Google live in the browser,
+    //    streaming results in as the city sweep progresses so the feed fills fast.
+    try {
       const apply = (places: Place[]) => {
         if (get().city.id !== city.id) return; // city changed mid-sweep — drop stale
         const map: Record<string, Place> = {};

@@ -64,5 +64,15 @@ to the offline CDMX sample so nothing breaks. Native builds use OpenStreetMap
 ### Quota note
 Each grid point/page is one Nearby Search request (~$32 / 1,000 on the Basic
 tier). Defaults ≈ 16–32 requests per city load, once per session. Dial `GRID` /
-`MAX_PAGES` to trade coverage for cost, or move the sweep to a cached backend job
-for production.
+`MAX_PAGES` to trade coverage for cost.
+
+### Cached backend (recommended for production)
+The live per-browser sweep means **every visitor** spends quota. To make it
+sustainable, the app can instead read **one shared, pre-swept index** from
+Supabase — swept once on a schedule and read by everyone, for near-zero
+per-visitor cost. `loadNearby` is **cache-first**: it reads that index and only
+falls back to the live browser sweep when the cache is empty/unconfigured. See
+**[CACHED_SWEEP.md](CACHED_SWEEP.md)** for the one-time setup (table + two Edge
+Functions + nightly job). Photos in the cached path are still fetched **live**
+from Google (through a proxy that keeps the server key private), never
+re-hosted.

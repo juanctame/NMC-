@@ -1,0 +1,58 @@
+name: Sweep places cache
+
+# Refills the shared Google Places index (Supabase `public.places`) on a schedule
+# so every app visitor reads a fresh, pre-swept city list instead of spending
+# Google quota in their own browser. Safe no-op until the two repo secrets are
+# set (Settings → Secrets and variables → Actions):
+#   SUPABASE_URL   e.g. https://xxxx.supabase.co
+#   SWEEP_SECRET   the same random string given to `supabase secrets set`
+# See CACHED_SWEEP.md for the full one-time setup.
+
+on:
+  schedule:
+    - cron: '20 8 * * *' # 08:20 UTC daily (~02:20 CDMX) — off-peak
+  workflow_dispatch: # run on demand from the Actions tab
+    inputs:
+      city:
+        description: 'Single city id to sweep (blank = all)'
+        required: false
+        default: ''
+
+concurrency:
+  group: sweep-places
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        city: [cdmx, mty, gdl, nyc, tyo]
+    steps:
+      - name: Sweep ${{ matrix.city }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SWEEP_SECRET: ${{ secrets.SWEEP_SECRET }}
+          ONLY_CITY: ${{ github.event.inputs.city }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SWEEP_SECRET" ]; then
+            echo "SUPABASE_URL / SWEEP_SECRET not set — skipping (cache stays as-is)."
+            exit 0
+          fi
+          if [ -n "$ONLY_CITY" ] && [ "$ONLY_CITY" != "${{ matrix.city }}" ]; then
+            echo "Skipping ${{ matrix.city }} (dispatch asked for '$ONLY_CITY')."
+            exit 0
+          fi
+          echo "Sweeping ${{ matrix.city }}…"
+          code=$(curl -sS -o /tmp/out.json -w '%{http_code}' -X POST \
+            "$SUPABASE_URL/functions/v1/sweep-places?city=${{ matrix.city }}" \
+            -H "x-sweep-secret: $SWEEP_SECRET" \
+            --max-time 300 || echo 000)
+          echo "HTTP $code"
+          cat /tmp/out.json || true
+          echo
+          if [ "$code" != "200" ]; then
+            echo "Sweep for ${{ matrix.city }} failed (HTTP $code)."
+            exit 1
+          fi
