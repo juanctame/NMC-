@@ -202,7 +202,7 @@ function SelectCard({
 }) {
   const sel = useStore((s) => s.selPin)!;
 
-  let content: { photo: string; name: string; meta: string; badge: string; badgeBg: string; badgeFg: string; walk: string; cta: string; onPress: () => void; google?: string };
+  let content: { photo: string; photoUrl?: string; name: string; meta: string; badge: string; badgeBg: string; badgeFg: string; walk: string; cta: string; onPress: () => void; google?: string };
 
   if (sel.kind === 'event') {
     const ev = EVENTS.find((e) => e.id === sel.id)!;
@@ -246,6 +246,7 @@ function SelectCard({
         : undefined;
     content = {
       photo: base.photo,
+      photoUrl: base.photoUrl,
       name: base.name,
       meta: metaOf(base),
       badge: shownScore != null ? `Grade ${fmt(shownScore)}` : base.price,
@@ -261,7 +262,7 @@ function SelectCard({
   return (
     <View style={{ position: 'absolute', left: 14, right: 14, bottom: 14, zIndex: 25 }}>
       <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 10 }}>
-        <Photo source={photo(content.photo)} style={{ width: 56, height: 56, borderWidth: 2, borderColor: C.inkBlack }} />
+        <Photo source={content.photoUrl ? { uri: content.photoUrl } : photo(content.photo)} style={{ width: 56, height: 56, borderWidth: 2, borderColor: C.inkBlack }} />
         <View style={{ flex: 1, minWidth: 0 }}>
           <SerifDisplay s={16} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 16 }}>
             {content.name}

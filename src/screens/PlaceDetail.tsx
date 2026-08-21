@@ -17,7 +17,7 @@ import { PLATFORM_LABEL } from '../data/creators';
 import { youtubeEnabled } from '../data/videosLive';
 import { useT } from '../i18n';
 import { C, col } from '../theme/tokens';
-import { photo, PHOTO_POOL } from '../assets';
+import { photo, placePhoto, PHOTO_POOL } from '../assets';
 import { Display, Banner, Serif, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
@@ -261,8 +261,9 @@ export function PlaceDetail() {
   const off = activePlaceId.length % PHOTO_POOL.length;
   const seedG = [base.photo, PHOTO_POOL[off], PHOTO_POOL[(off + 3) % PHOTO_POOL.length]];
   const mine = userPhotos[activePlaceId] || [];
-  const gallery = [
-    ...seedG.map((src) => ({ src, mine: false })),
+  const gallery: { src: string; mine: boolean; url?: string }[] = [
+    // First tile shows the venue's real Google photo when we have one.
+    ...seedG.map((src, i) => ({ src, mine: false, url: i === 0 ? base.photoUrl : undefined })),
     ...mine.map((src) => ({ src, mine: true })),
   ];
 
@@ -276,7 +277,14 @@ export function PlaceDetail() {
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
       {/* hero */}
       <View style={{ position: 'relative' }}>
-        <Photo source={photo(base.photo)} style={{ width: '100%', height: 226, borderBottomWidth: 2.5, borderColor: C.inkBlack }} />
+        <Photo source={placePhoto(base)} style={{ width: '100%', height: 226, borderBottomWidth: 2.5, borderColor: C.inkBlack }} />
+        {base.photoUrl ? (
+          <View style={{ position: 'absolute', right: 8, bottom: 8, backgroundColor: 'rgba(27,16,4,0.6)', borderRadius: 4, paddingVertical: 2, paddingHorizontal: 6 }}>
+            <Mono s={7.5} c={C.paper0} numberOfLines={1}>
+              {base.photoAttr ? `Photo: ${base.photoAttr}` : 'Photo · Google Maps'}
+            </Mono>
+          </View>
+        ) : null}
         <View style={{ position: 'absolute', top: insets.top + 8, left: 16 }}>
           <StickerView offset="sm" radius={999}>
             <Pressable onPress={closePlace} style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
@@ -451,7 +459,7 @@ export function PlaceDetail() {
           </Pressable>
           {gallery.map((g, i) => (
             <View key={i} style={{ width: '31.6%', aspectRatio: 1, borderWidth: 2, borderColor: C.inkBlack, overflow: 'hidden' }}>
-              <Photo source={photo(g.src)} style={{ width: '100%', height: '100%' }} />
+              <Photo source={g.url ? { uri: g.url } : photo(g.src)} style={{ width: '100%', height: '100%' }} />
               {g.mine ? (
                 <View style={{ position: 'absolute', bottom: 4, left: 4, backgroundColor: C.sun400, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 1, paddingHorizontal: 6 }}>
                   <Banner s={7} tk={0.1} c={C.inkDeep}>

@@ -16,7 +16,7 @@ const PLATFORM_TAG: Record<string, string> = { tiktok: 'TT', instagram: 'IG', yo
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { C } from '../theme/tokens';
 import { col } from '../theme/tokens';
-import { photo, BRAND } from '../assets';
+import { photo, placePhoto, BRAND } from '../assets';
 import { Display, Banner, Serif, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
@@ -548,7 +548,7 @@ export function Feed() {
                   onPress={() => openPlaceFromFeed(p.id)}
                   style={{ width: 128, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
                 >
-                  <Photo source={photo(p.photo)} style={{ width: '100%', height: 84, borderBottomWidth: 2, borderColor: C.inkBlack }} />
+                  <Photo source={placePhoto(p)} style={{ width: '100%', height: 84, borderBottomWidth: 2, borderColor: C.inkBlack }} />
                   <View style={{ padding: 8 }}>
                     <SerifDisplay s={13} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 14 }}>
                       {p.name}

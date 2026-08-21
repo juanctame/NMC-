@@ -39,3 +39,11 @@ export const PHOTO_POOL = [
 export function photo(key: string): number {
   return PHOTOS[key] ?? PHOTOS['french-dip'];
 }
+
+/**
+ * Source for a place image: a live Google Places photo URL when present
+ * (fetched at display time, never re-hosted), otherwise a bundled sample photo.
+ */
+export function placePhoto(p: { photo: string; photoUrl?: string }): number | { uri: string } {
+  return p.photoUrl ? { uri: p.photoUrl } : photo(p.photo);
+}
