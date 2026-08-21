@@ -14,8 +14,12 @@ import { DATA_SOURCE, GOOGLE_PLACES_API_KEY } from './config';
 export type PlacesProvider = {
   id: string;
   label: string;
-  /** Real places near a city, normalized to the app's Place shape. */
-  searchNearby: (city: City) => Promise<Place[]>;
+  /**
+   * Real places near a city, normalized to the app's Place shape. `onPartial`
+   * (when supported) streams cumulative results as they arrive, so the UI can
+   * fill progressively during a long city sweep.
+   */
+  searchNearby: (city: City, onPartial?: (places: Place[]) => void) => Promise<Place[]>;
 };
 
 const overpassProvider: PlacesProvider = {
@@ -34,7 +38,7 @@ const googleProvider: PlacesProvider = {
   id: 'google',
   label: 'Google Places',
   // Web: live Google Places Nearby Search. Native: OSM (Places JS is web-only).
-  searchNearby: (city) => googleSearchNearby(city),
+  searchNearby: (city, onPartial) => googleSearchNearby(city, onPartial),
 };
 
 export function getProvider(): PlacesProvider {

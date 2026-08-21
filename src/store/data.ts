@@ -31,6 +31,7 @@ export type Place = {
   rating?: number; // Google's 0–5 community rating (live places)
   reviews?: number; // Google review count
   photoUrl?: string; // live Google Places photo URL (fetched at display time)
+  photoUrls?: string[]; // up to a few live photos (for the gallery)
   photoAttr?: string; // required attribution for that photo
 };
 

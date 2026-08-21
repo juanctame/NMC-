@@ -726,10 +726,15 @@ export const useStore = create<State & Actions>((set, get) => ({
     const city = get().city;
     set({ nearbyStatus: 'loading' });
     try {
-      const places = await getProvider().searchNearby(city);
-      const map: Record<string, Place> = {};
-      places.forEach((p) => (map[p.id] = p));
-      set({ nearby: places, nearbyById: map, nearbyStatus: 'ready' });
+      // Stream results in as the city sweep progresses so the map/feed fill fast.
+      const apply = (places: Place[]) => {
+        if (get().city.id !== city.id) return; // city changed mid-sweep — drop stale
+        const map: Record<string, Place> = {};
+        places.forEach((p) => (map[p.id] = p));
+        set({ nearby: places, nearbyById: map, nearbyStatus: 'ready' });
+      };
+      const places = await getProvider().searchNearby(city, apply);
+      apply(places);
     } catch {
       // Graceful degradation: keep CDMX populated from the offline sample.
       const fb = city.id === 'cdmx' ? fixtureFallback(city) : [];

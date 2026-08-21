@@ -8,6 +8,9 @@ import type { Place } from '../store/data';
 import type { City } from './cities';
 import { fetchOsmNearby } from './osm';
 
-export function googleSearchNearby(city: City): Promise<Place[]> {
+export function googleSearchNearby(
+  city: City,
+  _onPartial?: (places: Place[]) => void
+): Promise<Place[]> {
   return fetchOsmNearby(city);
 }

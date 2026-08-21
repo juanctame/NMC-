@@ -259,11 +259,16 @@ export function PlaceDetail() {
       : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(base.name + ' ' + base.hood)}`;
 
   const off = activePlaceId.length % PHOTO_POOL.length;
-  const seedG = [base.photo, PHOTO_POOL[off], PHOTO_POOL[(off + 3) % PHOTO_POOL.length]];
+  const stockFill = [base.photo, PHOTO_POOL[off], PHOTO_POOL[(off + 3) % PHOTO_POOL.length]];
+  // Prefer the venue's real Google photos; fall back to stock only to fill out
+  // the grid when a place has fewer than three.
+  const realPhotos = base.photoUrls?.length ? base.photoUrls : base.photoUrl ? [base.photoUrl] : [];
+  const seedTiles = Array.from({ length: 3 }, (_, i) =>
+    i < realPhotos.length ? { url: realPhotos[i], mine: false } : { src: stockFill[i], mine: false }
+  );
   const mine = userPhotos[activePlaceId] || [];
-  const gallery: { src: string; mine: boolean; url?: string }[] = [
-    // First tile shows the venue's real Google photo when we have one.
-    ...seedG.map((src, i) => ({ src, mine: false, url: i === 0 ? base.photoUrl : undefined })),
+  const gallery: { src?: string; url?: string; mine: boolean }[] = [
+    ...seedTiles,
     ...mine.map((src) => ({ src, mine: true })),
   ];
 
@@ -459,7 +464,7 @@ export function PlaceDetail() {
           </Pressable>
           {gallery.map((g, i) => (
             <View key={i} style={{ width: '31.6%', aspectRatio: 1, borderWidth: 2, borderColor: C.inkBlack, overflow: 'hidden' }}>
-              <Photo source={g.url ? { uri: g.url } : photo(g.src)} style={{ width: '100%', height: '100%' }} />
+              <Photo source={g.url ? { uri: g.url } : photo(g.src || base.photo)} style={{ width: '100%', height: '100%' }} />
               {g.mine ? (
                 <View style={{ position: 'absolute', bottom: 4, left: 4, backgroundColor: C.sun400, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 1, paddingHorizontal: 6 }}>
                   <Banner s={7} tk={0.1} c={C.inkDeep}>

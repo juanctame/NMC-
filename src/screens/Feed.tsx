@@ -2,7 +2,7 @@
  * Feed (home) — social home: trending strip, friends' activity, personalized
  * recs, and (once unlocked) the Dine Club teaser.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, ScrollView, Pressable, Image, ActivityIndicator, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
@@ -11,6 +11,8 @@ import { FEED, RECS, byId } from '../store/data';
 import { CREATOR_REVIEWS, PLATFORM_LABEL } from '../data/creators';
 import { TRENDING_VIDEOS, embedUrlFor, type TrendingVideo } from '../data/videos';
 import type { BuzzResult } from '../data/trending';
+import { computePalate } from '../data/palate';
+import { recommend, type Rec, type ReasonTag } from '../data/recommend';
 
 const PLATFORM_TAG: Record<string, string> = { tiktok: 'TT', instagram: 'IG', youtube: 'YT' };
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
@@ -161,6 +163,84 @@ function MonthlyTrendCard({ item, rank }: { item: BuzzResult; rank: number }) {
         ) : null}
       </View>
     </View>
+  );
+}
+
+function reasonText(r: ReasonTag, t: (k: string) => string): string {
+  return t(r.key).replace('{x}', r.arg || '');
+}
+
+/** The single best-fit pick for this foodie — quality × taste. */
+function TopPick({ rec }: { rec: Rec }) {
+  const openPlace = useStore((s) => s.openPlace);
+  const t = useT();
+  const p = rec.place;
+  return (
+    <StickerPressable offset="lg" onPress={() => openPlace(p.id)} style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
+      <View style={{ position: 'relative' }}>
+        <Photo source={placePhoto(p)} style={{ width: '100%', height: 152 }} darken={0.12} />
+        <View style={{ position: 'absolute', top: 10, left: 10, backgroundColor: C.ink400, borderWidth: 2, borderColor: C.paper0, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 10, transform: [{ rotate: '-3deg' }] }}>
+          <Banner s={9} tk={0.14} c={C.paper0}>
+            {t('feed.topPick')}
+          </Banner>
+        </View>
+        <View style={{ position: 'absolute', top: 8, right: 10, alignItems: 'center' }}>
+          <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: C.sun400, borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+            <Display s={18} c={C.inkDeep}>
+              {rec.score}
+            </Display>
+          </View>
+          <Banner s={7} tk={0.1} c={C.paper0} style={{ marginTop: 2 }}>
+            {t('feed.forYouScore')}
+          </Banner>
+        </View>
+      </View>
+      <View style={{ padding: 13 }}>
+        <SerifDisplay s={18} c={C.inkDeep} numberOfLines={1}>
+          {p.name}
+        </SerifDisplay>
+        <Mono s={9.5} c={C.inkMuted} style={{ marginTop: 3 }} numberOfLines={1}>
+          {p.cuisine} · {p.hood}
+          {typeof p.rating === 'number' ? ` · ★ ${p.rating.toFixed(1)}${p.reviews ? ` (${p.reviews > 999 ? (p.reviews / 1000).toFixed(1) + 'k' : p.reviews})` : ''}` : ''}
+        </Mono>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 9 }}>
+          {rec.reasons.map((r, i) => (
+            <View key={i} style={{ backgroundColor: C.sun100, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 9 }}>
+              <Banner s={8.5} tk={0.03} c={C.inkDeep}>
+                {reasonText(r, t)}
+              </Banner>
+            </View>
+          ))}
+        </View>
+      </View>
+    </StickerPressable>
+  );
+}
+
+/** Compact recommendation card for the runner-up strip. */
+function RecMini({ rec }: { rec: Rec }) {
+  const openPlace = useStore((s) => s.openPlace);
+  const t = useT();
+  const p = rec.place;
+  return (
+    <StickerPressable offset="sm" onPress={() => openPlace(p.id)} style={{ width: 152, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
+      <View style={{ position: 'relative' }}>
+        <Photo source={placePhoto(p)} style={{ width: '100%', height: 88 }} />
+        <View style={{ position: 'absolute', top: 6, right: 6, minWidth: 26, height: 22, paddingHorizontal: 5, borderRadius: 11, backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+          <Display s={12} c={C.inkDeep}>
+            {rec.score}
+          </Display>
+        </View>
+      </View>
+      <View style={{ padding: 8, gap: 3 }}>
+        <SerifDisplay s={13} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 14 }}>
+          {p.name}
+        </SerifDisplay>
+        <Mono s={8.5} c={C.inkSoft} numberOfLines={1}>
+          {reasonText(rec.reasons[0], t)}
+        </Mono>
+      </View>
+    </StickerPressable>
   );
 }
 
@@ -440,7 +520,20 @@ export function Feed() {
   const monthlyTrending = useStore((s) => s.monthlyTrending);
   const monthlyTrendingStatus = useStore((s) => s.monthlyTrendingStatus);
   const loadMonthlyTrending = useStore((s) => s.loadMonthlyTrending);
+  const ranked = useStore((s) => s.ranked);
+  const tastes = useStore((s) => s.tastes);
+  const userReviews = useStore((s) => s.userReviews);
+  const wantIds = useStore((s) => s.wantIds);
   const t = useT();
+
+  // The ideal picks for this foodie, from the live venues (quality × taste fit).
+  const recs = useMemo(() => {
+    if (!nearby.length) return [];
+    const palate = computePalate(ranked, tastes, userReviews);
+    const beenIds = new Set(ranked.map((r) => r.id));
+    const wantSet = new Set(wantIds);
+    return recommend(nearby, { palate, tastes, beenIds, wantIds: wantSet }).slice(0, 7);
+  }, [nearby, ranked, tastes, userReviews, wantIds]);
 
   // Rank the most-mentioned restaurants this month (cached; recomputes ~daily).
   useEffect(() => {
@@ -482,6 +575,28 @@ export function Feed() {
 
       {/* body */}
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 100, gap: 16 }} showsVerticalScrollIndicator={false}>
+        {/* Ideal for you — quality × your taste, from the live venues */}
+        {recs.length ? (
+          <View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <Banner s={11} tk={0.14} c={C.inkDeep}>
+                {t('feed.forYou')}
+              </Banner>
+              <Mono s={9} c={C.inkSoft}>
+                {t('feed.forYouSub')}
+              </Mono>
+            </View>
+            <TopPick rec={recs[0]} />
+            {recs.length > 1 ? (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingTop: 10, paddingBottom: 4, paddingRight: 4 }}>
+                {recs.slice(1).map((rec) => (
+                  <RecMini key={rec.place.id} rec={rec} />
+                ))}
+              </ScrollView>
+            ) : null}
+          </View>
+        ) : null}
+
         <View>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
             <Banner s={11} tk={0.14} c={C.inkDeep}>

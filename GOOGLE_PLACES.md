@@ -15,11 +15,27 @@ whole city we **tile it into a grid** of search points, page through each, and
 - each point searched at `RADIUS` metres, paged `MAX_PAGES` deep
 - results merged and de-duplicated → **hundreds of live venues** instead of ~20
 
-Defaults (central CDMX): `GRID=4` (16 points), `SPAN≈0.11°` (~12 km), `RADIUS=2400 m`,
-`MAX_PAGES=2`. Turn `GRID`/`MAX_PAGES` up for more of the city (and more API calls),
-down to spend less quota. The sweep runs **once per city per session** (the store
-caches `nearby` until you change city), then everything is filtered/searched
-locally.
+Defaults (central CDMX, cranked): `GRID=6` (36 points), `SPAN≈0.16°` (~17 km),
+`RADIUS=2400 m`, `MAX_PAGES=3` (up to 60/point) → often **1,000+ live venues**.
+Turn `GRID`/`MAX_PAGES` up for more of the city (and more API calls), down to
+spend less quota. The sweep is **progressive** — results stream into the map/feed
+as each batch of points lands (via `onPartial`), so you see venues within a
+couple of seconds — and runs **once per city per session** (the store caches
+`nearby` until you change city).
+
+## Ideal recommendations (`src/data/recommend.ts`)
+The Feed's **"Ideal for you"** rail ranks the live venues for the signed-in
+foodie by `quality × taste fit`:
+
+- **Quality** — a Bayesian-smoothed Google rating, so a 5.0 with 3 reviews never
+  outranks a 4.6 with 4,000.
+- **Taste fit** — the venue's cuisine scored against the user's palate axes +
+  their chosen tastes (the same palate engine that powers the profile).
+- Small nudges for corroboration (review volume), open-now, and novelty
+  (want-to-try, and never re-recommending somewhere already in your log).
+
+Each pick shows a 0–100 "for you" score and short reason tags ("Right up your
+Seafood alley", "Beloved by thousands", "A hidden gem", "Open now").
 
 ## Photos
 Each venue's photo comes from Google's own Places Photo endpoint via
