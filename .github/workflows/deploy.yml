@@ -1,0 +1,57 @@
+name: Deploy site (GitHub Pages)
+
+# Builds the Expo web bundle and publishes it to GitHub Pages on every push to
+# the app branch — so the public site at https://juanctame.github.io/NMC-/ stays
+# current automatically (no hand-built deploys). `configure-pages` with
+# enablement turns Pages on if it isn't already, so this also *activates* the
+# site the first time it runs.
+
+on:
+  push:
+    branches: [claude/modern-app-interface-design-ax8tbd, main]
+    paths-ignore:
+      - '**.md'
+      - 'supabase/**'
+  workflow_dispatch:
+
+# Least-privilege token that can still publish Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One live deploy at a time; let a newer push supersede an in-flight build.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Export web bundle
+        run: npx expo export -p web
+      - name: Jekyll-proof the _expo/ dir
+        run: touch dist/.nojekyll
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

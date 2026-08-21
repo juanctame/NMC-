@@ -15,6 +15,23 @@ from the high-fidelity design handoff.
 
 ---
 
+## Live site & deployment
+
+The web build is public at **<https://juanctame.github.io/NMC-/>**.
+
+Deployment is automated: [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
+builds the Expo web bundle (`npx expo export -p web`) and publishes it to GitHub
+Pages on every push to the app branch, so the site stays current with no manual
+step. The workflow enables Pages on first run; if Pages isn't on yet, confirm it
+under **Settings → Pages → Build and deployment → Source = GitHub Actions**.
+
+Restaurant data loads live from Google Places, and — once the optional shared
+cache is set up — from one server-swept index so visitors don't each spend
+Google quota. See **[CACHED_SWEEP.md](CACHED_SWEEP.md)** for that one-time
+backend setup (Supabase table + two Edge Functions + nightly sweep).
+
+---
+
 ## Stack
 
 | Concern | Choice |
