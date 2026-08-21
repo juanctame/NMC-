@@ -233,6 +233,7 @@ export type State = {
   nearby: Place[];
   nearbyById: Record<string, Place>;
   nearbyStatus: NearbyStatus;
+  nearbyUpdatedAt: string | null; // when the shared cache was last swept (only set on 'cached')
   citySheetOpen: boolean;
 
   // Reviews (public, Letterboxd-style)
@@ -450,6 +451,7 @@ const initialState = (): State => ({
   nearby: [],
   nearbyById: {},
   nearbyStatus: 'idle',
+  nearbyUpdatedAt: null,
   citySheetOpen: false,
   userReviews: [],
   sharedReviews: [],
@@ -729,12 +731,12 @@ export const useStore = create<State & Actions>((set, get) => ({
     // 1) Cache-first: read the shared, pre-swept city index (Supabase). Every
     //    visitor reads this one table, so nobody spends Google quota on load.
     try {
-      const cached = await fetchCachedPlaces(city.id);
+      const { places: cached, updatedAt } = await fetchCachedPlaces(city.id);
       if (get().city.id !== city.id) return; // city changed mid-read — drop stale
       if (cached.length) {
         const map: Record<string, Place> = {};
         cached.forEach((p) => (map[p.id] = p));
-        set({ nearby: cached, nearbyById: map, nearbyStatus: 'cached' });
+        set({ nearby: cached, nearbyById: map, nearbyStatus: 'cached', nearbyUpdatedAt: updatedAt });
         return;
       }
     } catch {
@@ -747,7 +749,7 @@ export const useStore = create<State & Actions>((set, get) => ({
         if (get().city.id !== city.id) return; // city changed mid-sweep — drop stale
         const map: Record<string, Place> = {};
         places.forEach((p) => (map[p.id] = p));
-        set({ nearby: places, nearbyById: map, nearbyStatus: 'ready' });
+        set({ nearby: places, nearbyById: map, nearbyStatus: 'ready', nearbyUpdatedAt: null });
       };
       const places = await getProvider().searchNearby(city, apply);
       apply(places);
@@ -756,7 +758,7 @@ export const useStore = create<State & Actions>((set, get) => ({
       const fb = city.id === 'cdmx' ? fixtureFallback(city) : [];
       const map: Record<string, Place> = {};
       fb.forEach((p) => (map[p.id] = p));
-      set({ nearby: fb, nearbyById: map, nearbyStatus: fb.length ? 'fallback' : 'error' });
+      set({ nearby: fb, nearbyById: map, nearbyStatus: fb.length ? 'fallback' : 'error', nearbyUpdatedAt: null });
     }
   },
   setCity: (id) => {

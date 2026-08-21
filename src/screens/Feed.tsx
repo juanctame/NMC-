@@ -22,6 +22,7 @@ import { photo, placePhoto, BRAND } from '../assets';
 import { Display, Banner, Serif, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
+import { CacheChip } from '../components/CacheChip';
 import { Grain } from '../components/Grain';
 import { ScreenIn } from '../components/Anim';
 import { GlobeMark, MapIcon, ChartIcon, PlayIcon, HeartIcon, CommentIcon, BookmarkIcon } from '../components/icons';
@@ -646,9 +647,12 @@ export function Feed() {
         {nearby.length > 0 ? (
           <View>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-              <Banner s={11} tk={0.14} c={C.inkDeep}>
-                {t('feed.fresh')}
-              </Banner>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexShrink: 1, minWidth: 0 }}>
+                <Banner s={11} tk={0.14} c={C.inkDeep}>
+                  {t('feed.fresh')}
+                </Banner>
+                <CacheChip />
+              </View>
               <Pressable onPress={openCitySheet} hitSlop={6}>
                 <Mono s={9} c={C.inkSoft}>
                   {city.name} · change ▾

@@ -18,6 +18,7 @@ import { photo } from '../assets';
 import { Display, Banner, SerifItalic, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
+import { CacheChip } from '../components/CacheChip';
 import { MapSurface } from '../components/MapSurface';
 import { ScreenIn } from '../components/Anim';
 
@@ -145,6 +146,11 @@ export function NearbyMap() {
       {/* map surface */}
       <View style={{ flex: 1, backgroundColor: C.paper100, overflow: 'hidden' }}>
         <MapSurface pins={visible} city={city} selPin={selPin} onSelect={selectPin} />
+
+        {/* shared-index provenance — only when venues came from the cache */}
+        <View style={{ position: 'absolute', right: 14, top: 14, zIndex: 5 }}>
+          <CacheChip />
+        </View>
 
         {/* legend */}
         <View style={{ position: 'absolute', left: 14, bottom: 14, zIndex: 5 }}>

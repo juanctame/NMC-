@@ -67,7 +67,28 @@ type Row = {
   photo_refs: string[] | null;
   photo_attr: string | null;
   open_now: boolean | null;
+  updated_at: string | null;
 };
+
+export type CachedPlaces = {
+  places: Place[];
+  /** ISO time of the freshest row — when the sweep last refilled this city. */
+  updatedAt: string | null;
+};
+
+/** Short "how fresh is the shared index" label, e.g. "just now", "3h ago". */
+export function cacheAgeLabel(iso: string | null): string {
+  if (!iso) return 'live';
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return 'live';
+  const mins = Math.max(0, Math.round((Date.now() - then) / 60000));
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.round(hrs / 24);
+  return `${days}d ago`;
+}
 
 function rowToPlace(row: Row, defaultHood: string): Place {
   const id = 'g-' + row.id;
@@ -104,25 +125,30 @@ function rowToPlace(row: Row, defaultHood: string): Place {
 }
 
 /**
- * All cached venues for a city, best first. Returns [] when the cache is
- * unconfigured, empty, or unreachable — the caller then does the live sweep.
+ * All cached venues for a city, best first, plus when the index was last swept.
+ * Returns an empty list when the cache is unconfigured, empty, or unreachable —
+ * the caller then does the live sweep.
  */
-export async function fetchCachedPlaces(cityId: string): Promise<Place[]> {
-  if (!cacheEnabled()) return [];
+export async function fetchCachedPlaces(cityId: string): Promise<CachedPlaces> {
+  if (!cacheEnabled()) return { places: [], updatedAt: null };
   try {
     const url =
       `${SUPABASE_URL}/rest/v1/places?city_id=eq.${encodeURIComponent(cityId)}` +
       `&select=*&order=rating.desc.nullslast&limit=${LIMIT}`;
     const res = await fetch(url, { headers: headers() });
-    if (!res.ok) return [];
+    if (!res.ok) return { places: [], updatedAt: null };
     const rows = (await res.json()) as Row[];
-    if (!Array.isArray(rows) || !rows.length) return [];
+    if (!Array.isArray(rows) || !rows.length) return { places: [], updatedAt: null };
     const defaultHood = cityById(cityId).defaultHood;
-    const places = rows.filter((r) => r && r.id && r.name).map((r) => rowToPlace(r, defaultHood));
+    const clean = rows.filter((r) => r && r.id && r.name);
+    const places = clean.map((r) => rowToPlace(r, defaultHood));
     // Trending first: weight rating by how many people rated it (mirrors the live sweep).
     places.sort((a, b) => (b.reviews || 0) * (b.rating || 0) - (a.reviews || 0) * (a.rating || 0));
-    return places;
+    // Freshest row = when the sweep last touched this city.
+    let updatedAt: string | null = null;
+    for (const r of clean) if (r.updated_at && (!updatedAt || r.updated_at > updatedAt)) updatedAt = r.updated_at;
+    return { places, updatedAt };
   } catch {
-    return [];
+    return { places: [], updatedAt: null };
   }
 }
