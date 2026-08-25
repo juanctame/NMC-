@@ -1,18 +1,18 @@
 name: Deploy site (GitHub Pages)
 
 # Builds the Expo web bundle and publishes it to the `gh-pages` branch on every
-# push to the app branch — so the public site at https://juanctame.github.io/NMC-/
-# stays current automatically (no hand-built deploys).
+# push to a deploy branch — so the public site at https://juanctame.github.io/NMC-/
+# stays current automatically (no hand-built deploys). `main` is the canonical
+# production branch; the feature branch also deploys so work is previewable live.
 #
 # This uses classic branch-based Pages (Settings → Pages → Source =
 # "Deploy from a branch" → gh-pages / root) rather than the Actions "environment"
 # deploy, because that environment restricts deployments to the default branch —
-# this repo's work lives on a feature branch, so the branch-push approach is the
-# one that actually deploys here.
+# the branch-push approach here deploys from either branch.
 
 on:
   push:
-    branches: [claude/modern-app-interface-design-ax8tbd, main]
+    branches: [main, claude/modern-app-interface-design-ax8tbd]
     paths-ignore:
       - '**.md'
       - 'supabase/**'
