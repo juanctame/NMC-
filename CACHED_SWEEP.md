@@ -43,10 +43,14 @@ server. Create a **second** key for the sweep:
    Keep this key **secret** — it never goes in the app, only in Supabase secrets.
 
 ## 3. Deploy the Edge Functions
-With the [Supabase CLI](https://supabase.com/docs/guides/cli) (`supabase login`
-&& `supabase link --project-ref <ref>`):
+Install the [Supabase CLI](https://supabase.com/docs/guides/cli), then (this
+project's ref is **`psbxxcupbbgwcjzqkygb`**, from the `SUPABASE_URL` in
+`src/config.ts`):
 
 ```bash
+supabase login
+supabase link --project-ref psbxxcupbbgwcjzqkygb
+
 # secrets (SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY are injected automatically)
 supabase secrets set GOOGLE_SERVER_KEY=<the server key from step 2>
 supabase secrets set SWEEP_SECRET=<a long random string you invent>
@@ -59,29 +63,45 @@ supabase functions deploy place-photo --no-verify-jwt
 ```
 
 ## 4. Fill the cache once
+Run these from a shell (swap in the `SWEEP_SECRET` you chose above):
+
 ```bash
-curl -X POST "$SUPABASE_URL/functions/v1/sweep-places?city=cdmx" \
-     -H "x-sweep-secret: $SWEEP_SECRET"
-# → {"city":"cdmx","points":36,"found":1200,"upserted":1200}
+SUPABASE_URL=https://psbxxcupbbgwcjzqkygb.supabase.co
+SWEEP_SECRET=<the string you set in step 3>
+
+for CITY in cdmx mty gdl nyc tyo; do
+  curl -X POST "$SUPABASE_URL/functions/v1/sweep-places?city=$CITY" \
+       -H "x-sweep-secret: $SWEEP_SECRET"
+  echo
+done
+# each → {"city":"cdmx","points":36,"found":1200,"upserted":1200}
 ```
-Reload the app — CDMX now loads from the cache (instantly, no Google calls in
-the browser). Sweep the other cities the same way (`?city=mty`, `gdl`, `nyc`,
-`tyo`).
+
+## 4b. Confirm it worked
+- **Data landed:** `curl "$SUPABASE_URL/rest/v1/places?select=count" -H "apikey: <anon key>"`
+  should report a non-zero count (the anon key is the public one in `src/config.ts`).
+- **App reads it:** reload <https://juanctame.github.io/NMC-/> — the venues now
+  load instantly with **no Google calls in the browser** (check the Network tab),
+  and the **"shared index · updated …"** chip appears on the feed's *Fresh near
+  you* header and the map. That chip is your live proof the cache is serving.
 
 ## 5. Keep it fresh automatically
 Pick either scheduler:
 
 **GitHub Actions (included).** Add two repo secrets (Settings → Secrets and
-variables → Actions): `SUPABASE_URL` and `SWEEP_SECRET`. The workflow
-[`.github/workflows/sweep-places.yml`](.github/workflows/sweep-places.yml) then
-sweeps all five cities nightly (and on-demand from the Actions tab). Without the
-secrets it's a harmless no-op.
+variables → Actions):
+- `SUPABASE_URL` = `https://psbxxcupbbgwcjzqkygb.supabase.co`
+- `SWEEP_SECRET` = the same string you set in step 3
+
+The workflow [`.github/workflows/sweep-places.yml`](.github/workflows/sweep-places.yml)
+then sweeps all five cities nightly (and on-demand from the Actions tab). Without
+the secrets it's a harmless no-op.
 
 **Supabase pg_cron** (alternative, all in-database):
 ```sql
 select cron.schedule('sweep-cdmx', '20 8 * * *', $$
   select net.http_post(
-    url    := 'https://<ref>.supabase.co/functions/v1/sweep-places?city=cdmx',
+    url    := 'https://psbxxcupbbgwcjzqkygb.supabase.co/functions/v1/sweep-places?city=cdmx',
     headers:= '{"x-sweep-secret":"<SWEEP_SECRET>"}'::jsonb
   );
 $$);
