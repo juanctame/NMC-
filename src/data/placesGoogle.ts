@@ -6,6 +6,7 @@
  */
 import type { Place } from '../store/data';
 import type { City } from './cities';
+import type { PlaceDetails } from './placeDetails';
 import { fetchOsmNearby } from './osm';
 
 export function googleSearchNearby(
@@ -13,4 +14,9 @@ export function googleSearchNearby(
   _onPartial?: (places: Place[]) => void
 ): Promise<Place[]> {
   return fetchOsmNearby(city);
+}
+
+/** Native shim: the Place Details lookup is web-only (Places JS library). */
+export function getPlaceDetails(_placeId: string): Promise<PlaceDetails> {
+  return Promise.resolve({});
 }

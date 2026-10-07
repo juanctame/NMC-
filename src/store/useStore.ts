@@ -20,6 +20,7 @@ import { PHOTO_POOL } from '../assets';
 import { DEFAULT_CITY, cityById, type City } from '../data/cities';
 import { getProvider, fixtureFallback } from '../data/provider';
 import { fetchCachedPlaces } from '../data/placesCache';
+import type { PlaceDetails, DetailsStatus } from '../data/placeDetails';
 import { REVIEWS, DISH_PHOTOS, type Review } from '../data/reviews';
 import { fetchSharedReviews, pushSharedReview } from '../data/shared';
 import { makeProfile, makeProfileFromAuth, identity, type Profile } from '../data/profile';
@@ -266,6 +267,10 @@ export type State = {
   placeVideosStatus: Record<string, VideoStatus>;
   videoUrl: string | null;
 
+  // Rich "before you go" details per place (live Google Place Details)
+  placeDetails: Record<string, PlaceDetails>;
+  placeDetailsStatus: Record<string, DetailsStatus>;
+
   // Monthly trending: restaurants ranked by last-30d social buzz (YouTube)
   monthlyTrending: BuzzResult[];
   monthlyTrendingStatus: VideoStatus;
@@ -370,6 +375,8 @@ export type Actions = {
   setLang: (lang: Lang) => void;
   // hashtag videos
   loadPlaceVideos: (placeId: string) => Promise<void>;
+  // rich place details
+  loadPlaceDetails: (placeId: string) => Promise<void>;
   openVideo: (url: string) => void;
   closeVideo: () => void;
   // monthly trending
@@ -472,6 +479,8 @@ const initialState = (): State => ({
   lang: 'en',
   placeVideos: {},
   placeVideosStatus: {},
+  placeDetails: {},
+  placeDetailsStatus: {},
   videoUrl: null,
   monthlyTrending: [],
   monthlyTrendingStatus: 'idle',
@@ -956,6 +965,34 @@ export const useStore = create<State & Actions>((set, get) => ({
   },
   openVideo: (url) => set({ videoUrl: url }),
   closeVideo: () => set({ videoUrl: null }),
+
+  // ── rich place details (live Google Place Details, web) ──
+  loadPlaceDetails: async (placeId) => {
+    const s = get();
+    const status = s.placeDetailsStatus[placeId];
+    // Fetch once per place per session (ready/empty are terminal).
+    if (status === 'loading' || status === 'ready' || status === 'empty') return;
+    const place = resolvePlace(placeId, s.nearbyById);
+    // Only Google-sourced places carry a place_id to look up ("g-" + place_id).
+    const gid = placeId.startsWith('g-') ? placeId.slice(2) : null;
+    const provider = getProvider();
+    if (!place || !gid || !provider.getDetails) {
+      set((st) => ({ placeDetailsStatus: { ...st.placeDetailsStatus, [placeId]: 'empty' } }));
+      return;
+    }
+    set({ placeDetailsStatus: { ...s.placeDetailsStatus, [placeId]: 'loading' } });
+    let det: PlaceDetails = {};
+    try {
+      det = await provider.getDetails(gid);
+    } catch {
+      det = {};
+    }
+    const has = !!(det && (det.weekdayHours || det.phone || det.website || det.summary || det.googleReviews));
+    set((st) => ({
+      placeDetails: { ...st.placeDetails, [placeId]: det },
+      placeDetailsStatus: { ...st.placeDetailsStatus, [placeId]: has ? 'ready' : 'empty' },
+    }));
+  },
 
   // ── monthly trending (most mentioned this month) ──
   loadMonthlyTrending: async (force) => {

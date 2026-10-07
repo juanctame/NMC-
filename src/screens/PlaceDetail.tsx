@@ -15,6 +15,8 @@ import { embedUrlFor, type TrendingVideo } from '../data/videos';
 import { hashtagOf, hashtagLinks, TAG_PLATFORMS } from '../data/hashtags';
 import { PLATFORM_LABEL } from '../data/creators';
 import { youtubeEnabled } from '../data/videosLive';
+import { computePalate } from '../data/palate';
+import { drawAndKnow, priceLabel, fitFor, type GReview } from '../data/placeDetails';
 import { useT } from '../i18n';
 import { C, col } from '../theme/tokens';
 import { photo, placePhoto, PHOTO_POOL } from '../assets';
@@ -22,7 +24,7 @@ import { Display, Banner, Serif, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
 import { Roundel } from '../components/Roundel';
-import { PlusIcon, BookmarkIcon, HeartIcon, PlayIcon } from '../components/icons';
+import { PlusIcon, BookmarkIcon, HeartIcon, PlayIcon, MapIcon, GlobeMark } from '../components/icons';
 import { ScreenIn } from '../components/Anim';
 
 function TogglePill({ on, label, onPress }: { on: boolean; label: string; onPress: () => void }) {
@@ -194,6 +196,110 @@ function VideoThumb({ v, onPress }: { v: TrendingVideo; onPress: () => void }) {
   );
 }
 
+/** A small bordered info pill (rating, price, open-state, cuisine…). */
+function InfoChip({ children, bg = C.paper0 }: { children: React.ReactNode; bg?: string }) {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: bg, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 5, paddingHorizontal: 11 }}>
+      {children}
+    </View>
+  );
+}
+
+/** One "the draw" (pro) or "good to know" (caveat) line. */
+function Point({ text, kind }: { text: string; kind: 'pro' | 'con' }) {
+  const dotBg = kind === 'pro' ? C.stampGreen : C.sun400;
+  const dotFg = kind === 'pro' ? C.paper0 : C.inkDeep;
+  return (
+    <View style={{ flexDirection: 'row', gap: 9, alignItems: 'flex-start' }}>
+      <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: dotBg, borderWidth: 1.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
+        <Banner s={9.5} c={dotFg}>
+          {kind === 'pro' ? '+' : '!'}
+        </Banner>
+      </View>
+      <Serif s={13} style={{ flex: 1, lineHeight: 18, color: C.inkDeep }}>
+        {text}
+      </Serif>
+    </View>
+  );
+}
+
+/** A contact / planning action (Call, Website, Directions, Menu). */
+function ActionPill({ label, onPress, children }: { label: string; onPress: () => void; children?: React.ReactNode }) {
+  return (
+    <StickerPressable
+      offset="sm"
+      radius={999}
+      onPress={onPress}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper0, paddingVertical: 9, paddingHorizontal: 13 }}
+    >
+      {children}
+      <Banner s={9.5} tk={0.08} c={C.inkDeep}>
+        {label}
+      </Banner>
+    </StickerPressable>
+  );
+}
+
+/** Full weekly hours, today's row highlighted. Google lists Monday-first. */
+function HoursList({ weekday }: { weekday: string[] }) {
+  const todayIdx = (new Date().getDay() + 6) % 7; // JS Sun=0 → Google Mon=0
+  return (
+    <View style={{ gap: 2 }}>
+      {weekday.map((line, i) => {
+        const ci = line.indexOf(': ');
+        const day = ci > 0 ? line.slice(0, ci) : line;
+        const hrs = ci > 0 ? line.slice(ci + 2) : '';
+        const today = i === todayIdx;
+        return (
+          <View
+            key={i}
+            style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 10, backgroundColor: today ? C.paper100 : 'transparent', borderRadius: 6, paddingVertical: 3, paddingHorizontal: 7 }}
+          >
+            <Mono s={10} c={today ? C.inkDeep : C.inkMuted}>
+              {day}
+              {today ? ' · today' : ''}
+            </Mono>
+            <Mono s={10} c={today ? C.inkDeep : C.inkMuted} style={{ textAlign: 'right' }}>
+              {hrs}
+            </Mono>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
+/** One real Google review (shown verbatim, with attribution). */
+function GReviewCard({ r }: { r: GReview }) {
+  return (
+    <StickerView offset="sm" style={{ width: 260, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, padding: 12 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
+        {r.photo ? (
+          <Image source={{ uri: r.photo }} style={{ width: 30, height: 30, borderRadius: 15, borderWidth: 1.5, borderColor: C.inkBlack }} />
+        ) : (
+          <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: C.ink400, borderWidth: 1.5, borderColor: C.inkBlack }} />
+        )}
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <Banner s={10} tk={0.04} c={C.inkDeep} numberOfLines={1}>
+            {r.author}
+          </Banner>
+          <Mono s={8} c={C.inkSoft} style={{ marginTop: 2 }}>
+            {r.relativeTime}
+          </Mono>
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: C.paper100, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 7 }}>
+          <Banner s={9} c={C.sun600}>
+            ★ {r.rating.toFixed(1)}
+          </Banner>
+        </View>
+      </View>
+      <Serif s={12.5} style={{ marginTop: 9, lineHeight: 18 }}>
+        {r.text}
+      </Serif>
+    </StickerView>
+  );
+}
+
 export function PlaceDetail() {
   const insets = useSafeAreaInsets();
   const activePlaceId = useStore((s) => s.activePlaceId);
@@ -221,6 +327,10 @@ export function PlaceDetail() {
   const placeVideosStatusMap = useStore((s) => s.placeVideosStatus);
   const loadPlaceVideos = useStore((s) => s.loadPlaceVideos);
   const openVideo = useStore((s) => s.openVideo);
+  const tastes = useStore((s) => s.tastes);
+  const placeDetailsMap = useStore((s) => s.placeDetails);
+  const placeDetailsStatusMap = useStore((s) => s.placeDetailsStatus);
+  const loadPlaceDetails = useStore((s) => s.loadPlaceDetails);
   const t = useT();
 
   // Pull other testers' reviews for this place from the shared backend (if on).
@@ -232,6 +342,11 @@ export function PlaceDetail() {
   useEffect(() => {
     if (activePlaceId) loadPlaceVideos(activePlaceId);
   }, [activePlaceId, loadPlaceVideos]);
+
+  // Pull rich "before you go" details (live Google Place Details; web only).
+  useEffect(() => {
+    if (activePlaceId) loadPlaceDetails(activePlaceId);
+  }, [activePlaceId, loadPlaceDetails]);
 
   if (!activePlaceId) return <View style={{ flex: 1, backgroundColor: C.paper50 }} />;
   const base = resolvePlace(activePlaceId, nearbyById);
@@ -277,6 +392,23 @@ export function PlaceDetail() {
   const links = hashtagLinks(tag);
   const videos = placeVideosMap[activePlaceId] || [];
   const videosStatus = placeVideosStatusMap[activePlaceId] || 'idle';
+
+  // Rich "before you go" details + honest highlights + taste fit.
+  const details = placeDetailsMap[activePlaceId];
+  const detailsStatus = placeDetailsStatusMap[activePlaceId] || 'idle';
+  const palate = computePalate(ranked, tastes, userReviews);
+  const fit = fitFor(base, palate, tastes); // 0..1 | null
+  const { draws, knows } = drawAndKnow(base, details, fit);
+  const gReviews = details?.googleReviews || [];
+  const gRating = base.rating ?? details?.rating;
+  const gReviewCount = base.reviews ?? details?.reviews;
+  const openNow = details?.openNow ?? (/open/i.test(base.openInfo || '') ? true : /closed/i.test(base.openInfo || '') ? false : undefined);
+  const phone = details?.phone;
+  const website = details?.website;
+  const dirUrl =
+    base.lat != null
+      ? `https://www.google.com/maps/dir/?api=1&destination=${base.lat},${base.lon}`
+      : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(base.name + ' ' + base.hood)}`;
 
   return (
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
@@ -328,6 +460,88 @@ export function PlaceDetail() {
           {base.blurb}
         </Serif>
 
+        {/* at-a-glance — the quick read before anything else */}
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 14 }}>
+          {gRating != null ? (
+            <InfoChip>
+              <Banner s={10} c={C.sun600}>
+                ★ {gRating.toFixed(1)}
+              </Banner>
+              {gReviewCount != null ? (
+                <Mono s={9} c={C.inkMuted}>
+                  {gReviewCount.toLocaleString()}
+                </Mono>
+              ) : null}
+            </InfoChip>
+          ) : null}
+          <InfoChip>
+            <Mono s={10} c={C.inkDeep}>
+              {priceLabel(base, details)}
+            </Mono>
+          </InfoChip>
+          {openNow !== undefined ? (
+            <InfoChip bg={openNow ? C.stampGreen : C.paper0}>
+              <Banner s={9.5} tk={0.06} c={openNow ? C.paper0 : C.inkMuted}>
+                {openNow ? 'Open now' : 'Closed now'}
+              </Banner>
+            </InfoChip>
+          ) : null}
+          {base.cuisine && base.cuisine !== 'Restaurant' ? (
+            <InfoChip>
+              <Mono s={10} c={C.inkDeep}>
+                {base.cuisine}
+              </Mono>
+            </InfoChip>
+          ) : null}
+          {detailsStatus === 'loading' ? (
+            <InfoChip>
+              <ActivityIndicator size="small" color={C.ink400} />
+              <Mono s={9} c={C.inkMuted}>
+                more…
+              </Mono>
+            </InfoChip>
+          ) : null}
+        </View>
+
+        {/* the lowdown — Google's own words about the place (when available) */}
+        {details?.summary ? (
+          <View style={{ marginTop: 14, flexDirection: 'row', gap: 10 }}>
+            <View style={{ width: 3, borderRadius: 2, backgroundColor: C.ink400 }} />
+            <View style={{ flex: 1 }}>
+              <Banner s={8.5} tk={0.14} c={C.inkMuted}>
+                The lowdown · Google
+              </Banner>
+              <Serif s={13.5} style={{ marginTop: 4, lineHeight: 20, color: C.inkDeep }}>
+                {details.summary}
+              </Serif>
+            </View>
+          </View>
+        ) : null}
+
+        {/* taste match — how it fits the signed-in foodie's palate */}
+        {fit != null ? (
+          <View style={{ marginTop: 16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+              <Banner s={10} tk={0.14} c={C.inkMuted}>
+                Your taste match
+              </Banner>
+              <Banner s={13} c={fit >= 0.66 ? C.stampGreen : fit >= 0.45 ? C.sun600 : C.inkMuted}>
+                {Math.round(fit * 100)}%
+              </Banner>
+            </View>
+            <View style={{ height: 14, borderRadius: 999, backgroundColor: C.paper100, borderWidth: 2, borderColor: C.inkBlack, overflow: 'hidden' }}>
+              <View style={{ width: `${Math.max(4, Math.round(fit * 100))}%`, height: '100%', backgroundColor: fit >= 0.66 ? C.stampGreen : C.ink400 }} />
+            </View>
+            <Mono s={9} c={C.inkSoft} style={{ marginTop: 5, lineHeight: 14 }}>
+              {fit >= 0.66
+                ? 'Strongly matches your palate'
+                : fit >= 0.45
+                  ? 'A decent fit for your taste'
+                  : 'Outside your usual lane — could be a fun stretch'}
+            </Mono>
+          </View>
+        ) : null}
+
         {/* rankings panel — dual verdict for rated places, "be the first" for fresh finds */}
         <View style={{ marginTop: 16 }}>
           {isRated ? (
@@ -368,6 +582,38 @@ export function PlaceDetail() {
               ) : null}
             </StickerView>
           )}
+        </View>
+
+        {/* the draw / good to know — honest highlights derived from real signals */}
+        <View style={{ marginTop: 18 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.stampGreen }} />
+            <Banner s={10} tk={0.16} c={C.inkMuted}>
+              The draw
+            </Banner>
+            <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+          </View>
+          <StickerView offset="sm" style={{ backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, padding: 13, gap: 10 }}>
+            {draws.map((d, i) => (
+              <Point key={i} text={d} kind="pro" />
+            ))}
+          </StickerView>
+          {knows.length ? (
+            <>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 14, marginBottom: 10 }}>
+                <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.sun400 }} />
+                <Banner s={10} tk={0.16} c={C.inkMuted}>
+                  Good to know
+                </Banner>
+                <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+              </View>
+              <StickerView offset="sm" style={{ backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, padding: 13, gap: 10 }}>
+                {knows.map((k, i) => (
+                  <Point key={i} text={k} kind="con" />
+                ))}
+              </StickerView>
+            </>
+          ) : null}
         </View>
 
         {/* table favourite — the most-named dish across everyone's reviews */}
@@ -441,6 +687,51 @@ export function PlaceDetail() {
               </View>
             </AppCard>
           </Pressable>
+        </View>
+
+        {/* plan your visit — full hours + one-tap contact / directions */}
+        <View style={{ marginTop: 20 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.ink400 }} />
+            <Banner s={10} tk={0.16} c={C.inkMuted}>
+              Plan your visit
+            </Banner>
+            <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+          </View>
+          <StickerView offset="sm" style={{ backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, padding: 13, gap: 12 }}>
+            {details?.weekdayHours ? (
+              <View>
+                <Banner s={8.5} tk={0.14} c={C.inkMuted} style={{ marginBottom: 6 }}>
+                  Hours
+                </Banner>
+                <HoursList weekday={details.weekdayHours} />
+              </View>
+            ) : detailsStatus === 'loading' ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <ActivityIndicator size="small" color={C.ink400} />
+                <Mono s={10} c={C.inkMuted}>
+                  Loading hours &amp; contact…
+                </Mono>
+              </View>
+            ) : base.openInfo ? (
+              <Mono s={10.5} c={C.inkDeep}>
+                {base.openInfo}
+              </Mono>
+            ) : null}
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {phone ? (
+                <ActionPill label={phone} onPress={() => Linking.openURL(`tel:${phone.replace(/\s+/g, '')}`)} />
+              ) : null}
+              {website ? (
+                <ActionPill label="Website" onPress={() => Linking.openURL(website)}>
+                  <GlobeMark size={13} color={C.ink400} />
+                </ActionPill>
+              ) : null}
+              <ActionPill label="Directions" onPress={() => Linking.openURL(dirUrl)}>
+                <MapIcon size={13} color={C.ink400} />
+              </ActionPill>
+            </View>
+          </StickerView>
         </View>
 
         {/* photo gallery */}
@@ -573,6 +864,30 @@ export function PlaceDetail() {
             Write a review
           </Banner>
         </StickerPressable>
+
+        {/* fresh from google — real Google reviews, shown verbatim with attribution */}
+        {gReviews.length ? (
+          <View style={{ marginTop: 22 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 10 }}>
+              <Banner s={10} tk={0.16} c={C.inkMuted}>
+                From Google
+              </Banner>
+              <Mono s={9.5} c={C.inkSoft}>
+                {gRating != null
+                  ? `★ ${gRating.toFixed(1)}${gReviewCount != null ? ` · ${gReviewCount.toLocaleString()}` : ''}`
+                  : 'reviews'}
+              </Mono>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+              {gReviews.map((r, i) => (
+                <GReviewCard key={i} r={r} />
+              ))}
+            </ScrollView>
+            <Mono s={8} c={C.inkSoft} style={{ marginTop: 6 }}>
+              Reviews from Google · shown as written
+            </Mono>
+          </View>
+        ) : null}
 
         {/* resy card */}
         <View style={{ marginTop: 18 }}>

@@ -21,6 +21,7 @@
  */
 import type { Place } from '../store/data';
 import type { City } from './cities';
+import type { PlaceDetails } from './placeDetails';
 import { loadGoogleMaps } from './googleMaps';
 import { PHOTO_POOL } from '../assets';
 import { cuisineFromGoogleTypes } from './cuisines';
@@ -178,4 +179,85 @@ export function googleSearchNearby(city: City, onPartial?: (places: Place[]) => 
     }
     return toPlaces(rawAll, city);
   });
+}
+
+/** Safe open-now read (isOpen() can throw if hours aren't loaded). */
+function readOpenNow(oh: any): boolean | undefined {
+  if (!oh) return undefined;
+  if (typeof oh.isOpen === 'function') {
+    try {
+      return oh.isOpen();
+    } catch {
+      /* fall through */
+    }
+  }
+  return typeof oh.open_now === 'boolean' ? oh.open_now : undefined;
+}
+
+/**
+ * Live Google Place Details for one venue — full weekly hours, phone, website,
+ * Google's editorial summary, and up to 5 real Google reviews. Fetched on demand
+ * (when a place is opened), never stored. Resolves to {} on any failure so the
+ * UI degrades gracefully. `placeId` is the raw Google place_id (no "g-" prefix).
+ */
+export function getPlaceDetails(placeId: string): Promise<PlaceDetails> {
+  return loadGoogleMaps().then(
+    (maps) =>
+      new Promise<PlaceDetails>((resolve) => {
+        try {
+          const svc = new maps.places.PlacesService(document.createElement('div'));
+          svc.getDetails(
+            {
+              placeId,
+              fields: [
+                'formatted_phone_number',
+                'international_phone_number',
+                'website',
+                'url',
+                'opening_hours',
+                'rating',
+                'user_ratings_total',
+                'price_level',
+                'reviews',
+                'editorial_summary',
+              ],
+            },
+            (res: any, status: any) => {
+              if (status !== maps.places.PlacesServiceStatus.OK || !res) {
+                resolve({});
+                return;
+              }
+              const oh = res.opening_hours;
+              const googleReviews = Array.isArray(res.reviews)
+                ? res.reviews
+                    .slice(0, 5)
+                    .map((rv: any) => ({
+                      author: rv.author_name,
+                      authorUrl: rv.author_url,
+                      photo: rv.profile_photo_url,
+                      rating: typeof rv.rating === 'number' ? rv.rating : 0,
+                      relativeTime: rv.relative_time_description || '',
+                      text: rv.text || '',
+                    }))
+                    .filter((r: any) => r.text)
+                : undefined;
+              resolve({
+                phone: res.formatted_phone_number || res.international_phone_number || undefined,
+                website: res.website || undefined,
+                mapsUrl: res.url || undefined,
+                weekdayHours: Array.isArray(oh?.weekday_text) && oh.weekday_text.length ? oh.weekday_text : undefined,
+                openNow: readOpenNow(oh),
+                summary: res.editorial_summary?.overview || undefined,
+                rating: typeof res.rating === 'number' ? res.rating : undefined,
+                reviews: typeof res.user_ratings_total === 'number' ? res.user_ratings_total : undefined,
+                priceLevel: typeof res.price_level === 'number' ? res.price_level : undefined,
+                googleReviews: googleReviews && googleReviews.length ? googleReviews : undefined,
+              });
+            },
+          );
+        } catch {
+          resolve({});
+        }
+      }),
+  );
 }

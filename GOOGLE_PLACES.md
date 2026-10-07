@@ -44,6 +44,26 @@ live (`placePhoto()` in `src/assets.ts`) on the Feed cards, the place hero +
 gallery, and the map card — with the required **attribution** shown over the
 hero. Photos are never downloaded or re-hosted.
 
+## Place profiles — everything to know before you go
+Opening a venue fetches **live Google Place Details**
+(`getPlaceDetails` in `src/data/placesGoogle.web.ts`, behind the provider's
+`getDetails`) and enriches the profile (`src/screens/PlaceDetail.tsx`) with:
+- **At-a-glance** chips (rating + volume, price tier, open-now, cuisine).
+- **The lowdown** — Google's own editorial summary, when it has one.
+- **The draw / Good to know** — honest pros & caveats *derived from real
+  signals* (rating, review volume, price, open state, taste fit). Nothing is
+  invented (`drawAndKnow` in `src/data/placeDetails.ts`).
+- **Your taste match** — the venue scored against the signed-in foodie's palate.
+- **Plan your visit** — full weekly hours (today highlighted) + one-tap Call,
+  Website, Directions.
+- **From Google** — up to 5 real Google reviews, shown verbatim with attribution.
+
+Details are fetched **once per place per session** and never stored. Cost note:
+each place-open is one Place Details request (Contact + Atmosphere fields,
+roughly $0.02 combined on the Basic/Contact/Atmosphere SKUs) — modest and
+user-initiated, unlike a bulk sweep. Native builds show the base profile only
+(Place Details is web-only, like the rest of the Places JS library).
+
 ## What this is *not* (and why)
 - **Not "every single restaurant" as a shipped dataset.** Google has no
   "list all" endpoint (Nearby Search caps at 60/query), and the Google Maps
