@@ -64,6 +64,21 @@ roughly $0.02 combined on the Basic/Contact/Atmosphere SKUs) — modest and
 user-initiated, unlike a bulk sweep. Native builds show the base profile only
 (Place Details is web-only, like the rest of the Places JS library).
 
+## What to order & bang for your buck
+Each profile also helps you *decide*:
+- **What to order** — three suggested plans (a quick solo hit, "the move" = a
+  balanced start→finish **optimal plan**, and a shareable spread), each with an
+  **estimated price** in the city's currency. Combos come from a per-cuisine kit
+  priced off the venue's tier (`src/data/combos.ts`) and are anchored on the
+  community's table-favourite dish when there is one. These are clearly flagged
+  **estimates** — Google serves no menu, so nothing here is presented as a real
+  one.
+- **Bang for your buck** — a value ladder that ranks the venue against
+  same-cuisine, similar-priced neighbours already loaded, by **quality-per-dollar**
+  (Google rating ÷ price tier). You see where it lands ("Nº 2 of 9"), a verdict,
+  and — when one exists — a cheaper spot that's just as loved. This part is built
+  entirely from real rating/price data.
+
 ## Build your passport from photos (onboarding)
 New users can register where they've already been straight from their camera
 roll. The photo picker reads each image's **EXIF GPS tag in the browser**

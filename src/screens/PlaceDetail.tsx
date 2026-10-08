@@ -17,6 +17,7 @@ import { PLATFORM_LABEL } from '../data/creators';
 import { youtubeEnabled } from '../data/videosLive';
 import { computePalate } from '../data/palate';
 import { drawAndKnow, priceLabel, fitFor, type GReview } from '../data/placeDetails';
+import { combosFor, peerComparison, currencyCode, type Combo, type ValueRow } from '../data/combos';
 import { useT } from '../i18n';
 import { C, col } from '../theme/tokens';
 import { photo, placePhoto, PHOTO_POOL } from '../assets';
@@ -300,10 +301,100 @@ function GReviewCard({ r }: { r: GReview }) {
   );
 }
 
+/** One suggested order/plan, with its numbered steps and estimated total. */
+function ComboCard({ combo }: { combo: Combo }) {
+  return (
+    <StickerView offset="sm" style={{ width: 228, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8, paddingHorizontal: 11, backgroundColor: combo.best ? C.sun400 : C.paper50, borderBottomWidth: 2, borderColor: C.inkBlack }}>
+        <Banner s={10} tk={0.1} c={C.inkDeep}>
+          {combo.title}
+        </Banner>
+        {combo.best ? (
+          <View style={{ backgroundColor: C.inkDeep, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 7 }}>
+            <Banner s={7.5} tk={0.1} c={C.paper0}>
+              Optimal
+            </Banner>
+          </View>
+        ) : (
+          <Mono s={8.5} c={C.inkMuted}>{combo.forText}</Mono>
+        )}
+      </View>
+      <View style={{ padding: 11, gap: 9 }}>
+        <Serif s={11.5} c={C.inkMuted} style={{ lineHeight: 15 }}>
+          {combo.blurb}
+        </Serif>
+        <View style={{ gap: 6 }}>
+          {combo.items.map((it, i) => (
+            <View key={i} style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
+              <View style={{ width: 16, height: 16, borderRadius: 8, borderWidth: 1.5, borderColor: C.inkBlack, backgroundColor: combo.best ? C.sun400 : C.paper100, alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
+                <Banner s={8} c={C.inkDeep}>
+                  {i + 1}
+                </Banner>
+              </View>
+              <Serif s={12.5} c={C.inkDeep} style={{ flex: 1, lineHeight: 16 }}>
+                {it.label}
+              </Serif>
+            </View>
+          ))}
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', borderTopWidth: 1, borderColor: 'rgba(42,26,6,0.2)', paddingTop: 8 }}>
+          <Mono s={9} c={C.inkSoft}>
+            Est. · {combo.forText}
+          </Mono>
+          <SerifDisplay s={18} c={C.inkDeep}>
+            {combo.priceText}
+          </SerifDisplay>
+        </View>
+      </View>
+    </StickerView>
+  );
+}
+
+/** One row of the value ladder: a quality-per-dollar bar for a peer venue. */
+function ValueRowView({ row, rank, maxV, onOpen }: { row: ValueRow; rank: number; maxV: number; onOpen: () => void }) {
+  const p = row.place;
+  const w = Math.max(8, Math.round((row.value / maxV) * 100));
+  return (
+    <Pressable
+      onPress={onOpen}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: row.isThis ? C.sun400 : C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 8, paddingHorizontal: 10 }}
+    >
+      <Display s={14} c={C.inkSoft}>
+        {rank}
+      </Display>
+      <View style={{ flex: 1, minWidth: 0 }}>
+        <SerifDisplay s={13} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 15 }}>
+          {p.name}
+          {row.isThis ? ' · here' : ''}
+        </SerifDisplay>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
+          <View style={{ flex: 1, height: 7, backgroundColor: C.paper100, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, overflow: 'hidden' }}>
+            <View style={{ width: `${w}%`, height: '100%', backgroundColor: row.isThis ? C.inkDeep : C.stampGreen }} />
+          </View>
+          <Mono s={8.5} c={C.inkMuted}>
+            {p.price}
+          </Mono>
+        </View>
+      </View>
+      <View style={{ alignItems: 'flex-end', width: 44 }}>
+        <Banner s={9.5} c={C.sun600}>
+          ★ {typeof p.rating === 'number' ? p.rating.toFixed(1) : '—'}
+        </Banner>
+        {rank === 1 ? (
+          <Mono s={7.5} c={C.stampGreen} style={{ marginTop: 2 }}>
+            best value
+          </Mono>
+        ) : null}
+      </View>
+    </Pressable>
+  );
+}
+
 export function PlaceDetail() {
   const insets = useSafeAreaInsets();
   const activePlaceId = useStore((s) => s.activePlaceId);
   const closePlace = useStore((s) => s.closePlace);
+  const openPlace = useStore((s) => s.openPlace);
   const startRank = useStore((s) => s.startRank);
   const go = useStore((s) => s.go);
   const addPhoto = useStore((s) => s.addPhoto);
@@ -313,6 +404,8 @@ export function PlaceDetail() {
   const saved = useStore((s) => s.saved);
   const userPhotos = useStore((s) => s.userPhotos);
   const nearbyById = useStore((s) => s.nearbyById);
+  const nearbyList = useStore((s) => s.nearby);
+  const city = useStore((s) => s.city);
   const userReviews = useStore((s) => s.userReviews);
   const reviewLikes = useStore((s) => s.reviewLikes);
   const reviewSort = useStore((s) => s.reviewSort);
@@ -409,6 +502,22 @@ export function PlaceDetail() {
     base.lat != null
       ? `https://www.google.com/maps/dir/?api=1&destination=${base.lat},${base.lon}`
       : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(base.name + ' ' + base.hood)}`;
+
+  // What to order (estimated combos / optimal plan) + bang-for-buck comparison.
+  const combos = combosFor(base, topDish?.name, city);
+  const curCode = currencyCode(city);
+  const peerComp = peerComparison(base, nearbyList);
+  const valueMax = peerComp ? peerComp.rows[0].value || 1 : 1;
+  const topRows = peerComp ? peerComp.rows.slice(0, 3) : [];
+  const valueRows =
+    peerComp && !topRows.some((r) => r.isThis) ? [...topRows, peerComp.rows[peerComp.rankOfThis - 1]] : topRows;
+  const valueVerdict = peerComp
+    ? peerComp.verdict.startsWith('Great')
+      ? { bg: C.stampGreen, fg: C.paper0 }
+      : peerComp.verdict.startsWith('Fair')
+        ? { bg: C.sun400, fg: C.inkDeep }
+        : { bg: C.paper100, fg: C.inkMuted }
+    : { bg: C.paper0, fg: C.inkDeep };
 
   return (
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
@@ -661,6 +770,70 @@ export function PlaceDetail() {
                   </Mono>
                 </View>
               </View>
+            </StickerView>
+          </View>
+        ) : null}
+
+        {/* what to order — estimated combos + the optimal plan */}
+        <View style={{ marginTop: 18 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.ink400 }} />
+            <Banner s={10} tk={0.16} c={C.inkMuted}>
+              What to order
+            </Banner>
+            <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+            <Mono s={9} c={C.inkSoft}>
+              est. {curCode}
+            </Mono>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+            {combos.map((c) => (
+              <ComboCard key={c.key} combo={c} />
+            ))}
+          </ScrollView>
+          <Mono s={8} c={C.inkSoft} style={{ marginTop: 6, lineHeight: 12 }}>
+            Suggested plans — prices are rough estimates from the venue's price tier, not a live menu.
+          </Mono>
+        </View>
+
+        {/* bang for your buck — value vs. same-niche, similar-priced neighbours */}
+        {peerComp ? (
+          <View style={{ marginTop: 20 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+              <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.stampGreen }} />
+              <Banner s={10} tk={0.16} c={C.inkMuted}>
+                Bang for your buck
+              </Banner>
+              <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+            </View>
+            <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, padding: 13, gap: 11 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                <View style={{ backgroundColor: valueVerdict.bg, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 11 }}>
+                  <Banner s={9.5} tk={0.06} c={valueVerdict.fg}>
+                    {peerComp.verdict}
+                  </Banner>
+                </View>
+                <Mono s={9} c={C.inkMuted} style={{ flexShrink: 1, textAlign: 'right' }}>
+                  Nº {peerComp.rankOfThis} of {peerComp.total} · {base.cuisine} near {base.price}
+                </Mono>
+              </View>
+              <View style={{ gap: 8 }}>
+                {valueRows.map((row) => (
+                  <ValueRowView key={row.place.id} row={row} rank={peerComp.rows.indexOf(row) + 1} maxV={valueMax} onOpen={() => openPlace(row.place.id)} />
+                ))}
+              </View>
+              {peerComp.cheaperBetter ? (
+                <View style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start', borderTopWidth: 1, borderColor: 'rgba(42,26,6,0.2)', paddingTop: 10 }}>
+                  <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.stampGreen, marginTop: 5 }} />
+                  <Serif s={12.5} c={C.inkDeep} style={{ flex: 1, lineHeight: 17 }}>
+                    Cheaper &amp; just as loved: {peerComp.cheaperBetter.name} ({peerComp.cheaperBetter.price}
+                    {typeof peerComp.cheaperBetter.rating === 'number' ? ` · ★${peerComp.cheaperBetter.rating.toFixed(1)}` : ''}).
+                  </Serif>
+                </View>
+              ) : null}
+              <Mono s={8} c={C.inkSoft} style={{ lineHeight: 12 }}>
+                Value = Google rating ÷ price tier, across loaded {base.cuisine} spots near this price.
+              </Mono>
             </StickerView>
           </View>
         ) : null}
