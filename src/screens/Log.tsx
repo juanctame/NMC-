@@ -12,7 +12,7 @@ import { useT } from '../i18n';
 import { byId, RECS, type Place } from '../store/data';
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { C } from '../theme/tokens';
-import { photo } from '../assets';
+import { photo, placePhoto } from '../assets';
 import { Display, Banner, Serif, SerifItalic, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
@@ -160,7 +160,7 @@ function PodiumCard({ item, rank }: { item: Place; rank: number }) {
       style={{ flex: 1, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
     >
       <View>
-        <Photo source={photo(item.photo)} style={{ width: '100%', height: 74, borderBottomWidth: 2, borderColor: C.inkBlack }} />
+        <Photo source={placePhoto(item)} style={{ width: '100%', height: 74, borderBottomWidth: 2, borderColor: C.inkBlack }} />
         <View style={{ position: 'absolute', top: 5, left: 5, width: 24, height: 24, borderRadius: 12, backgroundColor: m.bg, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-6deg' }] }}>
           <Display s={12} c={C.inkDeep}>
             {rank}
@@ -198,7 +198,7 @@ function BeenRow({ item, rank }: { item: Place; rank: number }) {
           {rank}
         </Display>
       </View>
-      <Photo source={photo(item.photo)} style={{ width: 56, height: 56, borderWidth: 2, borderColor: C.inkBlack }} />
+      <Photo source={placePhoto(item)} style={{ width: 56, height: 56, borderWidth: 2, borderColor: C.inkBlack }} />
       <View style={{ flex: 1, minWidth: 0 }}>
         <SerifDisplay s={15.5} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 17 }}>
           {item.name}
@@ -327,6 +327,7 @@ export function Log() {
   const insets = useSafeAreaInsets();
   const logSeg = useStore((s) => s.logSeg);
   const setLogSeg = useStore((s) => s.setLogSeg);
+  const openPhotoImport = useStore((s) => s.openPhotoImport);
   const ranked = useStore((s) => s.ranked); // stable ref — derive lists below
   const wantIds = useStore((s) => s.wantIds);
   const t = useT();
@@ -363,6 +364,28 @@ export function Log() {
             activeBorder={C.ink400}
           />
         </View>
+        <StickerPressable
+          offset="sm"
+          onPress={openPhotoImport}
+          style={{ marginTop: 11, marginBottom: 14, flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 10, paddingHorizontal: 12 }}
+        >
+          <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-5deg' }] }}>
+            <Display s={15} c={C.inkDeep}>
+              ＋
+            </Display>
+          </View>
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Banner s={10.5} tk={0.08} c={C.inkDeep}>
+              Build your Guide from photos
+            </Banner>
+            <Mono s={9} c={C.inkSoft} style={{ marginTop: 2 }}>
+              Import food photos → we find the spots you've been
+            </Mono>
+          </View>
+          <Banner s={11} tk={0.1} c={C.ink400}>
+            →
+          </Banner>
+        </StickerPressable>
       </View>
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 14, paddingBottom: insets.bottom + 100 }} showsVerticalScrollIndicator={false}>

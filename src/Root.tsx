@@ -32,6 +32,7 @@ import { AttachSheet } from './overlays/AttachSheet';
 import { CreateTable } from './overlays/CreateTable';
 import { ChannelComposer } from './overlays/ChannelComposer';
 import { TasteCard } from './overlays/TasteCard';
+import { PhotoImport } from './overlays/PhotoImport';
 import { VideoOverlay } from './components/VideoOverlay';
 
 const SCREENS: Record<Screen, React.ComponentType> = {
@@ -64,6 +65,7 @@ export function Root() {
   const videoOpen = useStore((s) => !!s.videoUrl);
   const channelComposerOpen = useStore((s) => s.channelComposerOpen);
   const tasteCardOpen = useStore((s) => s.tasteCardOpen);
+  const photoImportOpen = useStore((s) => s.photoImportOpen);
   const nearbyStatus = useStore((s) => s.nearbyStatus);
   const loadNearby = useStore((s) => s.loadNearby);
 
@@ -73,7 +75,7 @@ export function Root() {
   }, [nearbyStatus, loadNearby]);
 
   const Active = SCREENS[screen] ?? Feed;
-  const anyOverlay = rankOpen || attachOpen || createOpen || citySheetOpen || reviewOpen || videoOpen || channelComposerOpen || tasteCardOpen;
+  const anyOverlay = rankOpen || attachOpen || createOpen || citySheetOpen || reviewOpen || videoOpen || channelComposerOpen || tasteCardOpen || photoImportOpen;
   const showTabBar = ROOT_TABS.includes(screen) && !anyOverlay;
 
   return (
@@ -87,6 +89,7 @@ export function Root() {
       {reviewOpen ? <ReviewComposer /> : null}
       {channelComposerOpen ? <ChannelComposer /> : null}
       {tasteCardOpen ? <TasteCard /> : null}
+      {photoImportOpen ? <PhotoImport /> : null}
       <VideoOverlay />
     </View>
   );

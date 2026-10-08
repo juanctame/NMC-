@@ -64,6 +64,19 @@ roughly $0.02 combined on the Basic/Contact/Atmosphere SKUs) — modest and
 user-initiated, unlike a bulk sweep. Native builds show the base profile only
 (Place Details is web-only, like the rest of the Places JS library).
 
+## Build your passport from photos (onboarding)
+New users can register where they've already been straight from their camera
+roll. The photo picker reads each image's **EXIF GPS tag in the browser**
+(`src/data/photoImport.web.ts` — nothing is uploaded; photos never leave the
+device), the store dedupes nearby points and asks the provider's `findNearest`
+for the restaurant at each coordinate (`rankBy: DISTANCE`, with a ~180 m cutoff
+so non-dining photos are dropped), and the user confirms which matches to add.
+Confirmed spots land in the log with a provisional score from Google's rating
+(flagged `provisional`, re-rankable anytime) and stay resolvable via a module
+registry even after a city reload. Entry points: the **Guide** screen and the
+onboarding house-rules step. Web-only (needs the Places JS library + a file
+picker); native is a graceful no-op until expo-media-library is added.
+
 ## What this is *not* (and why)
 - **Not "every single restaurant" as a shipped dataset.** Google has no
   "list all" endpoint (Nearby Search caps at 60/query), and the Google Maps

@@ -9,7 +9,7 @@ import type { City } from './cities';
 import type { PlaceDetails } from './placeDetails';
 import { fetchOsmNearby, osmNormalize } from './osm';
 import { CDMX_FIXTURE } from './fixtures';
-import { googleSearchNearby, getPlaceDetails } from './placesGoogle';
+import { googleSearchNearby, getPlaceDetails, findNearest } from './placesGoogle';
 import { DATA_SOURCE, GOOGLE_PLACES_API_KEY } from './config';
 
 export type PlacesProvider = {
@@ -26,6 +26,11 @@ export type PlacesProvider = {
    * and reviews), keyed by the provider's own id. Optional — only Google has it.
    */
   getDetails?: (providerPlaceId: string) => Promise<PlaceDetails>;
+  /**
+   * The nearest restaurant to a coordinate (turns a geotagged photo into a
+   * matched place). Optional — only Google has it.
+   */
+  findNearest?: (lat: number, lon: number) => Promise<Place | null>;
 };
 
 const overpassProvider: PlacesProvider = {
@@ -46,6 +51,7 @@ const googleProvider: PlacesProvider = {
   // Web: live Google Places Nearby Search. Native: OSM (Places JS is web-only).
   searchNearby: (city, onPartial) => googleSearchNearby(city, onPartial),
   getDetails: (providerPlaceId) => getPlaceDetails(providerPlaceId),
+  findNearest: (lat, lon) => findNearest(lat, lon),
 };
 
 export function getProvider(): PlacesProvider {

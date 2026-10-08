@@ -20,3 +20,8 @@ export function googleSearchNearby(
 export function getPlaceDetails(_placeId: string): Promise<PlaceDetails> {
   return Promise.resolve({});
 }
+
+/** Native shim: nearest-restaurant lookup is web-only (Places JS library). */
+export function findNearest(_lat: number, _lon: number): Promise<Place | null> {
+  return Promise.resolve(null);
+}

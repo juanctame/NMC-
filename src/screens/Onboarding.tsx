@@ -68,6 +68,7 @@ export function Onboarding() {
   const createProfile = useStore((s) => s.createProfile);
   const connectAccount = useStore((s) => s.connectAccount);
   const signInWithGoogle = useStore((s) => s.signInWithGoogle);
+  const openPhotoImport = useStore((s) => s.openPhotoImport);
   const authError = useStore((s) => s.authError);
   const t = useT();
 
@@ -415,6 +416,38 @@ export function Onboarding() {
         <Mono s={11} c={C.inkMuted} style={{ marginTop: 16, lineHeight: 18 }}>
           Every table has a named, verified host and a guest list. Report anything off — we read every flag.
         </Mono>
+
+        <StickerView offset="sm" style={{ marginTop: 18, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, padding: 14 }}>
+          <Banner s={9} tk={0.16} c={C.inkMuted}>
+            Jumpstart · optional
+          </Banner>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 9 }}>
+            <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-6deg' }] }}>
+              <Display s={18} c={C.inkDeep}>
+                ＋
+              </Display>
+            </View>
+            <View style={{ flex: 1, minWidth: 0 }}>
+              <SerifDisplay s={16} c={C.inkDeep} style={{ lineHeight: 18 }}>
+                Build from your photos
+              </SerifDisplay>
+              <Serif s={12.5} c={C.inkMuted} style={{ marginTop: 2, lineHeight: 17 }}>
+                Import your food photos and we'll fill your passport with the spots you've already been.
+              </Serif>
+            </View>
+          </View>
+          <StickerPressable
+            offset="sm"
+            radius={999}
+            onPress={openPhotoImport}
+            style={{ marginTop: 12, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper100, paddingVertical: 11 }}
+          >
+            <Banner s={11.5} tk={0.08} c={C.inkDeep}>
+              Choose photos →
+            </Banner>
+          </StickerPressable>
+        </StickerView>
+
         <View style={{ flex: 1, minHeight: 20 }} />
         <StickerPressable offset="sm" radius={999} onPress={submit} style={{ marginTop: 20, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.stampGreen, paddingVertical: 14 }}>
           <Banner s={14} tk={0.1} c={C.paper0}>

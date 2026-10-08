@@ -21,6 +21,8 @@ import { DEFAULT_CITY, cityById, type City } from '../data/cities';
 import { getProvider, fixtureFallback } from '../data/provider';
 import { fetchCachedPlaces } from '../data/placesCache';
 import type { PlaceDetails, DetailsStatus } from '../data/placeDetails';
+import { pickFoodPhotos, photoImportSupported } from '../data/photoImport';
+import type { PhotoMatch, PhotoImportStatus, PhotoPoint } from '../data/photoImportTypes';
 import { REVIEWS, DISH_PHOTOS, type Review } from '../data/reviews';
 import { fetchSharedReviews, pushSharedReview } from '../data/shared';
 import { makeProfile, makeProfileFromAuth, identity, type Profile } from '../data/profile';
@@ -271,6 +273,13 @@ export type State = {
   placeDetails: Record<string, PlaceDetails>;
   placeDetailsStatus: Record<string, DetailsStatus>;
 
+  // "Build your passport from photos" — import flow state
+  photoImportOpen: boolean;
+  photoImportStatus: PhotoImportStatus;
+  photoMatches: PhotoMatch[];
+  photoScanned: number; // how many photos were read in the last run
+  photoAdded: number; // how many places the last import registered
+
   // Monthly trending: restaurants ranked by last-30d social buzz (YouTube)
   monthlyTrending: BuzzResult[];
   monthlyTrendingStatus: VideoStatus;
@@ -377,6 +386,12 @@ export type Actions = {
   loadPlaceVideos: (placeId: string) => Promise<void>;
   // rich place details
   loadPlaceDetails: (placeId: string) => Promise<void>;
+  // build-from-photos import
+  openPhotoImport: () => void;
+  closePhotoImport: () => void;
+  runPhotoImport: () => Promise<void>;
+  togglePhotoMatch: (id: string) => void;
+  confirmPhotoMatches: () => void;
   openVideo: (url: string) => void;
   closeVideo: () => void;
   // monthly trending
@@ -395,9 +410,16 @@ export type Actions = {
 };
 
 /** Resolve a place by id across the seed catalog and live-loaded nearby set. */
+/**
+ * Places the user has registered into their log (e.g. from photo import) that
+ * must stay resolvable even after a city reload replaces `nearbyById`. Kept in a
+ * module registry so detail/rank views can always open them.
+ */
+const registeredPlaces: Record<string, Place> = {};
+
 export function resolvePlace(id: string | null, nearbyById: Record<string, Place>): Place | undefined {
   if (!id) return undefined;
-  return byId[id] || nearbyById[id];
+  return byId[id] || nearbyById[id] || registeredPlaces[id];
 }
 
 const initialState = (): State => ({
@@ -481,6 +503,11 @@ const initialState = (): State => ({
   placeVideosStatus: {},
   placeDetails: {},
   placeDetailsStatus: {},
+  photoImportOpen: false,
+  photoImportStatus: 'idle',
+  photoMatches: [],
+  photoScanned: 0,
+  photoAdded: 0,
   videoUrl: null,
   monthlyTrending: [],
   monthlyTrendingStatus: 'idle',
@@ -994,6 +1021,62 @@ export const useStore = create<State & Actions>((set, get) => ({
     }));
   },
 
+  // ── build your passport from photos ──
+  openPhotoImport: () =>
+    set({ photoImportOpen: true, photoImportStatus: 'idle', photoMatches: [], photoScanned: 0, photoAdded: 0 }),
+  closePhotoImport: () => set({ photoImportOpen: false }),
+  runPhotoImport: async () => {
+    const provider = getProvider();
+    if (!photoImportSupported() || !provider.findNearest) {
+      set({ photoImportStatus: 'unsupported' });
+      return;
+    }
+    const findNear = provider.findNearest;
+    set({ photoImportStatus: 'picking', photoMatches: [] });
+    let picked: { points: PhotoPoint[]; scanned: number };
+    try {
+      picked = await pickFoodPhotos();
+    } catch {
+      set({ photoImportStatus: 'error' });
+      return;
+    }
+    if (!picked.points.length) {
+      set({ photoImportStatus: picked.scanned ? 'nogps' : 'idle', photoScanned: picked.scanned });
+      return;
+    }
+    set({ photoImportStatus: 'matching', photoScanned: picked.scanned });
+    const pts = dedupePoints(picked.points);
+    const byPlace: Record<string, PhotoMatch> = {};
+    for (const pt of pts) {
+      let place: Place | null = null;
+      try {
+        place = await findNear(pt.lat, pt.lon);
+      } catch {
+        place = null;
+      }
+      if (!place || place.lat == null || place.lon == null) continue;
+      const d = haversine(pt.lat, pt.lon, place.lat, place.lon);
+      if (d > 180) continue; // too far from any restaurant to be a dining photo
+      const ex = byPlace[place.id];
+      if (ex) ex.count += pt.weight;
+      else byPlace[place.id] = { place, count: pt.weight, preview: pt.preview, distM: Math.round(d), picked: true };
+    }
+    const matches = Object.values(byPlace).sort((a, b) => b.count - a.count);
+    set({ photoMatches: matches, photoImportStatus: matches.length ? 'review' : 'nomatch' });
+  },
+  togglePhotoMatch: (id) =>
+    set((s) => ({ photoMatches: s.photoMatches.map((m) => (m.place.id === id ? { ...m, picked: !m.picked } : m)) })),
+  confirmPhotoMatches: () => {
+    const s = get();
+    const chosen = s.photoMatches.filter((m) => m.picked).map((m) => m.place);
+    if (!chosen.length) {
+      set({ photoImportStatus: 'done', photoAdded: 0 });
+      return;
+    }
+    addVisitedPlaces(set, get, chosen);
+    set({ photoImportStatus: 'done', photoAdded: chosen.length });
+  },
+
   // ── monthly trending (most mentioned this month) ──
   loadMonthlyTrending: async (force) => {
     const s = get();
@@ -1091,6 +1174,52 @@ export const useStore = create<State & Actions>((set, get) => ({
   openTasteCard: () => set({ tasteCardOpen: true }),
   closeTasteCard: () => set({ tasteCardOpen: false }),
 }));
+
+// ── build-your-passport-from-photos internals ──
+function haversine(aLat: number, aLon: number, bLat: number, bLon: number): number {
+  const R = 6371000;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(bLat - aLat);
+  const dLon = toRad(bLon - aLon);
+  const s = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(aLat)) * Math.cos(toRad(bLat)) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(s)));
+}
+
+/** Collapse photos taken at essentially the same spot (≤25 m) into one lookup. */
+function dedupePoints(points: PhotoPoint[]): { lat: number; lon: number; preview: string; weight: number }[] {
+  const clusters: { lat: number; lon: number; preview: string; weight: number }[] = [];
+  for (const p of points) {
+    const c = clusters.find((x) => haversine(x.lat, x.lon, p.lat, p.lon) <= 25);
+    if (c) c.weight += 1;
+    else clusters.push({ lat: p.lat, lon: p.lon, preview: p.preview, weight: 1 });
+  }
+  return clusters;
+}
+
+/** A sensible starting score for an auto-added "been" place (Google 0–5 → 0–10). */
+function provisionalScore(p: Place): number {
+  const r = typeof p.rating === 'number' ? Math.round(p.rating * 2 * 10) / 10 : 7.0;
+  return Math.max(3, Math.min(9.9, r));
+}
+
+/** Register confirmed photo-matches into the user's log (resolvable + sorted). */
+function addVisitedPlaces(set: (partial: Partial<State>) => void, get: () => State, places: Place[]) {
+  const s = get();
+  const ranked = s.ranked.slice();
+  const nearbyById = { ...s.nearbyById };
+  const have = new Set(ranked.map((r) => r.id));
+  const want = new Set(s.wantIds);
+  for (const p of places) {
+    nearbyById[p.id] = p; // make it resolvable in detail / log views
+    registeredPlaces[p.id] = p; // …and keep it resolvable after a city reload
+    want.delete(p.id);
+    if (have.has(p.id)) continue;
+    ranked.push({ ...p, score: provisionalScore(p), provisional: true, rated: false });
+    have.add(p.id);
+  }
+  ranked.sort((a, b) => (b.score || 0) - (a.score || 0));
+  set({ ranked, nearbyById, wantIds: Array.from(want) });
+}
 
 // ── rank-engine internals (kept outside the object to share set/get) ──
 function finalize(

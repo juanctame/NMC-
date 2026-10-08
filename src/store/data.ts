@@ -33,6 +33,7 @@ export type Place = {
   photoUrl?: string; // live Google Places photo URL (fetched at display time)
   photoUrls?: string[]; // up to a few live photos (for the gallery)
   photoAttr?: string; // required attribution for that photo
+  provisional?: boolean; // auto-added (e.g. from photo import) — needs a real rank
 };
 
 const P = (

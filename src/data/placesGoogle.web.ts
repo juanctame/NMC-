@@ -102,7 +102,8 @@ function plainAttr(html?: string): string | undefined {
 }
 
 /** Dedupe raw Google results by place_id and normalize to the app's Place shape. */
-function toPlaces(raw: any[], city: City): Place[] {
+function toPlaces(raw: any[], city?: City): Place[] {
+  const defaultHood = city?.defaultHood ?? 'Nearby';
   const seen = new Set<string>();
   const places: Place[] = [];
   for (const r of raw) {
@@ -113,7 +114,7 @@ function toPlaces(raw: any[], city: City): Place[] {
 
     const id = 'g-' + r.place_id;
     const cuisine = cuisineFromGoogleTypes(r.types);
-    const hood = r.vicinity ? r.vicinity.split(',').slice(-1)[0].trim() || city.defaultHood : city.defaultHood;
+    const hood = r.vicinity ? r.vicinity.split(',').slice(-1)[0].trim() || defaultHood : defaultHood;
     const priceLvl = typeof r.price_level === 'number' ? r.price_level : 1;
 
     // Real Google Maps photos, served live from Google with attribution.
@@ -257,6 +258,36 @@ export function getPlaceDetails(placeId: string): Promise<PlaceDetails> {
           );
         } catch {
           resolve({});
+        }
+      }),
+  );
+}
+
+/**
+ * The single nearest operational restaurant to a coordinate (used to turn a
+ * geotagged photo into "you were at this place"). Uses rankBy DISTANCE so the
+ * closest venue comes first; the caller applies a distance cutoff. Resolves to
+ * null on any miss/failure.
+ */
+export function findNearest(lat: number, lon: number): Promise<Place | null> {
+  return loadGoogleMaps().then(
+    (maps) =>
+      new Promise<Place | null>((resolve) => {
+        try {
+          const svc = new maps.places.PlacesService(document.createElement('div'));
+          svc.nearbySearch(
+            { location: new maps.LatLng(lat, lon), rankBy: maps.places.RankBy.DISTANCE, type: 'restaurant' },
+            (results: any[], status: any) => {
+              if (status !== maps.places.PlacesServiceStatus.OK || !Array.isArray(results) || !results.length) {
+                resolve(null);
+                return;
+              }
+              const places = toPlaces(results.slice(0, 1));
+              resolve(places[0] || null);
+            },
+          );
+        } catch {
+          resolve(null);
         }
       }),
   );
