@@ -18,12 +18,14 @@ import { youtubeEnabled } from '../data/videosLive';
 import { computePalate } from '../data/palate';
 import { drawAndKnow, priceLabel, fitFor, type GReview } from '../data/placeDetails';
 import { combosFor, peerComparison, currencyCode, type Combo, type ValueRow } from '../data/combos';
+import { chefForPlace } from '../data/chefs';
 import { useT } from '../i18n';
 import { C, col } from '../theme/tokens';
-import { photo, placePhoto, PHOTO_POOL } from '../assets';
+import { photo, PHOTO_POOL } from '../assets';
 import { Display, Banner, Serif, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
+import { Monogram } from '../components/Monogram';
 import { Roundel } from '../components/Roundel';
 import { PlusIcon, BookmarkIcon, HeartIcon, PlayIcon, MapIcon, GlobeMark } from '../components/icons';
 import { ScreenIn } from '../components/Anim';
@@ -438,6 +440,8 @@ export function PlaceDetail() {
   const placeDetailsMap = useStore((s) => s.placeDetails);
   const placeDetailsStatusMap = useStore((s) => s.placeDetailsStatus);
   const loadPlaceDetails = useStore((s) => s.loadPlaceDetails);
+  const livePhotosMap = useStore((s) => s.livePhotos);
+  const openChef = useStore((s) => s.openChef);
   const t = useT();
 
   // Pull other testers' reviews for this place from the shared backend (if on).
@@ -480,11 +484,26 @@ export function PlaceDetail() {
       ? `https://www.google.com/maps/search/?api=1&query=${base.lat},${base.lon}`
       : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(base.name + ' ' + base.hood)}`;
 
+  // Real Google Maps photos: resolved live for curated venues (livePhotos), or
+  // carried on the place for Google-sourced ones. Shown with attribution.
+  const live = livePhotosMap[activePlaceId];
+  const heroUrl = live?.photoUrl || base.photoUrl;
+  const heroAttr = live?.photoAttr || base.photoAttr;
+  const liveUrls = live?.photoUrls?.length
+    ? live.photoUrls
+    : live?.photoUrl
+      ? [live.photoUrl]
+      : base.photoUrls?.length
+        ? base.photoUrls
+        : base.photoUrl
+          ? [base.photoUrl]
+          : [];
+
   const off = activePlaceId.length % PHOTO_POOL.length;
   const stockFill = [base.photo, PHOTO_POOL[off], PHOTO_POOL[(off + 3) % PHOTO_POOL.length]];
   // Prefer the venue's real Google photos; fall back to stock only to fill out
   // the grid when a place has fewer than three.
-  const realPhotos = base.photoUrls?.length ? base.photoUrls : base.photoUrl ? [base.photoUrl] : [];
+  const realPhotos = liveUrls;
   const seedTiles = Array.from({ length: 3 }, (_, i) =>
     i < realPhotos.length ? { url: realPhotos[i], mine: false } : { src: stockFill[i], mine: false }
   );
@@ -552,16 +571,20 @@ export function PlaceDetail() {
           ? 'Institution'
           : '';
   const instaUrl = base.instagram ? `https://instagram.com/${base.instagram.replace(/^@/, '')}` : undefined;
+  // The chef (or team) behind this place — links to a profile that gathers all
+  // of their restaurants when the guide credits them at more than one.
+  const chef = chefForPlace(base);
+  const chefPlaceCount = chef ? chef.placeIds.length : 0;
 
   return (
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
       {/* hero */}
       <View style={{ position: 'relative' }}>
-        <Photo source={placePhoto(base)} style={{ width: '100%', height: 226, borderBottomWidth: 2.5, borderColor: C.inkBlack }} />
-        {base.photoUrl ? (
+        <Photo source={heroUrl ? { uri: heroUrl } : photo(base.photo)} style={{ width: '100%', height: 226, borderBottomWidth: 2.5, borderColor: C.inkBlack }} />
+        {heroUrl ? (
           <View style={{ position: 'absolute', right: 8, bottom: 8, backgroundColor: 'rgba(27,16,4,0.6)', borderRadius: 4, paddingVertical: 2, paddingHorizontal: 6 }}>
             <Mono s={7.5} c={C.paper0} numberOfLines={1}>
-              {base.photoAttr ? `Photo: ${base.photoAttr}` : 'Photo · Google Maps'}
+              {heroAttr ? `Photo: ${heroAttr}` : 'Photo · Google Maps'}
             </Mono>
           </View>
         ) : null}
@@ -572,6 +595,12 @@ export function PlaceDetail() {
                 ←
               </Display>
             </Pressable>
+          </StickerView>
+        </View>
+        {/* venue monogram — the app's own brand stamp (not the restaurant's logo) */}
+        <View style={{ position: 'absolute', right: 14, top: insets.top + 8 }}>
+          <StickerView offset="sm" radius={999}>
+            <Monogram name={base.name} size={46} rot="-6deg" />
           </StickerView>
         </View>
         {been ? (
@@ -727,7 +756,30 @@ export function PlaceDetail() {
                   </Serif>
                 </View>
               ) : null}
-              {base.chef ? <GuideRow label="Chef / team" text={base.chef} /> : null}
+              {chef ? (
+                <Pressable
+                  onPress={() => openChef(chef.id)}
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 11, borderWidth: 2, borderColor: C.sun400, borderRadius: 12, padding: 9, backgroundColor: 'rgba(251,245,229,0.06)' }}
+                >
+                  <Monogram name={chef.name} size={40} fg={C.paper0} rot="-4deg" />
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <Banner s={8} tk={0.14} c={C.sun300}>
+                      Chef / team
+                    </Banner>
+                    <Serif s={13.5} c={C.paper0} numberOfLines={1} style={{ marginTop: 2 }}>
+                      {chef.name}
+                    </Serif>
+                    <Mono s={8.5} c={C.ink100} style={{ marginTop: 2 }}>
+                      {chefPlaceCount > 1 ? `Behind ${chefPlaceCount} restaurants · see profile` : 'See chef profile'}
+                    </Mono>
+                  </View>
+                  <Display s={18} c={C.sun300}>
+                    →
+                  </Display>
+                </Pressable>
+              ) : base.chef ? (
+                <GuideRow label="Chef / team" text={base.chef} />
+              ) : null}
               {base.why ? <GuideRow label="Why it stands out now" text={base.why} /> : null}
               {base.occasion ? <GuideRow label="Ideal for" text={base.occasion} /> : null}
               {base.tip ? <GuideRow label="Insider tip" text={base.tip} /> : null}

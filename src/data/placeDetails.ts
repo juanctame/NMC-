@@ -37,6 +37,17 @@ export type PlaceDetails = {
 
 export type DetailsStatus = 'idle' | 'loading' | 'ready' | 'empty' | 'error';
 
+/**
+ * Real Google Maps photos resolved for a curated venue (by matching its
+ * coordinate to its live Google twin). Shown with attribution, never stored or
+ * re-hosted — so each guide restaurant gets a real picture of the place.
+ */
+export type LivePhoto = {
+  photoUrl?: string;
+  photoUrls?: string[];
+  photoAttr?: string;
+};
+
 const PRICE_WORD = ['Free', 'Budget-friendly', 'Mid-range', 'Pricey', 'Splurge'];
 
 /** Human price label, e.g. "$$$ · Pricey" when Google gives a level. */

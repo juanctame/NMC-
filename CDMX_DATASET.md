@@ -29,6 +29,22 @@ Trayectoria), and **awards**.
   occasion, insider tip), a **What to order** section built from the guide's
   **real dishes + real per-person MXN**, and a **Bang for your buck** value
   ladder across same-cuisine, similar-priced peers.
+- **Real photos** — when a curated venue is opened on the web, the app resolves
+  its **live Google Maps twin by coordinate** and shows that venue's **real
+  Google photos** (hero + gallery), with attribution and live Google hours /
+  reviews. Nothing is downloaded or re-hosted; the stock pool is only the
+  fallback when no key is configured or no match is found.
+- **Chef profiles** — every venue that credits a chef or kitchen team links to a
+  **chef profile** (`src/data/chefs.ts`, derived at runtime). When the guide
+  credits the **same** chef at more than one restaurant — Lucho Martínez (Em ·
+  Martínez · Ultramarinos Demar), Enrique Olvera (Pujol · Pujol.itto), Edgar
+  Núñez, Eduardo "Lalo" García, … — those venues gather under **one** profile
+  (matched on an accent- and nickname-insensitive key). A feed rail ("The chefs
+  behind it") surfaces them.
+- **Brand marks** — each venue and chef carries an original **monogram** seal
+  (initials on a deterministic colour, in the app's sticker look). These are our
+  own marks, not the restaurants' trademarked logos, so they're safe to ship and
+  render offline.
 - **Ranking** — because the guide has no Google star, quality comes from
   `acclaim` (0–100), a prestige index derived from the **real awards** (Michelin
   tier, 50 Best, guide mentions). We never fabricate a Google rating; profiles
@@ -42,5 +58,7 @@ derives `acclaim` from the awards text, parses "Qué pedir" into a dish list, an
 assigns a stock photo per venue (the workbook has no images). To refresh, re-run
 that script against an updated workbook and rebuild.
 
-> Photos are placeholders from the app's stock pool — the workbook ships no
-> images. Everything else (dishes, prices, chefs, awards, coordinates) is real.
+> The workbook ships no images, so on the web each venue pulls its **real Google
+> Maps photos** live (by coordinate match, with attribution — never stored); the
+> bundled stock pool is only the offline/no-key fallback. Everything else
+> (dishes, prices, chefs, awards, coordinates) is real.

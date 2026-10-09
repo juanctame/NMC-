@@ -20,7 +20,7 @@ import { PHOTO_POOL } from '../assets';
 import { DEFAULT_CITY, cityById, type City } from '../data/cities';
 import { getProvider, fixtureFallback } from '../data/provider';
 import { fetchCachedPlaces } from '../data/placesCache';
-import type { PlaceDetails, DetailsStatus } from '../data/placeDetails';
+import type { PlaceDetails, DetailsStatus, LivePhoto } from '../data/placeDetails';
 import { pickFoodPhotos, photoImportSupported } from '../data/photoImport';
 import type { PhotoMatch, PhotoImportStatus, PhotoPoint } from '../data/photoImportTypes';
 import { CARTE_CDMX } from '../data/carte';
@@ -159,6 +159,7 @@ export type Screen =
   | 'club'
   | 'channel'
   | 'foodie'
+  | 'chef'
   | 'map'
   | 'reel';
 
@@ -273,6 +274,12 @@ export type State = {
   // Rich "before you go" details per place (live Google Place Details)
   placeDetails: Record<string, PlaceDetails>;
   placeDetailsStatus: Record<string, DetailsStatus>;
+  // Real Google Maps photos resolved for curated venues (live, attributed)
+  livePhotos: Record<string, LivePhoto>;
+
+  // Chef profiles (guide credits; same chef across venues links into one)
+  activeChefId: string | null;
+  chefReturnTo: Screen;
 
   // "Build your passport from photos" — import flow state
   photoImportOpen: boolean;
@@ -303,6 +310,8 @@ export type Actions = {
   setScreen: (screen: Screen) => void;
   openPlace: (id: string) => void;
   closePlace: () => void;
+  openChef: (id: string) => void;
+  closeChef: () => void;
   openMap: () => void;
   closeMap: () => void;
   openEvent: (id: string) => void;
@@ -504,6 +513,9 @@ const initialState = (): State => ({
   placeVideosStatus: {},
   placeDetails: {},
   placeDetailsStatus: {},
+  livePhotos: {},
+  activeChefId: null,
+  chefReturnTo: 'feed',
   photoImportOpen: false,
   photoImportStatus: 'idle',
   photoMatches: [],
@@ -568,6 +580,9 @@ export const useStore = create<State & Actions>((set, get) => ({
   openPlace: (id) =>
     set((s) => ({ activePlaceId: id, screen: 'place', returnTo: s.screen === 'place' ? s.returnTo : s.screen })),
   closePlace: () => set((s) => ({ screen: s.returnTo || 'feed', activePlaceId: null })),
+  openChef: (id) =>
+    set((s) => ({ activeChefId: id, screen: 'chef', chefReturnTo: s.screen === 'chef' ? s.chefReturnTo : s.screen })),
+  closeChef: () => set((s) => ({ screen: s.chefReturnTo || 'feed' })),
   openMap: () => set((s) => ({ screen: 'map', returnTo: s.screen === 'map' ? s.returnTo : s.screen, selPin: null })),
   closeMap: () => set((s) => ({ screen: s.returnTo || 'feed', selPin: null })),
   openEvent: (id) => set({ screen: 'event', activeEventId: id, diet: [] }),
@@ -1010,14 +1025,44 @@ export const useStore = create<State & Actions>((set, get) => ({
     // Fetch once per place per session (ready/empty are terminal).
     if (status === 'loading' || status === 'ready' || status === 'empty') return;
     const place = resolvePlace(placeId, s.nearbyById);
-    // Only Google-sourced places carry a place_id to look up ("g-" + place_id).
-    const gid = placeId.startsWith('g-') ? placeId.slice(2) : null;
     const provider = getProvider();
-    if (!place || !gid || !provider.getDetails) {
+    if (!place) {
       set((st) => ({ placeDetailsStatus: { ...st.placeDetailsStatus, [placeId]: 'empty' } }));
       return;
     }
     set({ placeDetailsStatus: { ...s.placeDetailsStatus, [placeId]: 'loading' } });
+
+    // Resolve the Google place_id. Google-sourced places carry it in their id
+    // ("g-" + place_id); curated guide venues don't, so we find their live
+    // Google twin by coordinate — which also yields the venue's REAL Google Maps
+    // photos (served live, with attribution, never stored), so each guide place
+    // shows a real picture of where you're going. Gated on a name match so we
+    // never adopt a neighbour's photos.
+    let gid: string | null = placeId.startsWith('g-') ? placeId.slice(2) : null;
+    if (!gid && place.source === 'carte' && place.lat != null && place.lon != null && provider.findNearest) {
+      try {
+        const twin = await provider.findNearest(place.lat, place.lon);
+        if (twin && twin.id.startsWith('g-') && nameClose(place.name, twin.name)) {
+          gid = twin.id.slice(2);
+          if (twin.photoUrls?.length || twin.photoUrl) {
+            set((st) => ({
+              livePhotos: {
+                ...st.livePhotos,
+                [placeId]: { photoUrl: twin.photoUrl, photoUrls: twin.photoUrls, photoAttr: twin.photoAttr },
+              },
+            }));
+          }
+        }
+      } catch {
+        /* no twin — keep the stock photo */
+      }
+    }
+
+    if (!gid || !provider.getDetails) {
+      // No live details to show (may still have resolved real photos above).
+      set((st) => ({ placeDetailsStatus: { ...st.placeDetailsStatus, [placeId]: 'empty' } }));
+      return;
+    }
     let det: PlaceDetails = {};
     try {
       det = await provider.getDetails(gid);
@@ -1184,6 +1229,30 @@ export const useStore = create<State & Actions>((set, get) => ({
   openTasteCard: () => set({ tasteCardOpen: true }),
   closeTasteCard: () => set({ tasteCardOpen: false }),
 }));
+
+/** Loose venue-name slug for matching a curated place to its Google twin. */
+function nameSlug(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9 ]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** True when two venue names are close enough to be the same place. */
+function nameClose(a: string, b: string): boolean {
+  const A = nameSlug(a);
+  const B = nameSlug(b);
+  if (!A || !B) return false;
+  if (A === B || A.includes(B) || B.includes(A)) return true;
+  const at = new Set(A.split(' ').filter((w) => w.length > 2));
+  const bt = B.split(' ').filter((w) => w.length > 2);
+  if (!at.size || !bt.length) return false;
+  const hit = bt.filter((w) => at.has(w)).length;
+  return hit / Math.min(at.size, bt.length) >= 0.5;
+}
 
 // ── build-your-passport-from-photos internals ──
 function haversine(aLat: number, aLon: number, bLat: number, bLon: number): number {

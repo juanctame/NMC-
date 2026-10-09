@@ -24,6 +24,7 @@ import { Thread } from './screens/Thread';
 import { DineClub } from './screens/DineClub';
 import { Channel } from './screens/Channel';
 import { FoodieProfile } from './screens/FoodieProfile';
+import { ChefProfile } from './screens/ChefProfile';
 import { NearbyMap } from './screens/NearbyMap';
 import { Reel } from './screens/Reel';
 
@@ -49,6 +50,7 @@ const SCREENS: Record<Screen, React.ComponentType> = {
   club: DineClub,
   channel: Channel,
   foodie: FoodieProfile,
+  chef: ChefProfile,
   map: NearbyMap,
   reel: Reel,
 };
