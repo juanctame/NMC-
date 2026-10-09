@@ -13,7 +13,7 @@
  */
 import type { Place } from '../store/data';
 import type { City } from './cities';
-import { bayesianQuality } from './recommend';
+import { qualityScore } from './recommend';
 
 /* ---------- money ---------- */
 
@@ -143,10 +143,9 @@ export function currencyCode(city?: City): string {
 
 const TIER_W = [1, 1, 1.9, 3.2, 5]; // relative spend weight by price level
 
-/** Quality-per-dollar: a Bayesian-smoothed rating divided by the price tier. */
+/** Quality-per-dollar: a 0–5 quality signal divided by the price tier. */
 export function valueScore(p: Place): number {
-  const q = bayesianQuality(p.rating, p.reviews); // 0..5
-  return q / TIER_W[priceLevel(p)];
+  return qualityScore(p) / TIER_W[priceLevel(p)];
 }
 
 export type ValueRow = { place: Place; value: number; isThis: boolean };
@@ -165,7 +164,12 @@ export type PeerComp = {
 export function peerComparison(place: Place, pool: Place[]): PeerComp | null {
   const lvl = priceLevel(place);
   const peers = pool.filter(
-    (p) => p.id !== place.id && p.cuisine === place.cuisine && p.cuisine !== 'Restaurant' && typeof p.rating === 'number' && Math.abs(priceLevel(p) - lvl) <= 1,
+    (p) =>
+      p.id !== place.id &&
+      p.cuisine === place.cuisine &&
+      p.cuisine !== 'Restaurant' &&
+      (typeof p.rating === 'number' || typeof p.acclaim === 'number') &&
+      Math.abs(priceLevel(p) - lvl) <= 1,
   );
   if (peers.length < 2) return null;
 
@@ -178,10 +182,10 @@ export function peerComparison(place: Place, pool: Place[]): PeerComp | null {
   const verdict = pct <= 0.34 ? 'Great bang for your buck' : pct <= 0.67 ? 'Fair value for its class' : 'You pay for the name here';
 
   // A neighbour that's cheaper *and* rated at least as high (a genuine steal).
-  const thisQ = bayesianQuality(place.rating, place.reviews);
+  const thisQ = qualityScore(place);
   const cheaperBetter = peers
-    .filter((p) => priceLevel(p) < lvl && bayesianQuality(p.rating, p.reviews) >= thisQ - 0.05)
-    .sort((a, b) => bayesianQuality(b.rating, b.reviews) - bayesianQuality(a.rating, a.reviews))[0];
+    .filter((p) => priceLevel(p) < lvl && qualityScore(p) >= thisQ - 0.05)
+    .sort((a, b) => qualityScore(b) - qualityScore(a))[0];
 
   return { rows, rankOfThis, total, verdict, cheaperBetter };
 }

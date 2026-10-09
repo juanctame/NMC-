@@ -72,6 +72,13 @@ export function drawAndKnow(
   const draws: string[] = [];
   const knows: string[] = [];
 
+  // Curated acclaim (Michelin / 50 Best) — a real prestige signal for guide data.
+  const awards = place.awards || '';
+  if (/estrella|michelin/i.test(awards)) draws.push('Michelin-recognised');
+  else if (/50 best/i.test(awards)) draws.push('On the 50 Best list');
+  else if (typeof place.acclaim === 'number' && place.acclaim >= 88) draws.push("Among the city's most acclaimed");
+  if (place.moment === 'Apertura 2026') draws.push('New in 2026 — ahead of the crowd');
+
   // Quality
   if (rating != null && reviews != null && rating >= 4.6 && reviews >= 500)
     draws.push(`Crowd favourite — ${rating.toFixed(1)}★ across ${reviews.toLocaleString()} reviews`);
@@ -87,7 +94,7 @@ export function drawAndKnow(
 
   // Caveats (honest)
   if (reviews != null && reviews < 60) knows.push('Still proving itself — only a handful of Google reviews so far');
-  if (rating == null && place.critic == null) knows.push('No ratings yet — you could be an early voice');
+  if (rating == null && place.critic == null && place.acclaim == null) knows.push('No ratings yet — you could be an early voice');
   if (price === '$$$' || price === '$$$$') knows.push(`${PRICE_WORD[price.length] || 'Pricey'} — plan for a bigger bill`);
   if (closedNow) knows.push('Closed right now — check the hours before you go');
   if (rating != null && rating < 4.0) knows.push(`Mixed reviews — ${rating.toFixed(1)}★ overall`);

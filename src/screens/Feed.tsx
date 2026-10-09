@@ -7,12 +7,13 @@ import { View, ScrollView, Pressable, Image, ActivityIndicator, Linking } from '
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { useT } from '../i18n';
-import { FEED, RECS, byId } from '../store/data';
+import { FEED, RECS, byId, type Place } from '../store/data';
 import { CREATOR_REVIEWS, PLATFORM_LABEL } from '../data/creators';
 import { TRENDING_VIDEOS, embedUrlFor, type TrendingVideo } from '../data/videos';
 import type { BuzzResult } from '../data/trending';
 import { computePalate } from '../data/palate';
 import { recommend, type Rec, type ReasonTag } from '../data/recommend';
+import { CARTE_RISING } from '../data/carte';
 
 const PLATFORM_TAG: Record<string, string> = { tiktok: 'TT', instagram: 'IG', youtube: 'YT' };
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
@@ -172,6 +173,36 @@ function reasonText(r: ReasonTag, t: (k: string) => string): string {
 }
 
 /** The single best-fit pick for this foodie — quality × taste. */
+/** A compact "new & rising" card for the CDMX guide rail. */
+function RisingCard({ p }: { p: Place }) {
+  const openPlace = useStore((s) => s.openPlace);
+  const neo = p.moment === 'Apertura 2026';
+  return (
+    <StickerPressable
+      offset="sm"
+      onPress={() => openPlace(p.id)}
+      style={{ width: 150, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
+    >
+      <View style={{ position: 'relative' }}>
+        <Photo source={placePhoto(p)} style={{ width: '100%', height: 88, borderBottomWidth: 2, borderColor: C.inkBlack }} />
+        <View style={{ position: 'absolute', top: 6, left: 6, backgroundColor: neo ? C.stampGreen : C.sun400, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 1, paddingHorizontal: 7 }}>
+          <Banner s={7.5} tk={0.08} c={neo ? C.paper0 : C.inkDeep}>
+            {neo ? 'New · 2026' : 'Rising'}
+          </Banner>
+        </View>
+      </View>
+      <View style={{ padding: 8, gap: 3 }}>
+        <SerifDisplay s={13} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 14 }}>
+          {p.name}
+        </SerifDisplay>
+        <Mono s={8} c={C.inkMuted} numberOfLines={1}>
+          {p.category || p.cuisine} · {p.hood}
+        </Mono>
+      </View>
+    </StickerPressable>
+  );
+}
+
 function TopPick({ rec }: { rec: Rec }) {
   const openPlace = useStore((s) => s.openPlace);
   const t = useT();
@@ -595,6 +626,25 @@ export function Feed() {
                 ))}
               </ScrollView>
             ) : null}
+          </View>
+        ) : null}
+
+        {/* New & rising — 2026 openings and newly acclaimed CDMX spots (guide) */}
+        {city.id === 'cdmx' && CARTE_RISING.length ? (
+          <View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <Banner s={11} tk={0.14} c={C.inkDeep}>
+                New & rising
+              </Banner>
+              <Mono s={9} c={C.inkSoft}>
+                Guía CDMX 2026 →
+              </Mono>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+              {CARTE_RISING.slice(0, 14).map((p) => (
+                <RisingCard key={p.id} p={p} />
+              ))}
+            </ScrollView>
           </View>
         ) : null}
 

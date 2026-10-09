@@ -23,6 +23,7 @@ import { fetchCachedPlaces } from '../data/placesCache';
 import type { PlaceDetails, DetailsStatus } from '../data/placeDetails';
 import { pickFoodPhotos, photoImportSupported } from '../data/photoImport';
 import type { PhotoMatch, PhotoImportStatus, PhotoPoint } from '../data/photoImportTypes';
+import { CARTE_CDMX } from '../data/carte';
 import { REVIEWS, DISH_PHOTOS, type Review } from '../data/reviews';
 import { fetchSharedReviews, pushSharedReview } from '../data/shared';
 import { makeProfile, makeProfileFromAuth, identity, type Profile } from '../data/profile';
@@ -764,6 +765,15 @@ export const useStore = create<State & Actions>((set, get) => ({
   loadNearby: async () => {
     const city = get().city;
     set({ nearbyStatus: 'loading' });
+    // 0) CDMX ships with a curated, up-to-date guide dataset (Michelin 2026 / 50
+    //    Best / DENUE) — use it directly so the demo is full, real, and rich
+    //    (real dishes, chefs, prices, awards) without any API or cache.
+    if (city.id === 'cdmx') {
+      const map: Record<string, Place> = {};
+      CARTE_CDMX.forEach((p) => (map[p.id] = p));
+      set({ nearby: CARTE_CDMX, nearbyById: map, nearbyStatus: 'ready', nearbyUpdatedAt: null });
+      return;
+    }
     // 1) Cache-first: read the shared, pre-swept city index (Supabase). Every
     //    visitor reads this one table, so nobody spends Google quota on load.
     try {

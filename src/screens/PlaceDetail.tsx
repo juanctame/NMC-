@@ -378,7 +378,7 @@ function ValueRowView({ row, rank, maxV, onOpen }: { row: ValueRow; rank: number
       </View>
       <View style={{ alignItems: 'flex-end', width: 44 }}>
         <Banner s={9.5} c={C.sun600}>
-          ★ {typeof p.rating === 'number' ? p.rating.toFixed(1) : '—'}
+          {typeof p.rating === 'number' ? `★ ${p.rating.toFixed(1)}` : typeof p.acclaim === 'number' ? `◆ ${p.acclaim}` : '—'}
         </Banner>
         {rank === 1 ? (
           <Mono s={7.5} c={C.stampGreen} style={{ marginTop: 2 }}>
@@ -387,6 +387,20 @@ function ValueRowView({ row, rank, maxV, onOpen }: { row: ValueRow; rank: number
         ) : null}
       </View>
     </Pressable>
+  );
+}
+
+/** A labelled line inside the dark "From the guide" card. */
+function GuideRow({ label, text }: { label: string; text: string }) {
+  return (
+    <View style={{ gap: 2 }}>
+      <Banner s={8} tk={0.14} c={C.sun300}>
+        {label}
+      </Banner>
+      <Serif s={12.5} c={C.paper0} style={{ lineHeight: 17 }}>
+        {text}
+      </Serif>
+    </View>
   );
 }
 
@@ -496,8 +510,8 @@ export function PlaceDetail() {
   const gRating = base.rating ?? details?.rating;
   const gReviewCount = base.reviews ?? details?.reviews;
   const openNow = details?.openNow ?? (/open/i.test(base.openInfo || '') ? true : /closed/i.test(base.openInfo || '') ? false : undefined);
-  const phone = details?.phone;
-  const website = details?.website;
+  const phone = details?.phone || base.phone;
+  const website = details?.website || base.website;
   const dirUrl =
     base.lat != null
       ? `https://www.google.com/maps/dir/?api=1&destination=${base.lat},${base.lon}`
@@ -518,6 +532,26 @@ export function PlaceDetail() {
         ? { bg: C.sun400, fg: C.inkDeep }
         : { bg: C.paper100, fg: C.inkMuted }
     : { bg: C.paper0, fg: C.inkDeep };
+
+  // Curated "Carte" guide fields (CDMX dataset): real dishes, awards, chef, etc.
+  const isCarte = base.source === 'carte';
+  const awards = base.awards || '';
+  let guideBadge = '';
+  if (/estrella/i.test(awards)) {
+    const m = /(\d)\s*estrella/i.exec(awards);
+    guideBadge = 'Michelin ' + (m ? '★'.repeat(Math.min(3, +m[1])) : '★');
+  } else if (/bib gourmand/i.test(awards)) guideBadge = 'Bib Gourmand';
+  else if (/michelin/i.test(awards)) guideBadge = 'Michelin';
+  else if (/50 best/i.test(awards)) guideBadge = "50 Best";
+  const momentLabel =
+    base.moment === 'Apertura 2026'
+      ? 'New · 2026'
+      : base.moment === 'En ascenso'
+        ? 'Rising'
+        : base.moment === 'Trayectoria'
+          ? 'Institution'
+          : '';
+  const instaUrl = base.instagram ? `https://instagram.com/${base.instagram.replace(/^@/, '')}` : undefined;
 
   return (
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
@@ -583,6 +617,19 @@ export function PlaceDetail() {
               ) : null}
             </InfoChip>
           ) : null}
+          {isCarte && guideBadge ? (
+            <InfoChip bg={C.inkDeep}>
+              <Banner s={9.5} tk={0.06} c={C.paper0}>
+                {guideBadge}
+              </Banner>
+            </InfoChip>
+          ) : isCarte && base.acclaim != null ? (
+            <InfoChip>
+              <Banner s={9.5} c={C.sun600}>
+                Acclaim {base.acclaim}
+              </Banner>
+            </InfoChip>
+          ) : null}
           <InfoChip>
             <Mono s={10} c={C.inkDeep}>
               {priceLabel(base, details)}
@@ -598,8 +645,15 @@ export function PlaceDetail() {
           {base.cuisine && base.cuisine !== 'Restaurant' ? (
             <InfoChip>
               <Mono s={10} c={C.inkDeep}>
-                {base.cuisine}
+                {base.category || base.cuisine}
               </Mono>
+            </InfoChip>
+          ) : null}
+          {isCarte && momentLabel ? (
+            <InfoChip bg={base.moment === 'Apertura 2026' ? C.stampGreen : C.paper0}>
+              <Banner s={9.5} tk={0.06} c={base.moment === 'Apertura 2026' ? C.paper0 : C.inkMuted}>
+                {momentLabel}
+              </Banner>
             </InfoChip>
           ) : null}
           {detailsStatus === 'loading' ? (
@@ -649,6 +703,36 @@ export function PlaceDetail() {
                   : 'Outside your usual lane — could be a fun stretch'}
             </Mono>
           </View>
+        ) : null}
+
+        {/* from the guide — curated awards, chef, occasion & insider tip (Carte dataset) */}
+        {isCarte && (base.awards || base.chef || base.occasion || base.tip || base.why) ? (
+          <StickerView offset="lg" style={{ marginTop: 16, backgroundColor: C.ink700, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 9, paddingHorizontal: 13, borderBottomWidth: 2, borderColor: C.inkBlack }}>
+              <Banner s={10} tk={0.14} c={C.sun300}>
+                From the guide
+              </Banner>
+              {base.recognition ? (
+                <Mono s={8.5} c={C.paper0}>
+                  {base.recognition}
+                </Mono>
+              ) : null}
+            </View>
+            <View style={{ padding: 14, gap: 11 }}>
+              {base.awards ? (
+                <View style={{ flexDirection: 'row', gap: 9, alignItems: 'flex-start' }}>
+                  <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.sun400, marginTop: 5 }} />
+                  <Serif s={13} c={C.paper0} style={{ flex: 1, lineHeight: 18 }}>
+                    {base.awards}
+                  </Serif>
+                </View>
+              ) : null}
+              {base.chef ? <GuideRow label="Chef / team" text={base.chef} /> : null}
+              {base.why ? <GuideRow label="Why it stands out now" text={base.why} /> : null}
+              {base.occasion ? <GuideRow label="Ideal for" text={base.occasion} /> : null}
+              {base.tip ? <GuideRow label="Insider tip" text={base.tip} /> : null}
+            </View>
+          </StickerView>
         ) : null}
 
         {/* rankings panel — dual verdict for rated places, "be the first" for fresh finds */}
@@ -774,27 +858,69 @@ export function PlaceDetail() {
           </View>
         ) : null}
 
-        {/* what to order — estimated combos + the optimal plan */}
-        <View style={{ marginTop: 18 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
-            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.ink400 }} />
-            <Banner s={10} tk={0.16} c={C.inkMuted}>
-              What to order
-            </Banner>
-            <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
-            <Mono s={9} c={C.inkSoft}>
-              est. {curCode}
+        {/* what to order — real guide picks (Carte) or estimated combos (live) */}
+        {isCarte && base.dishes && base.dishes.length ? (
+          <View style={{ marginTop: 18 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+              <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.ink400 }} />
+              <Banner s={10} tk={0.16} c={C.inkMuted}>
+                What to order
+              </Banner>
+              <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+              <Mono s={9} c={C.inkSoft}>
+                from the guide
+              </Mono>
+            </View>
+            <StickerView offset="sm" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, padding: 14, gap: 11 }}>
+              {base.dishes.map((d, i) => (
+                <View key={i} style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>
+                  <View style={{ width: 18, height: 18, borderRadius: 9, borderWidth: 1.5, borderColor: C.inkBlack, backgroundColor: C.sun400, alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
+                    <Banner s={8.5} c={C.inkDeep}>
+                      {i + 1}
+                    </Banner>
+                  </View>
+                  <Serif s={13.5} c={C.inkDeep} style={{ flex: 1, lineHeight: 18 }}>
+                    {d}
+                  </Serif>
+                </View>
+              ))}
+              {base.ticket ? (
+                <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', borderTopWidth: 1, borderColor: 'rgba(42,26,6,0.2)', paddingTop: 10, marginTop: 2 }}>
+                  <Mono s={9.5} c={C.inkSoft}>
+                    Per person
+                  </Mono>
+                  <SerifDisplay s={17} c={C.inkDeep}>
+                    {base.ticketMid ? `≈ $${base.ticketMid.toLocaleString()} MXN` : base.ticket}
+                  </SerifDisplay>
+                </View>
+              ) : null}
+            </StickerView>
+            <Mono s={8} c={C.inkSoft} style={{ marginTop: 6, lineHeight: 12 }}>
+              The guide's picks{base.ticket ? ` · ${base.ticket} MXN per person` : ''}.
             </Mono>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
-            {combos.map((c) => (
-              <ComboCard key={c.key} combo={c} />
-            ))}
-          </ScrollView>
-          <Mono s={8} c={C.inkSoft} style={{ marginTop: 6, lineHeight: 12 }}>
-            Suggested plans — prices are rough estimates from the venue's price tier, not a live menu.
-          </Mono>
-        </View>
+        ) : (
+          <View style={{ marginTop: 18 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+              <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.ink400 }} />
+              <Banner s={10} tk={0.16} c={C.inkMuted}>
+                What to order
+              </Banner>
+              <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+              <Mono s={9} c={C.inkSoft}>
+                est. {curCode}
+              </Mono>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+              {combos.map((c) => (
+                <ComboCard key={c.key} combo={c} />
+              ))}
+            </ScrollView>
+            <Mono s={8} c={C.inkSoft} style={{ marginTop: 6, lineHeight: 12 }}>
+              Suggested plans — prices are rough estimates from the venue's price tier, not a live menu.
+            </Mono>
+          </View>
+        )}
 
         {/* bang for your buck — value vs. same-niche, similar-priced neighbours */}
         {peerComp ? (
@@ -832,7 +958,7 @@ export function PlaceDetail() {
                 </View>
               ) : null}
               <Mono s={8} c={C.inkSoft} style={{ lineHeight: 12 }}>
-                Value = Google rating ÷ price tier, across loaded {base.cuisine} spots near this price.
+                Value = quality ÷ price tier, across loaded {base.cuisine} spots near this price.
               </Mono>
             </StickerView>
           </View>
@@ -900,6 +1026,7 @@ export function PlaceDetail() {
                   <GlobeMark size={13} color={C.ink400} />
                 </ActionPill>
               ) : null}
+              {instaUrl ? <ActionPill label={base.instagram || 'Instagram'} onPress={() => Linking.openURL(instaUrl)} /> : null}
               <ActionPill label="Directions" onPress={() => Linking.openURL(dirUrl)}>
                 <MapIcon size={13} color={C.ink400} />
               </ActionPill>
