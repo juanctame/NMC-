@@ -420,6 +420,8 @@ function GuideRow({ label, text }: { label: string; text: string }) {
 }
 
 type PlaceTab = 'overview' | 'menu' | 'media' | 'reviews' | 'visit';
+/** The tab each restaurant was last left on, so coming back (e.g. from Clips) lands where you were. */
+const lastTab: Record<string, PlaceTab> = {};
 const TABS: { key: PlaceTab; label: string }[] = [
   { key: 'overview', label: 'Overview' },
   { key: 'menu', label: 'Menu' },
@@ -486,21 +488,26 @@ export function PlaceDetail() {
   const ensurePlates = useStore((s) => s.ensurePlates);
   const openChef = useStore((s) => s.openChef);
   const openGroup = useStore((s) => s.openGroup);
+  const openClips = useStore((s) => s.openClips);
   const commonsMap = useStore((s) => s.commonsPhotos);
   const nearbyMap = useStore((s) => s.nearbyPhotos);
   const hoodMap = useStore((s) => s.hoodPhotos);
   const ensureMedia = useStore((s) => s.ensureMedia);
   const t = useT();
-  const [tab, setTab] = useState<PlaceTab>('overview');
+  const [tab, setTabState] = useState<PlaceTab>(() => (activePlaceId && lastTab[activePlaceId]) || 'overview');
+  const setTab = (k: PlaceTab) => {
+    if (activePlaceId) lastTab[activePlaceId] = k;
+    setTabState(k);
+  };
   const [moreBlurb, setMoreBlurb] = useState(false);
   const [heroW, setHeroW] = useState(0);
   const [heroIdx, setHeroIdx] = useState(0);
   const [viewer, setViewer] = useState<number | null>(null);
   const [failed, setFailed] = useState<Record<string, true>>({});
 
-  // A new place opens on its overview, first picture.
+  // A new place opens on its overview (or the tab you left it on), first picture.
   useEffect(() => {
-    setTab('overview');
+    setTabState((activePlaceId && lastTab[activePlaceId]) || 'overview');
     setMoreBlurb(false);
     setHeroIdx(0);
     setViewer(null);
@@ -1226,6 +1233,15 @@ export function PlaceDetail() {
                       #{tag}
                     </Banner>
                   </StickerView>
+                <View style={{ flex: 1 }} />
+                {videos.length ? (
+                  <Pressable onPress={() => openClips(base.id)} accessibilityLabel="Watch as feed" hitSlop={6} style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: C.inkDeep, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 10 }}>
+                    <PlayIcon size={9} color={C.paper0} />
+                    <Banner s={8.5} tk={0.08} c={C.paper0}>
+                      Watch as feed
+                    </Banner>
+                  </Pressable>
+                ) : null}
                 </View>
 
                 {videosStatus === 'loading' ? (

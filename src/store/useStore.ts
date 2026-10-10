@@ -171,6 +171,7 @@ export type Screen =
   | 'foodie'
   | 'chef'
   | 'group'
+  | 'clips'
   | 'map'
   | 'reel';
 
@@ -308,6 +309,10 @@ export type State = {
   profileReturnTo: Screen;
   profileStack: NavSnap[];
 
+  // Clips (TikTok-style feed): which restaurant leads, and where to return to.
+  clipsFocusId: string | null;
+  clipsReturn: (NavSnap & { profileReturnTo: Screen; profileStack: NavSnap[] }) | null;
+
   // "Build your passport from photos" — import flow state
   photoImportOpen: boolean;
   photoImportStatus: PhotoImportStatus;
@@ -341,6 +346,8 @@ export type Actions = {
   closeChef: () => void;
   openGroup: (id: string) => void;
   closeGroup: () => void;
+  openClips: (focusPlaceId?: string | null) => void;
+  closeClips: () => void;
   ensureVenuePhoto: (place: Place) => Promise<void>;
   ensureChefPhoto: (chef: { id: string; name: string }) => Promise<void>;
   ensurePlates: (place: Place) => Promise<void>;
@@ -560,6 +567,8 @@ const initialState = (): State => ({
   activeGroupId: null,
   profileReturnTo: 'feed',
   profileStack: [],
+  clipsFocusId: null,
+  clipsReturn: null,
   photoImportOpen: false,
   photoImportStatus: 'idle',
   photoMatches: [],
@@ -656,6 +665,25 @@ export const useStore = create<State & Actions>((set, get) => ({
   closeChef: () => set((s) => closeProfile(s)),
   openGroup: (id) => set((s) => openProfile(s, 'group', { activeGroupId: id })),
   closeGroup: () => set((s) => closeProfile(s)),
+  // Clips remembers the whole navigation state it was opened from, so Back
+  // returns exactly there (even after hopping into restaurants from the feed).
+  openClips: (focusPlaceId) =>
+    set((s) => ({
+      screen: 'clips',
+      clipsFocusId: focusPlaceId || null,
+      clipsReturn:
+        s.screen === 'clips'
+          ? s.clipsReturn
+          : {
+              screen: s.screen,
+              activePlaceId: s.activePlaceId,
+              activeChefId: s.activeChefId,
+              activeGroupId: s.activeGroupId,
+              profileReturnTo: s.profileReturnTo,
+              profileStack: s.profileStack,
+            },
+    })),
+  closeClips: () => set((s) => (s.clipsReturn ? { ...s.clipsReturn, clipsReturn: null } : { screen: 'feed', clipsReturn: null })),
   // Real freely-licensed photos (Wikipedia/Wikimedia), resolved on demand and
   // cached; each only fills in if a match is actually found (else the generated
   // cover stays). Never blocks the UI.

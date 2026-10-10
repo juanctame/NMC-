@@ -564,6 +564,7 @@ export function Feed() {
   const insets = useSafeAreaInsets();
   const tapLogo = useStore((s) => s.tapLogo);
   const goMap = useStore((s) => s.openMap);
+  const openClips = useStore((s) => s.openClips);
   const goBoard = useStore((s) => s.go);
   const openReel = useStore((s) => s.openReel);
   const clubUnlocked = useStore((s) => s.clubUnlocked);
@@ -620,6 +621,9 @@ export function Feed() {
               </Mono>
             </Pressable>
           </View>
+          <HeaderIconButton onPress={() => openClips()} label="Clips">
+            <PlayIcon size={14} color={C.ink400} />
+          </HeaderIconButton>
           <HeaderIconButton onPress={goMap} label="Nearby map">
             <MapIcon size={16} color={C.ink400} />
           </HeaderIconButton>

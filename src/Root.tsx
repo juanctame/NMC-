@@ -26,6 +26,7 @@ import { Channel } from './screens/Channel';
 import { FoodieProfile } from './screens/FoodieProfile';
 import { ChefProfile } from './screens/ChefProfile';
 import { GroupProfile } from './screens/GroupProfile';
+import { Clips } from './screens/Clips';
 import { NearbyMap } from './screens/NearbyMap';
 import { Reel } from './screens/Reel';
 
@@ -53,6 +54,7 @@ const SCREENS: Record<Screen, React.ComponentType> = {
   foodie: FoodieProfile,
   chef: ChefProfile,
   group: GroupProfile,
+  clips: Clips,
   map: NearbyMap,
   reel: Reel,
 };

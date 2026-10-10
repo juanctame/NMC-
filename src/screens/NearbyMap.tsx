@@ -45,6 +45,7 @@ function distanceMin(city: City, lat: number, lon: number): string {
 export function NearbyMap() {
   const insets = useSafeAreaInsets();
   const closeMap = useStore((s) => s.closeMap);
+  const openClips = useStore((s) => s.openClips);
   const city = useStore((s) => s.city);
   const nearby = useStore((s) => s.nearby);
   const status = useStore((s) => s.nearbyStatus);
@@ -115,6 +116,19 @@ export function NearbyMap() {
               {city.flag} {city.name} · {city.defaultHood} · {city.weather} ▾
             </Mono>
           </Pressable>
+          {/* Map | Clips — the two ways to browse, side by side */}
+          <View style={{ flexDirection: 'row', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, overflow: 'hidden' }}>
+            <View accessibilityRole="tab" accessibilityState={{ selected: true }} style={{ paddingVertical: 6, paddingHorizontal: 11, backgroundColor: C.inkDeep }}>
+              <Banner s={9} tk={0.08} c={C.paper0}>
+                Map
+              </Banner>
+            </View>
+            <Pressable onPress={() => openClips()} accessibilityRole="tab" accessibilityState={{ selected: false }} style={{ paddingVertical: 6, paddingHorizontal: 11, backgroundColor: C.paper0 }}>
+              <Banner s={9} tk={0.08} c={C.inkDeep}>
+                Clips
+              </Banner>
+            </Pressable>
+          </View>
           <StickerView offset="sm" radius={999}>
             <Pressable onPress={() => loadNearby()} style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
               <Display s={15} c={C.ink400}>

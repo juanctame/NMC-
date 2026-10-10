@@ -79,6 +79,16 @@ Trayectoria), and **awards**.
   free daily quota), with a cached live search as fallback. **Requires the
   "YouTube Data API v3" to be enabled on the Google Cloud project of the site's
   key**; until then the sections stay hidden rather than showing placeholders.
+- **Clips (TikTok-style), beside the map** — a full-screen vertical feed of
+  those creator clips, opened from the button next to the map in the feed
+  header or the Map | Clips switch on the map (`src/screens/Clips.tsx`). One
+  clip per screen; swipe for the next; only the clip on screen plays (muted until
+  you turn sound on, looping, tap to pause). Every clip is **pinned to its
+  restaurant** — name, neighbourhood, award, price and hashtag — which opens it;
+  the rail saves the restaurant to want-to-try or likes the clip. Consecutive
+  clips come from different restaurants; "Watch as feed" on a restaurant's
+  Creator clips starts with that restaurant. Back always returns to where you
+  opened it.
 - **A calmer place page** — a swipeable, credited photo hero, a compact header
   (key chips + a collapsible blurb), and sticky tabs: **Overview** (the guide
   card, the draw / good to know, taste match), **Menu** (what to order,
