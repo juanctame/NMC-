@@ -1,4 +1,2536 @@
 {
- "generatedAt": "1970-01-01T00:00:00.000Z",
- "venues": {}
+ "generatedAt": "2026-10-10T16:09:22.048Z",
+ "userAgent": "Mozilla/5.0 (compatible; CRTQ-LinkPreview/1.0; +https://juanctame.github.io/NMC-/)",
+ "venues": {
+  "cx-pujol": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/pujol",
+     "specific": true
+    },
+    {
+     "outlet": "El Financiero",
+     "url": "https://www.elfinanciero.com.mx/food-and-drink/2025/06/05/the-worlds-50-best-2025-los-mejores-restaurantes-en-el-listado-51-100/",
+     "title": "Pujol cae 27 lugares en The World’s 50 Best 2025: 5 restaurantes mexicanos en lista del 51 al 100",
+     "image": "https://www.elfinanciero.com.mx/resizer/v2/Z7UCQHGILJG75MRMPFKAUAVN4A.jpeg?smart=true&auth=064da34bf0641782df062f65fd5fd7185b7edd10fa0e2fac096feff71c75b584&width=1200&height=630",
+     "specific": false
+    },
+    {
+     "outlet": "El Financiero",
+     "url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/",
+     "title": "¡Que vivan los tacos! México brilla con 8 restaurantes en ranking Latin America’s 50 Best",
+     "image": "https://www.elfinanciero.com.mx/resizer/v2/QEVHYPWCU5C33PYMH732IFAA4Y.jpeg?smart=true&auth=b0f81f4ff493a4b3dd7c3d3334d571362ff1513f4d9b5a084f7fd3f60fb8d8b0&width=1200&height=630",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-em": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/em",
+     "specific": true
+    },
+    {
+     "outlet": "El Financiero",
+     "url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/",
+     "title": "¡Que vivan los tacos! México brilla con 8 restaurantes en ranking Latin America’s 50 Best",
+     "image": "https://www.elfinanciero.com.mx/resizer/v2/QEVHYPWCU5C33PYMH732IFAA4Y.jpeg?smart=true&auth=b0f81f4ff493a4b3dd7c3d3334d571362ff1513f4d9b5a084f7fd3f60fb8d8b0&width=1200&height=630",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://itsemilia.rest/meta-tags.jpg",
+    "link": "https://itsemilia.rest",
+    "credit": "itsemilia.rest",
+    "title": "Em"
+   }
+  },
+  "cx-maximo": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/maximo",
+     "specific": true
+    },
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/articulo/michelin-guide-ceremony/estrellas-michelin-mexico-2026-nuevas-incorporaciones-y-tendencias-que-marcan-el-ano",
+     "specific": false
+    },
+    {
+     "outlet": "El Financiero",
+     "url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/",
+     "title": "¡Que vivan los tacos! México brilla con 8 restaurantes en ranking Latin America’s 50 Best",
+     "image": "https://www.elfinanciero.com.mx/resizer/v2/QEVHYPWCU5C33PYMH732IFAA4Y.jpeg?smart=true&auth=b0f81f4ff493a4b3dd7c3d3334d571362ff1513f4d9b5a084f7fd3f60fb8d8b0&width=1200&height=630",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Recurso-1-1024x576.png",
+    "link": "https://maximobistrot.com.mx",
+    "credit": "maximobistrot.com.mx",
+    "title": "Restaurante Máximo"
+   }
+  },
+  "cx-nicos": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/azcapotzalco_1993967/restaurante/nicos",
+     "specific": true
+    },
+    {
+     "outlet": "El Financiero",
+     "url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/",
+     "title": "¡Que vivan los tacos! México brilla con 8 restaurantes en ranking Latin America’s 50 Best",
+     "image": "https://www.elfinanciero.com.mx/resizer/v2/QEVHYPWCU5C33PYMH732IFAA4Y.jpeg?smart=true&auth=b0f81f4ff493a4b3dd7c3d3334d571362ff1513f4d9b5a084f7fd3f60fb8d8b0&width=1200&height=630",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-quintonil": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/quintonil",
+     "specific": true
+    },
+    {
+     "outlet": "El Financiero",
+     "url": "https://www.elfinanciero.com.mx/food-and-drink/2025/06/19/the-worlds-50-best-restaurants-2025-listado-completo-del-1-al-50-los-mejores-restaurantes-del-mundo/",
+     "title": "The World’s 50 Best Restaurants 2025: Quintonil, restaurante mexicano, entra al top 3",
+     "image": "https://www.elfinanciero.com.mx/resizer/v2/FHXNUFF3GVGXTJ6I3ZW63FUYXY.jpeg?smart=true&auth=1e4e011e02822743696085ad7af2185128ced3f19e4372947cfcab9c51029437&width=1200&height=630",
+     "specific": false
+    },
+    {
+     "outlet": "El Financiero",
+     "url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/",
+     "title": "¡Que vivan los tacos! México brilla con 8 restaurantes en ranking Latin America’s 50 Best",
+     "image": "https://www.elfinanciero.com.mx/resizer/v2/QEVHYPWCU5C33PYMH732IFAA4Y.jpeg?smart=true&auth=b0f81f4ff493a4b3dd7c3d3334d571362ff1513f4d9b5a084f7fd3f60fb8d8b0&width=1200&height=630",
+     "specific": false
+    }
+   ]
+  },
+  "cx-esquina-comun": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/esquina-comun",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-gaba": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/gaba",
+     "specific": true
+    },
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/articulo/michelin-guide-ceremony/estrellas-michelin-mexico-2026-nuevas-incorporaciones-y-tendencias-que-marcan-el-ano",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://gabarestaurante.com/wp-content/uploads/2024/12/6W4A0199-scaled.webp",
+    "link": "https://gabarestaurante.com",
+    "credit": "gabarestaurante.com",
+    "title": "Gaba Condesa"
+   }
+  },
+  "cx-la-once-mil": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/la-once-mil",
+     "specific": true
+    },
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/articulo/michelin-guide-ceremony/estrellas-michelin-mexico-2026-nuevas-incorporaciones-y-tendencias-que-marcan-el-ano",
+     "specific": false
+    },
+    {
+     "outlet": "N+",
+     "url": "https://www.nmas.com.mx/ciudad-de-mexico/califa-leon-pierde-estrella-michelin-2026-que-taqueria-cdmx-ocupo-lugar-donde-esta-la-once-mil/",
+     "title": "Taquería Califa de León Pierde Estrella Michelin, pero Se la Dan a Otros Restaurantes de México | N+",
+     "image": "https://static.nmas.com.mx/Nmas/cms/1779913256389-restauranteros-mexicanos-posan-durante-la-ceremonia-de-entrega-de-premios-de-la-gu-a-michel-n-2026-foto-efe-1920x1080.jpg",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-rosetta": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/rosetta",
+     "specific": true
+    },
+    {
+     "outlet": "El Financiero",
+     "url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/",
+     "title": "¡Que vivan los tacos! México brilla con 8 restaurantes en ranking Latin America’s 50 Best",
+     "image": "https://www.elfinanciero.com.mx/resizer/v2/QEVHYPWCU5C33PYMH732IFAA4Y.jpeg?smart=true&auth=b0f81f4ff493a4b3dd7c3d3334d571362ff1513f4d9b5a084f7fd3f60fb8d8b0&width=1200&height=630",
+     "specific": false
+    }
+   ]
+  },
+  "cx-sud-777": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/alvaro-obregon_2003790/restaurante/sud-777",
+     "specific": true
+    },
+    {
+     "outlet": "El Financiero",
+     "url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/",
+     "title": "¡Que vivan los tacos! México brilla con 8 restaurantes en ranking Latin America’s 50 Best",
+     "image": "https://www.elfinanciero.com.mx/resizer/v2/QEVHYPWCU5C33PYMH732IFAA4Y.jpeg?smart=true&auth=b0f81f4ff493a4b3dd7c3d3334d571362ff1513f4d9b5a084f7fd3f60fb8d8b0&width=1200&height=630",
+     "specific": false
+    }
+   ]
+  },
+  "cx-expendio-de-maiz": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/expendio-de-maiz",
+     "specific": true
+    }
+   ]
+  },
+  "cx-masala-y-maiz": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/masala-y-maiz",
+     "specific": true
+    }
+   ],
+   "site": {
+    "image": "https://static1.squarespace.com/static/59238808e6f2e10edd5a1057/t/59af59bdbebafb7afc6af8bf/1504663998110/RUBRICA+b%26w+%28masala+%26+maiz%29.png?format=1500w",
+    "link": "https://masalaymaiz.com",
+    "credit": "masalaymaiz.com",
+    "title": "Masala y Maiz"
+   }
+  },
+  "cx-ajoblanco": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Food and Pleasure",
+     "url": "https://foodandpleasure.com/restaurantes-lomas-de-chapultepec",
+     "title": "8 de los restaurantes más bonitos de Lomas de Chapultepec",
+     "image": "https://foodandpleasure.com/wp-content/uploads/2022/01/aromascotidianos.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-al-andalus": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "The Infatuation",
+     "url": "https://www.theinfatuation.com/mexico-city/reviews/al-andalus",
+     "title": "Al Andalus - Review - Centro Histórico - Mexico City - The Infatuation",
+     "image": "https://res.cloudinary.com/the-infatuation/image/upload/c_scale,w_1200,q_auto,f_webp/images/AndrewReiner_CDMX-696_hbcmmk",
+     "specific": true
+    }
+   ]
+  },
+  "cx-alfil": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-arango": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/comida-yucateca-restaurante-arango-cdmx/",
+     "title": "Salbutes y más delicias de la comida yucateca llegan a este restaurante en CDMX",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/2024/05/comida-yucateca-en-el-restaurante-arango-1200x600.jpg",
+     "specific": true
+    }
+   ],
+   "site": {
+    "image": "https://static.wixstatic.com/media/c0a6ec_d006505249784565a934d48d807f8972~mv2.jpg/v1/fill/w_704,h_692,al_c/c0a6ec_d006505249784565a934d48d807f8972~mv2.jpg",
+    "link": "https://arangorestaurante.com",
+    "credit": "arangorestaurante.com",
+    "title": "Arango Restaurante | Alta Cocina Mexicana | Rooftop & Eventos CDMX | Monumento a la Revolución"
+   }
+  },
+  "cx-baldio": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/baldio",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-botanico": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/botanico",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://cdn.foodyvo.com/1300-fyv-photo-1.jpg",
+    "link": "https://botanico.website",
+    "credit": "botanico.website",
+    "title": "Botánico Restaurant · Upscale Dining in Condesa, Mexico City"
+   }
+  },
+  "cx-cachava": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/cachava",
+     "title": "Cachava: cortes, raw bar, vinos y cocteles",
+     "image": "https://media.timeout.com/images/105990411/image.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-cana": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/cana",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-carmela-y-sal": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/carmela-y-sal",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-cascabel": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/cascabel",
+     "title": "Cascabel",
+     "image": "https://media.timeout.com/images/103907509/image.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-chapulin": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida/restaurantes/restaurante-chapulin/",
+     "title": "Chapulín Polanco",
+     "image": "https://img.chilango.com/2017/05/tacos-de-lechon-chapulin.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-contramar": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/contramar",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-cuina": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Food and Pleasure",
+     "url": "https://foodandpleasure.com/antojo-de-pambazo-ve-a-cuina/",
+     "title": "¿Antojo de pambazos? Ve por uno a este precioso restaurante de la Roma",
+     "image": "https://i0.wp.com/foodandpleasure.com/wp-content/uploads/2022/11/antojo-de-pambazo-ve-a-cuina-9.jpg?fit=1080%2C1080&ssl=1",
+     "specific": true
+    }
+   ]
+  },
+  "cx-ehden": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/restaurantes/ehden-restaurante-libanes-mas-antiguo-centro-cdmx/",
+     "title": "Ehden: el restaurante libanés más antiguo de CDMX",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=2016,height=1512,quality=75,format=auto,onerror=redirect/2024/08/ehden-restaurante-libanes-mas-antiguo-centro-cdmx-1.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-eloise": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "The Infatuation",
+     "url": "https://theinfatuation.com/mexico-city/reviews/eloise-chic-cuisine-san-angel",
+     "title": "Eloise Chic Cuisine - Review - San Ángel - Mexico City - The Infatuation",
+     "specific": true
+    }
+   ]
+  },
+  "cx-emilio": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Food and Pleasure",
+     "url": "https://foodandpleasure.com/restaurantes-para-negocios-polanco",
+     "title": "8 restaurantes en Polanco perfectos para una comida de negocios",
+     "image": "https://i0.wp.com/foodandpleasure.com/wp-content/uploads/2022/06/restaurantes-para-negocios-polanco-blanco-castelar-josemargaleff.jpg?fit=1080%2C719&ssl=1",
+     "specific": false
+    }
+   ]
+  },
+  "cx-er-rre-un-bistro": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/er-rre-un-bistro",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-fabia-cocina-de-campo": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/fabia-cocina-de-campo",
+     "title": "Fabia: la propuesta del campo a la mesa que debes conocer en San Ángel",
+     "image": "https://media.timeout.com/images/106239785/image.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-fierro": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-fonda-margarita": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes-cafes/fonda-margarita",
+     "title": "Fonda Margarita",
+     "image": "https://media.timeout.com/images/100613001/image.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-fonico": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Food and Pleasure",
+     "url": "https://foodandpleasure.com/menu-de-degustacion-fonico/",
+     "title": "El menú de degustación de este restaurante en la Roma está inspirado en la esencia de las fondas mexicanas",
+     "image": "https://i0.wp.com/foodandpleasure.com/wp-content/uploads/2025/12/menu-de-degustacion-fonico9.jpg?fit=1500%2C1500&ssl=1",
+     "specific": true
+    }
+   ]
+  },
+  "cx-galea": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/galea",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-grana-sabores-de-origen": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/grana-sabores-de-origen",
+     "title": "Grana: joyas de la cocina mexicana en un espacio secreto del Centro",
+     "image": "https://media.timeout.com/images/106019021/image.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-guzina-oaxaca": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/guzina-oaxaca",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-la-cocina-del-bizco": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/la-cocina-del-bizco",
+     "title": "La Cocina del Bizco: así es la taberna española de la que todos hablan",
+     "image": "https://media.timeout.com/images/106182357/image.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-limosneros": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/limosneros",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://limosneros.com.mx/images/espacio.webp",
+    "link": "https://limosneros.com.mx",
+    "credit": "limosneros.com.mx",
+    "title": "Limosneros | Gastronomía Mexicana"
+   }
+  },
+  "cx-lina": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/lina",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-lorea": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/lorea",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-los-danzantes": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/coyoacan_1995033/restaurante/los-danzantes-mexico-city",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-maizajo": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/maizajo",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://www.maizajo.com/cdn/shop/files/meta_2.png?v=1749138942",
+    "link": "https://maizajo.com",
+    "credit": "maizajo.com",
+    "title": "MAIZAJO"
+   }
+  },
+  "cx-marea": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Food and Pleasure",
+     "url": "https://foodandpleasure.com/marea-cdmx/",
+     "title": "Marea: Cocina de mar y mezcales en una hermosa terraza de la Roma",
+     "image": "https://i0.wp.com/foodandpleasure.com/wp-content/uploads/2022/02/restaurantes-roma.jpg?fit=1280%2C937&ssl=1",
+     "specific": true
+    }
+   ]
+  },
+  "cx-mattea": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Food and Pleasure",
+     "url": "https://foodandpleasure.com/restaurantes-lomas-de-chapultepec",
+     "title": "8 de los restaurantes más bonitos de Lomas de Chapultepec",
+     "image": "https://foodandpleasure.com/wp-content/uploads/2022/01/aromascotidianos.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-meroma": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/meroma",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://static1.squarespace.com/static/5d094a8f0e0c3f00013c7241/t/5d0953d090f93c00011cf7ed/1560892381214/Restauranteesoacio6.jpg?format=1500w",
+    "link": "https://meroma.mx",
+    "credit": "meroma.mx",
+    "title": "Meroma CDMX"
+   }
+  },
+  "cx-migrante": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/migrante",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://migranteroma.com/wp-content/uploads/2025/04/migrante-roma-6-1.jpg",
+    "link": "https://migranteroma.com",
+    "credit": "migranteroma.com",
+    "title": "Migrante Roma | Sitio Oficial"
+   }
+  },
+  "cx-momiji": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida/momiji-speakeasy-comida-italiana-japonesa-cdmx/",
+     "title": "En esta casa se esconde un speakeasy con comida de influencia italiana y japonesa",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/2024/04/momiji-speakeasy-1024x683.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-pargot": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/pargot",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-plonk": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/plonk",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-prendes": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "El Financiero",
+     "url": "https://www.elfinanciero.com.mx/food-and-drink/2025/10/23/la-historia-de-prendes-restaurante-con-133-anos-en-donde-se-sirven-gusanos-de-maguey-por-diego-rivera/",
+     "title": "La historia de Prendes, restaurante con 133 años, en donde se sirven gusanos de maguey por Diego Rivera",
+     "image": "https://www.elfinanciero.com.mx/resizer/v2/MNNSTM27EZECBH66NM7Y6KU3NQ.jpg?smart=true&auth=247032b9d89c70a93f358a2364c9a2e441409f65e5e21c9690046ec58aed9401&width=1200&height=630",
+     "specific": true
+    }
+   ]
+  },
+  "cx-raiz": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/raiz-1208231",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-rocasal": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/rocasal",
+     "title": "Rocasal, el nuevo restaurante con interiores increíbles en El Pedregal",
+     "image": "https://media.timeout.com/images/105873839/image.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-sarde": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Food and Pleasure",
+     "url": "https://foodandpleasure.com/?p=145727",
+     "title": "SARDE: el restaurante del momento para comer cocina marina contemporánea en la Roma",
+     "image": "https://i0.wp.com/foodandpleasure.com/wp-content/uploads/2023/09/nuevo-restaurante-mariscos-4sarderest.jpeg?fit=1065%2C1065&ssl=1",
+     "specific": false
+    }
+   ]
+  },
+  "cx-sartoria": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/sartoria",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://sartoria.mx/wp-content/uploads/2022/07/featured2.jpg",
+    "link": "https://sartoria.mx",
+    "credit": "sartoria.mx",
+    "title": "Sartoria | Modern Osteria"
+   }
+  },
+  "cx-sesame": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes-cafes/sesame",
+     "title": "Sesame",
+     "image": "https://media.timeout.com/images/100508483/image.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-siembra-comedor": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/siembra-comedor",
+     "title": "Siembra: de tortillería a comedor con maíz criollo mexicano",
+     "image": "https://media.timeout.com/images/105963625/image.jpg",
+     "specific": true
+    }
+   ],
+   "site": {
+    "image": "https://siempresiembra.com.mx/cdn/shopifycloud/storefront/assets/no-image-100-2a702f30_small.gif",
+    "link": "https://siempresiembra.com.mx",
+    "credit": "siempresiembra.com.mx",
+    "title": "Siembra Tortilleria"
+   }
+  },
+  "cx-somsaa": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Food and Pleasure",
+     "url": "https://foodandpleasure.com/somsaa-tailandes-te-vinos-y-postres-en-la-cdmx/",
+     "title": "Somsaa: el nuevo restaurante tailandés (bonito en extremo) de té, vino y postres en la CDMX",
+     "image": "https://foodandpleasure.com/wp-content/uploads/2023/01/somsaa-tailandes-te-vinos-y-postres-en-la-cdmx-8.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-taco-tasting-room": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taco-tasting-room",
+     "specific": true
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-the-palm": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Food and Pleasure",
+     "url": "https://foodandpleasure.com/restaurantes-para-negocios-polanco",
+     "title": "8 restaurantes en Polanco perfectos para una comida de negocios",
+     "image": "https://i0.wp.com/foodandpleasure.com/wp-content/uploads/2022/06/restaurantes-para-negocios-polanco-blanco-castelar-josemargaleff.jpg?fit=1080%2C719&ssl=1",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://grupopresidente.com.mx/wp-content/uploads/2024/07/15-1024x491.png",
+    "link": "https://grupopresidente.com.mx",
+    "credit": "grupopresidente.com.mx",
+    "title": "Home - Grupo Presidente"
+   }
+  },
+  "cx-tierra-adentro": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/tierra-adentro-nueva-etapa-con-amor-a-la-cocina-mexicana",
+     "title": "Tierra Adentro crece sin perder el amor a los fogones mexicanos",
+     "image": "https://media.timeout.com/images/106267924/image.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-tori": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Life and Style",
+     "url": "https://lifeandstyle.expansion.mx/viajes-y-gourmet/2026/07/08/donde-comer-este-fin-de-semana-en-la-ciudad-de-mexico",
+     "title": "3 nuevos spots para comer en CDMX este fin de semana",
+     "image": "https://cdn-3.expansion.mx/dims4/default/86a3d9b/2147483647/strip/true/crop/784x412+0+15/resize/1200x630!/format/jpg/quality/80/?url=https%3A%2F%2Fcdn-3.expansion.mx%2Fd7%2F53%2F5f2261b04f398ffb825b210717cf%2Faperturas-gastronomicas-en-la-cdmx.png",
+     "specific": false
+    }
+   ]
+  },
+  "cx-vega": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Food and Pleasure",
+     "url": "https://foodandpleasure.com/vega-restaurante-espanol/",
+     "title": "Parece un jardín encantado, pero es un nuevo restaurante español (ultra romántico) en San Ángel",
+     "image": "https://i0.wp.com/foodandpleasure.com/wp-content/uploads/2024/09/restaurante-vega-san-angel.jpg?fit=1200%2C1200&ssl=1",
+     "specific": true
+    }
+   ]
+  },
+  "cx-voraz": {
+   "press": [
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    },
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-xuva": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/xuva",
+     "title": "Xuva’: cocina de herencia oaxaqueña del chef Juan Aquino",
+     "image": "https://media.timeout.com/images/106002408/image.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-yoshimi": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/yoshimi",
+     "title": "Yoshimi: cocina japonesa tradicional y espectacular",
+     "image": "https://media.timeout.com/images/105880346/image.jpg",
+     "specific": true
+    }
+   ]
+  },
+  "cx-zeru": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    },
+    {
+     "outlet": "Food and Pleasure",
+     "url": "https://foodandpleasure.com/restaurantes-lomas-de-chapultepec",
+     "title": "8 de los restaurantes más bonitos de Lomas de Chapultepec",
+     "image": "https://foodandpleasure.com/wp-content/uploads/2022/01/aromascotidianos.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-abyssmo": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-aleli-rooftop": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/aleli-rooftop",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://alelirooftop.com/wp-content/uploads/2025/02/DAN_9436-Mejorado-NR.webp",
+    "link": "https://alelirooftop.com",
+    "credit": "alelirooftop.com",
+    "title": "Alelí Rooftop"
+   }
+  },
+  "cx-almara-comida-mediterranea": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-another": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-au-pied-de-cochon": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-azul-historico": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-bajel": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/bajel",
+     "specific": true
+    }
+   ]
+  },
+  "cx-balcon-del-zocalo": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-barbacoa-gonzalitos": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/barbacoa-gonzalitos",
+     "specific": true
+    }
+   ]
+  },
+  "cx-bella-aurora": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/bella-aurora",
+     "specific": true
+    }
+   ]
+  },
+  "cx-brutal": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-bulla": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-cafe-arixi": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-campobaja": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/campobaja",
+     "specific": true
+    }
+   ]
+  },
+  "cx-caracol-de-mar": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/caracol-de-mar",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-carinito-tacos": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/carinito-tacos",
+     "specific": true
+    }
+   ]
+  },
+  "cx-castacan": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/castacan",
+     "specific": true
+    }
+   ]
+  },
+  "cx-centro-castellano": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-charco": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-chevere": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-chui": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-comal-oculto": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/comal-oculto",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-comedor-jacinta": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/comedor-jacinta",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-dante-brasa-y-fuego": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://cdn.prod.website-files.com/69fe10382d9176b6b5051136/6a6244589e6c43eadb302536_DANTE-brasa-y-fuego.webp",
+    "link": "https://dantebrasayfuego.com",
+    "credit": "dantebrasayfuego.com",
+    "title": "DANTE Brasa y Fuego | Steakhouse en Polanco"
+   }
+  },
+  "cx-el-bajio": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-el-cardenal": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-el-mirador-de-chapultepec": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-el-tigre-silencioso": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/el-tigre-silencioso",
+     "specific": true
+    }
+   ]
+  },
+  "cx-el-vilsito": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/benito-juarez_1994163/restaurante/el-vilsito",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-entremar": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/entremar",
+     "specific": true
+    }
+   ]
+  },
+  "cx-filigrana": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/filigrana",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-fugaz": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/fugaz",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-fugu": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-galanga-thai-house": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/galanga-thai-house",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-gia": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-hank-s": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-havre-77": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-hugo": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/hugo-1210967",
+     "specific": true
+    }
+   ],
+   "site": {
+    "image": "https://hugoelwinebar.com/assets/images/card.jpg?v=2dd217b3",
+    "link": "https://hugoelwinebar.com",
+    "credit": "hugoelwinebar.com",
+    "title": "Hugo"
+   }
+  },
+  "cx-issi": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-jowong": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/jowong",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-kill-bill": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-la-89": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/la-89",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-la-barra-de-fran": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/la-barra-de-fran",
+     "specific": true
+    }
+   ]
+  },
+  "cx-la-cabrera": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-liona": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-los-consentidos-del-barrio": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/benito-juarez_1994163/restaurante/los-consentidos-del-barrio",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-los-panchos": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-lotti": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/lotti",
+     "specific": true
+    }
+   ]
+  },
+  "cx-magazzino": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-maleza": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-malix": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/malix",
+     "specific": true
+    }
+   ]
+  },
+  "cx-martinez": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/martinez",
+     "specific": true
+    }
+   ],
+   "site": {
+    "image": "https://freight.cargo.site/w/1000/i/B1773549660274010923612963117442/screenshot-1550631637.jpg",
+    "link": "https://martinez.rest",
+    "credit": "martinez.rest",
+    "title": "Martinez"
+   }
+  },
+  "cx-merotoro": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/merotoro",
+     "specific": true
+    }
+   ]
+  },
+  "cx-mi-compa-chava": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-mitemaki": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-molino-el-pujol": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/molino-el-pujol",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-piazza-pasticcio": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-pizza-felix-condesa": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-plumbago": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-propio": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-ricos-tacos-toluca": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/ricos-tacos-toluca",
+     "specific": true
+    }
+   ]
+  },
+  "cx-siembra-tortilleria": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/siembra-tortilleria",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://siempresiembra.com.mx/cdn/shopifycloud/storefront/assets/no-image-100-2a702f30_small.gif",
+    "link": "https://siempresiembra.com.mx",
+    "credit": "siempresiembra.com.mx",
+    "title": "Siembra Tortilleria"
+   }
+  },
+  "cx-sin-nombre": {
+   "press": [
+    {
+     "outlet": "Time Out México",
+     "url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025",
+     "title": "La lista Best 2025, las mejores aperturas en CDMX",
+     "image": "https://media.timeout.com/images/106271933/image.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-tacos-charly": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/tlalpan_2003036/restaurante/tacos-charly",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-tacos-de-canasta-los-especiales": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/tacos-de-canasta-los-especiales",
+     "specific": true
+    }
+   ]
+  },
+  "cx-tacos-del-valle": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/tacos-del-valle",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-tacos-hola-el-guero": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/tacos-hola-el-guero",
+     "specific": true
+    }
+   ]
+  },
+  "cx-tacos-los-alexis": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/tacos-los-alexis",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-taqueria-el-califa-de-leon": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-el-califa-de-leon",
+     "specific": true
+    },
+    {
+     "outlet": "N+",
+     "url": "https://www.nmas.com.mx/ciudad-de-mexico/califa-leon-pierde-estrella-michelin-2026-que-taqueria-cdmx-ocupo-lugar-donde-esta-la-once-mil/",
+     "title": "Taquería Califa de León Pierde Estrella Michelin, pero Se la Dan a Otros Restaurantes de México | N+",
+     "image": "https://static.nmas.com.mx/Nmas/cms/1779913256389-restauranteros-mexicanos-posan-durante-la-ceremonia-de-entrega-de-premios-de-la-gu-a-michel-n-2026-foto-efe-1920x1080.jpg",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://cdn.placejoys.com/5793-oy-photo-1.jpg",
+    "link": "https://el-califa-de-leon.shop",
+    "credit": "el-califa-de-leon.shop",
+    "title": "El Califa de León - Vibrant Tacos & Authentic Flavors in CDMX"
+   }
+  },
+  "cx-taqueria-el-gran-abanico": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-el-gran-abanico",
+     "specific": true
+    }
+   ]
+  },
+  "cx-taqueria-el-jarocho": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-el-jarocho",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-taqueria-el-paisa": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-el-paisa-1212979",
+     "specific": true
+    }
+   ]
+  },
+  "cx-taqueria-los-cocuyos": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-los-cocuyos",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-taqueria-los-milanesos": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/alvaro-obregon_2003790/restaurante/taqueria-los-milanesos",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://losmilanesos.com/wp-content/uploads/2024/12/cropped-taqueria-cdmx-los-milanesos.png",
+    "link": "https://losmilanesos.com",
+    "credit": "losmilanesos.com",
+    "title": "En CDMX - Los Mejores Tacos - Los Milanesos"
+   }
+  },
+  "cx-taqueria-los-parados": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-los-parados",
+     "specific": true
+    }
+   ]
+  },
+  "cx-tenampa": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-the-lamb": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-torre-de-castilla": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://static.wixstatic.com/media/7e1b73_b0d7d4f448f14c519229a95ab27fa06e%7Emv2.png/v1/fit/w_2500,h_1330,al_c/7e1b73_b0d7d4f448f14c519229a95ab27fa06e%7Emv2.png",
+    "link": "https://grupocastellano.com.mx",
+    "credit": "grupocastellano.com.mx",
+    "title": "Gastronomía Española"
+   }
+  },
+  "cx-ultramarinos-demar": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/ultramarinos-demar",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ],
+   "site": {
+    "image": "https://demar.rest/ULTRAMARINOS_metaImg.jpg",
+    "link": "https://demar.rest",
+    "credit": "demar.rest",
+    "title": "ULTRAMARINOS DEMAR"
+   }
+  },
+  "cx-vigneron": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/vigneron",
+     "specific": true
+    },
+    {
+     "outlet": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico",
+     "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
+     "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
+     "specific": false
+    }
+   ]
+  },
+  "cx-xuna": {
+   "press": [
+    {
+     "outlet": "Guía Michelin",
+     "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/xuna",
+     "specific": true
+    }
+   ]
+  },
+  "cx-zagala": {
+   "press": [
+    {
+     "outlet": "Chilango",
+     "url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/",
+     "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
+     "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-ideal": {
+   "press": [
+    {
+     "outlet": "Mex Best",
+     "url": "https://mex-best.mx/gastronomia/2026/05/22/6-nuevos-restaurantes-cdmx-2026/",
+     "title": "6 restaurantes nuevos en CDMX que sí recomendamos",
+     "image": "https://mex-best.mx/wp-content/uploads/2026/05/ideal.jpeg",
+     "specific": false
+    },
+    {
+     "outlet": "Life and Style",
+     "url": "https://lifeandstyle.expansion.mx/viajes-y-gourmet/2026/07/08/donde-comer-este-fin-de-semana-en-la-ciudad-de-mexico",
+     "title": "3 nuevos spots para comer en CDMX este fin de semana",
+     "image": "https://cdn-3.expansion.mx/dims4/default/86a3d9b/2147483647/strip/true/crop/784x412+0+15/resize/1200x630!/format/jpg/quality/80/?url=https%3A%2F%2Fcdn-3.expansion.mx%2Fd7%2F53%2F5f2261b04f398ffb825b210717cf%2Faperturas-gastronomicas-en-la-cdmx.png",
+     "specific": false
+    }
+   ]
+  },
+  "cx-asaderos-orozco": {
+   "press": [
+    {
+     "outlet": "Panorama",
+     "url": "https://www.panoramaweb.com.mx/panoramasocial/2026/8/20/nuevos-hot-spots-en-cdmx-restaurantes-bares-y-cafes-para-conocer-49007.html",
+     "title": "Nuevos hot spots en CDMX: restaurantes, bares y cafés para conocer",
+     "image": "https://img.editor80.com/Dz0ICUc1XVM7dOIiWqx2VVTHFz5bU28LWBfO2w7Beok/rs:fill:1200:630:0/g:fp:0.5:0.5/f:jpg/aHR0cHM6Ly9tZWRpYS5lZGl0b3I4MC5jb20vcGFub3JhbWEvaW1nLzE3ODcxNjQ4NTY4OTUta2Rvb2czLnBuZw",
+     "specific": false
+    }
+   ]
+  },
+  "cx-barrita-de-sushi": {
+   "press": [
+    {
+     "outlet": "The Happening",
+     "url": "https://thehappening.com/quieres-conocer-nuevos-restaurantes-aqui-estan-los-hotspots-de-octubre-2026/",
+     "title": "Nuevos hotspots para conocer en octubre 2026 en CDMX",
+     "image": "https://thehappening.com/wp-content/uploads/2026/09/destacadas-th-2026-10-01t081855006.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-boca-grande": {
+   "press": [
+    {
+     "outlet": "The Happening",
+     "url": "https://thehappening.com/los-nuevos-hotspots-de-abril-2026-en-cdmx/",
+     "title": "Los nuevos hotspots de abril 2026 en CDMX",
+     "image": "https://thehappening.com/wp-content/uploads/2026/03/hotspots-abr.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-cafe-ocaso": {
+   "press": [
+    {
+     "outlet": "Mex Best",
+     "url": "https://mex-best.mx/gastronomia/2026/05/22/6-nuevos-restaurantes-cdmx-2026/",
+     "title": "6 restaurantes nuevos en CDMX que sí recomendamos",
+     "image": "https://mex-best.mx/wp-content/uploads/2026/05/ideal.jpeg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-cursi": {
+   "press": [
+    {
+     "outlet": "The Happening",
+     "url": "https://thehappening.com/los-nuevos-hotspots-de-abril-2026-en-cdmx/",
+     "title": "Los nuevos hotspots de abril 2026 en CDMX",
+     "image": "https://thehappening.com/wp-content/uploads/2026/03/hotspots-abr.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-don-sireno": {
+   "press": [
+    {
+     "outlet": "The Happening",
+     "url": "https://thehappening.com/los-nuevos-hotspots-de-abril-2026-en-cdmx/",
+     "title": "Los nuevos hotspots de abril 2026 en CDMX",
+     "image": "https://thehappening.com/wp-content/uploads/2026/03/hotspots-abr.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-el-maldito-de-jalisco": {
+   "press": [
+    {
+     "outlet": "The Happening",
+     "url": "https://thehappening.com/los-nuevos-hotspots-de-abril-2026-en-cdmx/",
+     "title": "Los nuevos hotspots de abril 2026 en CDMX",
+     "image": "https://thehappening.com/wp-content/uploads/2026/03/hotspots-abr.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-el-mekong": {
+   "press": [
+    {
+     "outlet": "Mex Best",
+     "url": "https://mex-best.mx/gastronomia/2026/05/22/6-nuevos-restaurantes-cdmx-2026/",
+     "title": "6 restaurantes nuevos en CDMX que sí recomendamos",
+     "image": "https://mex-best.mx/wp-content/uploads/2026/05/ideal.jpeg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-enzu": {
+   "press": [
+    {
+     "outlet": "The Happening",
+     "url": "https://thehappening.com/quieres-conocer-nuevos-restaurantes-aqui-estan-los-hotspots-de-octubre-2026/",
+     "title": "Nuevos hotspots para conocer en octubre 2026 en CDMX",
+     "image": "https://thehappening.com/wp-content/uploads/2026/09/destacadas-th-2026-10-01t081855006.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-la-cava-de-la-docena": {
+   "press": [
+    {
+     "outlet": "The Happening",
+     "url": "https://thehappening.com/quieres-conocer-nuevos-restaurantes-aqui-estan-los-hotspots-de-octubre-2026/",
+     "title": "Nuevos hotspots para conocer en octubre 2026 en CDMX",
+     "image": "https://thehappening.com/wp-content/uploads/2026/09/destacadas-th-2026-10-01t081855006.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-la-pantera-asador": {
+   "press": [
+    {
+     "outlet": "Mex Best",
+     "url": "https://mex-best.mx/gastronomia/2026/05/22/6-nuevos-restaurantes-cdmx-2026/",
+     "title": "6 restaurantes nuevos en CDMX que sí recomendamos",
+     "image": "https://mex-best.mx/wp-content/uploads/2026/05/ideal.jpeg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-maison-futari": {
+   "press": [
+    {
+     "outlet": "Mex Best",
+     "url": "https://mex-best.mx/gastronomia/2026/05/22/6-nuevos-restaurantes-cdmx-2026/",
+     "title": "6 restaurantes nuevos en CDMX que sí recomendamos",
+     "image": "https://mex-best.mx/wp-content/uploads/2026/05/ideal.jpeg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-max": {
+   "press": [
+    {
+     "outlet": "The Happening",
+     "url": "https://thehappening.com/los-nuevos-hotspots-de-abril-2026-en-cdmx/",
+     "title": "Los nuevos hotspots de abril 2026 en CDMX",
+     "image": "https://thehappening.com/wp-content/uploads/2026/03/hotspots-abr.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-mesa": {
+   "press": [
+    {
+     "outlet": "The Happening",
+     "url": "https://thehappening.com/quieres-conocer-nuevos-restaurantes-aqui-estan-los-hotspots-de-octubre-2026/",
+     "title": "Nuevos hotspots para conocer en octubre 2026 en CDMX",
+     "image": "https://thehappening.com/wp-content/uploads/2026/09/destacadas-th-2026-10-01t081855006.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-mistral": {
+   "press": [
+    {
+     "outlet": "The Happening",
+     "url": "https://thehappening.com/quieres-conocer-nuevos-restaurantes-aqui-estan-los-hotspots-de-octubre-2026/",
+     "title": "Nuevos hotspots para conocer en octubre 2026 en CDMX",
+     "image": "https://thehappening.com/wp-content/uploads/2026/09/destacadas-th-2026-10-01t081855006.jpg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-pujol-itto": {
+   "press": [
+    {
+     "outlet": "Mex Best",
+     "url": "https://mex-best.mx/gastronomia/2026/05/22/6-nuevos-restaurantes-cdmx-2026/",
+     "title": "6 restaurantes nuevos en CDMX que sí recomendamos",
+     "image": "https://mex-best.mx/wp-content/uploads/2026/05/ideal.jpeg",
+     "specific": false
+    }
+   ]
+  },
+  "cx-tosco": {
+   "press": [
+    {
+     "outlet": "The Happening",
+     "url": "https://thehappening.com/los-nuevos-hotspots-de-abril-2026-en-cdmx/",
+     "title": "Los nuevos hotspots de abril 2026 en CDMX",
+     "image": "https://thehappening.com/wp-content/uploads/2026/03/hotspots-abr.jpg",
+     "specific": false
+    }
+   ]
+  }
+ },
+ "stats": {
+  "venues": 166,
+  "withPhoto": 44,
+  "sitePhotos": 22,
+  "specificPress": 24,
+  "pressCards": 269,
+  "failedPages": 9
+ }
 }
