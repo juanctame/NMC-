@@ -9,7 +9,7 @@
  * Opened beside the map (feed header, map screen) or from a restaurant's Media
  * tab, in which case that restaurant's clips come first.
  */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -22,9 +22,6 @@ import { Display, Banner, Serif, Mono } from '../components/Text';
 import { Monogram } from '../components/Monogram';
 import { ClipPlayer } from '../components/ClipPlayer';
 import { HeartIcon, BookmarkIcon, MuteIcon, PlayIcon } from '../components/icons';
-
-/** How many top venues to top up with a (cached) live search when the feed is thin. */
-const WARM_VENUES = 8;
 
 function compact(n?: number): string {
   if (!n) return '';
@@ -184,16 +181,15 @@ export function Clips() {
   const [index, setIndex] = useState(0);
   const [muted, setMuted] = useState(true);
 
-  // Top up a thin feed: the focused restaurant plus the most acclaimed venues
-  // (served from collected clips or the per-device cache; live search otherwise).
+  const startId = useStore((s) => s.clipsStartId);
+  const scroller = useRef<ScrollView | null>(null);
+  const jumped = useRef<string | null>(null);
+
+  // The feed is built from collected clips (free). Only a focused restaurant may
+  // fetch live if it hasn't been collected yet — browsing never spends quota.
   useEffect(() => {
-    const top = nearby
-      .slice()
-      .sort((a, b) => (b.acclaim || 0) - (a.acclaim || 0))
-      .slice(0, WARM_VENUES)
-      .map((p) => p.id);
-    [focusId, ...top].forEach((id) => id && loadPlaceVideos(id));
-  }, [nearby, focusId, loadPlaceVideos]);
+    if (focusId) loadPlaceVideos(focusId);
+  }, [focusId, loadPlaceVideos]);
 
   const feed = useMemo(() => {
     const extra = [...Object.values(placeVideos).flat(), ...monthlyTrending.map((t) => t.video)];
@@ -201,6 +197,16 @@ export function Clips() {
   }, [nearby, placeVideos, monthlyTrending, focusId]);
 
   const loading = Object.values(placeVideosStatus).some((st) => st === 'loading');
+
+  // Opened on a specific clip (from a preview): jump straight to it, once.
+  useEffect(() => {
+    if (!startId || !pageH || jumped.current === startId) return;
+    const i = feed.findIndex((f) => f.clip.id === startId);
+    if (i < 0) return;
+    jumped.current = startId;
+    setIndex(i);
+    setTimeout(() => scroller.current?.scrollTo({ y: i * pageH, animated: false }), 0);
+  }, [startId, pageH, feed]);
   const focusName = focusId ? nearby.find((p) => p.id === focusId)?.name : undefined;
   const cur = Math.min(index, Math.max(0, feed.length - 1));
 
@@ -208,6 +214,7 @@ export function Clips() {
     <View style={{ flex: 1, backgroundColor: '#000' }} onLayout={(e) => setPageH(e.nativeEvent.layout.height)}>
       {feed.length && pageH ? (
         <ScrollView
+          ref={scroller}
           pagingEnabled
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={50}

@@ -118,6 +118,7 @@ async function main() {
         const d = await yt('videos', { part: 'snippet,contentDetails,statistics,status', id: ids.join(','), key });
         details = (d.items || []).map((it) => R.toYtVideo(it));
       }
+      if (process.env.RAW_DIR) fs.writeFileSync(`${process.env.RAW_DIR}/${v.id}.json`, JSON.stringify(details)); // for offline rule tuning
       const clips = R.rankClips(v, details);
       prev.venues[v.id] = { searchedAt: new Date().toISOString(), clips };
       done++;

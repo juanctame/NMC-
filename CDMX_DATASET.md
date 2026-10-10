@@ -88,7 +88,11 @@ Trayectoria), and **awards**.
   the rail saves the restaurant to want-to-try or likes the clip. Consecutive
   clips come from different restaurants; "Watch as feed" on a restaurant's
   Creator clips starts with that restaurant. Back always returns to where you
-  opened it.
+  opened it. Previews lead into it from everywhere: a **Clips rail** of vertical
+  9:16 previews on the feed (views, @creator, the restaurant it's pinned to —
+  each opens the feed *at that clip*), a **top-clip card** on every restaurant's
+  Overview tab, and the Media tab's thumbnails, which open the feed at the
+  tapped clip.
 - **A calmer place page** — a swipeable, credited photo hero, a compact header
   (key chips + a collapsible blurb), and sticky tabs: **Overview** (the guide
   card, the draw / good to know, taste match), **Menu** (what to order,

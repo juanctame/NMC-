@@ -422,6 +422,13 @@ function GuideRow({ label, text }: { label: string; text: string }) {
 type PlaceTab = 'overview' | 'menu' | 'media' | 'reviews' | 'visit';
 /** The tab each restaurant was last left on, so coming back (e.g. from Clips) lands where you were. */
 const lastTab: Record<string, PlaceTab> = {};
+/** Compact count: 1234 → "1.2k". */
+function compactN(n: number): string {
+  if (n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace('.0', '') + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(n >= 1e4 ? 0 : 1).replace('.0', '') + 'k';
+  return String(n);
+}
+
 const TABS: { key: PlaceTab; label: string }[] = [
   { key: 'overview', label: 'Overview' },
   { key: 'menu', label: 'Menu' },
@@ -833,6 +840,43 @@ export function PlaceDetail() {
                   </Serif>
                 </View>
               </View>
+            ) : null}
+
+            {/* top creator clip — a vertical preview that opens the Clips feed on it */}
+            {videos.length ? (
+              <StickerPressable
+                offset="sm"
+                onPress={() => openClips(base.id, videos[0].id)}
+                accessibilityLabel={`Watch ${videos.length} creator clip${videos.length > 1 ? 's' : ''} about ${base.name}`}
+                style={{ marginTop: 16, flexDirection: 'row', gap: 12, backgroundColor: C.inkDeep, borderWidth: 2, borderColor: C.inkBlack, padding: 8 }}
+              >
+                <View style={{ width: 74, height: 124, backgroundColor: C.ink700, borderWidth: 1.5, borderColor: C.paper0, overflow: 'hidden' }}>
+                  {videos[0].thumb ? <Photo source={{ uri: videos[0].thumb }} style={{ width: '100%', height: '100%' }} warm={0} /> : null}
+                  <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(216,80,26,0.92)', borderWidth: 2, borderColor: C.paper0, alignItems: 'center', justifyContent: 'center' }}>
+                      <PlayIcon size={12} color={C.paper0} />
+                    </View>
+                  </View>
+                </View>
+                <View style={{ flex: 1, minWidth: 0, paddingVertical: 2, gap: 5 }}>
+                  <Banner s={8.5} tk={0.14} c={C.sun300}>
+                    Creator clips · #{tag}
+                  </Banner>
+                  <Serif s={13.5} c={C.paper0} numberOfLines={3} style={{ lineHeight: 19 }}>
+                    {videos[0].caption}
+                  </Serif>
+                  <Mono s={8.5} c={C.ink100} numberOfLines={1}>
+                    {['@' + videos[0].creator, (videos[0] as { views?: number }).views ? `${compactN((videos[0] as { views?: number }).views!)} views` : '', (videos[0] as { hd?: boolean }).hd ? 'HD' : ''].filter(Boolean).join(' · ')}
+                  </Mono>
+                  <View style={{ flex: 1 }} />
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, alignSelf: 'flex-start', backgroundColor: C.ink400, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 10 }}>
+                    <PlayIcon size={9} color={C.paper0} />
+                    <Banner s={8.5} tk={0.08} c={C.paper0}>
+                      {videos.length > 1 ? `Watch ${videos.length} clips` : 'Watch clip'}
+                    </Banner>
+                  </View>
+                </View>
+              </StickerPressable>
             ) : null}
 
             {/* taste match — how it fits the signed-in foodie's palate */}
@@ -1263,7 +1307,9 @@ export function PlaceDetail() {
                           key={v.id}
                           v={v}
                           onPress={() =>
-                            url && openVideo(url + '&autoplay=1', { title: v.caption, creator: v.creator, platform: 'YouTube', views: c.views, hd: c.hd, placeName: base.name })
+                            v.embedId
+                              ? openClips(base.id, v.id)
+                              : url && openVideo(url + '&autoplay=1', { title: v.caption, creator: v.creator, platform: 'YouTube', views: c.views, hd: c.hd, placeName: base.name })
                           }
                         />
                       );

@@ -311,6 +311,7 @@ export type State = {
 
   // Clips (TikTok-style feed): which restaurant leads, and where to return to.
   clipsFocusId: string | null;
+  clipsStartId: string | null; // open the feed at this clip
   clipsReturn: (NavSnap & { profileReturnTo: Screen; profileStack: NavSnap[] }) | null;
 
   // "Build your passport from photos" — import flow state
@@ -346,7 +347,7 @@ export type Actions = {
   closeChef: () => void;
   openGroup: (id: string) => void;
   closeGroup: () => void;
-  openClips: (focusPlaceId?: string | null) => void;
+  openClips: (focusPlaceId?: string | null, startClipId?: string | null) => void;
   closeClips: () => void;
   ensureVenuePhoto: (place: Place) => Promise<void>;
   ensureChefPhoto: (chef: { id: string; name: string }) => Promise<void>;
@@ -568,6 +569,7 @@ const initialState = (): State => ({
   profileReturnTo: 'feed',
   profileStack: [],
   clipsFocusId: null,
+  clipsStartId: null,
   clipsReturn: null,
   photoImportOpen: false,
   photoImportStatus: 'idle',
@@ -667,10 +669,11 @@ export const useStore = create<State & Actions>((set, get) => ({
   closeGroup: () => set((s) => closeProfile(s)),
   // Clips remembers the whole navigation state it was opened from, so Back
   // returns exactly there (even after hopping into restaurants from the feed).
-  openClips: (focusPlaceId) =>
+  openClips: (focusPlaceId, startClipId) =>
     set((s) => ({
       screen: 'clips',
       clipsFocusId: focusPlaceId || null,
+      clipsStartId: startClipId || null,
       clipsReturn:
         s.screen === 'clips'
           ? s.clipsReturn

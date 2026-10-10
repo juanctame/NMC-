@@ -17,6 +17,7 @@ import { CARTE_RISING } from '../data/carte';
 import { FEATURED_CHEFS, type Chef } from '../data/chefs';
 import { GROUPS, type Group } from '../data/groups';
 import { staticCover } from '../data/media';
+import { buildClipFeed, type FeedClip } from '../data/clipFeed';
 
 const PLATFORM_TAG: Record<string, string> = { tiktok: 'TT', instagram: 'IG', youtube: 'YT' };
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
@@ -130,6 +131,50 @@ function MonthlyTrendCard({ item, rank }: { item: BuzzResult; rank: number }) {
         ) : null}
       </View>
     </View>
+  );
+}
+
+/**
+ * A vertical (9:16) clip preview — the creator's thumbnail, reach, @creator and
+ * the restaurant it's pinned to. Opens the full-screen Clips feed at this clip.
+ */
+function ClipPreview({ item }: { item: FeedClip }) {
+  const openClips = useStore((s) => s.openClips);
+  const { clip, place } = item;
+  return (
+    <Pressable
+      onPress={() => openClips(null, clip.id)}
+      accessibilityRole="button"
+      accessibilityLabel={`Clip about ${place.name} by ${clip.creator}`}
+      style={{ width: 118, height: 210, backgroundColor: C.ink700, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
+    >
+      {clip.thumb ? <Image source={{ uri: clip.thumb }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} resizeMode="cover" /> : null}
+      <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 92, backgroundColor: 'rgba(15,9,2,0.55)' }} />
+      <View style={{ position: 'absolute', top: 6, left: 6, flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(27,16,4,0.7)', borderRadius: 999, paddingVertical: 2, paddingHorizontal: 6 }}>
+        <PlayIcon size={8} color={C.paper0} />
+        <Mono s={8} c={C.paper0}>
+          {clip.views ? compact(clip.views) : 'Play'}
+        </Mono>
+      </View>
+      {clip.hd ? (
+        <View style={{ position: 'absolute', top: 6, right: 6, backgroundColor: C.inkBlack, borderRadius: 3, paddingVertical: 1, paddingHorizontal: 4 }}>
+          <Banner s={6.5} tk={0.06} c={C.paper0}>
+            HD
+          </Banner>
+        </View>
+      ) : null}
+      <View style={{ position: 'absolute', left: 7, right: 7, bottom: 7, gap: 5 }}>
+        <Mono s={8} c={C.ink100} numberOfLines={1}>
+          @{clip.creator}
+        </Mono>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, alignSelf: 'flex-start', maxWidth: '100%', backgroundColor: C.paper0, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingLeft: 2, paddingRight: 7 }}>
+          <Monogram name={place.name} size={16} />
+          <Banner s={7.5} tk={0.04} c={C.inkDeep} numberOfLines={1} style={{ flexShrink: 1 }}>
+            {place.name}
+          </Banner>
+        </View>
+      </View>
+    </Pressable>
   );
 }
 
@@ -576,6 +621,7 @@ export function Feed() {
   const monthlyTrending = useStore((s) => s.monthlyTrending);
   const monthlyTrendingStatus = useStore((s) => s.monthlyTrendingStatus);
   const loadMonthlyTrending = useStore((s) => s.loadMonthlyTrending);
+  const placeVideos = useStore((s) => s.placeVideos);
   const ranked = useStore((s) => s.ranked);
   const tastes = useStore((s) => s.tastes);
   const userReviews = useStore((s) => s.userReviews);
@@ -598,6 +644,12 @@ export function Feed() {
   }, [loadMonthlyTrending, city.id, nearby.length > 0]);
 
   const trendLive = monthlyTrendingStatus === 'ready' && monthlyTrending.length > 0;
+
+  // The same clip stream the Clips screen plays, so a preview opens right where it sits.
+  const clipFeed = useMemo(
+    () => buildClipFeed(nearby, [...Object.values(placeVideos).flat(), ...monthlyTrending.map((m) => m.video)]),
+    [nearby, placeVideos, monthlyTrending],
+  );
 
   return (
     <ScreenIn>
@@ -701,6 +753,27 @@ export function Feed() {
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
               {behind === 'chefs' ? FEATURED_CHEFS.map((c) => <ChefChip key={c.id} chef={c} />) : GROUPS.map((g) => <GroupChip key={g.id} group={g} />)}
+            </ScrollView>
+          </View>
+        ) : null}
+
+        {/* Clips — vertical previews of creator clips, each pinned to its restaurant */}
+        {clipFeed.length ? (
+          <View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <Banner s={11} tk={0.14} c={C.inkDeep}>
+                Clips
+              </Banner>
+              <Pressable onPress={() => openClips()} accessibilityLabel="Watch all clips" hitSlop={8}>
+                <Mono s={9} c={C.ink400}>
+                  watch all {clipFeed.length} →
+                </Mono>
+              </Pressable>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+              {clipFeed.slice(0, 12).map((it) => (
+                <ClipPreview key={it.clip.id} item={it} />
+              ))}
             </ScrollView>
           </View>
         ) : null}

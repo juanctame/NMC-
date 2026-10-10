@@ -29,7 +29,8 @@ export function buildClipFeed(places: Place[], extra: TrendingVideo[], focusPlac
   extra.forEach(add);
 
   const score = (f: FeedClip) => f.clip.score ?? Math.log10((f.clip.views || 0) + 10);
-  const pools = Object.values(perVenue).map((list) => list.sort((a, b) => score(b) - score(a)).slice(0, PER_VENUE));
+  // A focused restaurant keeps all its clips (so any one can be opened); others give their best few.
+  const pools = Object.values(perVenue).map((list) => list.sort((a, b) => score(b) - score(a)).slice(0, list[0]?.place.id === focusPlaceId ? undefined : PER_VENUE));
 
   // Interleave: repeatedly take the best remaining clip whose venue differs from the last one.
   const out: FeedClip[] = [];
