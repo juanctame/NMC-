@@ -1,6 +1,6 @@
 {
- "version": 2,
- "generatedAt": "2026-10-10T16:15:41.417Z",
+ "version": 3,
+ "generatedAt": "2026-10-10T16:21:56.971Z",
  "userAgent": "Mozilla/5.0 (compatible; CRTQ-LinkPreview/1.0; +https://juanctame.github.io/NMC-/)",
  "venues": {
   "cx-pujol": {
@@ -140,7 +140,13 @@
      "image": "https://www.elfinanciero.com.mx/resizer/v2/QEVHYPWCU5C33PYMH732IFAA4Y.jpeg?smart=true&auth=b0f81f4ff493a4b3dd7c3d3334d571362ff1513f4d9b5a084f7fd3f60fb8d8b0&width=1200&height=630",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://quintonil.com/wp-content/uploads/2024/06/Banner-1-WEB-600x303.jpg",
+    "link": "https://quintonil.com",
+    "credit": "quintonil.com",
+    "title": "Quintonil"
+   }
   },
   "cx-esquina-comun": {
    "press": [
@@ -227,7 +233,13 @@
      "image": "https://www.elfinanciero.com.mx/resizer/v2/QEVHYPWCU5C33PYMH732IFAA4Y.jpeg?smart=true&auth=b0f81f4ff493a4b3dd7c3d3334d571362ff1513f4d9b5a084f7fd3f60fb8d8b0&width=1200&height=630",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://rosetta.com.mx/wp-content/uploads/2025/06/home-rec-01.png",
+    "link": "https://rosetta.com.mx",
+    "credit": "rosetta.com.mx",
+    "title": "Rosetta"
+   }
   },
   "cx-sud-777": {
    "press": [
@@ -252,7 +264,13 @@
      "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/expendio-de-maiz",
      "specific": true
     }
-   ]
+   ],
+   "site": {
+    "image": "https://images.squarespace-cdn.com/content/v1/6a0392652cde9f6bd9d342b5/1778618982085-DQXGLRTQQY0AEU75PLSF/DSCF0172+%281%29.jpg",
+    "link": "https://expendiodemaizsinnombre.com",
+    "credit": "expendiodemaizsinnombre.com",
+    "title": "Expendio de Maíz"
+   }
   },
   "cx-masala-y-maiz": {
    "press": [
@@ -417,7 +435,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://images.squarespace-cdn.com/content/v1/69bab62adfc3963bb605c0e3/f6229f26-81a1-4739-862c-12b8300e26e3/DSCF7378.jpg?format=2500w",
+    "link": "https://canacdmx.com",
+    "credit": "canacdmx.com",
+    "title": "CANA BISTRO"
+   }
   },
   "cx-carmela-y-sal": {
    "press": [
@@ -492,7 +516,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://contramar.com.mx/upload/06.jpg",
+    "link": "https://contramar.com.mx",
+    "credit": "contramar.com.mx",
+    "title": "Contramar"
+   }
   },
   "cx-cuina": {
    "press": [
@@ -510,7 +540,13 @@
      "image": "https://i0.wp.com/foodandpleasure.com/wp-content/uploads/2022/11/antojo-de-pambazo-ve-a-cuina-9.jpg?fit=1080%2C1080&ssl=1",
      "specific": true
     }
-   ]
+   ],
+   "site": {
+    "image": "https://cuina.com.mx/wp-content/plugins/revslider/sr6/assets/assets/dummy.png",
+    "link": "https://cuina.com.mx",
+    "credit": "cuina.com.mx",
+    "title": "Cuina"
+   }
   },
   "cx-ehden": {
    "press": [
@@ -680,7 +716,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://www.galea.mx/wp-content/plugins/translatepress-multilingual/assets/images/flags/en_US.png",
+    "link": "https://galea.mx",
+    "credit": "galea.mx",
+    "title": "Galea - Cocina Italiana"
+   }
   },
   "cx-grana-sabores-de-origen": {
    "press": [
@@ -714,7 +756,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/2be0df84-e23b-40ff-a7fc-e56ea847e783/1D8A7527+copia.jpg?format=2500w",
+    "link": "https://guzinaoaxaca.org",
+    "credit": "guzinaoaxaca.org",
+    "title": "GUZINA OAXACA"
+   }
   },
   "cx-la-cocina-del-bizco": {
    "press": [
@@ -770,7 +818,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://lina.mx/wp-content/uploads/2026/08/KatieJuneBurton_Lina-98-scaled.jpg",
+    "link": "https://lina.mx",
+    "credit": "lina.mx",
+    "title": "Lina &#8211; Restaurante CDMX"
+   }
   },
   "cx-lorea": {
    "press": [
@@ -808,7 +862,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://www.losdanzantescoyoacan.com/wp-content/themes/Divi/includes/builder/styles/images/preloader.gif",
+    "link": "https://losdanzantescoyoacan.com",
+    "credit": "losdanzantescoyoacan.com",
+    "title": "Los Danzantes Coyoacán |"
+   }
   },
   "cx-maizajo": {
    "press": [
@@ -974,7 +1034,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://static.wixstatic.com/media/efa6e0_89920f4822114af19277e49608296585~mv2.png/v1/fill/w_67,h_100,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/efa6e0_89920f4822114af19277e49608296585~mv2.png",
+    "link": "https://plonk.mx",
+    "credit": "plonk.mx",
+    "title": "Home | Plonk"
+   }
   },
   "cx-prendes": {
    "press": [
@@ -1015,7 +1081,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://static.wixstatic.com/media/6ad2ef_f1256207126e41488acc38c5a3c73dd2~mv2.jpeg/v1/fill/w_148,h_49,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/PHOTO-2022-01-24-11-42-57.jpeg",
+    "link": "https://restauranteraiz.com",
+    "credit": "restauranteraiz.com",
+    "title": "Cocina Mexicana Contemporanea | Restaurante Raíz | Ciudad De México"
+   }
   },
   "cx-rocasal": {
    "press": [
@@ -1149,7 +1221,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://tacotastingroom.com/wp-content/uploads/2025/06/8479.08-1.png",
+    "link": "https://tacotastingroom.com",
+    "credit": "tacotastingroom.com",
+    "title": "Inicio - https://tacotastingroom.com"
+   }
   },
   "cx-the-palm": {
    "press": [
@@ -1209,7 +1287,13 @@
      "image": "https://cdn-3.expansion.mx/dims4/default/86a3d9b/2147483647/strip/true/crop/784x412+0+15/resize/1200x630!/format/jpg/quality/80/?url=https%3A%2F%2Fcdn-3.expansion.mx%2Fd7%2F53%2F5f2261b04f398ffb825b210717cf%2Faperturas-gastronomicas-en-la-cdmx.png",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://toritori.com.mx/wp-content/uploads/2018/05/tori-tori-white.png",
+    "link": "https://toritori.com.mx",
+    "credit": "toritori.com.mx",
+    "title": "TORI TORI By Kumoto | Restaurante de alta cocina japonesa en CDMX"
+   }
   },
   "cx-vega": {
    "press": [
@@ -1350,7 +1434,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://almara.rest/wp-content/uploads/2025/09/EXPERIENCIA-3-scaled.jpg",
+    "link": "https://almara.rest",
+    "credit": "almara.rest",
+    "title": "Almara Restaurante - Almara Restaurante"
+   }
   },
   "cx-another": {
    "press": [
@@ -1392,7 +1482,13 @@
      "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/bajel",
      "specific": true
     }
-   ]
+   ],
+   "site": {
+    "image": "https://m.ahstatic.com/is/image/accorhotels/2607_mkt_0014:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80",
+    "link": "https://sofitel.accor.com/en/hotels/9615/R004.restaurant.html",
+    "credit": "sofitel.accor.com",
+    "title": "Bajel"
+   }
   },
   "cx-balcon-del-zocalo": {
    "press": [
@@ -1421,7 +1517,13 @@
      "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/bella-aurora",
      "specific": true
     }
-   ]
+   ],
+   "site": {
+    "image": "https://bellaaurora.mx/img/Recurso%201.png",
+    "link": "https://bellaaurora.mx",
+    "credit": "bellaaurora.mx",
+    "title": "Bella Aurora"
+   }
   },
   "cx-brutal": {
    "press": [
@@ -1432,7 +1534,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://brutalbrutal.mx/cdn/shop/files/Captura_de_pantalla_2023-10-24_a_la_s_11.10.35_530x_crop_top@2x.png?v=1698167482",
+    "link": "https://brutalbrutal.mx",
+    "credit": "brutalbrutal.mx",
+    "title": "Brutal"
+   }
   },
   "cx-bulla": {
    "press": [
@@ -1479,7 +1587,13 @@
      "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://caracoldemar.com.mx/wp-content/uploads/2026/05/caracol-blanco-480x113.png",
+    "link": "https://caracoldemar.com.mx",
+    "credit": "caracoldemar.com.mx",
+    "title": "Caracol de Mar"
+   }
   },
   "cx-carinito-tacos": {
    "press": [
@@ -1648,7 +1762,13 @@
      "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://elvilsito.com/wp-content/uploads/2026/02/c1b5e54a-62b3-47ff-a628-4787cf9e75ba-2.jpeg",
+    "link": "https://elvilsito.com",
+    "credit": "elvilsito.com",
+    "title": "El Vilsito - elvilsito.com"
+   }
   },
   "cx-entremar": {
    "press": [
@@ -1657,7 +1777,13 @@
      "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/entremar",
      "specific": true
     }
-   ]
+   ],
+   "site": {
+    "image": "https://entremar.com/upload/06.jpg",
+    "link": "https://entremar.com",
+    "credit": "entremar.com",
+    "title": "Entremar"
+   }
   },
   "cx-filigrana": {
    "press": [
@@ -1673,7 +1799,13 @@
      "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://www.filigrana.com.mx/wp-content/uploads/2022/11/1.jpg",
+    "link": "https://filigrana.com.mx",
+    "credit": "filigrana.com.mx",
+    "title": "Filigrana | Los hilos de sabor que nos unen a todos. El nuevo espacio gastronómico de la chef Martha Ortiz."
+   }
   },
   "cx-fugaz": {
    "press": [
@@ -1791,7 +1923,13 @@
      "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://static.wixstatic.com/media/11062b_cef3b719166a4815b446d4dcfcb6120d~mv2.png/v1/fill/w_34,h_34,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/11062b_cef3b719166a4815b446d4dcfcb6120d~mv2.png",
+    "link": "https://jowong.mx",
+    "credit": "jowong.mx",
+    "title": "COMIDA"
+   }
   },
   "cx-kill-bill": {
    "press": [
@@ -1802,7 +1940,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://killbill.mx/wp-content/uploads/2023/12/ELEMENTS.png",
+    "link": "https://killbill.mx",
+    "credit": "killbill.mx",
+    "title": "Kill Bill - Hi-Fi Sushi & Robata"
+   }
   },
   "cx-la-89": {
    "press": [
@@ -1827,7 +1971,13 @@
      "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/la-barra-de-fran",
      "specific": true
     }
-   ]
+   ],
+   "site": {
+    "image": "https://static.wixstatic.com/media/608b2e_8fb75dc4c3b845ba86c2ee28b62a2bb1~mv2_d_3092_1302_s_2.jpg/v1/fill/w_196,h_82,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/608b2e_8fb75dc4c3b845ba86c2ee28b62a2bb1~mv2_d_3092_1302_s_2.jpg",
+    "link": "https://labarradefran.com",
+    "credit": "labarradefran.com",
+    "title": "Taberna Contemporánea Española , Polanco, La Barra de Fran"
+   }
   },
   "cx-la-cabrera": {
    "press": [
@@ -1865,7 +2015,13 @@
      "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://losconsentidos.com/wp-content/uploads/2026/06/elementos_landing-12rEf30.png",
+    "link": "https://losconsentidos.com",
+    "credit": "losconsentidos.com",
+    "title": "Home - Los Consentidos"
+   }
   },
   "cx-los-panchos": {
    "press": [
@@ -1876,7 +2032,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://lospanchos.mx/wp-content/uploads/2023/11/sucursal-panchos-coyoacan-6.webp",
+    "link": "https://lospanchos.mx",
+    "credit": "lospanchos.mx",
+    "title": "Los Panchos Restaurant | Nuestra especialidad: Las Carnitas."
+   }
   },
   "cx-lotti": {
    "press": [
@@ -1916,7 +2078,13 @@
      "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/malix",
      "specific": true
     }
-   ]
+   ],
+   "site": {
+    "image": "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/04326f17-a89a-4d9e-abef-4252dd2b9202/HT3A0306.jpg?format=2500w",
+    "link": "https://malixresto.com",
+    "credit": "malixresto.com",
+    "title": "Malix"
+   }
   },
   "cx-martinez": {
    "press": [
@@ -1940,7 +2108,13 @@
      "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/merotoro",
      "specific": true
     }
-   ]
+   ],
+   "site": {
+    "image": "https://merotoro.mx/assets/img/fondo-curvas-2.png",
+    "link": "https://merotoro.mx",
+    "credit": "merotoro.mx",
+    "title": "MEROTORO"
+   }
   },
   "cx-mi-compa-chava": {
    "press": [
@@ -2105,7 +2279,13 @@
      "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://tacosdelvalle.com/images/michelin.webp",
+    "link": "https://tacosdelvalle.com",
+    "credit": "tacosdelvalle.com",
+    "title": "Tacos Del Valle"
+   }
   },
   "cx-tacos-hola-el-guero": {
    "press": [
@@ -2177,7 +2357,13 @@
      "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://taqueriaeljarocho.com.mx/wp-content/uploads/2013/03/fachada-1020x425.jpg",
+    "link": "https://taqueriaeljarocho.com.mx",
+    "credit": "taqueriaeljarocho.com.mx",
+    "title": "Taqueria-Restaurante El Jarocho"
+   }
   },
   "cx-taqueria-el-paisa": {
    "press": [
@@ -2233,7 +2419,13 @@
      "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-los-parados",
      "specific": true
     }
-   ]
+   ],
+   "site": {
+    "image": "https://los-parados.com/images/about-main.jpg",
+    "link": "https://los-parados.com",
+    "credit": "los-parados.com",
+    "title": "Los Parados - La mejor taqueria en CDMX desde 1965"
+   }
   },
   "cx-tenampa": {
    "press": [
@@ -2319,7 +2511,13 @@
      "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/xuna",
      "specific": true
     }
-   ]
+   ],
+   "site": {
+    "image": "https://xunarestaurante.com.mx/wp-content/themes/yootheme/cache/c8/Untitled-design-23-c851d338.png",
+    "link": "https://xunarestaurante.com.mx",
+    "credit": "xunarestaurante.com.mx",
+    "title": "Xuna Restaurante"
+   }
   },
   "cx-zagala": {
    "press": [
@@ -2330,7 +2528,13 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ]
+   ],
+   "site": {
+    "image": "https://zagalarestaurante.com/wp-content/uploads/2022/04/Zagala_Beige-1.png",
+    "link": "https://zagalarestaurante.com",
+    "credit": "zagalarestaurante.com",
+    "title": "Zagala Restaurante"
+   }
   },
   "cx-ideal": {
    "press": [
@@ -2577,18 +2781,6 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://quintonil.com": {
-   "status": 200,
-   "bytes": 122593,
-   "title": "Quintonil",
-   "candidates": 1,
-   "rejected": [
-    {
-     "url": "https://quintonil.com/wp-content/uploads/2025/07/50Best-Estrellas-2025.svg",
-     "why": "looks like a logo/icon"
-    }
-   ]
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/quintonil": {
    "status": 202,
    "bytes": 2399,
@@ -2613,13 +2805,6 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://rosetta.com.mx": {
-   "status": 200,
-   "bytes": 36966,
-   "title": "Rosetta",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/rosetta": {
    "status": 202,
    "bytes": 2399,
@@ -2628,7 +2813,7 @@
   },
   "https://sud777.com.mx": {
    "status": 200,
-   "bytes": 511399,
+   "bytes": 511337,
    "title": "SUD 777 | restaurante en Pedregal | Blvrd de la Luz 777, Jardines del Pedregal, ",
    "candidates": 0,
    "rejected": []
@@ -2636,13 +2821,6 @@
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/alvaro-obregon_2003790/restaurante/sud-777": {
    "status": 202,
    "bytes": 2399,
-   "candidates": 0,
-   "rejected": []
-  },
-  "https://expendiodemaizsinnombre.com": {
-   "status": 200,
-   "bytes": 103232,
-   "title": "Expendio de Maíz",
    "candidates": 0,
    "rejected": []
   },
@@ -2662,10 +2840,14 @@
    "status": 200,
    "bytes": 36677,
    "title": "Baldío",
-   "candidates": 1,
+   "candidates": 2,
    "rejected": [
     {
      "url": "https://www.baldio.mx/wp-content/uploads/2024/06/logo.png",
+     "why": "looks like a logo/icon"
+    },
+    {
+     "url": "https://www.baldio.mx/wp-content/uploads/2024/06/logo-300x85.png",
      "why": "looks like a logo/icon"
     }
    ]
@@ -2681,22 +2863,6 @@
    "bytes": 2399,
    "candidates": 0,
    "rejected": []
-  },
-  "https://canacdmx.com": {
-   "status": 200,
-   "bytes": 130320,
-   "title": "CANA BISTRO",
-   "candidates": 2,
-   "rejected": [
-    {
-     "url": "https://static1.squarespace.com/static/69bab62adfc3963bb605c0e3/t/69bace5e71fa165b607c2c84/1773850206823/CANA+LOGO.png?format=1500w",
-     "why": "looks like a logo/icon"
-    },
-    {
-     "url": "https://images.squarespace-cdn.com/content/v1/69bab62adfc3963bb605c0e3/71cfc378-c9f6-4a0f-a10b-b0bdd78f28a2/CANA+LOGO.png",
-     "why": "looks like a logo/icon"
-    }
-   ]
   },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/cana": {
    "status": 202,
@@ -2716,29 +2882,15 @@
   "https://chapulin.rest": {
    "status": "fetch failed"
   },
-  "https://contramar.com.mx": {
-   "status": 200,
-   "bytes": 26170,
-   "title": "Contramar",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/contramar": {
    "status": 202,
    "bytes": 2399,
    "candidates": 0,
    "rejected": []
   },
-  "https://cuina.com.mx": {
-   "status": 200,
-   "bytes": 147719,
-   "title": "Cuina",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://theinfatuation.com/mexico-city/reviews/eloise-chic-cuisine-san-angel": {
    "status": 200,
-   "bytes": 731856,
+   "bytes": 731857,
    "title": "Eloise Chic Cuisine - Review - San Ángel - Mexico City - The Infatuation",
    "candidates": 1,
    "rejected": [
@@ -2757,28 +2909,9 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://galea.mx": {
-   "status": 200,
-   "bytes": 79389,
-   "title": "Galea - Cocina Italiana",
-   "candidates": 1,
-   "rejected": [
-    {
-     "url": "https://www.galea.mx/wp-content/uploads/2022/03/michelin_logo.png",
-     "why": "looks like a logo/icon"
-    }
-   ]
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/galea": {
    "status": 202,
    "bytes": 2399,
-   "candidates": 0,
-   "rejected": []
-  },
-  "https://guzinaoaxaca.org": {
-   "status": 200,
-   "bytes": 349151,
-   "title": "GUZINA OAXACA",
    "candidates": 0,
    "rejected": []
   },
@@ -2794,13 +2927,6 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://lina.mx": {
-   "status": 200,
-   "bytes": 394431,
-   "title": "Lina &#8211; Restaurante CDMX",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/lina": {
    "status": 202,
    "bytes": 2399,
@@ -2810,13 +2936,6 @@
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/lorea": {
    "status": 202,
    "bytes": 2399,
-   "candidates": 0,
-   "rejected": []
-  },
-  "https://losdanzantescoyoacan.com": {
-   "status": 200,
-   "bytes": 236842,
-   "title": "Los Danzantes Coyoacán |",
    "candidates": 0,
    "rejected": []
   },
@@ -2850,13 +2969,6 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://plonk.mx": {
-   "status": 200,
-   "bytes": 485412,
-   "title": "Home | Plonk",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/plonk": {
    "status": 202,
    "bytes": 2399,
@@ -2865,13 +2977,6 @@
   },
   "https://prendes.com.mx": {
    "status": "fetch failed"
-  },
-  "https://restauranteraiz.com": {
-   "status": 200,
-   "bytes": 617661,
-   "title": "Cocina Mexicana Contemporanea | Restaurante Raíz | Ciudad De México",
-   "candidates": 0,
-   "rejected": []
   },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/raiz-1208231": {
    "status": 202,
@@ -2885,53 +2990,17 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://tacotastingroom.com": {
-   "status": 200,
-   "bytes": 165087,
-   "title": "Inicio - https://tacotastingroom.com",
-   "candidates": 1,
-   "rejected": [
-    {
-     "url": "https://tacotastingroom.com/wp-content/uploads/2026/05/logo_website_Restaurant_Selection_2026_red.png",
-     "why": "looks like a logo/icon"
-    }
-   ]
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taco-tasting-room": {
    "status": 202,
    "bytes": 2399,
    "candidates": 0,
    "rejected": []
   },
-  "https://toritori.com.mx": {
-   "status": 200,
-   "bytes": 80336,
-   "title": "TORI TORI By Kumoto | Restaurante de alta cocina japonesa en CDMX",
-   "candidates": 1,
-   "rejected": [
-    {
-     "url": "https://toritori.com.mx/wp-content/uploads/2018/06/Logo_tori.png",
-     "why": "looks like a logo/icon"
-    }
-   ]
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/aleli-rooftop": {
    "status": 202,
    "bytes": 2399,
    "candidates": 0,
    "rejected": []
-  },
-  "https://almara.rest": {
-   "status": 200,
-   "bytes": 146811,
-   "title": "Almara Restaurante - Almara Restaurante",
-   "candidates": 1,
-   "rejected": [
-    {
-     "url": "https://almara.rest/wp-content/uploads/2022/05/favicon-almara.png",
-     "why": "looks like a logo/icon"
-    }
-   ]
   },
   "https://www.opentable.ie/r/restaurante-almara-ciudad-de-mexico": {
    "status": 403,
@@ -2942,18 +3011,6 @@
   },
   "https://azul.rest.com": {
    "status": "fetch failed"
-  },
-  "https://sofitel.accor.com/en/hotels/9615/R004.restaurant.html": {
-   "status": 200,
-   "bytes": 391855,
-   "title": "Bajel | Restaurant in Downtown CDMX | Sofitel Mexico City Reforma",
-   "candidates": 1,
-   "rejected": [
-    {
-     "url": "https://sofitel.accor.com/content/dam/brands/sof/global-marketing/brand-identity/logos/favicon.svg",
-     "why": "looks like a logo/icon"
-    }
-   ]
   },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/bajel": {
    "status": 202,
@@ -2967,30 +3024,11 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://bellaaurora.mx": {
-   "status": 200,
-   "bytes": 7317,
-   "title": "Bella Aurora",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/bella-aurora": {
    "status": 202,
    "bytes": 2399,
    "candidates": 0,
    "rejected": []
-  },
-  "https://brutalbrutal.mx": {
-   "status": 200,
-   "bytes": 87030,
-   "title": "Brutal",
-   "candidates": 1,
-   "rejected": [
-    {
-     "url": "https://brutalbrutal.mx/cdn/shop/files/BRUTAL_LOGOS-08_1200x1200.png?v=1698164426",
-     "why": "looks like a logo/icon"
-    }
-   ]
   },
   "https://www.opentable.ie/r/brutal-ciudad-de-mexico": {
    "status": 403,
@@ -3010,13 +3048,6 @@
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/campobaja": {
    "status": 202,
    "bytes": 2399,
-   "candidates": 0,
-   "rejected": []
-  },
-  "https://caracoldemar.com.mx": {
-   "status": 200,
-   "bytes": 145285,
-   "title": "Caracol de Mar",
    "candidates": 0,
    "rejected": []
   },
@@ -3070,36 +3101,15 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://elvilsito.com": {
-   "status": 200,
-   "bytes": 126636,
-   "title": "El Vilsito - elvilsito.com",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/benito-juarez_1994163/restaurante/el-vilsito": {
    "status": 202,
    "bytes": 2399,
    "candidates": 0,
    "rejected": []
   },
-  "https://entremar.com": {
-   "status": 200,
-   "bytes": 34860,
-   "title": "Entremar",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/entremar": {
    "status": 202,
    "bytes": 2399,
-   "candidates": 0,
-   "rejected": []
-  },
-  "https://filigrana.com.mx": {
-   "status": 200,
-   "bytes": 235301,
-   "title": "Filigrana | Los hilos de sabor que nos unen a todos. El nuevo espacio gastronómi",
    "candidates": 0,
    "rejected": []
   },
@@ -3130,23 +3140,9 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://jowong.mx": {
-   "status": 200,
-   "bytes": 1933802,
-   "title": "COMIDA | Jowong",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/jowong": {
    "status": 202,
    "bytes": 2399,
-   "candidates": 0,
-   "rejected": []
-  },
-  "https://killbill.mx": {
-   "status": 200,
-   "bytes": 38471,
-   "title": "Kill Bill - Hi-Fi Sushi & Robata",
    "candidates": 0,
    "rejected": []
   },
@@ -3160,13 +3156,6 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://labarradefran.com": {
-   "status": 200,
-   "bytes": 803082,
-   "title": "Taberna Contemporánea Española , Polanco, La Barra de Fran",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/la-barra-de-fran": {
    "status": 202,
    "bytes": 2399,
@@ -3177,28 +3166,9 @@
    "status": 403,
    "bytes": 0
   },
-  "https://losconsentidos.com": {
-   "status": 200,
-   "bytes": 148909,
-   "title": "Home - Los Consentidos",
-   "candidates": 1,
-   "rejected": [
-    {
-     "url": "https://losconsentidos.com/wp-content/uploads/2026/06/Logotipo_LC-04.png",
-     "why": "looks like a logo/icon"
-    }
-   ]
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/benito-juarez_1994163/restaurante/los-consentidos-del-barrio": {
    "status": 202,
    "bytes": 2399,
-   "candidates": 0,
-   "rejected": []
-  },
-  "https://lospanchos.mx": {
-   "status": 200,
-   "bytes": 182231,
-   "title": "Los Panchos Restaurant | Nuestra especialidad: Las Carnitas.",
    "candidates": 0,
    "rejected": []
   },
@@ -3215,22 +3185,6 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://malixresto.com": {
-   "status": 200,
-   "bytes": 127089,
-   "title": "Malix",
-   "candidates": 2,
-   "rejected": [
-    {
-     "url": "https://static1.squarespace.com/static/6213e0ff2bb9a478f3fae011/t/6213e5674b5d2811ea8db758/1645471079633/Malix-Logo-White.jpg?format=1500w",
-     "why": "looks like a logo/icon"
-    },
-    {
-     "url": "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/15fe6e27-0532-4703-acdd-507c2414ce1a/Malix-Logo-White.jpg",
-     "why": "looks like a logo/icon"
-    }
-   ]
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/malix": {
    "status": 202,
    "bytes": 2399,
@@ -3240,13 +3194,6 @@
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/martinez": {
    "status": 202,
    "bytes": 2399,
-   "candidates": 0,
-   "rejected": []
-  },
-  "https://merotoro.mx": {
-   "status": 200,
-   "bytes": 7113,
-   "title": "MEROTORO",
    "candidates": 0,
    "rejected": []
   },
@@ -3290,13 +3237,6 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://tacosdelvalle.com": {
-   "status": 200,
-   "bytes": 43637,
-   "title": "Tacos del Valle",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/tacos-del-valle": {
    "status": 202,
    "bytes": 2399,
@@ -3327,13 +3267,6 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://taqueriaeljarocho.com.mx": {
-   "status": 200,
-   "bytes": 37720,
-   "title": "Taqueria-Restaurante El Jarocho",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-el-jarocho": {
    "status": 202,
    "bytes": 2399,
@@ -3355,13 +3288,6 @@
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/alvaro-obregon_2003790/restaurante/taqueria-los-milanesos": {
    "status": 202,
    "bytes": 2399,
-   "candidates": 0,
-   "rejected": []
-  },
-  "https://los-parados.com": {
-   "status": 200,
-   "bytes": 64187,
-   "title": "Los Parados - La mejor taqueria en CDMX desde 1965",
    "candidates": 0,
    "rejected": []
   },
@@ -3394,23 +3320,9 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://xunarestaurante.com.mx": {
-   "status": 200,
-   "bytes": 65593,
-   "title": "Xuna Restaurante",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/xuna": {
    "status": 202,
    "bytes": 2399,
-   "candidates": 0,
-   "rejected": []
-  },
-  "https://zagalarestaurante.com": {
-   "status": 200,
-   "bytes": 133074,
-   "title": "Zagala Restaurante",
    "candidates": 0,
    "rejected": []
   },
@@ -3421,8 +3333,8 @@
  },
  "stats": {
   "venues": 166,
-  "withPhoto": 46,
-  "sitePhotos": 24,
+  "withPhoto": 79,
+  "sitePhotos": 58,
   "specificPress": 24,
   "pressCards": 269,
   "failedPages": 9
