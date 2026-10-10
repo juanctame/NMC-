@@ -26,6 +26,7 @@ import { Display, Banner, Serif, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
 import { Monogram } from '../components/Monogram';
+import { PlaceCover } from '../components/Cover';
 import { Roundel } from '../components/Roundel';
 import { PlusIcon, BookmarkIcon, HeartIcon, PlayIcon, MapIcon, GlobeMark } from '../components/icons';
 import { ScreenIn } from '../components/Anim';
@@ -578,9 +579,15 @@ export function PlaceDetail() {
 
   return (
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
-      {/* hero */}
+      {/* hero — real Google photo when we have one, else a distinct generated cover */}
       <View style={{ position: 'relative' }}>
-        <Photo source={heroUrl ? { uri: heroUrl } : photo(base.photo)} style={{ width: '100%', height: 226, borderBottomWidth: 2.5, borderColor: C.inkBlack }} />
+        <PlaceCover
+          place={base}
+          photoUrl={heroUrl}
+          style={{ width: '100%', height: 226, borderBottomWidth: 2.5, borderColor: C.inkBlack }}
+          crestSize={92}
+          eyebrow
+        />
         {heroUrl ? (
           <View style={{ position: 'absolute', right: 8, bottom: 8, backgroundColor: 'rgba(27,16,4,0.6)', borderRadius: 4, paddingVertical: 2, paddingHorizontal: 6 }}>
             <Mono s={7.5} c={C.paper0} numberOfLines={1}>
@@ -597,12 +604,14 @@ export function PlaceDetail() {
             </Pressable>
           </StickerView>
         </View>
-        {/* venue monogram — the app's own brand stamp (not the restaurant's logo) */}
-        <View style={{ position: 'absolute', right: 14, top: insets.top + 8 }}>
-          <StickerView offset="sm" radius={999}>
-            <Monogram name={base.name} size={46} rot="-6deg" />
-          </StickerView>
-        </View>
+        {/* over a real photo, stamp the venue's brand monogram (the generated cover already carries its crest) */}
+        {heroUrl ? (
+          <View style={{ position: 'absolute', right: 14, top: insets.top + 8 }}>
+            <StickerView offset="sm" radius={999}>
+              <Monogram name={base.name} size={46} rot="-6deg" />
+            </StickerView>
+          </View>
+        ) : null}
         {been ? (
           <View style={{ position: 'absolute', right: 16, bottom: -24, transform: [{ rotate: '-7deg' }] }}>
             <StickerView offset="lg" radius={999}>

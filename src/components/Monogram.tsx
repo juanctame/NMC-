@@ -45,6 +45,17 @@ export function monogramColor(name: string): string {
   return PALETTE[hashStr(name) % PALETTE.length];
 }
 
+/**
+ * A distinct duotone for a venue's generated cover: a semi-transparent colour
+ * wash (laid over a darkened stock photo) and a solid deep backing. Derived from
+ * the name across the full hue wheel at a muted poster saturation/lightness, so
+ * every restaurant gets its own cover colour even from a small photo pool.
+ */
+export function coverColors(name: string): { wash: string; deep: string } {
+  const hue = hashStr(name) % 360;
+  return { wash: `hsla(${hue}, 47%, 33%, 0.60)`, deep: `hsl(${hue}, 45%, 20%)` };
+}
+
 export function Monogram({
   name,
   size = 44,

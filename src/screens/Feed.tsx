@@ -20,11 +20,12 @@ const PLATFORM_TAG: Record<string, string> = { tiktok: 'TT', instagram: 'IG', yo
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { C } from '../theme/tokens';
 import { col } from '../theme/tokens';
-import { photo, placePhoto, BRAND } from '../assets';
+import { photo, BRAND } from '../assets';
 import { Display, Banner, Serif, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
 import { Monogram } from '../components/Monogram';
+import { PlaceCover } from '../components/Cover';
 import { CacheChip } from '../components/CacheChip';
 import { Grain } from '../components/Grain';
 import { ScreenIn } from '../components/Anim';
@@ -186,7 +187,7 @@ function RisingCard({ p }: { p: Place }) {
       style={{ width: 150, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
     >
       <View style={{ position: 'relative' }}>
-        <Photo source={placePhoto(p)} style={{ width: '100%', height: 88, borderBottomWidth: 2, borderColor: C.inkBlack }} />
+        <PlaceCover place={p} style={{ width: '100%', height: 88, borderBottomWidth: 2, borderColor: C.inkBlack }} crestSize={40} />
         <View style={{ position: 'absolute', top: 6, left: 6, backgroundColor: neo ? C.stampGreen : C.sun400, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 1, paddingHorizontal: 7 }}>
           <Banner s={7.5} tk={0.08} c={neo ? C.paper0 : C.inkDeep}>
             {neo ? 'New · 2026' : 'Rising'}
@@ -235,7 +236,7 @@ function TopPick({ rec }: { rec: Rec }) {
   return (
     <StickerPressable offset="lg" onPress={() => openPlace(p.id)} style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
       <View style={{ position: 'relative' }}>
-        <Photo source={placePhoto(p)} style={{ width: '100%', height: 152 }} darken={0.12} />
+        <PlaceCover place={p} style={{ width: '100%', height: 152 }} crestSize={72} darken={0.5} />
         <View style={{ position: 'absolute', top: 10, left: 10, backgroundColor: C.ink400, borderWidth: 2, borderColor: C.paper0, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 10, transform: [{ rotate: '-3deg' }] }}>
           <Banner s={9} tk={0.14} c={C.paper0}>
             {t('feed.topPick')}
@@ -282,7 +283,7 @@ function RecMini({ rec }: { rec: Rec }) {
   return (
     <StickerPressable offset="sm" onPress={() => openPlace(p.id)} style={{ width: 152, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
       <View style={{ position: 'relative' }}>
-        <Photo source={placePhoto(p)} style={{ width: '100%', height: 88 }} />
+        <PlaceCover place={p} style={{ width: '100%', height: 88 }} crestSize={40} />
         <View style={{ position: 'absolute', top: 6, right: 6, minWidth: 26, height: 22, paddingHorizontal: 5, borderRadius: 11, backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
           <Display s={12} c={C.inkDeep}>
             {rec.score}
@@ -761,7 +762,7 @@ export function Feed() {
                   onPress={() => openPlaceFromFeed(p.id)}
                   style={{ width: 128, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
                 >
-                  <Photo source={placePhoto(p)} style={{ width: '100%', height: 84, borderBottomWidth: 2, borderColor: C.inkBlack }} />
+                  <PlaceCover place={p} style={{ width: '100%', height: 84, borderBottomWidth: 2, borderColor: C.inkBlack }} crestSize={38} />
                   <View style={{ padding: 8 }}>
                     <SerifDisplay s={13} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 14 }}>
                       {p.name}
