@@ -1,7 +1,7 @@
 {
  "version": 1,
- "generatedAt": "2026-10-10T17:17:24.151Z",
+ "generatedAt": "2026-10-10T17:18:24.872Z",
  "status": "forbidden",
- "note": "Requests to this API youtube method youtube.api.v3.V3DataSearchService.List are blocked.",
+ "note": "site key: forbidden — Requests to this API youtube method youtube.api.v3.V3DataVideoService.List are blocked.",
  "venues": {}
 }
