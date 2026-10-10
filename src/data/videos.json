@@ -1,7 +1,7 @@
 {
  "version": 1,
- "generatedAt": "2026-10-10T16:45:41.967Z",
- "status": "api-disabled",
- "note": "YouTube Data API v3 has not been used in project 545170702116 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/youtube.googleapis.com/overview?project=545170702116 then retry. If you enabled thi",
+ "generatedAt": "2026-10-10T17:02:26.381Z",
+ "status": "forbidden",
+ "note": "Requests to this API youtube method youtube.api.v3.V3DataSearchService.List are blocked.",
  "venues": {}
 }
