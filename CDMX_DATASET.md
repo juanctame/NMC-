@@ -32,8 +32,14 @@ Trayectoria), and **awards**.
 - **Real photos** — when a curated venue is opened on the web, the app resolves
   its **live Google Maps twin by coordinate** and shows that venue's **real
   Google photos** (hero + gallery), with attribution and live Google hours /
-  reviews. Nothing is downloaded or re-hosted; the stock pool is only the
-  fallback when no key is configured or no match is found.
+  reviews. In addition — and with **no API key** — it pulls freely-licensed
+  photos from **Wikipedia + Wikimedia** (`src/data/wikiPhotos.ts`): a photo of
+  the restaurant for well-known venues, the **chef's portrait** on chef profiles,
+  and **reference plates** (a real photo of each recognised dish) in *What to
+  order*. These load straight in the visitor's browser via the CORS-friendly
+  MediaWiki API, are shown with attribution, and are never re-hosted. Anything
+  without a match keeps the generated cover — so coverage grows but nothing ever
+  looks broken.
 - **Chef profiles** — every venue that credits a chef or kitchen team links to a
   **chef profile** (`src/data/chefs.ts`, derived at runtime). When the guide
   credits the **same** chef at more than one restaurant — Lucho Martínez (Em ·

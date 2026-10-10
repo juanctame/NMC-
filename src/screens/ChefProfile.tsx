@@ -8,7 +8,7 @@
  * Everything shown — name, restaurants, awards — comes from the curated guide
  * dataset; the circular mark is an original monogram (we don't re-host logos).
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
@@ -17,6 +17,7 @@ import { C } from '../theme/tokens';
 import { Display, Banner, Serif, SerifDisplay, SerifItalic, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Monogram } from '../components/Monogram';
+import { Photo } from '../components/Photo';
 import { Grain } from '../components/Grain';
 import { ScreenIn } from '../components/Anim';
 import type { Place } from '../store/data';
@@ -74,9 +75,18 @@ export function ChefProfile() {
   const id = useStore((s) => s.activeChefId);
   const closeChef = useStore((s) => s.closeChef);
   const openPlace = useStore((s) => s.openPlace);
+  const chefPhotos = useStore((s) => s.chefPhotos);
+  const ensureChefPhoto = useStore((s) => s.ensureChefPhoto);
 
   const chef = chefById(id);
+
+  // Resolve the chef's real portrait (Wikipedia) — fills in if they have a page.
+  useEffect(() => {
+    if (chef) ensureChefPhoto({ id: chef.id, name: chef.name });
+  }, [chef, ensureChefPhoto]);
+
   if (!chef) return <View style={{ flex: 1, backgroundColor: C.paper50 }} />;
+  const portrait = chefPhotos[chef.id];
 
   const places = placesOfChef(chef);
   const multi = places.length > 1;
@@ -90,24 +100,53 @@ export function ChefProfile() {
   return (
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 40 }} showsVerticalScrollIndicator={false}>
-        {/* header */}
-        <View style={{ paddingTop: insets.top + 8, paddingHorizontal: 16 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-            <Pressable onPress={closeChef} style={{ paddingRight: 8, paddingVertical: 4 }}>
-              <Display s={20} c={C.ink400}>
-                ←
-              </Display>
-            </Pressable>
-            <Banner s={10} tk={0.16} c={C.inkMuted}>
-              The chef
-            </Banner>
+        {/* real portrait cover (Wikipedia) when the chef has a page */}
+        {portrait ? (
+          <View style={{ position: 'relative' }}>
+            <Photo source={{ uri: portrait.url }} style={{ width: '100%', height: 200, borderBottomWidth: 2.5, borderColor: C.inkBlack }} darken={0.16} />
+            <View style={{ position: 'absolute', top: insets.top + 8, left: 16 }}>
+              <StickerView offset="sm" radius={999}>
+                <Pressable onPress={closeChef} style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+                  <Display s={18} c={C.ink400}>
+                    ←
+                  </Display>
+                </Pressable>
+              </StickerView>
+            </View>
+            <View style={{ position: 'absolute', right: 8, bottom: 8, backgroundColor: 'rgba(27,16,4,0.6)', borderRadius: 4, paddingVertical: 2, paddingHorizontal: 6 }}>
+              <Mono s={7.5} c={C.paper0} numberOfLines={1}>
+                Portrait: {portrait.attr}
+              </Mono>
+            </View>
           </View>
+        ) : null}
+
+        {/* header */}
+        <View style={{ paddingTop: portrait ? 16 : insets.top + 8, paddingHorizontal: 16 }}>
+          {!portrait ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+              <Pressable onPress={closeChef} style={{ paddingRight: 8, paddingVertical: 4 }}>
+                <Display s={20} c={C.ink400}>
+                  ←
+                </Display>
+              </Pressable>
+              <Banner s={10} tk={0.16} c={C.inkMuted}>
+                The chef
+              </Banner>
+            </View>
+          ) : null}
 
           <StickerView offset="lg" style={{ backgroundColor: C.ink700, borderWidth: 2.5, borderColor: C.inkBlack, padding: 18, overflow: 'hidden' }}>
             <Grain opacity={0.08} />
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
               <StickerView offset="sm" radius={999} style={{ transform: [{ rotate: '-4deg' }] }}>
-                <Monogram name={chef.name} size={60} fg={C.paper0} />
+                {portrait ? (
+                  <View style={{ width: 60, height: 60, borderRadius: 30, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
+                    <Photo source={{ uri: portrait.url }} style={{ width: '100%', height: '100%' }} />
+                  </View>
+                ) : (
+                  <Monogram name={chef.name} size={60} fg={C.paper0} />
+                )}
               </StickerView>
               <View style={{ flex: 1, minWidth: 0 }}>
                 <Display s={22} c={C.paper0} style={{ lineHeight: 23 }}>

@@ -442,6 +442,10 @@ export function PlaceDetail() {
   const placeDetailsStatusMap = useStore((s) => s.placeDetailsStatus);
   const loadPlaceDetails = useStore((s) => s.loadPlaceDetails);
   const livePhotosMap = useStore((s) => s.livePhotos);
+  const venuePhotosMap = useStore((s) => s.venuePhotos);
+  const platePhotosMap = useStore((s) => s.platePhotos);
+  const ensureVenuePhoto = useStore((s) => s.ensureVenuePhoto);
+  const ensurePlates = useStore((s) => s.ensurePlates);
   const openChef = useStore((s) => s.openChef);
   const t = useT();
 
@@ -459,6 +463,17 @@ export function PlaceDetail() {
   useEffect(() => {
     if (activePlaceId) loadPlaceDetails(activePlaceId);
   }, [activePlaceId, loadPlaceDetails]);
+
+  // Resolve real, freely-licensed photos (Wikipedia venue photo + Wikimedia
+  // reference plates) — fills in when a match exists, else keeps the cover.
+  useEffect(() => {
+    if (!activePlaceId) return;
+    const p = resolvePlace(activePlaceId, nearbyById);
+    if (p) {
+      ensureVenuePhoto(p);
+      ensurePlates(p);
+    }
+  }, [activePlaceId, nearbyById, ensureVenuePhoto, ensurePlates]);
 
   if (!activePlaceId) return <View style={{ flex: 1, backgroundColor: C.paper50 }} />;
   const base = resolvePlace(activePlaceId, nearbyById);
@@ -485,11 +500,13 @@ export function PlaceDetail() {
       ? `https://www.google.com/maps/search/?api=1&query=${base.lat},${base.lon}`
       : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(base.name + ' ' + base.hood)}`;
 
-  // Real Google Maps photos: resolved live for curated venues (livePhotos), or
-  // carried on the place for Google-sourced ones. Shown with attribution.
+  // Real photos, best first: the actual venue photo (live Google Maps, or carried
+  // on a Google-sourced place), then a freely-licensed Wikipedia photo of the
+  // venue. Shown with attribution; absent → the generated cover.
   const live = livePhotosMap[activePlaceId];
-  const heroUrl = live?.photoUrl || base.photoUrl;
-  const heroAttr = live?.photoAttr || base.photoAttr;
+  const venueWiki = venuePhotosMap[activePlaceId];
+  const heroUrl = live?.photoUrl || base.photoUrl || venueWiki?.url;
+  const heroAttr = live?.photoAttr || base.photoAttr || venueWiki?.attr;
   const liveUrls = live?.photoUrls?.length
     ? live.photoUrls
     : live?.photoUrl
@@ -498,7 +515,9 @@ export function PlaceDetail() {
         ? base.photoUrls
         : base.photoUrl
           ? [base.photoUrl]
-          : [];
+          : venueWiki?.url
+            ? [venueWiki.url]
+            : [];
 
   const off = activePlaceId.length % PHOTO_POOL.length;
   const stockFill = [base.photo, PHOTO_POOL[off], PHOTO_POOL[(off + 3) % PHOTO_POOL.length]];
@@ -539,6 +558,7 @@ export function PlaceDetail() {
 
   // What to order (estimated combos / optimal plan) + bang-for-buck comparison.
   const combos = combosFor(base, topDish?.name, city);
+  const plates = platePhotosMap[activePlaceId] || []; // real reference plates (Wikimedia)
   const curCode = currencyCode(city);
   const peerComp = peerComparison(base, nearbyList);
   const valueMax = peerComp ? peerComp.rows[0].value || 1 : 1;
@@ -932,6 +952,32 @@ export function PlaceDetail() {
                 from the guide
               </Mono>
             </View>
+            {plates.length ? (
+              <View style={{ marginBottom: 12 }}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+                  {plates.map((pl, i) => (
+                    <StickerView key={i} offset="sm" style={{ width: 152, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, overflow: 'hidden' }}>
+                      <View style={{ position: 'relative' }}>
+                        <Photo source={{ uri: pl.img.url }} style={{ width: '100%', height: 104, borderBottomWidth: 2, borderColor: C.inkBlack }} />
+                        <View style={{ position: 'absolute', top: 5, left: 5, backgroundColor: C.inkDeep, borderRadius: 999, paddingVertical: 1, paddingHorizontal: 7 }}>
+                          <Banner s={7} tk={0.08} c={C.paper0}>
+                            Reference plate
+                          </Banner>
+                        </View>
+                      </View>
+                      <View style={{ padding: 8, gap: 3 }}>
+                        <Serif s={11.5} c={C.inkDeep} numberOfLines={2} style={{ lineHeight: 15 }}>
+                          {pl.dish}
+                        </Serif>
+                        <Mono s={7.5} c={C.inkSoft} numberOfLines={1}>
+                          {pl.img.attr}
+                        </Mono>
+                      </View>
+                    </StickerView>
+                  ))}
+                </ScrollView>
+              </View>
+            ) : null}
             <StickerView offset="sm" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, padding: 14, gap: 11 }}>
               {base.dishes.map((d, i) => (
                 <View key={i} style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>

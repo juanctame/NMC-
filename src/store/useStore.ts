@@ -22,6 +22,7 @@ import { getProvider, fixtureFallback } from '../data/provider';
 import { fetchCachedPlaces } from '../data/placesCache';
 import type { PlaceDetails, DetailsStatus, LivePhoto } from '../data/placeDetails';
 import { pickFoodPhotos, photoImportSupported } from '../data/photoImport';
+import { resolveVenuePhoto, resolveChefPhoto, resolveDishPhoto, dishTerm, type WikiImgResolved } from '../data/wikiPhotos';
 import type { PhotoMatch, PhotoImportStatus, PhotoPoint } from '../data/photoImportTypes';
 import { CARTE_CDMX } from '../data/carte';
 import { REVIEWS, DISH_PHOTOS, type Review } from '../data/reviews';
@@ -276,6 +277,10 @@ export type State = {
   placeDetailsStatus: Record<string, DetailsStatus>;
   // Real Google Maps photos resolved for curated venues (live, attributed)
   livePhotos: Record<string, LivePhoto>;
+  // Real freely-licensed photos from Wikipedia/Wikimedia (keyless, attributed)
+  venuePhotos: Record<string, WikiImgResolved>; // placeId → real venue photo
+  chefPhotos: Record<string, WikiImgResolved>; // chefId → chef portrait
+  platePhotos: Record<string, { dish: string; img: WikiImgResolved }[]>; // placeId → reference plates
 
   // Chef profiles (guide credits; same chef across venues links into one)
   activeChefId: string | null;
@@ -312,6 +317,9 @@ export type Actions = {
   closePlace: () => void;
   openChef: (id: string) => void;
   closeChef: () => void;
+  ensureVenuePhoto: (place: Place) => Promise<void>;
+  ensureChefPhoto: (chef: { id: string; name: string }) => Promise<void>;
+  ensurePlates: (place: Place) => Promise<void>;
   openMap: () => void;
   closeMap: () => void;
   openEvent: (id: string) => void;
@@ -427,6 +435,9 @@ export type Actions = {
  */
 const registeredPlaces: Record<string, Place> = {};
 
+/** Entities we've already attempted a Wikipedia/Wikimedia lookup for (fetch once). */
+const wikiTried = new Set<string>();
+
 export function resolvePlace(id: string | null, nearbyById: Record<string, Place>): Place | undefined {
   if (!id) return undefined;
   return byId[id] || nearbyById[id] || registeredPlaces[id];
@@ -514,6 +525,9 @@ const initialState = (): State => ({
   placeDetails: {},
   placeDetailsStatus: {},
   livePhotos: {},
+  venuePhotos: {},
+  chefPhotos: {},
+  platePhotos: {},
   activeChefId: null,
   chefReturnTo: 'feed',
   photoImportOpen: false,
@@ -583,6 +597,42 @@ export const useStore = create<State & Actions>((set, get) => ({
   openChef: (id) =>
     set((s) => ({ activeChefId: id, screen: 'chef', chefReturnTo: s.screen === 'chef' ? s.chefReturnTo : s.screen })),
   closeChef: () => set((s) => ({ screen: s.chefReturnTo || 'feed' })),
+  // Real freely-licensed photos (Wikipedia/Wikimedia), resolved on demand and
+  // cached; each only fills in if a match is actually found (else the generated
+  // cover stays). Never blocks the UI.
+  ensureVenuePhoto: async (place) => {
+    if (!place || place.photoUrl) return; // already has a real (Google) photo
+    const k = 'v:' + place.id;
+    if (wikiTried.has(k)) return;
+    wikiTried.add(k);
+    const img = await resolveVenuePhoto(place.name);
+    if (img) set((s) => ({ venuePhotos: { ...s.venuePhotos, [place.id]: img } }));
+  },
+  ensureChefPhoto: async (chef) => {
+    if (!chef) return;
+    const k = 'c:' + chef.id;
+    if (wikiTried.has(k)) return;
+    wikiTried.add(k);
+    const img = await resolveChefPhoto(chef.name);
+    if (img) set((s) => ({ chefPhotos: { ...s.chefPhotos, [chef.id]: img } }));
+  },
+  ensurePlates: async (place) => {
+    if (!place || !place.dishes || !place.dishes.length) return;
+    const k = 'p:' + place.id;
+    if (wikiTried.has(k)) return;
+    wikiTried.add(k);
+    const seen = new Set<string>();
+    const out: { dish: string; img: WikiImgResolved }[] = [];
+    for (const dish of place.dishes.slice(0, 5)) {
+      const term = dishTerm(dish);
+      if (!term || seen.has(term)) continue;
+      seen.add(term);
+      const img = await resolveDishPhoto(term);
+      if (img) out.push({ dish, img });
+      if (out.length >= 4) break;
+    }
+    if (out.length) set((s) => ({ platePhotos: { ...s.platePhotos, [place.id]: out } }));
+  },
   openMap: () => set((s) => ({ screen: 'map', returnTo: s.screen === 'map' ? s.returnTo : s.screen, selPin: null })),
   closeMap: () => set((s) => ({ screen: s.returnTo || 'feed', selPin: null })),
   openEvent: (id) => set({ screen: 'event', activeEventId: id, diet: [] }),
