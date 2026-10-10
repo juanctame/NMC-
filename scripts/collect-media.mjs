@@ -24,6 +24,7 @@ const CARTE = 'src/data/carte.ts';
 const OUT = 'src/data/media.json';
 const UA = 'Mozilla/5.0 (compatible; CRTQ-LinkPreview/1.0; +https://juanctame.github.io/NMC-/)';
 const MAX_AGE_DAYS = 7;
+const VERSION = 2; // bump when collection logic changes → forces a refresh
 const CONCURRENCY = 8;
 
 function readVenues() {
@@ -78,6 +79,27 @@ function metaTags(html) {
   return tags;
 }
 
+/** Images declared in JSON-LD structured data (many guide pages carry them). */
+function jsonLdImages(html) {
+  const out = [];
+  const walk = (n) => {
+    if (!n || typeof n !== 'object') return;
+    if (Array.isArray(n)) return n.forEach(walk);
+    const img = n.image ?? n.photo ?? n.thumbnailUrl;
+    for (const x of [].concat(img || [])) {
+      if (typeof x === 'string') out.push(x);
+      else if (x && typeof x === 'object') out.push(x.url || x.contentUrl);
+    }
+    for (const k of ['@graph', 'mainEntity', 'itemListElement']) walk(n[k]);
+  };
+  for (const m of html.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
+    try {
+      walk(JSON.parse(m[1].trim()));
+    } catch {}
+  }
+  return out.filter((x) => typeof x === 'string' && x.length > 8);
+}
+
 async function get(url, init = {}, ms = 15000) {
   const ctl = new AbortController();
   const to = setTimeout(() => ctl.abort(), ms);
@@ -94,42 +116,58 @@ async function get(url, init = {}, ms = 15000) {
 }
 
 /** Confirm a URL actually serves an image (some og:image values are stale). */
-async function isImage(url) {
+async function imageCheck(url) {
   try {
     const r = await get(url, { headers: { Range: 'bytes=0-2047', Accept: 'image/*' } }, 12000);
-    const ok = r.ok || r.status === 206;
     const type = r.headers.get('content-type') || '';
     try {
       await r.body?.cancel();
     } catch {}
-    return ok && type.startsWith('image/') && !type.includes('svg');
-  } catch {
-    return false;
+    if (!(r.ok || r.status === 206)) return { ok: false, why: `HTTP ${r.status}` };
+    if (!type.startsWith('image/') || type.includes('svg')) return { ok: false, why: `type ${type || 'none'}` };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, why: e.name === 'AbortError' ? 'timeout' : 'fetch error' };
   }
 }
 
 const NOT_A_PHOTO = /logo|favicon|placeholder|default[-_]?(image|og|share)|sprite|icon|avatar|\.svg(\?|$)/i;
 
-/** Unfurl one page: its preview image (validated) and title. */
+/** Unfurl one page: its preview image (validated) and title, with diagnostics. */
 async function unfurl(url) {
   try {
     const r = await get(url, { headers: { Accept: 'text/html,application/xhtml+xml' } });
-    if (!r.ok) return { ok: false, status: r.status };
-    const type = r.headers.get('content-type') || '';
-    if (!type.includes('html')) return { ok: false, status: 'not-html' };
-    const tags = metaTags(await r.text());
-    const raw = tags['og:image:secure_url'] || tags['og:image'] || tags['twitter:image'] || tags['twitter:image:src'] || tags['image_src'];
+    const html = r.ok ? await r.text() : '';
+    const diag = { status: r.status, bytes: html.length };
+    if (!r.ok) return { ok: false, diag };
+    if (!(r.headers.get('content-type') || '').includes('html')) return { ok: false, diag: { ...diag, reason: 'not-html' } };
+    const tags = metaTags(html);
+    const raw = [
+      tags['og:image:secure_url'],
+      tags['og:image'],
+      tags['twitter:image'],
+      tags['twitter:image:src'],
+      ...jsonLdImages(html),
+      tags['image_src'],
+    ].filter(Boolean);
+    const candidates = [...new Set(raw.map((x) => { try { return new URL(x, r.url).href.replace(/^http:\/\//, 'https://'); } catch { return ''; } }).filter(Boolean))];
+    const rejected = [];
     let image;
-    if (raw) {
-      try {
-        image = new URL(raw, r.url).href.replace(/^http:\/\//, 'https://');
-      } catch {}
+    for (const c of candidates.slice(0, 5)) {
+      if (NOT_A_PHOTO.test(c)) { rejected.push({ url: c, why: 'looks like a logo/icon' }); continue; }
+      const check = await imageCheck(c);
+      if (check.ok) { image = c; break; }
+      rejected.push({ url: c, why: check.why });
     }
-    if (image && (NOT_A_PHOTO.test(image) || !(await isImage(image)))) image = undefined;
     const title = tags['og:title'] || tags['twitter:title'] || tags['html:title'];
-    return { ok: true, image, title: title ? title.slice(0, 160) : undefined, site: tags['og:site_name'] };
+    return {
+      ok: true,
+      image,
+      title: title ? title.slice(0, 160) : undefined,
+      diag: image ? undefined : { ...diag, title: tags['html:title']?.slice(0, 80), candidates: candidates.length, rejected },
+    };
   } catch (e) {
-    return { ok: false, status: e.name === 'AbortError' ? 'timeout' : 'error' };
+    return { ok: false, diag: { status: e.name === 'AbortError' ? 'timeout' : String(e.message || 'error').slice(0, 80) } };
   }
 }
 
@@ -154,7 +192,7 @@ async function main() {
       const prev = JSON.parse(fs.readFileSync(OUT, 'utf8'));
       const ageDays = (Date.now() - Date.parse(prev.generatedAt)) / 864e5;
       const covered = venues.every((v) => prev.venues && prev.venues[v.id]);
-      if (ageDays < MAX_AGE_DAYS && covered) {
+      if (prev.version === VERSION && ageDays < MAX_AGE_DAYS && covered) {
         console.log(`media.json is fresh (${ageDays.toFixed(1)} days) and covers all venues — skipping (FORCE=1 to refresh)`);
         return;
       }
@@ -163,6 +201,7 @@ async function main() {
 
   // Every page to unfurl, de-duplicated (roundups are shared by many venues).
   const pages = new Map();
+  const out_diag = {};
   for (const v of venues) {
     if (v.website) pages.set(v.website, null);
     for (const s of v.sources || []) pages.set(s.url, null);
@@ -175,8 +214,11 @@ async function main() {
     return res;
   });
   urls.forEach((u, k) => pages.set(u, results[k]));
+  urls.forEach((u, k) => {
+    if (results[k]?.diag) out_diag[u] = results[k].diag;
+  });
 
-  const out = { generatedAt: new Date().toISOString(), userAgent: UA, venues: {} };
+  const out = { version: VERSION, generatedAt: new Date().toISOString(), userAgent: UA, venues: {}, diagnostics: {} };
   const stats = { venues: venues.length, withPhoto: 0, sitePhotos: 0, specificPress: 0, pressCards: 0, failedPages: 0 };
   for (const v of venues) {
     const entry = { press: [] };
@@ -204,6 +246,7 @@ async function main() {
     out.venues[v.id] = entry;
   }
   out.stats = stats;
+  out.diagnostics = out_diag;
   fs.writeFileSync(OUT, JSON.stringify(out, null, 1) + '\n');
   console.log('wrote', OUT, JSON.stringify(stats));
 }
