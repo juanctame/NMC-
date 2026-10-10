@@ -12,9 +12,7 @@ import { useStore, resolvePlace, reviewsFor, popularDishFor, type ScoredReview }
 import { RANK } from '../store/data';
 import { scoreStyle, verdictOf, fmt, metaOf } from '../store/helpers';
 import { embedUrlFor, type TrendingVideo } from '../data/videos';
-import { hashtagOf, hashtagLinks, TAG_PLATFORMS } from '../data/hashtags';
-import { PLATFORM_LABEL } from '../data/creators';
-import { youtubeEnabled } from '../data/videosLive';
+import { hashtagOf } from '../data/hashtags';
 import { computePalate } from '../data/palate';
 import { drawAndKnow, priceLabel, fitFor, type GReview } from '../data/placeDetails';
 import { combosFor, peerComparison, currencyCode, type Combo, type ValueRow } from '../data/combos';
@@ -169,26 +167,37 @@ function AppCard({
 
 /** A live hashtag clip: poster thumbnail + play badge, title, and creator. */
 function VideoThumb({ v, onPress }: { v: TrendingVideo; onPress: () => void }) {
+  const c = v as TrendingVideo & { views?: number; hd?: boolean; durationSec?: number };
+  const views = c.views ? (c.views >= 1e6 ? (c.views / 1e6).toFixed(1).replace('.0', '') + 'M' : c.views >= 1e3 ? Math.round(c.views / 1e3) + 'k' : String(c.views)) : '';
+  const len = c.durationSec ? `${Math.floor(c.durationSec / 60)}:${String(c.durationSec % 60).padStart(2, '0')}` : '';
   return (
     <StickerPressable
       offset="sm"
       onPress={onPress}
-      style={{ width: 148, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
+      accessibilityLabel={`Play ${v.caption}`}
+      style={{ width: 160, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
     >
-      <View style={{ width: '100%', height: 96, backgroundColor: C.ink700 }}>
-        {v.thumb ? (
-          <Image source={{ uri: v.thumb }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
-        ) : null}
+      <View style={{ width: '100%', height: 100, backgroundColor: C.ink700 }}>
+        {v.thumb ? <Image source={{ uri: v.thumb }} style={{ width: '100%', height: '100%' }} contentFit="cover" /> : null}
         <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
           <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(216,80,26,0.92)', borderWidth: 2, borderColor: C.paper0, alignItems: 'center', justifyContent: 'center' }}>
             <PlayIcon size={14} color={C.paper0} />
           </View>
         </View>
-        <View style={{ position: 'absolute', top: 5, left: 5, backgroundColor: C.inkBlack, borderRadius: 3, paddingVertical: 1, paddingHorizontal: 5 }}>
-          <Banner s={7} tk={0.1} c={C.paper0}>
-            YouTube
-          </Banner>
-        </View>
+        {c.hd ? (
+          <View style={{ position: 'absolute', top: 5, left: 5, backgroundColor: C.sun400, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 3, paddingHorizontal: 4 }}>
+            <Banner s={7} tk={0.06} c={C.inkDeep}>
+              HD
+            </Banner>
+          </View>
+        ) : null}
+        {len ? (
+          <View style={{ position: 'absolute', bottom: 5, right: 5, backgroundColor: 'rgba(27,16,4,0.75)', borderRadius: 3, paddingVertical: 1, paddingHorizontal: 4 }}>
+            <Mono s={7.5} c={C.paper0}>
+              {len}
+            </Mono>
+          </View>
+        ) : null}
       </View>
       <View style={{ padding: 8, gap: 3 }}>
         <Serif s={11} c={C.inkDeep} numberOfLines={2} style={{ lineHeight: 15 }}>
@@ -196,6 +205,7 @@ function VideoThumb({ v, onPress }: { v: TrendingVideo; onPress: () => void }) {
         </Serif>
         <Mono s={8} c={C.inkSoft} numberOfLines={1}>
           {v.creator}
+          {views ? ` · ${views} views` : ''}
         </Mono>
       </View>
     </StickerPressable>
@@ -565,7 +575,6 @@ export function PlaceDetail() {
 
   // Hashtag videos: the venue's tag, its live clips, and platform feed links.
   const tag = hashtagOf(base);
-  const links = hashtagLinks(tag);
   const videos = placeVideosMap[activePlaceId] || [];
   const videosStatus = placeVideosStatusMap[activePlaceId] || 'idle';
 
@@ -781,7 +790,7 @@ export function PlaceDetail() {
         <View style={{ flexDirection: 'row', backgroundColor: C.paper50, borderBottomWidth: 2, borderColor: C.inkBlack, paddingHorizontal: 8 }}>
           {TABS.map((tb) => {
             const on = tab === tb.key;
-            const n = tb.key === 'media' ? pics.length + press.length : tb.key === 'reviews' ? reviews.length + gReviews.length : 0;
+            const n = tb.key === 'media' ? pics.length + press.length + videos.length : tb.key === 'reviews' ? reviews.length + gReviews.length : 0;
             return (
               <Pressable
                 key={tb.key}
@@ -1206,6 +1215,51 @@ export function PlaceDetail() {
                 </View>
               )}
 
+              {/* creator clips: third-party HD clips found by the restaurant's hashtag, played here */}
+              <View style={{ marginTop: 22 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                  <Banner s={10} tk={0.16} c={C.inkMuted}>
+                    {t('reel.section')}
+                  </Banner>
+                  <StickerView offset="sm" radius={999} style={{ backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 10 }}>
+                    <Banner s={9.5} tk={0.04} c={C.inkDeep}>
+                      #{tag}
+                    </Banner>
+                  </StickerView>
+                </View>
+
+                {videosStatus === 'loading' ? (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 6 }}>
+                    <ActivityIndicator size="small" color={C.ink400} />
+                    <Mono s={10} c={C.inkMuted}>
+                      {t('reel.finding')}
+                    </Mono>
+                  </View>
+                ) : null}
+
+                {videos.length ? (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+                    {videos.map((v) => {
+                      const url = embedUrlFor(v);
+                      const c = v as typeof v & { views?: number; hd?: boolean };
+                      return (
+                        <VideoThumb
+                          key={v.id}
+                          v={v}
+                          onPress={() =>
+                            url && openVideo(url + '&autoplay=1', { title: v.caption, creator: v.creator, platform: 'YouTube', views: c.views, hd: c.hd, placeName: base.name })
+                          }
+                        />
+                      );
+                    })}
+                  </ScrollView>
+                ) : videosStatus !== 'loading' ? (
+                  <Mono s={11} c={C.inkMuted} style={{ lineHeight: 17 }}>
+                    {t('reel.none')}
+                  </Mono>
+                ) : null}
+              </View>
+
               {/* in the press — guides & local media that cover the place */}
               {press.length ? (
                 <>
@@ -1291,59 +1345,6 @@ export function PlaceDetail() {
                     </View>
                   </View>
                 ))}
-              </View>
-              {/* on the reel — real videos found by this restaurant's hashtag */}
-              <View style={{ marginTop: 22 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                  <Banner s={10} tk={0.16} c={C.inkMuted}>
-                    {t('reel.section')}
-                  </Banner>
-                  <StickerView offset="sm" radius={999} style={{ backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 10 }}>
-                    <Banner s={9.5} tk={0.04} c={C.inkDeep}>
-                      #{tag}
-                    </Banner>
-                  </StickerView>
-                </View>
-
-                {videosStatus === 'loading' ? (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 6 }}>
-                    <ActivityIndicator size="small" color={C.ink400} />
-                    <Mono s={10} c={C.inkMuted}>
-                      {t('reel.finding')}
-                    </Mono>
-                  </View>
-                ) : null}
-
-                {videos.length ? (
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
-                    {videos.map((v) => {
-                      const url = embedUrlFor(v);
-                      return <VideoThumb key={v.id} v={v} onPress={() => url && openVideo(url + '&autoplay=1')} />;
-                    })}
-                  </ScrollView>
-                ) : videosStatus === 'empty' || videosStatus === 'idle' || !youtubeEnabled() ? (
-                  <Mono s={11} c={C.inkMuted} style={{ lineHeight: 17 }}>
-                    {t('reel.none')}
-                  </Mono>
-                ) : null}
-
-                {/* live hashtag feeds on each platform (always available) */}
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
-                  {TAG_PLATFORMS.map((p) => (
-                    <StickerPressable
-                      key={p}
-                      offset="sm"
-                      radius={999}
-                      onPress={() => Linking.openURL(links[p])}
-                      style={{ flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper0, paddingVertical: 8, paddingHorizontal: 13 }}
-                    >
-                      <PlayIcon size={11} color={C.ink400} />
-                      <Banner s={9.5} tk={0.08} c={C.inkDeep}>
-                        {PLATFORM_LABEL[p]}
-                      </Banner>
-                    </StickerPressable>
-                  ))}
-                </View>
               </View>
             </>
           ) : tab === 'reviews' ? (

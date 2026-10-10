@@ -3,13 +3,13 @@
  * recs, and (once unlocked) the Dine Club teaser.
  */
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, Image, ActivityIndicator, Linking } from 'react-native';
+import { View, ScrollView, Pressable, Image, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { useT } from '../i18n';
 import { FEED, RECS, byId, type Place } from '../store/data';
 import { CREATOR_REVIEWS, PLATFORM_LABEL } from '../data/creators';
-import { TRENDING_VIDEOS, embedUrlFor, type TrendingVideo } from '../data/videos';
+import { embedUrlFor } from '../data/videos';
 import type { BuzzResult } from '../data/trending';
 import { computePalate } from '../data/palate';
 import { recommend, type Rec, type ReasonTag } from '../data/recommend';
@@ -57,46 +57,6 @@ function HeaderIconButton({ onPress, label, children }: { onPress: () => void; l
   );
 }
 
-function TrendingThumb({ video, rank, onPress }: { video: TrendingVideo; rank: number; onPress: () => void }) {
-  const p = byId[video.placeId];
-  return (
-    <StickerPressable
-      offset="sm"
-      onPress={onPress}
-      style={{
-        width: 96,
-        borderWidth: 2.5,
-        borderColor: C.inkBlack,
-        backgroundColor: C.ink700,
-        overflow: 'hidden',
-      }}
-    >
-      <Photo source={photo(p.photo)} style={{ width: '100%', height: 120 }} darken={0.16} warm={0.06} />
-      <View style={{ position: 'absolute', top: 6, left: 6, width: 20, height: 20, borderRadius: 10, backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
-        <Display s={10} c={C.inkDeep}>
-          {rank}
-        </Display>
-      </View>
-      {/* platform badge */}
-      <View style={{ position: 'absolute', top: 6, right: 6, backgroundColor: C.inkBlack, borderRadius: 999, paddingVertical: 1, paddingHorizontal: 5 }}>
-        <Banner s={7.5} tk={0.06} c={C.paper0}>
-          {PLATFORM_TAG[video.platform]}
-        </Banner>
-      </View>
-      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
-        <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(251,245,229,0.92)', borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
-          <PlayIcon size={12} color={C.ink400} />
-        </View>
-      </View>
-      <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingVertical: 5, paddingHorizontal: 6, backgroundColor: C.inkBlack }}>
-        <Banner s={8} tk={0.06} c={C.paper0} numberOfLines={1}>
-          {video.handle}
-        </Banner>
-      </View>
-    </StickerPressable>
-  );
-}
-
 /** Compact count: 1234 → "1.2k", 2_400_000 → "2.4M". */
 function compact(n: number): string {
   if (n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace('.0', '') + 'M';
@@ -110,7 +70,7 @@ function compact(n: number): string {
  * tastemakers — an "On CRTQ" link into their in-app presence.
  */
 function MonthlyTrendCard({ item, rank }: { item: BuzzResult; rank: number }) {
-  const openVideo = useStore((s) => s.openVideo);
+  const openReel = useStore((s) => s.openReel);
   const openPlace = useStore((s) => s.openPlace);
   const t = useT();
   const url = embedUrlFor(item.video);
@@ -118,7 +78,7 @@ function MonthlyTrendCard({ item, rank }: { item: BuzzResult; rank: number }) {
     <View style={{ width: 168, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack }}>
       {/* hero clip */}
       <Pressable
-        onPress={() => url && openVideo(url + '&autoplay=1')}
+        onPress={() => url && openReel(rank - 1)}
         accessibilityRole="button"
         accessibilityLabel={`Play ${item.name}`}
         style={{ width: '100%', height: 110, backgroundColor: C.ink700 }}
@@ -133,7 +93,7 @@ function MonthlyTrendCard({ item, rank }: { item: BuzzResult; rank: number }) {
         </View>
         <View style={{ position: 'absolute', top: 6, right: 6, backgroundColor: C.inkBlack, borderRadius: 3, paddingVertical: 1, paddingHorizontal: 5 }}>
           <Banner s={7} tk={0.06} c={C.paper0}>
-            YouTube
+            {(item.video as { hd?: boolean }).hd ? 'HD · ' : ''}YouTube
           </Banner>
         </View>
         <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
@@ -589,17 +549,13 @@ function CreatorCard({ cr }: { cr: (typeof CREATOR_REVIEWS)[number] }) {
       <Serif s={13} style={{ paddingHorizontal: 13, paddingTop: 10, paddingBottom: 6, lineHeight: 19 }}>
         {cr.text}
       </Serif>
-      <Pressable onPress={() => Linking.openURL(cr.sourceUrl)} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 13, paddingBottom: 12 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 13, paddingBottom: 12 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 9 }}>
-          <PlayIcon size={9} color={C.paper0} />
           <Banner s={8.5} tk={0.1} c={C.paper0}>
-            {PLATFORM_LABEL[cr.platform]}
+            {PLATFORM_LABEL[cr.platform]} creator
           </Banner>
         </View>
-        <Banner s={9.5} tk={0.1} c={C.ink400}>
-          Watch the clip →
-        </Banner>
-      </Pressable>
+      </View>
     </StickerView>
   );
 }
@@ -638,7 +594,7 @@ export function Feed() {
   // Rank the most-mentioned restaurants this month (cached; recomputes ~daily).
   useEffect(() => {
     loadMonthlyTrending();
-  }, [loadMonthlyTrending, city.id]);
+  }, [loadMonthlyTrending, city.id, nearby.length > 0]);
 
   const trendLive = monthlyTrendingStatus === 'ready' && monthlyTrending.length > 0;
 
@@ -745,6 +701,8 @@ export function Feed() {
           </View>
         ) : null}
 
+        {/* Trending now — real creator clips (third-party, HD), played in-app */}
+        {trendLive || monthlyTrendingStatus === 'loading' ? (
         <View>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
             <Banner s={11} tk={0.14} c={C.inkDeep}>
@@ -754,24 +712,17 @@ export function Feed() {
               <ActivityIndicator size="small" color={C.ink400} />
             ) : (
               <Mono s={9} c={C.inkSoft}>
-                {trendLive ? t('feed.trendingSub') : 'TikTok · Reels · Shorts →'}
+                {t('feed.trendingSub')}
               </Mono>
             )}
           </View>
-          {trendLive ? (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
-              {monthlyTrending.map((it, i) => (
-                <MonthlyTrendCard key={it.placeId} item={it} rank={i + 1} />
-              ))}
-            </ScrollView>
-          ) : (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4 }}>
-              {TRENDING_VIDEOS.map((v, i) => (
-                <TrendingThumb key={v.id} video={v} rank={i + 1} onPress={() => openReel(i)} />
-              ))}
-            </ScrollView>
-          )}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+            {monthlyTrending.map((it, i) => (
+              <MonthlyTrendCard key={it.placeId} item={it} rank={i + 1} />
+            ))}
+          </ScrollView>
         </View>
+        ) : null}
 
         {/* Tastemakers — featured creators, the content we promote */}
         <View>

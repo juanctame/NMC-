@@ -65,6 +65,20 @@ Trayectoria), and **awards**.
     answers automated requests with a bot challenge, so its listings show as
     links without a picture; Instagram is linked (its image URLs expire and
     can't be embedded).
+- **Creator clips, played in the app** — each restaurant's hashtag (e.g.
+  `#Pujol`) and name find YouTube clips, kept only if they are **about the
+  venue**, posted by **third-party creators** (never the restaurant's own channel
+  / Instagram handle / website, nor its chef) and **high quality** (HD,
+  embeddable, public, 10 s–20 min, real views); the rest are ranked by reach,
+  like ratio, recency and short-form (`src/data/clipRank.ts`). They play inside
+  the app through YouTube's privacy-enhanced embedded player — on the place's
+  Media tab, in "Trending now", and in a full-screen in-app reel — and nothing
+  redirects out. (Platforms don't offer downloadable MP4s; their official embed
+  players stream the video in place.) Clips are collected in CI into
+  `src/data/videos.json` (`scripts/collect-videos.mjs`, within the YouTube API's
+  free daily quota), with a cached live search as fallback. **Requires the
+  "YouTube Data API v3" to be enabled on the Google Cloud project of the site's
+  key**; until then the sections stay hidden rather than showing placeholders.
 - **A calmer place page** — a swipeable, credited photo hero, a compact header
   (key chips + a collapsible blurb), and sticky tabs: **Overview** (the guide
   card, the draw / good to know, taste match), **Menu** (what to order,

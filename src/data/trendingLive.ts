@@ -1,20 +1,17 @@
 /**
- * Monthly-trending algorithm (native fallback). The YouTube browser key is
- * HTTP-referrer-restricted to the website, so native builds don't compute the
- * live ranking here — the Feed falls back to its seeded trending strip, and the
- * per-place hashtag deep-links still reach TikTok / Instagram / YouTube. A real
- * native build would point this at a platform key or a backend that aggregates
- * cross-platform mention volume, returning the same BuzzResult[]. Metro resolves
- * trendingLive.web.ts for the web export.
+ * "Trending now" (native) — ranked from the CI-collected creator clips only (no
+ * live search on native; see videosLive.ts). Same BuzzResult shape as the web
+ * build, whose trendingLive.web.ts adds a small live top-up.
  */
 import type { Place } from '../store/data';
 import type { City } from './cities';
 import type { BuzzResult } from './trending';
+import { collectedTrending } from './clips';
 
 export function trendingEnabled(): boolean {
-  return false;
+  return true;
 }
 
-export async function computeMonthlyTrending(_places: Place[], _city?: City): Promise<BuzzResult[]> {
-  return [];
+export async function computeMonthlyTrending(places: Place[], _city?: City): Promise<BuzzResult[]> {
+  return collectedTrending(places);
 }

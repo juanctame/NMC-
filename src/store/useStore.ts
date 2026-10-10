@@ -67,7 +67,7 @@ import {
   type Session,
   type AuthUser,
 } from '../data/auth';
-import { TRENDING_VIDEOS, type TrendingVideo } from '../data/videos';
+import { type TrendingVideo, type VideoMeta } from '../data/videos';
 import { searchPlaceVideos } from '../data/videosLive';
 import { computeMonthlyTrending } from '../data/trendingLive';
 import type { BuzzResult } from '../data/trending';
@@ -285,6 +285,7 @@ export type State = {
   placeVideos: Record<string, TrendingVideo[]>;
   placeVideosStatus: Record<string, VideoStatus>;
   videoUrl: string | null;
+  videoMeta: VideoMeta | null; // credits for the clip playing in-app
 
   // Rich "before you go" details per place (live Google Place Details)
   placeDetails: Record<string, PlaceDetails>;
@@ -434,7 +435,7 @@ export type Actions = {
   runPhotoImport: () => Promise<void>;
   togglePhotoMatch: (id: string) => void;
   confirmPhotoMatches: () => void;
-  openVideo: (url: string) => void;
+  openVideo: (url: string, meta?: VideoMeta) => void;
   closeVideo: () => void;
   // monthly trending
   loadMonthlyTrending: (force?: boolean) => Promise<void>;
@@ -565,6 +566,7 @@ const initialState = (): State => ({
   photoScanned: 0,
   photoAdded: 0,
   videoUrl: null,
+  videoMeta: null,
   monthlyTrending: [],
   monthlyTrendingStatus: 'idle',
   activeChannel: null,
@@ -728,7 +730,7 @@ export const useStore = create<State & Actions>((set, get) => ({
   openReel: (i) => set({ screen: 'reel', reelIndex: i || 0 }),
   reelGo: (d) =>
     set((s) => {
-      const n = TRENDING_VIDEOS.length;
+      const n = Math.max(1, s.monthlyTrending.length);
       return { reelIndex: (s.reelIndex + d + n) % n };
     }),
 
@@ -1153,8 +1155,8 @@ export const useStore = create<State & Actions>((set, get) => ({
       placeVideosStatus: { ...st.placeVideosStatus, [placeId]: vids.length ? 'ready' : 'empty' },
     }));
   },
-  openVideo: (url) => set({ videoUrl: url }),
-  closeVideo: () => set({ videoUrl: null }),
+  openVideo: (url, meta) => set({ videoUrl: url, videoMeta: meta || null }),
+  closeVideo: () => set({ videoUrl: null, videoMeta: null }),
 
   // ── rich place details (live Google Place Details, web) ──
   loadPlaceDetails: async (placeId) => {
@@ -1298,6 +1300,16 @@ export const useStore = create<State & Actions>((set, get) => ({
         candidates.push(p);
       }
     };
+    // The city's guide venues, most acclaimed first, then the seed favourites.
+    s.nearby
+      .slice()
+      .sort((a, b) => (b.acclaim || 0) - (a.acclaim || 0))
+      .forEach((p) => {
+        if (!seen.has(p.id)) {
+          seen.add(p.id);
+          candidates.push(p);
+        }
+      });
     TRENDING.forEach(push);
     Object.keys(byId).forEach(push);
 

@@ -22,6 +22,8 @@ on:
     paths-ignore:
       - '**.md'
       - 'supabase/**'
+  schedule:
+    - cron: '17 9 * * *' # daily (runs on the default branch): refresh clips within the YouTube quota
   workflow_dispatch:
     inputs:
       force_media:
@@ -52,16 +54,21 @@ jobs:
         continue-on-error: true
         env:
           FORCE: ${{ github.event.inputs.force_media == 'true' && '1' || '' }}
+      - name: Collect creator clips (YouTube, by hashtag; third-party, HD)
+        run: node scripts/collect-videos.mjs
+        continue-on-error: true
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
       - name: Export web bundle
         run: npx expo export -p web
-      - name: Save refreshed media manifest to the branch
+      - name: Save refreshed media + clip manifests to the branch
         continue-on-error: true
         run: |
-          if git diff --quiet -- src/data/media.json; then echo "media manifest unchanged"; exit 0; fi
+          if git diff --quiet -- src/data/media.json src/data/videos.json; then echo "manifests unchanged"; exit 0; fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/media.json
-          git commit -q -m "Refresh restaurant media manifest [skip ci]"
+          git add src/data/media.json src/data/videos.json
+          git commit -q -m "Refresh restaurant media + clip manifests [skip ci]"
           git push origin "HEAD:${GITHUB_REF_NAME}"
       - name: Publish to gh-pages
         run: |

@@ -81,12 +81,12 @@ const STRINGS: Record<string, [string, string, string]> = {
   'feed.reels': ['On the reel', 'En video', 'En vidéo'],
 
   // ── hashtag videos (place detail) ──
-  'reel.section': ['On the reel', 'En video', 'En vidéo'],
+  'reel.section': ['Creator clips', 'Clips de creadores', 'Clips de créateurs'],
   'reel.finding': ['Finding videos…', 'Buscando videos…', 'Recherche de vidéos…'],
   'reel.none': [
-    'No in-app clips yet — open the live hashtag feed on any platform below.',
-    'Aún no hay clips en la app — abre el feed del hashtag en cualquier plataforma abajo.',
-    'Pas encore de clips dans l’app — ouvrez le fil du hashtag sur une plateforme ci-dessous.',
+    'No creator clips for this hashtag yet. We only show HD clips from independent creators, and they play right here.',
+    'Aún no hay clips de creadores con este hashtag. Solo mostramos clips en HD de creadores independientes, y se ven aquí mismo.',
+    'Pas encore de clips de créateurs pour ce hashtag. Nous ne montrons que des clips HD de créateurs indépendants, lus ici même.',
   ],
 
   // ── leaderboard / board ──
