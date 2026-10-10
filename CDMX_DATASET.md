@@ -115,22 +115,28 @@ Trayectoria), and **awards**.
   chefs involved, and lists sister venues the guide names but doesn't review.
   Groups the guide doesn't name are described by their flagship ("Rosetta
   family") rather than given an invented company name.
-- **Your profile, made of where you ate** (`src/screens/Passport.tsx`,
-  `src/data/youProfile.ts`) — no post grid and no follower counts for diners.
-  The header hangs a **papel picado** generated from your palate (flag colours =
-  your cuisines, cut-outs = your strongest palate axes, variations = your handle),
-  so no two profiles look alike. The passport then opens like a booklet:
-  **Menu** — your rankings plated as a *menú degustación* (para abrir, antojito,
-  del mar, plato fuerte = your #1, postre, sobremesa), each with the dish to
-  order from the guide, your manifesto as the *nota del chef*, and your
-  want-to-try as "next on the menu"; **Territory** — a schematic map of the
-  guide's 28 colonias (real west→east / north→south order from the guide's
-  coordinates), stamped where you've eaten, with what to try next in each;
-  **Album** — collectable guide stamps (Michelin stars, 50 Best, Bib Gourmand,
-  2026 openings) and the next to collect; **Palate** — radar, flavour DNA,
-  recent stamps, go-to order and palates like yours. Guide credit needs an exact
+- **The Food Passport** (`src/screens/Passport.tsx`, `src/data/youProfile.ts`) —
+  the You tab is laid out like a real passport, built from where you ate (no
+  post grid, no follower counts for diners). A leather **cover** (gold emblem)
+  folds back onto the **data page**: surname / given names, *paladar* (your
+  palate archetype), home city, issue date, the record (sellos · colonias ·
+  visas · promedio), the holder's signature (your manifesto), a holographic
+  **papel picado** cut from your palate, a guilloché security print, and a
+  **machine-readable zone** encoding it all (ICAO 9303 layout and check
+  digits). A table of **contents** opens the inside pages:
+  **Visas** — each guide is a visa (Michelin stars, 50 Best, Bib Gourmand, 2026
+  openings): entries collected, the next entry to collect, and your want-to-try
+  as *solicitudes en trámite*; **Sellos** — the colonias you've crossed on a
+  schematic of the guide's 28 colonias (real west→east / north→south order) and
+  one rubber entry stamp per ranked table; **Biometría** — the palate print
+  (papel picado, radar, flavour DNA, distinguishing marks, palates like yours);
+  **Observaciones** — your *menú degustación* endorsed from your rankings (para
+  abrir, antojito, del mar, plato fuerte = your #1, postre, sobremesa, with the
+  dish to order from the guide) and the holder's note. Settings (language,
+  account, press access) fold away at the foot. Guide credit needs an exact
   name match, so a namesake never earns another venue's award. Verified critics
-  keep their press pass, follower count and Critic's Desk.
+  carry a **press passport** (type D): a darker cover, beat, readers and the
+  Critic's Desk for hosting events.
 - **Brand marks** — each venue and chef carries an original **monogram** seal
   (initials on a deterministic colour, in the app's sticker look). These are our
   own marks, not the restaurants' trademarked logos, so they're safe to ship and

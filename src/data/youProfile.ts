@@ -246,3 +246,38 @@ export function hashOf(s: string): number {
   for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>> 0;
   return h >>> 0;
 }
+
+// ── machine-readable zone ────────────────────────────────────────────────────
+
+const ISO3: Record<string, string> = { mexico: 'MEX', usa: 'USA', 'united states': 'USA', japan: 'JPN', spain: 'ESP', france: 'FRA' };
+const mrzText = (s: string) => fold(s).toUpperCase().replace(/[^A-Z0-9]+/g, '<');
+
+/** ICAO 9303 check digit (weights 7·3·1; A–Z = 10–35, '<' = 0). */
+export function mrzCheck(s: string): number {
+  const w = [7, 3, 1];
+  let sum = 0;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    const v = c >= '0' && c <= '9' ? +c : c >= 'A' && c <= 'Z' ? c.charCodeAt(0) - 55 : 0;
+    sum += v * w[i % 3];
+  }
+  return sum % 10;
+}
+
+/**
+ * The passport's two 44-character MRZ lines, encoding the holder's record:
+ * type, issuer (CRTQ), surname<<given names; document number + check digit,
+ * country, palate archetype, and the record (S stamps · C colonias · V visas · avg).
+ */
+export function mrzLines(o: { type: 'P' | 'D'; name: string; passportNo: number; country: string; archetype: string; stamps: number; colonias: number; visas: number; avg: string }): [string, string] {
+  const pad = (s: string) => (s + '<'.repeat(44)).slice(0, 44);
+  const parts = o.name.trim().split(/\s+/);
+  const surname = parts.length > 1 ? parts[parts.length - 1] : parts[0] || '';
+  const given = parts.length > 1 ? parts.slice(0, -1).join(' ') : '';
+  const l1 = pad(`${o.type}<CRTQ${mrzText(surname)}<<${mrzText(given)}`);
+  const doc = String(o.passportNo).padStart(7, '0').slice(-7);
+  const c3 = ISO3[fold(o.country)] || mrzText(o.country).slice(0, 3).padEnd(3, '<');
+  const rec = `${String(o.stamps).padStart(2, '0')}S${String(o.colonias).padStart(2, '0')}C${String(o.visas).padStart(2, '0')}V`;
+  const l2 = pad(`${doc}${mrzCheck(doc)}<${c3}<${mrzText(o.archetype).slice(0, 14)}<${rec}<${o.avg.replace('.', '')}`);
+  return [l1, l2];
+}
