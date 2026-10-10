@@ -47,6 +47,22 @@ Trayectoria), and **awards**.
   Núñez, Eduardo "Lalo" García, … — those venues gather under **one** profile
   (matched on an accent- and nickname-insensitive key). A feed rail ("The chefs
   behind it") surfaces them.
+- **Restaurant groups** — `src/data/groups.ts` gathers the venues the guide
+  itself ties together into **group profiles**, the same way chefs are linked.
+  Signals, all from the guide's own text/data: a named group ("del **Grupo
+  Castellano**", "(**Grupo Casamata**)", "del grupo Pujol"), sister/parent
+  statements ("hermano de Rosetta y Lardo", "del equipo de Hugo Wine Bar", "de
+  los creadores de Choza", "por los chefs de Siembra Comedor", "segundo proyecto
+  de la chef de Cana"), "el grupo tiene otras sedes como…", a "(grupo)" chef
+  credit, and a shared official website. That yields 12 groups — e.g. Grupo
+  Casamata (Pujol · Pujol.itto · Molino El Pujol), Grupo Castellano (Vega ·
+  Centro Castellano · Torre de Castilla), and families like Rosetta (+ Lardo) and
+  El Tigre Silencioso (+ Fauna). Plain name mentions don't count (Em's blurb
+  mentions "Martínez" only as the chef's surname), nor do branches of one
+  restaurant. Each profile shows the guide's own words as evidence, links the
+  chefs involved, and lists sister venues the guide names but doesn't review.
+  Groups the guide doesn't name are described by their flagship ("Rosetta
+  family") rather than given an invented company name.
 - **Brand marks** — each venue and chef carries an original **monogram** seal
   (initials on a deterministic colour, in the app's sticker look). These are our
   own marks, not the restaurants' trademarked logos, so they're safe to ship and

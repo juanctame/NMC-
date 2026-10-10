@@ -161,8 +161,13 @@ export type Screen =
   | 'channel'
   | 'foodie'
   | 'chef'
+  | 'group'
   | 'map'
   | 'reel';
+
+/** Profile screens (place / chef / group) share one back-trail. */
+const PROFILE_SCREENS: Screen[] = ['place', 'chef', 'group'];
+type NavSnap = { screen: Screen; activePlaceId: string | null; activeChefId: string | null; activeGroupId: string | null };
 
 export type PinRef = { kind: string; id: string } | null;
 export type CreatedTable = (typeof EVENTS)[number] & { mine: true };
@@ -284,7 +289,11 @@ export type State = {
 
   // Chef profiles (guide credits; same chef across venues links into one)
   activeChefId: string | null;
-  chefReturnTo: Screen;
+  // Restaurant groups (venues the guide ties together)
+  activeGroupId: string | null;
+  // Back-trail across profile screens: where the trail began + each step since.
+  profileReturnTo: Screen;
+  profileStack: NavSnap[];
 
   // "Build your passport from photos" — import flow state
   photoImportOpen: boolean;
@@ -317,6 +326,8 @@ export type Actions = {
   closePlace: () => void;
   openChef: (id: string) => void;
   closeChef: () => void;
+  openGroup: (id: string) => void;
+  closeGroup: () => void;
   ensureVenuePhoto: (place: Place) => Promise<void>;
   ensureChefPhoto: (chef: { id: string; name: string }) => Promise<void>;
   ensurePlates: (place: Place) => Promise<void>;
@@ -529,7 +540,9 @@ const initialState = (): State => ({
   chefPhotos: {},
   platePhotos: {},
   activeChefId: null,
-  chefReturnTo: 'feed',
+  activeGroupId: null,
+  profileReturnTo: 'feed',
+  profileStack: [],
   photoImportOpen: false,
   photoImportStatus: 'idle',
   photoMatches: [],
@@ -546,6 +559,34 @@ const initialState = (): State => ({
   activeFoodieId: null,
   tasteCardOpen: false,
 });
+
+/**
+ * Open a profile screen (place / chef / group). Coming from another profile we
+ * remember where we were, so Back retraces the exact path (place → chef → place
+ * → Back → chef → Back → place); from anywhere else a fresh trail starts. Kept
+ * separate from the map's `returnTo` so map → place → Back → Back still exits.
+ */
+function openProfile(
+  s: State,
+  screen: 'place' | 'chef' | 'group',
+  ids: Partial<Pick<State, 'activePlaceId' | 'activeChefId' | 'activeGroupId'>>,
+): Partial<State> {
+  const cur = screen === 'place' ? s.activePlaceId : screen === 'chef' ? s.activeChefId : s.activeGroupId;
+  const next = screen === 'place' ? ids.activePlaceId : screen === 'chef' ? ids.activeChefId : ids.activeGroupId;
+  if (s.screen === screen && cur === next) return {}; // already here
+  if (PROFILE_SCREENS.includes(s.screen)) {
+    const snap: NavSnap = { screen: s.screen, activePlaceId: s.activePlaceId, activeChefId: s.activeChefId, activeGroupId: s.activeGroupId };
+    return { ...ids, screen, profileStack: [...s.profileStack, snap] };
+  }
+  return { ...ids, screen, profileStack: [], profileReturnTo: s.screen };
+}
+
+/** Back from a profile screen: retrace the trail, else return to where it began. */
+function closeProfile(s: State): Partial<State> {
+  const prev = s.profileStack[s.profileStack.length - 1];
+  if (prev) return { ...prev, profileStack: s.profileStack.slice(0, -1) };
+  return { screen: s.profileReturnTo || 'feed', activePlaceId: null, profileStack: [] };
+}
 
 function findTable(s: State, id: string | null) {
   return [...s.createdTables, ...OPEN, ...EVENTS].find((t) => t.id === id);
@@ -589,14 +630,14 @@ export const useStore = create<State & Actions>((set, get) => ({
   ...initialState(),
 
   // ── navigation ──
-  go: (tab) => set({ tab, screen: tab, activePlaceId: null }),
+  go: (tab) => set({ tab, screen: tab, activePlaceId: null, profileStack: [] }),
   setScreen: (screen) => set({ screen }),
-  openPlace: (id) =>
-    set((s) => ({ activePlaceId: id, screen: 'place', returnTo: s.screen === 'place' ? s.returnTo : s.screen })),
-  closePlace: () => set((s) => ({ screen: s.returnTo || 'feed', activePlaceId: null })),
-  openChef: (id) =>
-    set((s) => ({ activeChefId: id, screen: 'chef', chefReturnTo: s.screen === 'chef' ? s.chefReturnTo : s.screen })),
-  closeChef: () => set((s) => ({ screen: s.chefReturnTo || 'feed' })),
+  openPlace: (id) => set((s) => openProfile(s, 'place', { activePlaceId: id })),
+  closePlace: () => set((s) => closeProfile(s)),
+  openChef: (id) => set((s) => openProfile(s, 'chef', { activeChefId: id })),
+  closeChef: () => set((s) => closeProfile(s)),
+  openGroup: (id) => set((s) => openProfile(s, 'group', { activeGroupId: id })),
+  closeGroup: () => set((s) => closeProfile(s)),
   // Real freely-licensed photos (Wikipedia/Wikimedia), resolved on demand and
   // cached; each only fills in if a match is actually found (else the generated
   // cover stays). Never blocks the UI.

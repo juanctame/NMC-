@@ -15,6 +15,7 @@ import { computePalate } from '../data/palate';
 import { recommend, type Rec, type ReasonTag } from '../data/recommend';
 import { CARTE_RISING } from '../data/carte';
 import { FEATURED_CHEFS, type Chef } from '../data/chefs';
+import { GROUPS, type Group } from '../data/groups';
 
 const PLATFORM_TAG: Record<string, string> = { tiktok: 'TT', instagram: 'IG', youtube: 'YT' };
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
@@ -223,6 +224,30 @@ function ChefChip({ chef }: { chef: Chef }) {
       <View style={{ backgroundColor: multi ? C.sun400 : C.paper100, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 }}>
         <Banner s={7.5} tk={0.06} c={C.inkDeep}>
           {multi ? `${chef.placeIds.length} restaurants` : chef.topAward || 'Chef'}
+        </Banner>
+      </View>
+    </StickerPressable>
+  );
+}
+
+/** A restaurant group in the feed rail — crest, name, how many rooms. */
+function GroupChip({ group }: { group: Group }) {
+  const openGroup = useStore((s) => s.openGroup);
+  const n = group.placeIds.length;
+  return (
+    <StickerPressable
+      offset="sm"
+      onPress={() => openGroup(group.id)}
+      style={{ width: 150, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, padding: 11, alignItems: 'center', gap: 8 }}
+    >
+      <Monogram name={group.crest} size={52} rot="-5deg" />
+      <SerifDisplay s={13} c={C.inkDeep} numberOfLines={2} style={{ lineHeight: 15, textAlign: 'center', minHeight: 30 }}>
+        {group.name}
+      </SerifDisplay>
+      <View style={{ backgroundColor: group.kind === 'named' ? C.sun400 : C.paper100, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 }}>
+        <Banner s={7.5} tk={0.06} c={C.inkDeep}>
+          {n} {n === 1 ? 'restaurant' : 'restaurants'}
+          {group.also.length ? ` +${group.also.length}` : ''}
         </Banner>
       </View>
     </StickerPressable>
@@ -688,6 +713,25 @@ export function Feed() {
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
               {FEATURED_CHEFS.map((c) => (
                 <ChefChip key={c.id} chef={c} />
+              ))}
+            </ScrollView>
+          </View>
+        ) : null}
+
+        {/* Restaurant groups — the business families behind several rooms */}
+        {city.id === 'cdmx' && GROUPS.length ? (
+          <View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <Banner s={11} tk={0.14} c={C.inkDeep}>
+                Restaurant groups
+              </Banner>
+              <Mono s={9} c={C.inkSoft}>
+                who's behind the rooms →
+              </Mono>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+              {GROUPS.map((g) => (
+                <GroupChip key={g.id} group={g} />
               ))}
             </ScrollView>
           </View>

@@ -12,69 +12,23 @@ import React, { useEffect } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
-import { chefById, placesOfChef, guideBadgeOf } from '../data/chefs';
+import { chefById, placesOfChef } from '../data/chefs';
+import { groupsForChef } from '../data/groups';
 import { C } from '../theme/tokens';
-import { Display, Banner, Serif, SerifDisplay, SerifItalic, Mono } from '../components/Text';
+import { Display, Banner, Serif, SerifItalic, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Monogram } from '../components/Monogram';
+import { VenueRow } from '../components/VenueRow';
 import { Photo } from '../components/Photo';
 import { Grain } from '../components/Grain';
 import { ScreenIn } from '../components/Anim';
-import type { Place } from '../store/data';
-
-/** One of the chef's restaurants — tap through to its full profile. */
-function ChefPlaceRow({ place, onOpen }: { place: Place; onOpen: () => void }) {
-  const badge = guideBadgeOf(place);
-  return (
-    <StickerPressable
-      offset="sm"
-      onPress={onOpen}
-      style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, padding: 11 }}
-    >
-      <Monogram name={place.name} size={44} rot="-4deg" />
-      <View style={{ flex: 1, minWidth: 0 }}>
-        <SerifDisplay s={16} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 17 }}>
-          {place.name}
-        </SerifDisplay>
-        <Mono s={9} c={C.inkMuted} numberOfLines={1} style={{ marginTop: 3 }}>
-          {place.category || place.cuisine} · {place.hood}
-        </Mono>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 }}>
-          {badge ? (
-            <View style={{ backgroundColor: C.inkDeep, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 }}>
-              <Banner s={7.5} tk={0.06} c={C.paper0}>
-                {badge}
-              </Banner>
-            </View>
-          ) : null}
-          {typeof place.acclaim === 'number' ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: C.paper100, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 7 }}>
-              <Banner s={8} c={C.sun600}>
-                ◆ {place.acclaim}
-              </Banner>
-            </View>
-          ) : null}
-          {place.moment === 'Apertura 2026' ? (
-            <View style={{ backgroundColor: C.stampGreen, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 7 }}>
-              <Banner s={7.5} tk={0.06} c={C.paper0}>
-                New · 2026
-              </Banner>
-            </View>
-          ) : null}
-        </View>
-      </View>
-      <Display s={18} c={C.inkSoft}>
-        →
-      </Display>
-    </StickerPressable>
-  );
-}
 
 export function ChefProfile() {
   const insets = useSafeAreaInsets();
   const id = useStore((s) => s.activeChefId);
   const closeChef = useStore((s) => s.closeChef);
   const openPlace = useStore((s) => s.openPlace);
+  const openGroup = useStore((s) => s.openGroup);
   const chefPhotos = useStore((s) => s.chefPhotos);
   const ensureChefPhoto = useStore((s) => s.ensureChefPhoto);
 
@@ -89,6 +43,7 @@ export function ChefProfile() {
   const portrait = chefPhotos[chef.id];
 
   const places = placesOfChef(chef);
+  const chefGroups = groupsForChef(chef.id);
   const multi = places.length > 1;
   const soloHood = chef.hoods[0];
   const footprint = multi
@@ -198,6 +153,37 @@ export function ChefProfile() {
           </View>
         ) : null}
 
+        {/* the restaurant group(s) this chef cooks within */}
+        {chefGroups.length ? (
+          <View style={{ paddingTop: 20, paddingHorizontal: 16, gap: 10 }}>
+            <Banner s={10} tk={0.16} c={C.inkMuted}>
+              Part of
+            </Banner>
+            {chefGroups.map((g) => (
+              <StickerPressable
+                key={g.id}
+                offset="sm"
+                onPress={() => openGroup(g.id)}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.sun100, borderWidth: 2, borderColor: C.inkBlack, padding: 11 }}
+              >
+                <Monogram name={g.crest} size={40} rot="-4deg" />
+                <View style={{ flex: 1, minWidth: 0 }}>
+                  <Serif s={14} c={C.inkDeep} numberOfLines={1}>
+                    {g.name}
+                  </Serif>
+                  <Mono s={8.5} c={C.inkMuted} style={{ marginTop: 2 }} numberOfLines={1}>
+                    {g.kind === 'named' ? 'Restaurant group' : 'Restaurant family'} · {g.placeIds.length}{' '}
+                    {g.placeIds.length === 1 ? 'restaurant' : 'restaurants'} · see group
+                  </Mono>
+                </View>
+                <Display s={18} c={C.inkSoft}>
+                  →
+                </Display>
+              </StickerPressable>
+            ))}
+          </View>
+        ) : null}
+
         {/* their restaurants */}
         <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 12 }}>
@@ -212,7 +198,7 @@ export function ChefProfile() {
           </View>
           <View style={{ gap: 10 }}>
             {places.map((p) => (
-              <ChefPlaceRow key={p.id} place={p} onOpen={() => openPlace(p.id)} />
+              <VenueRow key={p.id} place={p} onOpen={() => openPlace(p.id)} />
             ))}
           </View>
         </View>

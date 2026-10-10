@@ -19,6 +19,7 @@ import { computePalate } from '../data/palate';
 import { drawAndKnow, priceLabel, fitFor, type GReview } from '../data/placeDetails';
 import { combosFor, peerComparison, currencyCode, type Combo, type ValueRow } from '../data/combos';
 import { chefForPlace } from '../data/chefs';
+import { groupForPlace, placesOfGroup } from '../data/groups';
 import { useT } from '../i18n';
 import { C, col } from '../theme/tokens';
 import { photo, PHOTO_POOL } from '../assets';
@@ -447,6 +448,7 @@ export function PlaceDetail() {
   const ensureVenuePhoto = useStore((s) => s.ensureVenuePhoto);
   const ensurePlates = useStore((s) => s.ensurePlates);
   const openChef = useStore((s) => s.openChef);
+  const openGroup = useStore((s) => s.openGroup);
   const t = useT();
 
   // Pull other testers' reviews for this place from the shared backend (if on).
@@ -596,6 +598,11 @@ export function PlaceDetail() {
   // of their restaurants when the guide credits them at more than one.
   const chef = chefForPlace(base);
   const chefPlaceCount = chef ? chef.placeIds.length : 0;
+  // The restaurant group / family the guide ties this place to, if any.
+  const group = groupForPlace(base);
+  const groupSiblings = group
+    ? [...placesOfGroup(group).filter((p) => p.id !== base.id).map((p) => p.name), ...group.also]
+    : [];
 
   return (
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
@@ -764,7 +771,7 @@ export function PlaceDetail() {
         ) : null}
 
         {/* from the guide — curated awards, chef, occasion & insider tip (Carte dataset) */}
-        {isCarte && (base.awards || base.chef || base.occasion || base.tip || base.why) ? (
+        {isCarte && (base.awards || base.chef || base.occasion || base.tip || base.why || group) ? (
           <StickerView offset="lg" style={{ marginTop: 16, backgroundColor: C.ink700, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 9, paddingHorizontal: 13, borderBottomWidth: 2, borderColor: C.inkBlack }}>
               <Banner s={10} tk={0.14} c={C.sun300}>
@@ -808,6 +815,28 @@ export function PlaceDetail() {
                 </Pressable>
               ) : base.chef ? (
                 <GuideRow label="Chef / team" text={base.chef} />
+              ) : null}
+              {group ? (
+                <Pressable
+                  onPress={() => openGroup(group.id)}
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 11, borderWidth: 2, borderColor: 'rgba(251,245,229,0.55)', borderRadius: 12, padding: 9, backgroundColor: 'rgba(251,245,229,0.06)' }}
+                >
+                  <Monogram name={group.crest} size={40} fg={C.paper0} rot="-4deg" />
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <Banner s={8} tk={0.14} c={C.sun300}>
+                      {group.kind === 'named' ? 'Restaurant group' : 'Restaurant family'}
+                    </Banner>
+                    <Serif s={13.5} c={C.paper0} numberOfLines={1} style={{ marginTop: 2 }}>
+                      {group.name}
+                    </Serif>
+                    <Mono s={8.5} c={C.ink100} numberOfLines={1} style={{ marginTop: 2 }}>
+                      {groupSiblings.length ? `With ${groupSiblings.slice(0, 3).join(' · ')} · see group` : 'See group'}
+                    </Mono>
+                  </View>
+                  <Display s={18} c={C.sun300}>
+                    →
+                  </Display>
+                </Pressable>
               ) : null}
               {base.why ? <GuideRow label="Why it stands out now" text={base.why} /> : null}
               {base.occasion ? <GuideRow label="Ideal for" text={base.occasion} /> : null}
