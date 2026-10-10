@@ -16,6 +16,7 @@ import { recommend, type Rec, type ReasonTag } from '../data/recommend';
 import { CARTE_RISING } from '../data/carte';
 import { FEATURED_CHEFS, type Chef } from '../data/chefs';
 import { GROUPS, type Group } from '../data/groups';
+import { staticCover } from '../data/media';
 
 const PLATFORM_TAG: Record<string, string> = { tiktok: 'TT', instagram: 'IG', youtube: 'YT' };
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
@@ -177,6 +178,21 @@ function reasonText(r: ReasonTag, t: (k: string) => string): string {
 }
 
 /** The single best-fit pick for this foodie — quality × taste. */
+/** A venue's cover on feed cards: its real photo (site / guide / Google) when known, else its generated cover. */
+function FeedCover({ p, height, crest, border, darken }: { p: Place; height: number; crest: number; border?: boolean; darken?: number }) {
+  const pic = staticCover(p);
+  return (
+    <PlaceCover
+      place={p}
+      photoUrl={pic?.url}
+      credit={pic?.credit.replace(/^Photo:\s*/, '')}
+      style={{ width: '100%', height, ...(border ? { borderBottomWidth: 2, borderColor: C.inkBlack } : null) }}
+      crestSize={crest}
+      darken={darken}
+    />
+  );
+}
+
 /** A compact "new & rising" card for the CDMX guide rail. */
 function RisingCard({ p }: { p: Place }) {
   const openPlace = useStore((s) => s.openPlace);
@@ -188,7 +204,7 @@ function RisingCard({ p }: { p: Place }) {
       style={{ width: 150, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
     >
       <View style={{ position: 'relative' }}>
-        <PlaceCover place={p} style={{ width: '100%', height: 88, borderBottomWidth: 2, borderColor: C.inkBlack }} crestSize={40} />
+        <FeedCover p={p} height={88} crest={40} border />
         <View style={{ position: 'absolute', top: 6, left: 6, backgroundColor: neo ? C.stampGreen : C.sun400, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 1, paddingHorizontal: 7 }}>
           <Banner s={7.5} tk={0.08} c={neo ? C.paper0 : C.inkDeep}>
             {neo ? 'New · 2026' : 'Rising'}
@@ -261,7 +277,7 @@ function TopPick({ rec }: { rec: Rec }) {
   return (
     <StickerPressable offset="lg" onPress={() => openPlace(p.id)} style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
       <View style={{ position: 'relative' }}>
-        <PlaceCover place={p} style={{ width: '100%', height: 152 }} crestSize={72} darken={0.5} />
+        <FeedCover p={p} height={152} crest={72} darken={0.5} />
         <View style={{ position: 'absolute', top: 10, left: 10, backgroundColor: C.ink400, borderWidth: 2, borderColor: C.paper0, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 10, transform: [{ rotate: '-3deg' }] }}>
           <Banner s={9} tk={0.14} c={C.paper0}>
             {t('feed.topPick')}
@@ -308,7 +324,7 @@ function RecMini({ rec }: { rec: Rec }) {
   return (
     <StickerPressable offset="sm" onPress={() => openPlace(p.id)} style={{ width: 152, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
       <View style={{ position: 'relative' }}>
-        <PlaceCover place={p} style={{ width: '100%', height: 88 }} crestSize={40} />
+        <FeedCover p={p} height={88} crest={40} />
         <View style={{ position: 'absolute', top: 6, right: 6, minWidth: 26, height: 22, paddingHorizontal: 5, borderRadius: 11, backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
           <Display s={12} c={C.inkDeep}>
             {rec.score}
@@ -608,6 +624,7 @@ export function Feed() {
   const userReviews = useStore((s) => s.userReviews);
   const wantIds = useStore((s) => s.wantIds);
   const t = useT();
+  const [behind, setBehind] = useState<'chefs' | 'groups'>('chefs');
 
   // The ideal picks for this foodie, from the live venues (quality × taste fit).
   const recs = useMemo(() => {
@@ -699,40 +716,31 @@ export function Feed() {
           </View>
         ) : null}
 
-        {/* The chefs behind it — the people cooking, linked across their venues */}
-        {city.id === 'cdmx' && FEATURED_CHEFS.length ? (
+        {/* Who's behind it — the chefs and the restaurant groups, one rail with a toggle */}
+        {city.id === 'cdmx' && (FEATURED_CHEFS.length || GROUPS.length) ? (
           <View>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
               <Banner s={11} tk={0.14} c={C.inkDeep}>
-                The chefs behind it
+                Who's behind it
               </Banner>
-              <Mono s={9} c={C.inkSoft}>
-                tap into their rooms →
-              </Mono>
+              <View style={{ flexDirection: 'row', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, overflow: 'hidden' }}>
+                {(['chefs', 'groups'] as const).map((k) => (
+                  <Pressable
+                    key={k}
+                    onPress={() => setBehind(k)}
+                    accessibilityRole="tab"
+                    accessibilityState={{ selected: behind === k }}
+                    style={{ paddingVertical: 4, paddingHorizontal: 11, backgroundColor: behind === k ? C.inkDeep : C.paper0 }}
+                  >
+                    <Banner s={8.5} tk={0.08} c={behind === k ? C.paper0 : C.inkDeep}>
+                      {k === 'chefs' ? `Chefs ${FEATURED_CHEFS.length}` : `Groups ${GROUPS.length}`}
+                    </Banner>
+                  </Pressable>
+                ))}
+              </View>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
-              {FEATURED_CHEFS.map((c) => (
-                <ChefChip key={c.id} chef={c} />
-              ))}
-            </ScrollView>
-          </View>
-        ) : null}
-
-        {/* Restaurant groups — the business families behind several rooms */}
-        {city.id === 'cdmx' && GROUPS.length ? (
-          <View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-              <Banner s={11} tk={0.14} c={C.inkDeep}>
-                Restaurant groups
-              </Banner>
-              <Mono s={9} c={C.inkSoft}>
-                who's behind the rooms →
-              </Mono>
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
-              {GROUPS.map((g) => (
-                <GroupChip key={g.id} group={g} />
-              ))}
+              {behind === 'chefs' ? FEATURED_CHEFS.map((c) => <ChefChip key={c.id} chef={c} />) : GROUPS.map((g) => <GroupChip key={g.id} group={g} />)}
             </ScrollView>
           </View>
         ) : null}
@@ -806,7 +814,7 @@ export function Feed() {
                   onPress={() => openPlaceFromFeed(p.id)}
                   style={{ width: 128, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
                 >
-                  <PlaceCover place={p} style={{ width: '100%', height: 84, borderBottomWidth: 2, borderColor: C.inkBlack }} crestSize={38} />
+                  <FeedCover p={p} height={84} crest={38} border />
                   <View style={{ padding: 8 }}>
                     <SerifDisplay s={13} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 14 }}>
                       {p.name}

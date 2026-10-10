@@ -22,7 +22,16 @@ import { getProvider, fixtureFallback } from '../data/provider';
 import { fetchCachedPlaces } from '../data/placesCache';
 import type { PlaceDetails, DetailsStatus, LivePhoto } from '../data/placeDetails';
 import { pickFoodPhotos, photoImportSupported } from '../data/photoImport';
-import { resolveVenuePhoto, resolveChefPhoto, resolveDishPhoto, dishTerm, type WikiImgResolved } from '../data/wikiPhotos';
+import {
+  resolveVenuePhoto,
+  resolveChefPhoto,
+  resolveDishPhoto,
+  resolveCommonsNamed,
+  resolveNearbyPhotos,
+  resolveHoodPhoto,
+  dishTerm,
+  type WikiImgResolved,
+} from '../data/wikiPhotos';
 import type { PhotoMatch, PhotoImportStatus, PhotoPoint } from '../data/photoImportTypes';
 import { CARTE_CDMX } from '../data/carte';
 import { REVIEWS, DISH_PHOTOS, type Review } from '../data/reviews';
@@ -286,6 +295,9 @@ export type State = {
   venuePhotos: Record<string, WikiImgResolved>; // placeId → real venue photo
   chefPhotos: Record<string, WikiImgResolved>; // chefId → chef portrait
   platePhotos: Record<string, { dish: string; img: WikiImgResolved }[]>; // placeId → reference plates
+  commonsPhotos: Record<string, WikiImgResolved[]>; // placeId → Commons files named after the venue
+  nearbyPhotos: Record<string, WikiImgResolved[]>; // placeId → photos geotagged around the corner
+  hoodPhotos: Record<string, WikiImgResolved>; // neighbourhood → its photo (shared)
 
   // Chef profiles (guide credits; same chef across venues links into one)
   activeChefId: string | null;
@@ -331,6 +343,7 @@ export type Actions = {
   ensureVenuePhoto: (place: Place) => Promise<void>;
   ensureChefPhoto: (chef: { id: string; name: string }) => Promise<void>;
   ensurePlates: (place: Place) => Promise<void>;
+  ensureMedia: (place: Place) => Promise<void>;
   openMap: () => void;
   closeMap: () => void;
   openEvent: (id: string) => void;
@@ -539,6 +552,9 @@ const initialState = (): State => ({
   venuePhotos: {},
   chefPhotos: {},
   platePhotos: {},
+  commonsPhotos: {},
+  nearbyPhotos: {},
+  hoodPhotos: {},
   activeChefId: null,
   activeGroupId: null,
   profileReturnTo: 'feed',
@@ -673,6 +689,37 @@ export const useStore = create<State & Actions>((set, get) => ({
       if (out.length >= 4) break;
     }
     if (out.length) set((s) => ({ platePhotos: { ...s.platePhotos, [place.id]: out } }));
+  },
+  // Every freely-licensed picture we can find for a venue (its Wikipedia photo,
+  // Commons files named after it, photos taken around the corner, and its
+  // neighbourhood) — so each restaurant has a real visual presence. Fetched once.
+  ensureMedia: async (place) => {
+    if (!place) return;
+    const k = 'm:' + place.id;
+    if (wikiTried.has(k)) return;
+    wikiTried.add(k);
+    get().ensureVenuePhoto(place);
+    const hood = place.hood;
+    const tasks: Promise<void>[] = [
+      resolveCommonsNamed(place.name).then((imgs) => {
+        if (imgs.length) set((s) => ({ commonsPhotos: { ...s.commonsPhotos, [place.id]: imgs } }));
+      }),
+    ];
+    if (place.lat != null && place.lon != null) {
+      tasks.push(
+        resolveNearbyPhotos(place.lat, place.lon).then((imgs) => {
+          if (imgs.length) set((s) => ({ nearbyPhotos: { ...s.nearbyPhotos, [place.id]: imgs } }));
+        }),
+      );
+    }
+    if (hood && !get().hoodPhotos[hood]) {
+      tasks.push(
+        resolveHoodPhoto(hood, place.borough).then((img) => {
+          if (img) set((s) => ({ hoodPhotos: { ...s.hoodPhotos, [hood]: img } }));
+        }),
+      );
+    }
+    await Promise.all(tasks.map((t) => t.catch(() => undefined)));
   },
   openMap: () => set((s) => ({ screen: 'map', returnTo: s.screen === 'map' ? s.returnTo : s.screen, selPin: null })),
   closeMap: () => set((s) => ({ screen: s.returnTo || 'feed', selPin: null })),

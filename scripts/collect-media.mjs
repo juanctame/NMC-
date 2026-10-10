@@ -24,7 +24,7 @@ const CARTE = 'src/data/carte.ts';
 const OUT = 'src/data/media.json';
 const UA = 'Mozilla/5.0 (compatible; CRTQ-LinkPreview/1.0; +https://juanctame.github.io/NMC-/)';
 const MAX_AGE_DAYS = 7;
-const VERSION = 2; // bump when collection logic changes → forces a refresh
+const VERSION = 3; // bump when collection logic changes → forces a refresh
 const CONCURRENCY = 8;
 
 function readVenues() {
@@ -133,8 +133,29 @@ async function imageCheck(url) {
 
 const NOT_A_PHOTO = /logo|favicon|placeholder|default[-_]?(image|og|share)|sprite|icon|avatar|\.svg(\?|$)/i;
 
+/**
+ * Photos embedded in a page's own markup — used only for a restaurant's own
+ * website when it declares no preview image (single-page / Wix / Squarespace
+ * sites): <img> src / lazy src / srcset, CSS background images, and image URLs
+ * inside the page's data. Logos, icons and tracking pixels are skipped.
+ */
+function pageImages(html) {
+  const out = [];
+  const push = (u) => u && !u.startsWith('data:') && out.push(u.trim());
+  for (const m of html.matchAll(/<img\b[^>]*>/gi)) {
+    const tag = m[0];
+    const attr = (n) => (tag.match(new RegExp(n + '\\s*=\\s*["\']([^"\']+)["\']', 'i')) || [])[1];
+    const set = attr('srcset') || attr('data-srcset');
+    if (set) push(set.split(',').pop().trim().split(/\s+/)[0]);
+    push(attr('data-src') || attr('data-lazy-src') || attr('src'));
+  }
+  for (const m of html.matchAll(/background(?:-image)?\s*:\s*url\(\s*['"]?([^'")]+)['"]?\s*\)/gi)) push(m[1]);
+  for (const m of html.matchAll(/https?:\/\/[^"'\s()<>\\]+?\.(?:jpe?g|webp)(?:\?[^"'\s()<>\\]*)?/gi)) push(m[0]);
+  return out.filter((u) => !/pixel|facebook\.com\/tr|1x1|spacer|blank\.(gif|png)|gravatar/i.test(u));
+}
+
 /** Unfurl one page: its preview image (validated) and title, with diagnostics. */
-async function unfurl(url) {
+async function unfurl(url, isSite = false) {
   try {
     const r = await get(url, { headers: { Accept: 'text/html,application/xhtml+xml' } });
     const html = r.ok ? await r.text() : '';
@@ -149,11 +170,12 @@ async function unfurl(url) {
       tags['twitter:image:src'],
       ...jsonLdImages(html),
       tags['image_src'],
+      ...(isSite ? pageImages(html) : []),
     ].filter(Boolean);
     const candidates = [...new Set(raw.map((x) => { try { return new URL(x, r.url).href.replace(/^http:\/\//, 'https://'); } catch { return ''; } }).filter(Boolean))];
     const rejected = [];
     let image;
-    for (const c of candidates.slice(0, 5)) {
+    for (const c of candidates.slice(0, isSite ? 10 : 5)) {
       if (NOT_A_PHOTO.test(c)) { rejected.push({ url: c, why: 'looks like a logo/icon' }); continue; }
       const check = await imageCheck(c);
       if (check.ok) { image = c; break; }
@@ -208,8 +230,9 @@ async function main() {
   }
   const urls = [...pages.keys()];
   console.log(`unfurling ${urls.length} pages for ${venues.length} venues…`);
+  const siteUrls = new Set(venues.map((v) => v.website).filter(Boolean));
   const results = await pool(urls, CONCURRENCY, async (u, k) => {
-    const res = await unfurl(u);
+    const res = await unfurl(u, siteUrls.has(u));
     if (k % 25 === 0) console.log(`  ${k}/${urls.length}`);
     return res;
   });

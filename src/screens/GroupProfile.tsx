@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { groupById, placesOfGroup } from '../data/groups';
 import { chefById } from '../data/chefs';
+import { staticCover } from '../data/media';
 import { C } from '../theme/tokens';
 import { Display, Banner, Serif, SerifItalic, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
@@ -81,7 +82,7 @@ export function GroupProfile() {
             <PlaceCover
               key={p.id}
               place={p}
-              photoUrl={livePhotos[p.id]?.photoUrl || venuePhotos[p.id]?.url}
+              photoUrl={livePhotos[p.id]?.photoUrl || staticCover(p)?.url || venuePhotos[p.id]?.url}
               style={{ flex: 1, height: '100%', borderLeftWidth: i ? 2.5 : 0, borderColor: C.inkBlack }}
               crestSize={mosaic.length === 1 ? 84 : mosaic.length === 2 ? 58 : 46}
             />

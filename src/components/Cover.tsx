@@ -8,12 +8,12 @@
  * the venue's own monogram crest and an optional cuisine eyebrow. Deterministic,
  * offline, and compliant — our own artwork, not the restaurant's logo.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, type ViewStyle } from 'react-native';
 import { Photo } from './Photo';
 import { Grain } from './Grain';
 import { Monogram, coverColors } from './Monogram';
-import { Banner } from './Text';
+import { Banner, Mono } from './Text';
 import { C } from '../theme/tokens';
 import { photo } from '../assets';
 
@@ -26,6 +26,7 @@ export function PlaceCover({
   crestSize = 54,
   eyebrow = false,
   darken = 0.46,
+  credit,
 }: {
   place: CoverPlace;
   /** Overrides place.photoUrl (e.g. a live-resolved Google photo). */
@@ -34,10 +35,26 @@ export function PlaceCover({
   crestSize?: number;
   eyebrow?: boolean;
   darken?: number;
+  /** Source of the real photo, shown as a subtle chip (e.g. "Time Out México"). */
+  credit?: string;
 }) {
-  const realUrl = photoUrl || place.photoUrl;
+  const [failed, setFailed] = useState<string | null>(null);
+  const candidate = photoUrl || place.photoUrl;
+  const realUrl = candidate && candidate !== failed ? candidate : undefined;
   if (realUrl) {
-    return <Photo source={{ uri: realUrl }} style={style} darken={eyebrow ? 0.06 : 0} />;
+    // A remote picture can fail (hotlink protection, moved); fall back to the generated cover.
+    return (
+      <View style={[{ overflow: 'hidden' }, style]}>
+        <Photo source={{ uri: realUrl }} style={StyleSheet.absoluteFill} darken={eyebrow ? 0.06 : 0} onError={() => setFailed(realUrl)} />
+        {credit ? (
+          <View pointerEvents="none" style={{ position: 'absolute', right: 4, bottom: 4, maxWidth: '80%', backgroundColor: 'rgba(27,16,4,0.55)', borderRadius: 3, paddingVertical: 1, paddingHorizontal: 4 }}>
+            <Mono s={6.5} c={C.paper0} numberOfLines={1}>
+              {credit}
+            </Mono>
+          </View>
+        ) : null}
+      </View>
+    );
   }
   const { wash, deep } = coverColors(place.name);
   const label = place.category || place.cuisine;

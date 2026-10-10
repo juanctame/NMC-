@@ -47,6 +47,30 @@ Trayectoria), and **awards**.
   Núñez, Eduardo "Lalo" García, … — those venues gather under **one** profile
   (matched on an accent- and nickname-insensitive key). A feed rail ("The chefs
   behind it") surfaces them.
+- **Pictures from every kind of source** — each restaurant's gallery merges, best
+  first: live Google Maps photos (with a Places key); the restaurant's **own
+  website**; **guide & press pages about the venue** (Time Out, Chilango, Food and
+  Pleasure, El Financiero, N+…); a Wikipedia photo / Commons files named after it;
+  photos **geotagged around the corner** (Commons, labelled with the distance);
+  and its **neighbourhood's** photo (labelled). Every picture carries its credit
+  and a link back, and anything that fails to load is dropped silently — so every
+  restaurant has a real visual presence, never a broken one.
+  - Site / guide / press images come from `src/data/media.json`, collected in CI
+    by `scripts/collect-media.mjs` (the deploy workflow refreshes it weekly, on a
+    version bump, or on demand). It reads each page's own link-preview image
+    (og:image / twitter:image / JSON-LD), validates it, and for a restaurant's
+    own site falls back to the first real photo on the page. Images are
+    hot-linked with credit, never re-hosted. Roundup articles appear as press
+    cards but their image is never used as the venue's own photo. Guía Michelin
+    answers automated requests with a bot challenge, so its listings show as
+    links without a picture; Instagram is linked (its image URLs expire and
+    can't be embedded).
+- **A calmer place page** — a swipeable, credited photo hero, a compact header
+  (key chips + a collapsible blurb), and sticky tabs: **Overview** (the guide
+  card, the draw / good to know, taste match), **Menu** (what to order,
+  reference plates, bang for your buck), **Media** (all photos, in the press,
+  social, community photos, videos), **Reviews**, **Visit** (hours, contact,
+  maps, booking). Nothing was removed — it's just one section at a time.
 - **Restaurant groups** — `src/data/groups.ts` gathers the venues the guide
   itself ties together into **group profiles**, the same way chefs are linked.
   Signals, all from the guide's own text/data: a named group ("del **Grupo

@@ -21,9 +21,10 @@ export type WikiImgResolved = { url: string; attr: string; pageUrl?: string };
 export type WikiImg = WikiImgResolved | null;
 
 const CACHE_KEY = 'nmc.wikiphotos.v1';
-const mem: Record<string, WikiImg> = loadCache();
+type Cached = WikiImg | WikiImgResolved[];
+const mem: Record<string, Cached> = loadCache();
 
-function loadCache(): Record<string, WikiImg> {
+function loadCache(): Record<string, Cached> {
   try {
     const s = typeof localStorage !== 'undefined' ? localStorage.getItem(CACHE_KEY) : null;
     if (s) return JSON.parse(s);
@@ -102,7 +103,7 @@ const RE_CHEF = /\bchef|cociner|reposter|pastel|restauran|cocina|gastrón|gastro
 
 export async function resolveChefPhoto(name: string): Promise<WikiImg> {
   const key = 'c:' + name.toLowerCase();
-  if (key in mem) return mem[key];
+  if (key in mem) return mem[key] as WikiImg;
   const clean = name
     .replace(/\s*\([^)]*\)\s*/g, ' ')
     .replace(/[«»"'·|].*$/g, '')
@@ -139,7 +140,7 @@ const RE_VENUE = /restauran|taquer|caf[eé]|cantina|cocina|marisqu|fonda|panader
 
 export async function resolveVenuePhoto(name: string): Promise<WikiImg> {
   const key = 'v:' + name.toLowerCase();
-  if (key in mem) return mem[key];
+  if (key in mem) return mem[key] as WikiImg;
 
   let res: WikiImg = null;
   for (const lang of LANGS) {
@@ -159,6 +160,118 @@ export async function resolveVenuePhoto(name: string): Promise<WikiImg> {
         res = { url: p.thumb, attr: 'Wikipedia', pageUrl: pageUrl(lang, p.title || t) };
         break;
       }
+    }
+  }
+  mem[key] = res;
+  saveCache();
+  return res;
+}
+
+// ── Wikimedia Commons: files named after the venue, and photos taken nearby ──
+const COMMONS = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*';
+const NOT_SCENE = /\b(map|mapa|plano|locator|location|logo|flag|bandera|escudo|coat of arms|diagram|sign|señal|svg|icon)\b/i;
+
+const plain = (html?: string) => (html || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+const fold = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+
+type CommonsPage = { title: string; imageinfo?: { thumburl?: string; url?: string; mime?: string; extmetadata?: any }[]; coordinates?: { lat: number; lon: number }[] };
+
+function commonsImg(p: CommonsPage, label: string): WikiImgResolved | null {
+  const info = p.imageinfo?.[0];
+  if (!info || !/^image\/(jpeg|png|webp)$/.test(info.mime || '')) return null;
+  if (NOT_SCENE.test(p.title)) return null;
+  const artist = plain(info.extmetadata?.Artist?.value);
+  const license = plain(info.extmetadata?.LicenseShortName?.value);
+  return {
+    url: info.thumburl || info.url || '',
+    attr: [label, artist && `${artist}`, license].filter(Boolean).join(' · ') || 'Wikimedia Commons',
+    pageUrl: `https://commons.wikimedia.org/wiki/${encodeURIComponent(p.title.replace(/\s/g, '_'))}`,
+  };
+}
+
+/** Commons files whose title names the venue (e.g. "Contramar restaurant, Mexico City.jpg"). */
+export async function resolveCommonsNamed(name: string): Promise<WikiImgResolved[]> {
+  const key = 'cn:' + fold(name);
+  if (key in mem) return (mem[key] as WikiImgResolved[]) || [];
+  const n = fold(name);
+  let out: WikiImgResolved[] = [];
+  if (n.length >= 5) {
+    const q = `intitle:"${name}" (Mexico OR México OR CDMX)`;
+    const d = await jget(
+      `${COMMONS}&generator=search&gsrnamespace=6&gsrlimit=8&gsrsearch=${encodeURIComponent(q)}` +
+        `&prop=imageinfo&iiprop=url|mime|extmetadata&iiurlwidth=1000`,
+    );
+    const pages: CommonsPage[] = Object.values(d?.query?.pages || {});
+    out = pages
+      .filter((p) => fold(p.title).includes(n))
+      .map((p) => commonsImg(p, 'Wikimedia Commons'))
+      .filter((x): x is WikiImgResolved => !!x && !!x.url)
+      .slice(0, 3);
+  }
+  mem[key] = out;
+  saveCache();
+  return out;
+}
+
+function meters(aLat: number, aLon: number, bLat: number, bLon: number): number {
+  const r = (d: number) => (d * Math.PI) / 180;
+  const x = r(bLon - aLon) * Math.cos(r((aLat + bLat) / 2));
+  return Math.sqrt(x * x + r(bLat - aLat) ** 2) * 6371000;
+}
+
+/** Photos geotagged within a short walk of the venue — "around the corner". */
+export async function resolveNearbyPhotos(lat: number, lon: number): Promise<WikiImgResolved[]> {
+  const key = `nb:${lat.toFixed(4)},${lon.toFixed(4)}`;
+  if (key in mem) return (mem[key] as WikiImgResolved[]) || [];
+  let out: WikiImgResolved[] = [];
+  for (const radius of [200, 500]) {
+    const d = await jget(
+      `${COMMONS}&generator=geosearch&ggsnamespace=6&ggslimit=25&ggsradius=${radius}&ggscoord=${lat}|${lon}` +
+        `&prop=imageinfo|coordinates&iiprop=url|mime|extmetadata&iiurlwidth=1000`,
+    );
+    const pages: CommonsPage[] = Object.values(d?.query?.pages || {});
+    out = pages
+      .map((p) => ({ p, dist: p.coordinates?.[0] ? meters(lat, lon, p.coordinates[0].lat, p.coordinates[0].lon) : radius }))
+      .sort((a, b) => a.dist - b.dist)
+      .map(({ p, dist }) => commonsImg(p, `${Math.max(10, Math.round(dist / 10) * 10)} m away · Wikimedia Commons`))
+      .filter((x): x is WikiImgResolved => !!x && !!x.url)
+      .slice(0, 4);
+    if (out.length) break;
+  }
+  mem[key] = out;
+  saveCache();
+  return out;
+}
+
+// ── Neighbourhoods ───────────────────────────────────────────────────────────
+const RE_HOOD = /ciudad de m[eé]xico|cdmx|alcald[ií]a|delegaci[oó]n|colonia|barrio|mexico city|neighbou?rhood/i;
+const MAPPY = /map|mapa|locator|location|plano|\.svg/i;
+
+/** The lead photo of the venue's neighbourhood (colonia) article. */
+export async function resolveHoodPhoto(hood: string, borough?: string): Promise<WikiImg> {
+  const key = 'h:' + fold(hood);
+  if (key in mem) return mem[key] as WikiImg;
+  const tries: [string, string, boolean][] = [
+    [`Colonia ${hood}`, 'es', false],
+    [hood, 'es', false],
+    [`${hood} colonia Ciudad de México`, 'es', true],
+    [`${hood}, Mexico City`, 'en', true],
+    ...(borough ? ([[`${borough} Ciudad de México alcaldía`, 'es', true]] as [string, string, boolean][]) : []),
+  ];
+  let res: WikiImg = null;
+  for (const [q, lang, search] of tries) {
+    const title = search ? await wikiSearchTitle(q, lang) : q;
+    if (!title) continue;
+    const p = await wikiPage(title, lang);
+    if (p?.thumb && !MAPPY.test(p.thumb) && matches(RE_HOOD, p.extract)) {
+      res = { url: p.thumb, attr: `${p.title || title} · Wikipedia`, pageUrl: pageUrl(lang, p.title || title) };
+      break;
     }
   }
   mem[key] = res;
@@ -217,7 +330,7 @@ export function dishTerm(dish: string): string | null {
 
 export async function resolveDishPhoto(term: string): Promise<WikiImg> {
   const key = 'd:' + term;
-  if (key in mem) return mem[key];
+  if (key in mem) return mem[key] as WikiImg;
   let res: WikiImg = null;
   for (const lang of LANGS) {
     const p = await wikiPage(term, lang);
