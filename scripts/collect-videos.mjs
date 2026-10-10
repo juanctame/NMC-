@@ -42,10 +42,14 @@ function readVenues() {
   return JSON.parse(t.slice(a, t.indexOf('\n];', a) + 2));
 }
 
-function apiKey() {
-  if (process.env.YOUTUBE_API_KEY) return process.env.YOUTUBE_API_KEY;
+/** Candidate keys, best first: the YOUTUBE_API_KEY secret, then the site's browser key. */
+function apiKeys() {
   const cfg = fs.readFileSync('src/config.ts', 'utf8');
-  return (cfg.match(/GOOGLE_MAPS_API_KEY\s*=\s*'([^']+)'/) || [])[1] || '';
+  const site = (cfg.match(/GOOGLE_MAPS_API_KEY\s*=\s*'([^']+)'/) || [])[1] || '';
+  const keys = [];
+  if (process.env.YOUTUBE_API_KEY) keys.push({ key: process.env.YOUTUBE_API_KEY, source: 'secret' });
+  if (site && site !== process.env.YOUTUBE_API_KEY) keys.push({ key: site, source: 'site key' });
+  return keys;
 }
 
 class ApiError extends Error {
@@ -76,7 +80,7 @@ async function main() {
     console.log(`last clip run ${sinceLast.toFixed(1)} h ago — skipping (FORCE=1 to override)`);
     return;
   }
-  const key = apiKey();
+  const keys = apiKeys();
   const save = (status, note) => {
     // Only a real run (ok / quota spent) starts the ~20 h spacing; a disabled API
     // or missing key retries on the very next deploy.
@@ -85,7 +89,29 @@ async function main() {
     fs.writeFileSync(OUT, JSON.stringify(out, null, 1) + '\n');
     console.log('wrote', OUT, status, note || '');
   };
-  if (!key) return save('no-key', 'No YouTube API key configured');
+  if (!keys.length) return save('no-key', 'No YouTube API key configured');
+
+  // Use the first key that can call the API (a 1-unit probe), so a restricted
+  // or wrong-project key doesn't block collection when another one works.
+  let key = '';
+  let probeErr = null;
+  const tried = [];
+  for (const k of keys) {
+    try {
+      await yt('videos', { part: 'id', id: 'jNQXAC9IVRw', key: k.key });
+      key = k.key;
+      console.log(`using ${k.source}`);
+      break;
+    } catch (e) {
+      probeErr = e;
+      tried.push(`${k.source}: ${e.reason}`);
+      console.log(`${k.source}: ${e.reason}`);
+    }
+  }
+  if (!key) {
+    const r = probeErr?.reason;
+    return save(r === 'accessNotConfigured' || r === 'SERVICE_DISABLED' ? 'api-disabled' : /quota/i.test(r || '') ? 'quota' : r || 'error', `${tried.join(' · ')} — ${probeErr?.message || ''}`);
+  }
 
   // Never-searched first (most acclaimed first), then the stalest.
   const now = Date.now();
