@@ -50,6 +50,7 @@ export type Place = {
   ticketMid?: number; // representative per-person number
   instagram?: string; // @handle
   phone?: string; // contact number
+  sources?: { outlet: string; url: string }[]; // guide / press coverage (Michelin, Chilango, Time Out…)
 };
 
 const P = (

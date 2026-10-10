@@ -62,6 +62,26 @@ def map_cuisine(cat):
         if any(k in c for k in kw): return key
     return "Contemporary"
 
+# Guide / press outlets behind each "Enlaces de fuente" link (by domain).
+OUTLETS = [
+    ("guide.michelin.com", "Guía Michelin"), ("chilango.com", "Chilango"),
+    ("timeoutmexico.mx", "Time Out México"), ("elfinanciero.com.mx", "El Financiero"),
+    ("foodandpleasure.com", "Food and Pleasure"), ("thehappening.com", "The Happening"),
+    ("mex-best.mx", "Mex Best"), ("opentable", "OpenTable"), ("nmas.com.mx", "N+"),
+    ("theinfatuation.com", "The Infatuation"), ("expansion.mx", "Life and Style"),
+    ("panoramaweb.com.mx", "Panorama"), ("wikipedia.org", "Wikipedia"),
+]
+def sources(raw):
+    out, seen = [], set()
+    for u in re.findall(r"https?://[^\s|;,]+", raw or ""):
+        u = u.rstrip(").")
+        if "inegi.org.mx" in u or u in seen:
+            continue  # INEGI DENUE is a data registry, not media
+        seen.add(u)
+        outlet = next((n for d, n in OUTLETS if d in u), re.sub(r"^https?://(www\.)?", "", u).split("/")[0])
+        out.append({"outlet": outlet, "url": u})
+    return out
+
 TICKET_MID = {"Menos de 400": 300, "400 a 1,000": 700, "1,000 a 2,000": 1500, "Más de 2,000": 2800}
 
 def acclaim(rec, level, moment):
@@ -130,6 +150,8 @@ def build(rows, is_radar=False):
         if ig: rec["instagram"] = ig
         web = s(x.get("Sitio web"))
         if web: rec["website"] = web if web.startswith("http") else "https://" + web
+        src = sources(s(x.get("Enlaces de fuente")))
+        if src: rec["sources"] = src
         tel = s(x.get("Teléfono"))
         if tel: rec["phone"] = tel
         lat = s(x.get("Latitud")); lon = s(x.get("Longitud"))

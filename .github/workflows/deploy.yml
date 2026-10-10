@@ -9,6 +9,12 @@ name: Deploy site (GitHub Pages)
 # "Deploy from a branch" → gh-pages / root) rather than the Actions "environment"
 # deploy, because that environment restricts deployments to the default branch —
 # the branch-push approach here deploys from either branch.
+#
+# Before building, it refreshes src/data/media.json — link-preview images for
+# every restaurant (official site, Guía Michelin, press) — when the manifest is
+# older than a week (or on demand), and saves the refreshed manifest back to the
+# branch. Collection needs open internet, which CI has; failures never block a
+# deploy (the app falls back to freely-licensed and generated covers).
 
 on:
   push:
@@ -17,6 +23,11 @@ on:
       - '**.md'
       - 'supabase/**'
   workflow_dispatch:
+    inputs:
+      force_media:
+        description: 'Re-collect restaurant media even if the manifest is fresh'
+        type: boolean
+        default: false
 
 # The built-in token needs write access to push the built site to gh-pages.
 permissions:
@@ -36,8 +47,22 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - name: Collect restaurant media (sites, guides, press)
+        run: node scripts/collect-media.mjs
+        continue-on-error: true
+        env:
+          FORCE: ${{ github.event.inputs.force_media == 'true' && '1' || '' }}
       - name: Export web bundle
         run: npx expo export -p web
+      - name: Save refreshed media manifest to the branch
+        continue-on-error: true
+        run: |
+          if git diff --quiet -- src/data/media.json; then echo "media manifest unchanged"; exit 0; fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/media.json
+          git commit -q -m "Refresh restaurant media manifest [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
       - name: Publish to gh-pages
         run: |
           touch dist/.nojekyll        # keep GitHub Pages from hiding the _expo/ dir

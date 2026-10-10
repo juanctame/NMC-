@@ -40,6 +40,24 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 2800,
 "instagram": "@restaurantepujol",
 "website": "https://pujol.com.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/pujol"
+},
+{
+"outlet": "El Financiero",
+"url": "https://www.elfinanciero.com.mx/food-and-drink/2025/06/05/the-worlds-50-best-2025-los-mejores-restaurantes-en-el-listado-51-100/"
+},
+{
+"outlet": "El Financiero",
+"url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 5545 4111",
 "lat": 19.432446,
 "lon": -99.194923
@@ -70,6 +88,20 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@em.rest",
 "website": "https://itsemilia.rest",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/em"
+},
+{
+"outlet": "El Financiero",
+"url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 5533 6175",
 "lat": 19.415242,
 "lon": -99.162019
@@ -100,6 +132,24 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 2800,
 "instagram": "@maximobistrot",
 "website": "https://maximobistrot.com.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/maximo"
+},
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/articulo/michelin-guide-ceremony/estrellas-michelin-mexico-2026-nuevas-incorporaciones-y-tendencias-que-marcan-el-ano"
+},
+{
+"outlet": "El Financiero",
+"url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 5264 4291",
 "lat": 19.418827,
 "lon": -99.157505
@@ -131,6 +181,20 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 300,
 "instagram": "@nicosmexico",
 "website": "https://nicosmexico.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/azcapotzalco_1993967/restaurante/nicos"
+},
+{
+"outlet": "El Financiero",
+"url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 5396 7090",
 "lat": 19.465116,
 "lon": -99.177598
@@ -159,6 +223,20 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Más de 2,000",
 "ticketMid": 2800,
 "website": "https://quintonil.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/quintonil"
+},
+{
+"outlet": "El Financiero",
+"url": "https://www.elfinanciero.com.mx/food-and-drink/2025/06/19/the-worlds-50-best-restaurants-2025-listado-completo-del-1-al-50-los-mejores-restaurantes-del-mundo/"
+},
+{
+"outlet": "El Financiero",
+"url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/"
+}
+],
 "phone": "55 5280 2680",
 "lat": 19.430991,
 "lon": -99.191712
@@ -187,6 +265,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@esquinacomun",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/esquina-comun"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "lat": 19.413869,
 "lon": -99.176758
 },
@@ -216,6 +304,20 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@restaurantegaba",
 "website": "https://gabarestaurante.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/gaba"
+},
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/articulo/michelin-guide-ceremony/estrellas-michelin-mexico-2026-nuevas-incorporaciones-y-tendencias-que-marcan-el-ano"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 9107 8494",
 "lat": 19.409318,
 "lon": -99.179583
@@ -245,7 +347,25 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "awards": "Michelin 2026 · 1 estrella (nueva); Guía México Gastronómico 2026 · Fenómeno gastronómico del año",
 "acclaim": 90,
 "ticket": "400 a 1,000",
-"ticketMid": 700
+"ticketMid": 700,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/la-once-mil"
+},
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/articulo/michelin-guide-ceremony/estrellas-michelin-mexico-2026-nuevas-incorporaciones-y-tendencias-que-marcan-el-ano"
+},
+{
+"outlet": "N+",
+"url": "https://www.nmas.com.mx/ciudad-de-mexico/califa-leon-pierde-estrella-michelin-2026-que-taqueria-cdmx-ocupo-lugar-donde-esta-la-once-mil/"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+]
 },
 {
 "id": "cx-rosetta",
@@ -272,6 +392,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://rosetta.com.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/rosetta"
+},
+{
+"outlet": "El Financiero",
+"url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/"
+}
+],
 "phone": "55 5533 7804",
 "lat": 19.419789,
 "lon": -99.160519
@@ -300,6 +430,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://sud777.com.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/alvaro-obregon_2003790/restaurante/sud-777"
+},
+{
+"outlet": "El Financiero",
+"url": "https://www.elfinanciero.com.mx/food-and-drink/2025/12/02/latin-americas-50-best-restaurants-2025-estos-son-los-mexicanos-en-el-ranking/"
+}
+],
 "phone": "55 5578 4777",
 "lat": 19.308335,
 "lon": -99.20821
@@ -327,6 +467,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://expendiodemaizsinnombre.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/expendio-de-maiz"
+}
+],
 "phone": "55 6508 2722",
 "lat": 19.414113,
 "lon": -99.16291
@@ -358,6 +504,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://masalaymaiz.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/masala-y-maiz"
+}
+],
 "phone": "55 1313 8260"
 },
 {
@@ -382,6 +534,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
 "instagram": "@ajoblanco_mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Food and Pleasure",
+"url": "https://foodandpleasure.com/restaurantes-lomas-de-chapultepec"
+}
+],
 "lat": 19.424102,
 "lon": -99.20374
 },
@@ -410,6 +572,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@alandalus_mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "The Infatuation",
+"url": "https://www.theinfatuation.com/mexico-city/reviews/al-andalus"
+}
+],
 "lat": 19.427653,
 "lon": -99.129169
 },
@@ -438,6 +610,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@alfilrest",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.416605,
 "lon": -99.159815
 },
@@ -467,6 +649,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@arangorestaurante",
 "website": "https://arangorestaurante.com",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/comida-yucateca-restaurante-arango-cdmx/"
+}
+],
 "phone": "55 5705 5731",
 "lat": 19.435991,
 "lon": -99.152676
@@ -496,6 +688,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@baldio.mx",
 "website": "https://baldio.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/baldio"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 4364 9852",
 "lat": 19.414634,
 "lon": -99.173185
@@ -524,6 +726,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@botanicomx",
 "website": "https://botanico.website",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/botanico"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 5271 2152",
 "lat": 19.406975,
 "lon": -99.173926
@@ -554,6 +766,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
 "instagram": "@cachava_mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/cachava"
+}
+],
 "lat": 19.386733,
 "lon": -99.2531
 },
@@ -583,6 +805,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@canacdmx",
 "website": "https://canacdmx.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/cana"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 7909 2913",
 "lat": 19.428151,
 "lon": -99.156316
@@ -612,6 +844,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@carmelaysal",
 "website": "https://carmelaysal.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/carmela-y-sal"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 2077 7107"
 },
 {
@@ -638,6 +880,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
 "instagram": "@cascabel_cdmx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/cascabel"
+}
+],
 "phone": "55 6216 4782",
 "lat": 19.365574,
 "lon": -99.259176
@@ -666,6 +918,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@chapulinrest",
 "website": "https://chapulin.rest",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida/restaurantes/restaurante-chapulin/"
+}
+],
 "lat": 19.427783,
 "lon": -99.193561
 },
@@ -696,6 +958,20 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@contramarmx",
 "website": "https://contramar.com.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/contramar"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 5514 3169",
 "lat": 19.419617,
 "lon": -99.167033
@@ -727,6 +1003,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@cuina.mx",
 "website": "https://cuina.com.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Food and Pleasure",
+"url": "https://foodandpleasure.com/antojo-de-pambazo-ve-a-cuina/"
+}
+],
 "lat": 19.419958,
 "lon": -99.155696
 },
@@ -756,6 +1042,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Menos de 400",
 "ticketMid": 300,
 "instagram": "@restaurant_ehden",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/restaurantes/ehden-restaurante-libanes-mas-antiguo-centro-cdmx/"
+}
+],
 "lat": 19.430581,
 "lon": -99.129176
 },
@@ -781,7 +1077,17 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 72,
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
-"instagram": "@eloise_rest"
+"instagram": "@eloise_rest",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "The Infatuation",
+"url": "https://theinfatuation.com/mexico-city/reviews/eloise-chic-cuisine-san-angel"
+}
+]
 },
 {
 "id": "cx-emilio",
@@ -808,6 +1114,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@emiliorestaurante",
 "website": "https://emiliorestaurante.com.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Food and Pleasure",
+"url": "https://foodandpleasure.com/restaurantes-para-negocios-polanco"
+}
+],
 "lat": 19.42987,
 "lon": -99.196494
 },
@@ -836,6 +1152,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@er_rre_",
 "website": "https://errreunbistro.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/er-rre-un-bistro"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 8974 1091",
 "lat": 19.430227,
 "lon": -99.186694
@@ -865,7 +1191,17 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
-"instagram": "@fabia_cocinadecampo"
+"instagram": "@fabia_cocinadecampo",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/fabia-cocina-de-campo"
+}
+]
 },
 {
 "id": "cx-fierro",
@@ -891,6 +1227,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@fierrocdmx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.425674,
 "lon": -99.159213
 },
@@ -918,7 +1264,17 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 72,
 "ticket": "Menos de 400",
 "ticketMid": 300,
-"instagram": "@fondamargarita"
+"instagram": "@fondamargarita",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes-cafes/fonda-margarita"
+}
+]
 },
 {
 "id": "cx-fonico",
@@ -946,6 +1302,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
 "instagram": "@fonicocdmx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Food and Pleasure",
+"url": "https://foodandpleasure.com/menu-de-degustacion-fonico/"
+}
+],
 "lat": 19.418224,
 "lon": -99.169655
 },
@@ -975,6 +1341,20 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@galea.restaurante",
 "website": "https://galea.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/galea"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 5158 9911",
 "lat": 19.420841,
 "lon": -99.166968
@@ -1005,6 +1385,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
 "instagram": "@grana_saboresdeorigen",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/grana-sabores-de-origen"
+}
+],
 "lat": 19.426934,
 "lon": -99.137602
 },
@@ -1035,6 +1425,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@guzinaoaxaca",
 "website": "https://guzinaoaxaca.org",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/guzina-oaxaca"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 5282 1820",
 "lat": 19.432345,
 "lon": -99.203769
@@ -1066,6 +1466,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@lacocinadelbizco",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/la-cocina-del-bizco"
+}
+],
 "lat": 19.409227,
 "lon": -99.172844
 },
@@ -1091,6 +1501,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@limosnerosmx",
 "website": "https://limosneros.com.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/limosneros"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 5521 5576",
 "lat": 19.436164,
 "lon": -99.137885
@@ -1121,6 +1541,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@lina.cdmx",
 "website": "https://lina.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/lina"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 5574 7004",
 "lat": 19.412341,
 "lon": -99.160186
@@ -1151,6 +1581,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@loreamx",
 "website": "https://lorea.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/lorea"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 6103 7914",
 "lat": 19.420143,
 "lon": -99.170066
@@ -1181,6 +1621,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@losdanzantes",
 "website": "https://losdanzantescoyoacan.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/coyoacan_1995033/restaurante/los-danzantes-mexico-city"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 4356 7185",
 "lat": 19.348886,
 "lon": -99.16373
@@ -1209,6 +1659,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@maizajo",
 "website": "https://maizajo.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/maizajo"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 9197 9461",
 "lat": 19.414943,
 "lon": -99.178135
@@ -1239,6 +1699,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@marearestaurantedemar",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Food and Pleasure",
+"url": "https://foodandpleasure.com/marea-cdmx/"
+}
+],
 "lat": 19.418859,
 "lon": -99.17502
 },
@@ -1264,6 +1734,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
 "instagram": "@mattea.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Food and Pleasure",
+"url": "https://foodandpleasure.com/restaurantes-lomas-de-chapultepec"
+}
+],
 "lat": 19.416059,
 "lon": -99.225589
 },
@@ -1293,6 +1773,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@meromamx",
 "website": "https://meroma.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/meroma"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 5920 2654",
 "lat": 19.419985,
 "lon": -99.159124
@@ -1322,6 +1812,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@migranteroma",
 "website": "https://migranteroma.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/migrante"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 5941 5470",
 "lat": 19.411699,
 "lon": -99.166069
@@ -1351,7 +1851,17 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
-"instagram": "@momiji_mx"
+"instagram": "@momiji_mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida/momiji-speakeasy-comida-italiana-japonesa-cdmx/"
+}
+]
 },
 {
 "id": "cx-pargot",
@@ -1379,6 +1889,20 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@pargotrestaurant",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/pargot"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "lat": 19.413355,
 "lon": -99.157084
 },
@@ -1410,6 +1934,20 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@plonk.mx",
 "website": "https://plonk.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/plonk"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 2953 0255"
 },
 {
@@ -1438,6 +1976,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@restaurante_prendes",
 "website": "https://prendes.com.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "El Financiero",
+"url": "https://www.elfinanciero.com.mx/food-and-drink/2025/10/23/la-historia-de-prendes-restaurante-con-133-anos-en-donde-se-sirven-gusanos-de-maguey-por-diego-rivera/"
+}
+],
 "phone": "55 5280 0218",
 "lat": 19.435096,
 "lon": -99.20156
@@ -1469,6 +2017,20 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 300,
 "instagram": "@raiz.restaurante",
 "website": "https://restauranteraiz.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/raiz-1208231"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 1247 6047",
 "lat": 19.431702,
 "lon": -99.186465
@@ -1497,6 +2059,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@rocasalrestaurante",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/rocasal"
+}
+],
 "lat": 19.315851,
 "lon": -99.21106
 },
@@ -1525,6 +2097,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@sarde.rest",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Food and Pleasure",
+"url": "https://foodandpleasure.com/?p=145727"
+}
+],
 "phone": "55 2854 6561",
 "lat": 19.422972,
 "lon": -99.159836
@@ -1552,6 +2134,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@sartoriamx",
 "website": "https://sartoria.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/sartoria"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 7265 3616",
 "lat": 19.421839,
 "lon": -99.160521
@@ -1580,6 +2172,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@mxsesame",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes-cafes/sesame"
+}
+],
 "lat": 19.419723,
 "lon": -99.16081
 },
@@ -1611,6 +2213,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@siembra_comedor_tortilleria",
 "website": "https://siempresiembra.com.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/siembra-comedor"
+}
+],
 "lat": 19.437313,
 "lon": -99.184088
 },
@@ -1639,7 +2251,17 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
-"instagram": "@somsaamx"
+"instagram": "@somsaamx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Food and Pleasure",
+"url": "https://foodandpleasure.com/somsaa-tailandes-te-vinos-y-postres-en-la-cdmx/"
+}
+]
 },
 {
 "id": "cx-taco-tasting-room",
@@ -1667,6 +2289,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 2800,
 "instagram": "@tacotastingroom",
 "website": "https://tacotastingroom.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taco-tasting-room"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "56 2553 9858"
 },
 {
@@ -1692,6 +2324,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 2800,
 "instagram": "@thepalmmx",
 "website": "https://grupopresidente.com.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Food and Pleasure",
+"url": "https://foodandpleasure.com/restaurantes-para-negocios-polanco"
+}
+],
 "lat": 19.427783,
 "lon": -99.19356
 },
@@ -1720,6 +2362,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@tierraadentro.cocina",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/tierra-adentro-nueva-etapa-con-amor-a-la-cocina-mexicana"
+}
+],
 "phone": "55 1505 3519",
 "lat": 19.359587,
 "lon": -99.148588
@@ -1750,6 +2402,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@toritorimx",
 "website": "https://toritori.com.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Life and Style",
+"url": "https://lifeandstyle.expansion.mx/viajes-y-gourmet/2026/07/08/donde-comer-este-fin-de-semana-en-la-ciudad-de-mexico"
+}
+],
 "lat": 19.430404,
 "lon": -99.19212
 },
@@ -1779,7 +2441,17 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
-"instagram": "@vega.cdmx"
+"instagram": "@vega.cdmx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Food and Pleasure",
+"url": "https://foodandpleasure.com/vega-restaurante-espanol/"
+}
+]
 },
 {
 "id": "cx-voraz",
@@ -1804,7 +2476,21 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 83,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
-"instagram": "@vorazzzzzzzzz"
+"instagram": "@vorazzzzzzzzz",
+"sources": [
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+},
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+]
 },
 {
 "id": "cx-xuva",
@@ -1832,6 +2518,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
 "instagram": "@xuvarestaurante",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/xuva"
+}
+],
 "phone": "55 1249 3955",
 "lat": 19.448896,
 "lon": -99.158261
@@ -1862,6 +2558,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
 "instagram": "@yoshimi_mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/yoshimi"
+}
+],
 "lat": 19.427407,
 "lon": -99.192858
 },
@@ -1887,7 +2593,17 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
-"instagram": "@zerulomas"
+"instagram": "@zerulomas",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "Food and Pleasure",
+"url": "https://foodandpleasure.com/restaurantes-lomas-de-chapultepec"
+}
+]
 },
 {
 "id": "cx-abyssmo",
@@ -1914,6 +2630,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.412186,
 "lon": -99.172344
 },
@@ -1942,6 +2664,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://alelirooftop.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/aleli-rooftop"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 1973 9913",
 "lat": 19.420312,
 "lon": -99.170137
@@ -1972,6 +2704,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@almara.rest",
 "website": "https://almara.rest",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "OpenTable",
+"url": "https://www.opentable.ie/r/restaurante-almara-ciudad-de-mexico"
+}
+],
 "phone": "55 3213 2492"
 },
 {
@@ -1998,6 +2740,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "phone": "55 3145 9694",
 "lat": 19.407233,
 "lon": -99.17452
@@ -2027,6 +2775,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@aupieddecochonmx",
 "website": "https://grupopresidente.com",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "lat": 19.427778,
 "lon": -99.193585
 },
@@ -2055,6 +2809,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@azulhistoricomx",
 "website": "https://azul.rest.com",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "lat": 19.432807,
 "lon": -99.136286
 },
@@ -2080,6 +2840,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Más de 2,000",
 "ticketMid": 2800,
 "website": "https://sofitel.accor.com/en/hotels/9615/R004.restaurant.html",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/bajel"
+}
+],
 "phone": "55 8660 0500",
 "lat": 19.428723,
 "lon": -99.166041
@@ -2106,7 +2872,13 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
-"instagram": "@balcondelzocalo"
+"instagram": "@balcondelzocalo",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+]
 },
 {
 "id": "cx-barbacoa-gonzalitos",
@@ -2131,6 +2903,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 77,
 "ticket": "Menos de 400",
 "ticketMid": 300,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/barbacoa-gonzalitos"
+}
+],
 "phone": "55 3240 4440",
 "lat": 19.420379,
 "lon": -99.156619
@@ -2160,6 +2938,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
 "website": "https://bellaaurora.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/bella-aurora"
+}
+],
 "phone": "55 8790 6824",
 "lat": 19.421514,
 "lon": -99.167279
@@ -2189,6 +2973,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://brutalbrutal.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "OpenTable",
+"url": "https://www.opentable.ie/r/brutal-ciudad-de-mexico"
+}
+],
 "phone": "56 2598 1020"
 },
 {
@@ -2217,6 +3011,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@bullamx",
 "website": "https://bulla.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "OpenTable",
+"url": "https://www.opentable.com.mx/r/bulla-ciudad-de-mexico"
+}
+],
 "phone": "55 1458 1322",
 "lat": 19.417158,
 "lon": -99.175295
@@ -2242,7 +3046,13 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "awards": "Time Out Best 2025",
 "acclaim": 70,
 "ticket": "400 a 1,000",
-"ticketMid": 700
+"ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+]
 },
 {
 "id": "cx-campobaja",
@@ -2270,6 +3080,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://campobaja.com.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/campobaja"
+}
+],
 "phone": "55 7091 5660",
 "lat": 19.419979,
 "lon": -99.158226
@@ -2296,6 +3112,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://caracoldemar.com.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/caracol-de-mar"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 5949 8304",
 "lat": 19.408975,
 "lon": -99.173509
@@ -2323,6 +3149,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Menos de 400",
 "ticketMid": 300,
 "instagram": "@carinito.tacos",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/carinito-tacos"
+}
+],
 "lat": 19.417396,
 "lon": -99.156734
 },
@@ -2348,6 +3180,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 77,
 "ticket": "Menos de 400",
 "ticketMid": 300,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/castacan"
+}
+],
 "phone": "55 9357 0596",
 "lat": 19.420056,
 "lon": -99.17446
@@ -2375,6 +3213,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@ccastellanomx",
 "website": "https://centrocastellano.com.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "lat": 19.430995,
 "lon": -99.13987
 },
@@ -2402,6 +3246,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.435194,
 "lon": -99.132596
 },
@@ -2428,7 +3278,13 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "awards": "Time Out Best 2025",
 "acclaim": 70,
 "ticket": "1,000 a 2,000",
-"ticketMid": 1500
+"ticketMid": 1500,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+]
 },
 {
 "id": "cx-chui",
@@ -2453,7 +3309,13 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "awards": "Time Out Best 2025",
 "acclaim": 70,
 "ticket": "400 a 1,000",
-"ticketMid": 700
+"ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+]
 },
 {
 "id": "cx-comal-oculto",
@@ -2479,6 +3341,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 83,
 "ticket": "Menos de 400",
 "ticketMid": 300,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/comal-oculto"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 8988 2557",
 "lat": 19.413681,
 "lon": -99.183299
@@ -2508,6 +3380,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://comedorjacinta.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/comedor-jacinta"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 5086 6965",
 "lat": 19.42998,
 "lon": -99.196139
@@ -2537,6 +3419,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@dantebrasayfuego",
 "website": "https://dantebrasayfuego.com",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "OpenTable",
+"url": "https://www.opentable.com.mx/r/dante-ciudad-de-mexico"
+}
+],
 "phone": "55 2120 5007",
 "lat": 19.430467,
 "lon": -99.200014
@@ -2566,6 +3458,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@restelbajio",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "lat": 19.462383,
 "lon": -99.177541
 },
@@ -2593,6 +3491,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@restaurante.elcardenal",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "lat": 19.433703,
 "lon": -99.135236
 },
@@ -2617,6 +3521,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@el_mirador_de_chapultepec",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "lat": 19.419824,
 "lon": -99.178858
 },
@@ -2642,6 +3552,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://eltigresilencioso.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/el-tigre-silencioso"
+}
+],
 "phone": "55 9300 3306",
 "lat": 19.419997,
 "lon": -99.159612
@@ -2669,6 +3585,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Menos de 400",
 "ticketMid": 300,
 "website": "https://elvilsito.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/benito-juarez_1994163/restaurante/el-vilsito"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 5536 3060"
 },
 {
@@ -2696,6 +3622,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://entremar.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/entremar"
+}
+],
 "phone": "55 5531 2031",
 "lat": 19.432965,
 "lon": -99.188104
@@ -2724,6 +3656,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://filigrana.com.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/filigrana"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 4398 3137",
 "lat": 19.417455,
 "lon": -99.173948
@@ -2752,6 +3694,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 83,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/fugaz"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "lat": 19.423837,
 "lon": -99.161205
 },
@@ -2777,6 +3729,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.416552,
 "lon": -99.175595
 },
@@ -2804,6 +3762,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://galangathaihouse.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/galanga-thai-house"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 6550 4492",
 "lat": 19.412946,
 "lon": -99.162903
@@ -2833,6 +3801,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.407309,
 "lon": -99.173201
 },
@@ -2859,6 +3833,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "Menos de 400",
 "ticketMid": 300,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "phone": "55 2504 1540",
 "lat": 19.413706,
 "lon": -99.163117
@@ -2887,6 +3867,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
 "instagram": "@havre77",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "lat": 19.425183,
 "lon": -99.160696
 },
@@ -2911,6 +3897,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://hugoelwinebar.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/hugo-1210967"
+}
+],
 "phone": "55 9224 6882",
 "lat": 19.418568,
 "lon": -99.175288
@@ -2939,7 +3931,13 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "awards": "Time Out Best 2025",
 "acclaim": 70,
 "ticket": "400 a 1,000",
-"ticketMid": 700
+"ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+]
 },
 {
 "id": "cx-jowong",
@@ -2967,6 +3965,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://jowong.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/jowong"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "56 2544 9746",
 "lat": 19.41685,
 "lon": -99.177095
@@ -2994,6 +4002,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 2800,
 "instagram": "@killbillsushi",
 "website": "https://killbill.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "OpenTable",
+"url": "https://www.opentable.com.mx/r/kill-bill-ciudad-de-mexico"
+}
+],
 "phone": "55 4759 8736",
 "lat": 19.421935,
 "lon": -99.160734
@@ -3021,6 +4039,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 83,
 "ticket": "Menos de 400",
 "ticketMid": 300,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/la-89"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 3112 6173",
 "lat": 19.420047,
 "lon": -99.158539
@@ -3049,6 +4077,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://labarradefran.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/la-barra-de-fran"
+}
+],
 "phone": "55 5280 6650",
 "lat": 19.430797,
 "lon": -99.200522
@@ -3078,7 +4112,17 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
-"instagram": "@lacabreracdmx"
+"instagram": "@lacabreracdmx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "OpenTable",
+"url": "https://www.opentable.com.mx/r/la-cabrera-ciudad-de-mexico"
+}
+]
 },
 {
 "id": "cx-liona",
@@ -3103,6 +4147,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "Menos de 400",
 "ticketMid": 300,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.427908,
 "lon": -99.154661
 },
@@ -3130,6 +4180,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Menos de 400",
 "ticketMid": 300,
 "website": "https://losconsentidos.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/benito-juarez_1994163/restaurante/los-consentidos-del-barrio"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 1287 5398"
 },
 {
@@ -3155,6 +4215,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@lospanchosrest",
 "website": "https://lospanchos.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "phone": "55 1501 7334",
 "lat": 19.425275,
 "lon": -99.177305
@@ -3183,6 +4249,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
 "website": "https://lotti.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/lotti"
+}
+],
 "phone": "55 7923 6534"
 },
 {
@@ -3207,6 +4279,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.41685,
 "lon": -99.177095
 },
@@ -3235,6 +4313,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.416611,
 "lon": -99.173618
 },
@@ -3262,6 +4346,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://malixresto.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/malix"
+}
+],
 "phone": "55 2875 1825",
 "lat": 19.432272,
 "lon": -99.190237
@@ -3290,6 +4380,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://martinez.rest",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/martinez"
+}
+],
 "phone": "55 9355 0017",
 "lat": 19.423088,
 "lon": -99.158726
@@ -3320,6 +4416,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://merotoro.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/merotoro"
+}
+],
 "lat": 19.409691,
 "lon": -99.16932
 },
@@ -3347,6 +4449,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@micompachava",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "lat": 19.41523,
 "lon": -99.162203
 },
@@ -3372,6 +4480,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.429272,
 "lon": -99.193543
 },
@@ -3401,6 +4515,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Menos de 400",
 "ticketMid": 300,
 "website": "https://pujol.com.mx/molino-el-pujol",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/molino-el-pujol"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 4386 2283",
 "lat": 19.407662,
 "lon": -99.17702
@@ -3429,6 +4553,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.423762,
 "lon": -99.169501
 },
@@ -3456,6 +4586,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.410258,
 "lon": -99.17079
 },
@@ -3484,6 +4620,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.426236,
 "lon": -99.17054
 },
@@ -3513,6 +4655,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.417382,
 "lon": -99.163238
 },
@@ -3540,6 +4688,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Menos de 400",
 "ticketMid": 300,
 "instagram": "@ricostacostoluca_",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/ricos-tacos-toluca"
+}
+],
 "phone": "722 474 7771",
 "lat": 19.429764,
 "lon": -99.142591
@@ -3568,6 +4722,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Menos de 400",
 "ticketMid": 300,
 "website": "https://siempresiembra.com.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/siembra-tortilleria"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 7875 0411",
 "lat": 19.436807,
 "lon": -99.184613
@@ -3594,6 +4758,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 70,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Time Out México",
+"url": "https://www.timeoutmexico.mx/ciudad-de-mexico/restaurantes/mejores-restaurantes-cdmx-best-2025"
+}
+],
 "lat": 19.418798,
 "lon": -99.175277
 },
@@ -3619,6 +4789,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 83,
 "ticket": "Menos de 400",
 "ticketMid": 300,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/tlalpan_2003036/restaurante/tacos-charly"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "56 2133 1129"
 },
 {
@@ -3645,6 +4825,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 79,
 "ticket": "Menos de 400",
 "ticketMid": 300,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/tacos-de-canasta-los-especiales"
+}
+],
 "phone": "55 4929 0816",
 "lat": 19.433133,
 "lon": -99.134471
@@ -3674,6 +4860,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Menos de 400",
 "ticketMid": 300,
 "website": "https://tacosdelvalle.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/tacos-del-valle"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "lat": 19.417917,
 "lon": -99.160612
 },
@@ -3699,6 +4895,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 79,
 "ticket": "Menos de 400",
 "ticketMid": 300,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/tacos-hola-el-guero"
+}
+],
 "phone": "56 1866 8923",
 "lat": 19.411603,
 "lon": -99.171471
@@ -3726,6 +4928,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 83,
 "ticket": "Menos de 400",
 "ticketMid": 300,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/tacos-los-alexis"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "lat": 19.413355,
 "lon": -99.157084
 },
@@ -3753,6 +4965,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Menos de 400",
 "ticketMid": 300,
 "website": "https://el-califa-de-leon.shop",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-el-califa-de-leon"
+},
+{
+"outlet": "N+",
+"url": "https://www.nmas.com.mx/ciudad-de-mexico/califa-leon-pierde-estrella-michelin-2026-que-taqueria-cdmx-ocupo-lugar-donde-esta-la-once-mil/"
+}
+],
 "phone": "55 5566 7859",
 "lat": 19.441002,
 "lon": -99.15913
@@ -3779,6 +5001,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 77,
 "ticket": "Menos de 400",
 "ticketMid": 300,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-el-gran-abanico"
+}
+],
 "phone": "55 8078 1884",
 "lat": 19.414696,
 "lon": -99.130085
@@ -3806,6 +5034,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Menos de 400",
 "ticketMid": 300,
 "website": "https://taqueriaeljarocho.com.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-el-jarocho"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 5574 5303",
 "lat": 19.411237,
 "lon": -99.165982
@@ -3831,7 +5069,13 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "awards": "Michelin 2026 · Seleccionado",
 "acclaim": 77,
 "ticket": "Menos de 400",
-"ticketMid": 300
+"ticketMid": 300,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-el-paisa-1212979"
+}
+]
 },
 {
 "id": "cx-taqueria-los-cocuyos",
@@ -3856,6 +5100,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 85,
 "ticket": "Menos de 400",
 "ticketMid": 300,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-los-cocuyos"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 5518 4231",
 "lat": 19.430552,
 "lon": -99.138745
@@ -3882,6 +5136,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Menos de 400",
 "ticketMid": 300,
 "website": "https://losmilanesos.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/alvaro-obregon_2003790/restaurante/taqueria-los-milanesos"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 1520 2208"
 },
 {
@@ -3907,6 +5171,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Menos de 400",
 "ticketMid": 300,
 "website": "https://los-parados.com",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/taqueria-los-parados"
+}
+],
 "phone": "55 8596 0191",
 "lat": 19.405966,
 "lon": -99.161179
@@ -3933,6 +5203,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 700,
 "instagram": "@salontenampa",
 "website": "https://salontenampa.com.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+}
+],
 "lat": 19.440867,
 "lon": -99.137781
 },
@@ -3962,6 +5238,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "instagram": "@thelamb___",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "OpenTable",
+"url": "https://www.opentable.ie/r/the-lamb-ciudad-de-mexico"
+}
+],
 "lat": 19.419061,
 "lon": -99.159644
 },
@@ -3991,6 +5277,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@torredecastillamx",
 "website": "https://grupocastellano.com.mx",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "OpenTable",
+"url": "https://www.opentable.ie/r/torre-de-castilla-ciudad-de-mexico"
+}
+],
 "phone": "55 5281 0906",
 "lat": 19.433183,
 "lon": -99.207001
@@ -4022,6 +5318,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "400 a 1,000",
 "ticketMid": 700,
 "website": "https://demar.rest",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/ultramarinos-demar"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 6481 5022",
 "lat": 19.423426,
 "lon": -99.158565
@@ -4051,6 +5357,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 83,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/vigneron"
+},
+{
+"outlet": "Wikipedia",
+"url": "https://en.wikipedia.org/wiki/List_of_Michelin_Bib_Gourmand_restaurants_in_Mexico"
+}
+],
 "phone": "55 5929 9548",
 "lat": 19.414651,
 "lon": -99.160335
@@ -4078,6 +5394,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticket": "Más de 2,000",
 "ticketMid": 2800,
 "website": "https://xunarestaurante.com.mx",
+"sources": [
+{
+"outlet": "Guía Michelin",
+"url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/xuna"
+}
+],
 "phone": "55 9459 5020",
 "lat": 19.417805,
 "lon": -99.167534
@@ -4106,6 +5428,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "ticketMid": 1500,
 "instagram": "@zagalarestaurante",
 "website": "https://zagalarestaurante.com",
+"sources": [
+{
+"outlet": "Chilango",
+"url": "https://www.chilango.com/comida-y-tragos/donde-comer-en-cdmx-conoce-los-restaurantes-mas-top-del-2026-segun-la-guia-mexico-gastronomico/"
+},
+{
+"outlet": "OpenTable",
+"url": "https://www.opentable.com.mx/r/zagala-ciudad-de-mexico"
+}
+],
 "phone": "55 5520 8726",
 "lat": 19.420302,
 "lon": -99.211134
@@ -4135,6 +5467,16 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 68,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Mex Best",
+"url": "https://mex-best.mx/gastronomia/2026/05/22/6-nuevos-restaurantes-cdmx-2026/"
+},
+{
+"outlet": "Life and Style",
+"url": "https://lifeandstyle.expansion.mx/viajes-y-gourmet/2026/07/08/donde-comer-este-fin-de-semana-en-la-ciudad-de-mexico"
+}
+],
 "lat": 19.423205,
 "lon": -99.159932
 },
@@ -4156,7 +5498,13 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "recognition": "Prensa · aperturas",
 "acclaim": 68,
 "ticket": "Menos de 400",
-"ticketMid": 300
+"ticketMid": 300,
+"sources": [
+{
+"outlet": "Panorama",
+"url": "https://www.panoramaweb.com.mx/panoramasocial/2026/8/20/nuevos-hot-spots-en-cdmx-restaurantes-bares-y-cafes-para-conocer-49007.html"
+}
+]
 },
 {
 "id": "cx-barrita-de-sushi",
@@ -4177,6 +5525,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 68,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "The Happening",
+"url": "https://thehappening.com/quieres-conocer-nuevos-restaurantes-aqui-estan-los-hotspots-de-octubre-2026/"
+}
+],
 "lat": 19.4222,
 "lon": -99.160808
 },
@@ -4200,6 +5554,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 68,
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
+"sources": [
+{
+"outlet": "The Happening",
+"url": "https://thehappening.com/los-nuevos-hotspots-de-abril-2026-en-cdmx/"
+}
+],
 "lat": 19.43018,
 "lon": -99.198827
 },
@@ -4226,7 +5586,13 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "recognition": "Prensa · aperturas",
 "acclaim": 68,
 "ticket": "400 a 1,000",
-"ticketMid": 700
+"ticketMid": 700,
+"sources": [
+{
+"outlet": "Mex Best",
+"url": "https://mex-best.mx/gastronomia/2026/05/22/6-nuevos-restaurantes-cdmx-2026/"
+}
+]
 },
 {
 "id": "cx-cursi",
@@ -4248,6 +5614,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 68,
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
+"sources": [
+{
+"outlet": "The Happening",
+"url": "https://thehappening.com/los-nuevos-hotspots-de-abril-2026-en-cdmx/"
+}
+],
 "lat": 19.417662,
 "lon": -99.157799
 },
@@ -4270,7 +5642,13 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "recognition": "Prensa · aperturas",
 "acclaim": 68,
 "ticket": "Menos de 400",
-"ticketMid": 300
+"ticketMid": 300,
+"sources": [
+{
+"outlet": "The Happening",
+"url": "https://thehappening.com/los-nuevos-hotspots-de-abril-2026-en-cdmx/"
+}
+]
 },
 {
 "id": "cx-el-maldito-de-jalisco",
@@ -4295,6 +5673,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 68,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "The Happening",
+"url": "https://thehappening.com/los-nuevos-hotspots-de-abril-2026-en-cdmx/"
+}
+],
 "lat": 19.428034,
 "lon": -99.155352
 },
@@ -4320,6 +5704,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 68,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "Mex Best",
+"url": "https://mex-best.mx/gastronomia/2026/05/22/6-nuevos-restaurantes-cdmx-2026/"
+}
+],
 "lat": 19.409354,
 "lon": -99.176152
 },
@@ -4341,7 +5731,13 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "recognition": "Prensa · aperturas",
 "acclaim": 68,
 "ticket": "1,000 a 2,000",
-"ticketMid": 1500
+"ticketMid": 1500,
+"sources": [
+{
+"outlet": "The Happening",
+"url": "https://thehappening.com/quieres-conocer-nuevos-restaurantes-aqui-estan-los-hotspots-de-octubre-2026/"
+}
+]
 },
 {
 "id": "cx-la-cava-de-la-docena",
@@ -4362,6 +5758,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 68,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "The Happening",
+"url": "https://thehappening.com/quieres-conocer-nuevos-restaurantes-aqui-estan-los-hotspots-de-octubre-2026/"
+}
+],
 "lat": 19.419363,
 "lon": -99.155672
 },
@@ -4388,6 +5790,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 68,
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
+"sources": [
+{
+"outlet": "Mex Best",
+"url": "https://mex-best.mx/gastronomia/2026/05/22/6-nuevos-restaurantes-cdmx-2026/"
+}
+],
 "lat": 19.419979,
 "lon": -99.158226
 },
@@ -4414,6 +5822,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 68,
 "ticket": "Más de 2,000",
 "ticketMid": 2800,
+"sources": [
+{
+"outlet": "Mex Best",
+"url": "https://mex-best.mx/gastronomia/2026/05/22/6-nuevos-restaurantes-cdmx-2026/"
+}
+],
 "lat": 19.419876,
 "lon": -99.159299
 },
@@ -4437,6 +5851,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 68,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "The Happening",
+"url": "https://thehappening.com/los-nuevos-hotspots-de-abril-2026-en-cdmx/"
+}
+],
 "lat": 19.428034,
 "lon": -99.155352
 },
@@ -4461,7 +5881,13 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "recognition": "Prensa · aperturas",
 "acclaim": 68,
 "ticket": "400 a 1,000",
-"ticketMid": 700
+"ticketMid": 700,
+"sources": [
+{
+"outlet": "The Happening",
+"url": "https://thehappening.com/quieres-conocer-nuevos-restaurantes-aqui-estan-los-hotspots-de-octubre-2026/"
+}
+]
 },
 {
 "id": "cx-mistral",
@@ -4485,6 +5911,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 68,
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
+"sources": [
+{
+"outlet": "The Happening",
+"url": "https://thehappening.com/quieres-conocer-nuevos-restaurantes-aqui-estan-los-hotspots-de-octubre-2026/"
+}
+],
 "lat": 19.420102,
 "lon": -99.17507
 },
@@ -4510,6 +5942,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 68,
 "ticket": "1,000 a 2,000",
 "ticketMid": 1500,
+"sources": [
+{
+"outlet": "Mex Best",
+"url": "https://mex-best.mx/gastronomia/2026/05/22/6-nuevos-restaurantes-cdmx-2026/"
+}
+],
 "lat": 19.422846,
 "lon": -99.173534
 },
@@ -4536,6 +5974,12 @@ const RAW: Omit<Place, 'photo' | 'openInfo'>[] = [
 "acclaim": 68,
 "ticket": "400 a 1,000",
 "ticketMid": 700,
+"sources": [
+{
+"outlet": "The Happening",
+"url": "https://thehappening.com/los-nuevos-hotspots-de-abril-2026-en-cdmx/"
+}
+],
 "lat": 19.427301,
 "lon": -99.160464
 }
