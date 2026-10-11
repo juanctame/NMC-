@@ -116,7 +116,7 @@ Trayectoria), and **awards**.
   Groups the guide doesn't name are described by their flagship ("Rosetta
   family") rather than given an invented company name.
 - **The Food Passport** (`src/screens/Passport.tsx`, `src/data/youProfile.ts`) —
-  the You tab is one passport booklet, built from where you ate (no post grid,
+  the You tab is one passport booklet in CRTQ's sticker stock (sun-yellow cover with the apple mascot, yellow spine and header bands, hard offset shadows, paper grain), built from where you ate (no post grid,
   no follower counts for diners). Every page shares the same stock — stitched
   binding, guilloché print, emblem watermark, the document number perforated
   through every page, a running header and a page number — and you swipe

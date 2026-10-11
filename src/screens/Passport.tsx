@@ -46,6 +46,8 @@ import { PalateRadar } from '../components/PalateRadar';
 import { Monogram } from '../components/Monogram';
 import { PapelPicado, MOTIF_GLYPH } from '../components/PapelPicado';
 import { PlusIcon } from '../components/icons';
+import { Grain } from '../components/Grain';
+import { BRAND } from '../assets';
 import { ScreenIn } from '../components/Anim';
 
 type Page = 'index' | 'visas' | 'stamps' | 'bio' | 'notes';
@@ -80,7 +82,7 @@ function Chevron({ color = C.inkBlack, dir = 'right' }: { color?: string; dir?: 
 }
 
 /** Guilloché — the interlaced security print behind a data page. */
-function Guilloche({ width, height, color = C.sun200 }: { width: number; height: number; color?: string }) {
+function Guilloche({ width, height, color = C.sun200, opacity = 0.55 }: { width: number; height: number; color?: string; opacity?: number }) {
   const paths = useMemo(() => {
     const out: string[] = [];
     const bands = Math.ceil(height / 28);
@@ -96,7 +98,7 @@ function Guilloche({ width, height, color = C.sun200 }: { width: number; height:
   }, [width, height]);
   if (width <= 0) return null;
   return (
-    <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, opacity: 0.55 }}>
+    <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, opacity }}>
       <Svg width={width} height={height}>
         {paths.map((d, i) => (
           <Path key={i} d={d} stroke={color} strokeWidth={1} fill="none" />
@@ -227,7 +229,7 @@ function VisasPage({ sets, pending }: { sets: AlbumSet[]; pending: Place[] }) {
                 </View>
                 {s.next ? (
                   <Pressable onPress={() => openPlace(s.next!.id)} accessibilityLabel={`Next entry: ${s.next.name}`} style={{ alignSelf: 'flex-start', minHeight: 32, flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingHorizontal: 10, backgroundColor: C.paper0, maxWidth: '100%' }}>
-                    <Mono s={9} c={C.inkMuted}>
+                    <Mono s={9} c={C.inkMuted} numberOfLines={1} style={{ flexShrink: 0 }}>
                       next entry
                     </Mono>
                     <Banner s={9.5} tk={0.05} c={C.inkDeep} numberOfLines={1} style={{ flexShrink: 1 }}>
@@ -740,10 +742,25 @@ const NOTES_PAGE = PAGES.findIndex((p) => p.key === 'notes');
 /** Survives leaving the tab (e.g. opening a restaurant from a page) for the session. */
 let lastPage = 0;
 
+/** A full-height page with the hard sticker shadow (StickerView sizes to content). */
+function PageSticker({ children }: { children: React.ReactNode }) {
+  return (
+    <View style={{ flex: 1 }}>
+      <View pointerEvents="none" style={{ position: 'absolute', left: 6, top: 6, right: -6, bottom: -6, backgroundColor: C.inkBlack, opacity: 0.85 }} />
+      {children}
+    </View>
+  );
+}
+
+/** The page edge every booklet page sits in: room for the hard sticker shadow. */
+const PAGE_PAD = { paddingLeft: 12, paddingRight: 18, paddingTop: 6, paddingBottom: 12 } as const;
+
 /**
- * One page of the passport. Every page shares the same stock: a stitched
- * binding, the guilloché print (tinted per page), the emblem watermark, the
- * perforated document number, a running header and the page number.
+ * One page of the passport, in CRTQ's sticker stock: thick black outline and a
+ * hard offset shadow, a sun-yellow spine (vermillion for the press), the
+ * header band with the mascot, paper grain over a light guilloché, the mascot
+ * watermark, the document number perforated through every page, and the page
+ * number on a round sticker.
  */
 function PassportPage({
   w,
@@ -772,104 +789,155 @@ function PassportPage({
 }) {
   const [box, setBox] = useState({ w: 0, h: 0 });
   const [innerW, setInnerW] = useState(0);
+  const spine = press ? C.ink400 : C.sun400;
   return (
-    <View style={{ width: w, height: h, paddingHorizontal: 12, paddingTop: 6, paddingBottom: 6 }}>
-      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
-        {/* the binding, stitched */}
-        <View style={{ width: 14, backgroundColor: C.paper100, borderRightWidth: 1.5, borderRightColor: C.paper300 }}>
-          <View style={{ position: 'absolute', top: 10, bottom: 10, left: 6, borderLeftWidth: 1.5, borderLeftColor: C.ink200, borderStyle: 'dashed' }} />
-        </View>
-        <View style={{ flex: 1 }} onLayout={(e) => setBox({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}>
-          <Guilloche width={box.w} height={box.h} color={wash} />
-          {/* the emblem watermark */}
-          <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', opacity: 0.05 }}>
-            <Emblem press={press} size={Math.max(60, Math.min(230, box.w * 0.72))} color={C.inkBlack} />
+    <View style={{ width: w, height: h, ...PAGE_PAD }}>
+      <PageSticker>
+        <View style={{ flex: 1, flexDirection: 'row', backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
+          {/* the spine, stitched */}
+          <View style={{ width: 14, backgroundColor: spine, borderRightWidth: 2, borderRightColor: C.inkBlack }}>
+            <View style={{ position: 'absolute', top: 8, bottom: 8, left: 5, borderLeftWidth: 2, borderLeftColor: C.inkBlack, borderStyle: 'dashed' }} />
           </View>
-          {/* the document number, perforated through every page */}
-          <View pointerEvents="none" style={{ position: 'absolute', right: 4, top: 44, alignItems: 'center', opacity: 0.4 }}>
-            {docNo.split('').map((d, i) => (
-              <Mono key={i} s={8} c={C.inkSoft} style={{ lineHeight: 10 }}>
-                {d}
-              </Mono>
-            ))}
-          </View>
-          {/* running header */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingTop: 9, paddingBottom: 7, borderBottomWidth: 1.5, borderBottomColor: C.paper300 }}>
-            <Mono s={8} c={C.inkMuted} numberOfLines={1} style={{ flexShrink: 1, letterSpacing: 1 }}>
-              {header}
-            </Mono>
-            <Mono s={8.5} c={C.inkMuted}>
-              Nº {docNo}
-            </Mono>
-          </View>
-          <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 14, paddingRight: 18, paddingTop: 12, paddingBottom: 16 }}>
-            {title ? (
-              <View style={{ marginBottom: 12 }}>
-                <Display s={22} c={C.inkDeep}>
-                  {title}
-                </Display>
-                <Mono s={9} c={C.inkMuted} style={{ marginTop: 2 }}>
-                  {sub}
+          <View style={{ flex: 1 }} onLayout={(e) => setBox({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}>
+            <Guilloche width={box.w} height={box.h} color={wash} opacity={0.4} />
+            <Grain opacity={0.05} />
+            {/* the mascot watermark */}
+            <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', opacity: 0.07 }}>
+              <Image source={BRAND.logo} style={{ width: Math.max(60, Math.min(250, box.w * 0.74)), height: Math.max(60, Math.min(250, box.w * 0.74)) }} contentFit="contain" />
+            </View>
+            {/* the document number, perforated through every page */}
+            <View pointerEvents="none" style={{ position: 'absolute', right: 4, top: 52, alignItems: 'center', opacity: 0.4 }}>
+              {docNo.split('').map((d, i) => (
+                <Mono key={i} s={8} c={C.inkSoft} style={{ lineHeight: 10 }}>
+                  {d}
                 </Mono>
+              ))}
+            </View>
+            {/* the header band */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingLeft: 8, paddingRight: 12, paddingVertical: 6, backgroundColor: spine, borderBottomWidth: 2, borderBottomColor: C.inkBlack }}>
+              <Image source={BRAND.logo} style={{ width: 26, height: 26, transform: [{ rotate: '-8deg' }] }} contentFit="contain" />
+              <Banner s={8.5} tk={0.16} c={press ? C.paper0 : C.inkDeep} numberOfLines={1} style={{ flex: 1 }}>
+                {header}
+              </Banner>
+              <Mono s={9} c={press ? C.paper0 : C.inkDeep}>
+                Nº {docNo}
+              </Mono>
+            </View>
+            <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 14, paddingRight: 18, paddingTop: 14, paddingBottom: 16 }}>
+              {title ? (
+                <View style={{ marginBottom: 14, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+                  <Display s={26} c={C.inkDeep}>
+                    {title}
+                  </Display>
+                  {sub ? (
+                    <View style={{ backgroundColor: C.sun100, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 9, transform: [{ rotate: '-2deg' }] }}>
+                      <Banner s={8} tk={0.08} c={C.inkDeep}>
+                        {sub}
+                      </Banner>
+                    </View>
+                  ) : null}
+                </View>
+              ) : null}
+              <View onLayout={(e) => setInnerW(e.nativeEvent.layout.width)}>{children(innerW)}</View>
+            </ScrollView>
+            {footer}
+            {/* the page number, on a round sticker */}
+            <View style={{ alignItems: 'center', paddingVertical: 5, borderTopWidth: 2, borderTopColor: C.inkBlack, backgroundColor: C.paper0 }}>
+              <View style={{ width: 26, height: 26, borderRadius: 13, backgroundColor: spine, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+                <Display s={11} c={press ? C.paper0 : C.inkDeep}>
+                  {no}
+                </Display>
               </View>
-            ) : null}
-            <View onLayout={(e) => setInnerW(e.nativeEvent.layout.width)}>{children(innerW)}</View>
-          </ScrollView>
-          {footer}
-          <View style={{ alignItems: 'center', paddingVertical: 4, borderTopWidth: 1.5, borderTopColor: C.paper300, backgroundColor: C.paper0 }}>
-            <Mono s={9} c={C.inkMuted}>
-              — {no} —
-            </Mono>
+            </View>
           </View>
         </View>
-      </View>
+      </PageSticker>
     </View>
   );
 }
 
-function CoverPage({ w, h, press, city, onOpen, onShare }: { w: number; h: number; press: boolean; city: string; onOpen: () => void; onShare: () => void }) {
-  const gold = C.sun400;
+/** The cover: a CRTQ sticker — sun-yellow stock (vermillion for the press), the mascot, a slanted title band. */
+function CoverPage({ w, h, press, city, joined, onOpen, onShare }: { w: number; h: number; press: boolean; city: string; joined: string; onOpen: () => void; onShare: () => void }) {
+  const stock = press ? C.ink400 : C.sun400;
+  const band = press ? C.inkDeep : C.ink400;
+  const ink = press ? C.paper0 : C.inkDeep;
   return (
-    <View style={{ width: w, height: h, paddingHorizontal: 12, paddingTop: 6, paddingBottom: 6 }}>
-      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: press ? C.inkDeep : C.ink700, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
-        <View style={{ width: 14, backgroundColor: press ? C.inkBlack : C.ink800, borderRightWidth: 1.5, borderRightColor: C.inkBlack }} />
-        <Pressable onPress={onOpen} accessibilityLabel="Open passport" style={{ flex: 1, alignItems: 'center', justifyContent: 'space-between', paddingVertical: 30, paddingHorizontal: 16 }}>
-          <View style={{ alignItems: 'center', gap: 5 }}>
-            <Banner s={11} tk={0.4} c={gold}>
-              CRTQ
+    <View style={{ width: w, height: h, ...PAGE_PAD }}>
+      <PageSticker>
+        <View style={{ flex: 1, flexDirection: 'row', backgroundColor: stock, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
+          <Grain opacity={0.09} />
+          {/* the spine, stitched */}
+          <View style={{ width: 16, backgroundColor: band, borderRightWidth: 2.5, borderRightColor: C.inkBlack }}>
+            <View style={{ position: 'absolute', top: 10, bottom: 10, left: 6, borderLeftWidth: 2, borderLeftColor: C.paper0, borderStyle: 'dashed' }} />
+          </View>
+          <Pressable onPress={onOpen} accessibilityLabel="Open passport" style={{ flex: 1, alignItems: 'center', justifyContent: 'space-between', paddingTop: 22, paddingBottom: 20 }}>
+            <View style={{ alignItems: 'center', gap: 2 }}>
+              <Display s={46} c={ink}>
+                CRTQ
+              </Display>
+              <Banner s={9.5} tk={0.3} c={ink}>
+                {press ? 'CRITICS · PRESS CORPS' : 'TASTE TRAVELLERS'}
+              </Banner>
+            </View>
+
+            {/* the mascot, as a sticker */}
+            <StickerView offset="lg" radius={999} style={{ transform: [{ rotate: '-6deg' }] }}>
+              <View style={{ width: 172, height: 172, borderRadius: 86, backgroundColor: C.paper0, borderWidth: 3, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                <Image source={BRAND.logo} style={{ width: 164, height: 164 }} contentFit="contain" />
+              </View>
+            </StickerView>
+
+            {/* the slanted title band */}
+            <View style={{ alignSelf: 'stretch', marginHorizontal: -8, backgroundColor: band, borderTopWidth: 2.5, borderBottomWidth: 2.5, borderColor: C.inkBlack, paddingVertical: 10, alignItems: 'center', transform: [{ rotate: '-3deg' }] }}>
+              <Display s={press ? 20 : 26} c={C.paper0}>
+                {press ? 'PASAPORTE DE PRENSA' : 'PASAPORTE'}
+              </Display>
+              <Display s={press ? 11 : 15} c={press ? C.sun300 : C.sun300}>
+                {press ? 'PRESS PASSPORT' : 'GASTRONÓMICO'}
+              </Display>
+              {!press ? (
+                <Banner s={8.5} tk={0.3} c={C.ink100} style={{ marginTop: 3 }}>
+                  FOOD PASSPORT
+                </Banner>
+              ) : null}
+            </View>
+
+            <View style={{ alignItems: 'center', gap: 8 }}>
+              {/* the e-passport chip mark */}
+              <Svg width={34} height={22} viewBox="0 0 34 22">
+                <Path d="M3 1h28a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2z" stroke={ink} strokeWidth={1.8} fill="none" />
+                <Circle cx={17} cy={11} r={5} stroke={ink} strokeWidth={1.8} fill="none" />
+                <Line x1={1} y1={11} x2={12} y2={11} stroke={ink} strokeWidth={1.8} />
+                <Line x1={22} y1={11} x2={33} y2={11} stroke={ink} strokeWidth={1.8} />
+              </Svg>
+              <Mono s={9} c={ink}>
+                tap or swipe to open →
+              </Mono>
+            </View>
+          </Pressable>
+
+          {/* stickers slapped on the cover */}
+          <View pointerEvents="none" style={{ position: 'absolute', top: 104, left: 30, width: 58, height: 58, borderRadius: 29, backgroundColor: C.stampGreen, borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-14deg' }] }}>
+            <Banner s={10} tk={0.08} c={C.paper0}>
+              {city.toUpperCase().slice(0, 6)}
             </Banner>
-            <Mono s={9} c={C.sun300} style={{ letterSpacing: 2 }}>
-              {city.toUpperCase()}
+            <Mono s={7} c={C.greenFg}>
+              ★ ★ ★
             </Mono>
           </View>
-          <View style={{ alignItems: 'center', gap: 20 }}>
-            <SerifDisplay s={25} c={gold} style={{ letterSpacing: 3, textAlign: 'center', lineHeight: 30 }}>
-              {press ? 'PASAPORTE\nDE PRENSA' : 'PASAPORTE\nGASTRONÓMICO'}
-            </SerifDisplay>
-            <Emblem press={press} size={124} />
-            <Banner s={10} tk={0.34} c={press ? C.sun300 : C.ink100}>
-              {press ? 'PRESS PASSPORT' : 'FOOD PASSPORT'}
+          <View pointerEvents="none" style={{ position: 'absolute', top: 258, right: 18, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 4, paddingHorizontal: 8, transform: [{ rotate: '9deg' }] }}>
+            <Banner s={8} tk={0.12} c={C.ink400}>
+              EST. {joined}
             </Banner>
           </View>
-          <View style={{ alignItems: 'center', gap: 10 }}>
-            {/* the e-passport chip mark */}
-            <Svg width={34} height={22} viewBox="0 0 34 22">
-              <Path d="M3 1h28a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2z" stroke={gold} strokeWidth={1.6} fill="none" />
-              <Circle cx={17} cy={11} r={5} stroke={gold} strokeWidth={1.6} fill="none" />
-              <Line x1={1} y1={11} x2={12} y2={11} stroke={gold} strokeWidth={1.6} />
-              <Line x1={22} y1={11} x2={33} y2={11} stroke={gold} strokeWidth={1.6} />
+
+          <Pressable onPress={onShare} accessibilityLabel="Share your passport" hitSlop={4} style={{ position: 'absolute', top: 12, right: 12, width: 44, height: 44, borderRadius: 22, borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.paper0, alignItems: 'center', justifyContent: 'center' }}>
+            <Svg width={18} height={18} viewBox="0 0 24 24">
+              <Path d="M12 15V3M7 8l5-5 5 5M5 13v7h14v-7" stroke={C.ink400} strokeWidth={2.4} fill="none" strokeLinecap="round" strokeLinejoin="round" />
             </Svg>
-            <Mono s={9} c={press ? C.sun300 : C.ink100}>
-              tap or swipe to open →
-            </Mono>
-          </View>
-        </Pressable>
-        <Pressable onPress={onShare} accessibilityLabel="Share your passport" hitSlop={4} style={{ position: 'absolute', top: 12, right: 12, width: 44, height: 44, borderRadius: 22, borderWidth: 2, borderColor: gold, alignItems: 'center', justifyContent: 'center' }}>
-          <Svg width={18} height={18} viewBox="0 0 24 24">
-            <Path d="M12 15V3M7 8l5-5 5 5M5 13v7h14v-7" stroke={gold} strokeWidth={2.2} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-          </Svg>
-        </Pressable>
-      </View>
+          </Pressable>
+        </View>
+      </PageSticker>
     </View>
   );
 }
@@ -934,7 +1002,7 @@ export function Passport() {
         { v: String(visas), l: 'VISAS' },
         { v: avg, l: 'PROMEDIO' },
       ];
-  const header = critic ? 'PASAPORTE DE PRENSA · PRESS PASSPORT' : 'PASAPORTE GASTRONÓMICO · FOOD PASSPORT';
+  const header = critic ? 'PASAPORTE DE PRENSA · PRESS' : 'PASAPORTE · FOOD PASSPORT';
 
   // Pages: swipe, or use the page control. The open page is remembered for the session.
   useEffect(() => {
@@ -1067,7 +1135,8 @@ export function Passport() {
       </View>
 
       {/* the holder's record */}
-      <View style={{ marginTop: 18, flexDirection: 'row', borderWidth: 2, borderColor: C.inkBlack, backgroundColor: C.paper0 }}>
+      <View style={{ marginTop: 18 }}>
+      <StickerView offset="sm" style={{ flexDirection: 'row', borderWidth: 2, borderColor: C.inkBlack, backgroundColor: C.sun50 }}>
         {record.map((r, i) => (
           <View key={r.l} style={{ flex: 1, alignItems: 'center', paddingVertical: 7, borderRightWidth: i < record.length - 1 ? 2 : 0, borderColor: C.inkBlack }}>
             <Display s={19} c={C.ink400}>
@@ -1078,6 +1147,7 @@ export function Passport() {
             </Banner>
           </View>
         ))}
+      </StickerView>
       </View>
 
       {/* signature: the holder's manifesto (written on the Observaciones page) */}
@@ -1190,7 +1260,7 @@ export function Passport() {
                 }
               }}
             >
-              <CoverPage w={area.w} h={area.h} press={critic} city={homeCity.name} onOpen={() => goTo(1)} onShare={openTasteCard} />
+              <CoverPage w={area.w} h={area.h} press={critic} city={homeCity.name} joined={me.joined} onOpen={() => goTo(1)} onShare={openTasteCard} />
               {page('data', () => dataPage(), mrz)}
               {page('visas', () => <VisasPage sets={album} pending={pending} />)}
               {page('stamps', (w) => <StampsPage tiles={terr.tiles} visited={terr.visited} elsewhere={terr.elsewhere} ranked={ranked} width={w} />)}
@@ -1203,22 +1273,22 @@ export function Passport() {
 
         {/* the page control */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingTop: 4 }}>
-          <Pressable onPress={() => goTo(idx - 1)} disabled={idx === 0} accessibilityLabel="Previous page" style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 2, borderColor: idx === 0 ? C.paper300 : C.inkBlack, alignItems: 'center', justifyContent: 'center', backgroundColor: C.paper0 }}>
-            <Chevron dir="left" color={idx === 0 ? C.paper300 : C.ink400} />
-          </Pressable>
+          <StickerPressable offset={idx === 0 ? 'none' : 'sm'} radius={999} onPress={() => goTo(idx - 1)} disabled={idx === 0} accessibilityLabel="Previous page" style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 2.5, borderColor: idx === 0 ? C.paper300 : C.inkBlack, alignItems: 'center', justifyContent: 'center', backgroundColor: idx === 0 ? C.paper50 : C.sun400 }}>
+            <Chevron dir="left" color={idx === 0 ? C.paper300 : C.inkDeep} />
+          </StickerPressable>
           <View style={{ flex: 1, alignItems: 'center', gap: 5 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               {PAGES.map((p, i) => (
-                <Pressable key={p.key} onPress={() => goTo(i)} accessibilityLabel={`Page: ${p.name}`} accessibilityState={{ selected: i === idx }} hitSlop={8} style={{ width: i === idx ? 20 : 9, height: 9, borderRadius: 5, backgroundColor: i === idx ? C.ink400 : i === 0 ? C.ink700 : C.paper200, borderWidth: 1.5, borderColor: C.inkBlack }} />
+                <Pressable key={p.key} onPress={() => goTo(i)} accessibilityLabel={`Page: ${p.name}`} accessibilityState={{ selected: i === idx }} hitSlop={8} style={{ width: i === idx ? 24 : 11, height: 11, borderRadius: 6, backgroundColor: i === idx ? C.ink400 : i === 0 ? (critic ? C.ink400 : C.sun400) : C.paper0, borderWidth: 2, borderColor: C.inkBlack }} />
               ))}
             </View>
-            <Mono s={9} c={C.inkMuted} numberOfLines={1}>
+            <Mono s={9.5} c={C.inkDeep} numberOfLines={1}>
               {cur.key === 'cover' ? 'COVER · PORTADA' : cur.key === 'data' ? 'p. 1 · DATA PAGE' : `p. ${cur.no} · ${cur.title}`}
             </Mono>
           </View>
-          <Pressable onPress={() => goTo(idx + 1)} disabled={idx === PAGES.length - 1} accessibilityLabel="Next page" style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 2, borderColor: idx === PAGES.length - 1 ? C.paper300 : C.inkBlack, alignItems: 'center', justifyContent: 'center', backgroundColor: C.paper0 }}>
-            <Chevron dir="right" color={idx === PAGES.length - 1 ? C.paper300 : C.ink400} />
-          </Pressable>
+          <StickerPressable offset={idx === PAGES.length - 1 ? 'none' : 'sm'} radius={999} onPress={() => goTo(idx + 1)} disabled={idx === PAGES.length - 1} accessibilityLabel="Next page" style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 2.5, borderColor: idx === PAGES.length - 1 ? C.paper300 : C.inkBlack, alignItems: 'center', justifyContent: 'center', backgroundColor: idx === PAGES.length - 1 ? C.paper50 : C.sun400 }}>
+            <Chevron dir="right" color={idx === PAGES.length - 1 ? C.paper300 : C.inkDeep} />
+          </StickerPressable>
         </View>
       </View>
     </ScreenIn>
