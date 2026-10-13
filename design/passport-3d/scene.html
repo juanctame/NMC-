@@ -1,0 +1,344 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>html,body{margin:0;background:#000}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"./lib/package/build/three.module.js"}}</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from './lib/package/examples/jsm/environments/RoomEnvironment.js';
+
+// ── CRTQ brand palette (src/theme/tokens.ts) ──────────────────────────────────
+const B = {
+  sun400: 0xf6c90e, sun500: 0xe3b200, sun50: 0xfff7d6,
+  ink400: 0xd8501a, ink700: 0x5e1d07, ink800: 0x3a1104,
+  paper0: 0xfffdf5, paper50: 0xfbf5e5, paper100: 0xf4eacc, paper300: 0xd6c07a,
+  inkBlack: 0x2a1a06, inkDeep: 0x1b1004, green: 0x2f6f4e,
+};
+
+const q = new URLSearchParams(location.search);
+const SCENE = q.get('scene') || 'hero';
+const WIDTH = +(q.get('w') || 2000), HEIGHT = +(q.get('h') || 1500);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.setSize(WIDTH, HEIGHT);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.VSMShadowMap;
+renderer.toneMapping = THREE.NoToneMapping; // keep brand colours exact
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+
+const loader = new THREE.TextureLoader();
+const maxAniso = renderer.capabilities.getMaxAnisotropy();
+const tex = (name, crop = 0) =>
+  new Promise((res) =>
+    loader.load('tex/' + name + '.png', (t) => {
+      t.colorSpace = THREE.SRGBColorSpace;
+      t.anisotropy = maxAniso;
+      if (crop) {
+        // drop the page's printed spine strip — the 3D binding replaces it
+        t.repeat.set(1 - crop, 1);
+        t.offset.set(crop, 0);
+      }
+      res(t);
+    }),
+  );
+
+// ── procedural textures: paper grain, page-block edges ───────────────────────
+function canvasTex(w, h, draw, repeat) {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = maxAniso;
+  if (repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repeat[0], repeat[1]); }
+  return t;
+}
+const hex = (n) => '#' + n.toString(16).padStart(6, '0');
+function grain(base, amt = 14, size = 512) {
+  return canvasTex(size, size, (g, w, h) => {
+    g.fillStyle = hex(base); g.fillRect(0, 0, w, h);
+    const img = g.getImageData(0, 0, w, h);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const n = (Math.random() - 0.5) * amt;
+      img.data[i] += n; img.data[i + 1] += n; img.data[i + 2] += n;
+    }
+    g.putImageData(img, 0, 0);
+  }, [6, 6]);
+}
+const pageEdges = canvasTex(64, 512, (g, w, h) => {
+  g.fillStyle = '#fffdf5'; g.fillRect(0, 0, w, h);
+  for (let y = 0; y < h; y += 4) { g.fillStyle = y % 8 ? '#efe5c4' : '#e3d6a8'; g.fillRect(0, y, w, 1.2); }
+});
+pageEdges.wrapS = pageEdges.wrapT = THREE.RepeatWrapping;
+
+// ── materials ────────────────────────────────────────────────────────────────
+const M = {
+  board: new THREE.MeshStandardMaterial({ roughness: 0.55, metalness: 0.0, map: grain(B.sun400, 10) }),
+  boardPress: new THREE.MeshStandardMaterial({ roughness: 0.55, map: grain(B.ink400, 10) }),
+  boardEdge: new THREE.MeshStandardMaterial({ color: B.inkBlack, roughness: 0.7 }),
+  spine: new THREE.MeshStandardMaterial({ color: B.ink400, roughness: 0.6 }),
+  spinePress: new THREE.MeshStandardMaterial({ color: B.inkDeep, roughness: 0.6 }),
+  pages: new THREE.MeshStandardMaterial({ map: pageEdges, roughness: 0.9 }),
+  paper: new THREE.MeshStandardMaterial({ color: B.paper0, roughness: 0.92 }),
+  thread: new THREE.MeshStandardMaterial({ color: B.inkBlack, roughness: 0.8 }),
+};
+const faceMat = (t) => new THREE.MeshStandardMaterial({ map: t, roughness: 0.82 });
+const coverMat = (t) => new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, metalness: 0.02 });
+
+// ── dimensions (page ratio 346:688 once the printed spine strip is cropped) ──
+const W = 1.0, H = 1.99;            // page
+const WC = 1.04, HC = 2.05;         // cover board
+const TB = 0.016;                   // board thickness
+const TP = 0.075;                   // page block (whole booklet)
+
+const shadowy = (m) => { m.castShadow = true; m.receiveShadow = true; return m; };
+
+/** A box whose +y face carries `top` (BoxGeometry: +x,-x,+y,-y,+z,-z). */
+function slab(w, t, h, top, side = M.boardEdge, bottom = side) {
+  return shadowy(new THREE.Mesh(new THREE.BoxGeometry(w, t, h), [side, side, top, bottom, side, side]));
+}
+
+/** The closed booklet, lying flat, spine along -x. */
+function closedBook(coverTex, press = false) {
+  const g = new THREE.Group();
+  const board = press ? M.boardPress : M.board;
+  const bottom = slab(WC, TB, HC, board, M.boardEdge, board);
+  bottom.position.set(0, TB / 2, 0);
+  g.add(bottom);
+  const block = shadowy(new THREE.Mesh(new THREE.BoxGeometry(W, TP, H), [M.pages, M.pages, M.paper, M.paper, M.pages, M.pages]));
+  block.position.set((WC - W) / 2 - 0.004, TB + TP / 2, 0);
+  g.add(block);
+  const top = slab(WC, TB, HC, coverMat(coverTex), M.boardEdge, board);
+  top.position.set(0, TB * 1.5 + TP, 0);
+  g.add(top);
+  // the rounded spine
+  const r = (TP + TB * 2) / 2;
+  const spine = shadowy(new THREE.Mesh(new THREE.CylinderGeometry(r, r, HC, 32, 1, false, Math.PI, Math.PI), press ? M.spinePress : M.spine));
+  spine.rotation.x = Math.PI / 2;
+  spine.position.set(-WC / 2, r, 0);
+  g.add(spine);
+  return g;
+}
+
+/** Height profile of an open page block: dips into the gutter, rises, flattens with a slight wave. */
+const blockTop = (d) => {
+  const rise = 1 - Math.exp(-d / 0.07);
+  return TB + 0.004 + (TP / 2) * rise + 0.012 * Math.sin((d / W) * Math.PI) * rise;
+};
+
+/** One open half: board, curved page block, and the printed page on top. side = +1 right, -1 left. */
+function openHalf(pageTex, side) {
+  const g = new THREE.Group();
+  const board = slab(WC, TB, HC, M.board, M.boardEdge, M.board);
+  board.position.set(side * WC / 2, TB / 2, 0);
+  g.add(board);
+
+  // page block: extrude the side profile along z
+  const shape = new THREE.Shape();
+  const N = 80;
+  shape.moveTo(0, TB);
+  for (let i = 0; i <= N; i++) { const d = (i / N) * W; shape.lineTo(d, blockTop(d)); }
+  shape.lineTo(W, TB);
+  shape.lineTo(0, TB);
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: H, bevelEnabled: false, steps: 1 });
+  geo.translate(0, 0, -H / 2);
+  const ext = shadowy(new THREE.Mesh(geo, [M.pages, M.pages]));
+  // caps use shape coords as UVs: stretch the line texture across the thin profile
+  ext.material = [new THREE.MeshStandardMaterial({ map: pageEdges.clone(), roughness: 0.9 }), M.pages];
+  ext.material[0].map.repeat.set(4, 12);
+  if (side < 0) ext.scale.x = -1;
+  ext.position.x = side * 0.012;
+  g.add(ext);
+
+  // the printed page, following the block's top
+  const SEG = 120;
+  const pos = [], uv = [], idx = [];
+  for (let i = 0; i <= SEG; i++) {
+    const d = (i / SEG) * W;
+    const y = blockTop(d) + 0.0012;
+    for (const v of [0, 1]) {
+      pos.push(side * (d + 0.012), y, (v - 0.5) * H);
+      uv.push(side > 0 ? d / W : 1 - d / W, 1 - v);
+    }
+  }
+  for (let i = 0; i < SEG; i++) {
+    const a = i * 2, b = a + 1, c = a + 2, e = a + 3;
+    if (side > 0) idx.push(a, b, c, b, e, c); else idx.push(a, c, b, b, c, e);
+  }
+  const pg = new THREE.BufferGeometry();
+  pg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  pg.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  pg.setIndex(idx);
+  pg.computeVertexNormals();
+  const page = shadowy(new THREE.Mesh(pg, faceMat(pageTex)));
+  g.add(page);
+  return g;
+}
+
+/** Stitching down the gutter. */
+function stitches() {
+  const g = new THREE.Group();
+  for (let z = -H / 2 + 0.08; z < H / 2 - 0.05; z += 0.16) {
+    const s = new THREE.Mesh(new THREE.CapsuleGeometry(0.0045, 0.07, 4, 8), M.thread);
+    s.rotation.x = Math.PI / 2;
+    s.position.set(0, TB + 0.006, z);
+    s.castShadow = true;
+    g.add(s);
+  }
+  return g;
+}
+
+/** A round sticker lying on the surface. */
+function sticker(t, r, color = B.paper0) {
+  const side = new THREE.MeshStandardMaterial({ color: B.inkBlack, roughness: 0.7 });
+  const face = new THREE.MeshStandardMaterial({ map: t, color: t ? 0xffffff : color, roughness: 0.6 });
+  const m = shadowy(new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.012, 64), [side, face, side]));
+  return m;
+}
+
+function surface(color, amt = 12) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshStandardMaterial({ roughness: 0.95, map: grain(color, amt) })); // the grain carries the colour
+  m.material.map.repeat.set(30, 30);
+  m.rotation.x = -Math.PI / 2;
+  m.receiveShadow = true;
+  return m;
+}
+
+function lights({ key = [-2.6, 5.2, 2.4], keyI = 1.0, fill = 0.14, hemi = 0.42, bounds = 3.2 } = {}) {
+  scene.add(new THREE.HemisphereLight(0xfff7d6, 0x8c2b0a, hemi));
+  const k = new THREE.DirectionalLight(0xfff1dc, keyI);
+  k.position.set(...key);
+  k.castShadow = true;
+  k.shadow.mapSize.set(4096, 4096);
+  k.shadow.radius = 9;
+  k.shadow.blurSamples = 24;
+  k.shadow.bias = -0.0004;
+  Object.assign(k.shadow.camera, { left: -bounds, right: bounds, top: bounds, bottom: -bounds, near: 0.5, far: 14 });
+  scene.add(k);
+  const f = new THREE.DirectionalLight(0xffe9dc, fill);
+  f.position.set(3, 2.2, -1.5);
+  scene.add(f);
+}
+
+let camera;
+const fontsReady = Promise.all([
+  new FontFace('Roquen', 'url(tex/Roquen.otf)').load(),
+  new FontFace('Megazoid', 'url(tex/Megazoid-Regular.otf)').load(),
+]).then((fs) => fs.forEach((f) => document.fonts.add(f)));
+const img = (src) => new Promise((r) => { const i = new Image(); i.onload = () => r(i); i.src = src; });
+
+/** A sticker face: paper disc + artwork for the cylinder cap. */
+function faceTex(draw) {
+  const t = canvasTex(1024, 1024, draw);
+  return t;
+}
+async function mascotFace() {
+  const logo = await img('tex/logo.png');
+  return faceTex((g, w, h) => {
+    g.fillStyle = '#fffdf5'; g.fillRect(0, 0, w, h);
+    g.drawImage(logo, w * 0.04, h * 0.04, w * 0.92, h * 0.92);
+  });
+}
+async function textFace(bg, fg, lines) {
+  await fontsReady;
+  return faceTex((g, w, h) => {
+    g.fillStyle = bg; g.fillRect(0, 0, w, h);
+    g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle';
+    lines.forEach(([txt, font, y]) => { g.font = font; g.fillText(txt, w / 2, h * y); });
+  });
+}
+async function build() {
+  if (SCENE === 'hero') {
+    scene.background = new THREE.Color(B.ink400);
+    scene.add(surface(B.ink400, 16));
+    lights({ key: [-2.2, 5.5, 2.6] });
+    const [cover, pressCover, logo] = await Promise.all([tex('cover'), tex('press-cover'), tex('logo')]);
+    const book = closedBook(cover);
+    book.rotation.y = 0.32;
+    book.position.set(-0.15, 0, 0.05);
+    scene.add(book);
+    // the press passport, half hidden behind
+    const press = closedBook(pressCover, true);
+    press.rotation.y = -0.38;
+    press.position.set(1.15, 0, -0.75);
+    scene.add(press);
+    const s = sticker(await mascotFace(), 0.42);
+    s.position.set(1.2, 0.006, 1.0);
+    s.rotation.y = 0.35;
+    scene.add(s);
+    const g = sticker(await textFace('#2f6f4e', '#fffdf5', [['CDMX', '220px Roquen', 0.47], ['★ ★ ★', '110px sans-serif', 0.7]]), 0.22);
+    g.position.set(-1.4, 0.006, -0.9);
+    g.rotation.y = 0.5;
+    scene.add(g);
+    const e = sticker(await textFace('#fffdf5', '#d8501a', [['EST.', '170px Roquen', 0.36], ['JUL', '170px Roquen', 0.53], ['2026', '200px Megazoid', 0.72]]), 0.17);
+    e.position.set(0.55, 0.006, 1.32);
+    scene.add(e);
+    camera = new THREE.PerspectiveCamera(30, WIDTH / HEIGHT, 0.1, 100);
+    camera.position.set(-0.6, 5.0, 4.4);
+    camera.lookAt(0.15, 0, 0.05);
+  } else if (SCENE === 'spread') {
+    scene.background = new THREE.Color(B.paper50);
+    scene.add(surface(B.paper50, 10));
+    lights({ key: [-2.4, 5.6, 2.0], bounds: 3 });
+    const [data, visas, logo] = await Promise.all([tex('data', 0.04), tex('visas', 0.04), tex('logo')]);
+    const book = new THREE.Group();
+    book.add(openHalf(data, -1));
+    book.add(openHalf(visas, 1));
+    book.add(stitches());
+    book.rotation.y = -0.08;
+    scene.add(book);
+    const s = sticker(await mascotFace(), 0.3);
+    s.position.set(1.32, 0.006, -0.78);
+    s.rotation.y = 0.4;
+    scene.add(s);
+    camera = new THREE.PerspectiveCamera(28, WIDTH / HEIGHT, 0.1, 100);
+    camera.position.set(0.25, 3.7, 2.55);
+    camera.lookAt(0.05, 0, 0.08);
+  } else if (SCENE === 'fan') {
+    scene.background = new THREE.Color(B.sun400);
+    scene.add(surface(B.sun400, 12));
+    lights({ key: [-2.6, 6, 3.2], bounds: 3.8 });
+    // every page of the one booklet, fanned like a hand of cards — the cover on top
+    const names = ['notes', 'bio', 'sellos', 'visas', 'data', 'cover'];
+    const ts = await Promise.all(names.map((n) => tex(n, n === 'cover' ? 0 : 0.04)));
+    const back = new THREE.MeshStandardMaterial({ color: B.paper0, roughness: 0.9 });
+    const n = names.length;
+    ts.forEach((t, i) => {
+      const cover = names[i] === 'cover';
+      const w = cover ? WC : W, h = cover ? HC : H, th = cover ? TB : 0.008;
+      const geo = new THREE.BoxGeometry(w, th, h);
+      geo.translate(0, 0, -h / 2 + 0.25); // pivot near the bottom edge
+      const top = cover ? coverMat(t) : faceMat(t);
+      const card = slab(1, 1, 1, top);
+      card.geometry.dispose();
+      card.geometry = geo;
+      card.material = [M.pages, M.pages, top, back, M.pages, M.pages];
+      card.rotation.y = THREE.MathUtils.degToRad(52 - (i * 92) / (n - 1));
+      card.position.set(0, 0.002 + i * 0.012 + th / 2, 0);
+      scene.add(card);
+    });
+    const s = sticker(await mascotFace(), 0.3);
+    s.position.set(1.45, 0.006, 0.35);
+    scene.add(s);
+    camera = new THREE.PerspectiveCamera(30, WIDTH / HEIGHT, 0.1, 100);
+    camera.position.set(0.1, 4.6, 2.9);
+    camera.lookAt(0.05, 0, -0.75);
+  }
+  scene.traverse((o) => { if (o.isMesh) [].concat(o.material).forEach((m) => { m.envMapIntensity = 0.18; }); });
+  renderer.render(scene, camera);
+  renderer.render(scene, camera);
+  window.__done = true;
+}
+build();
+</script>
+</body>
+</html>
