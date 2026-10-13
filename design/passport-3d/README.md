@@ -24,3 +24,10 @@ Scenes (`scene.html?scene=…`):
    `lib/package/build/three.module.js` and `RoomEnvironment.js`).
 3. Render — `CHROME_PATH=… node render.js hero,spread,fan 2400 1800`
    (needs `playwright-core`; writes `out-<scene>.png`).
+
+## In the app
+
+The hero shot ships as `assets/brand/passport-hero.jpg` (`BRAND.passportHero`):
+`node render.js hero 1280 800 jpg` → a 16:10, ~80 KB JPEG. It heads the share
+card (`src/overlays/TasteCard.tsx`) and is attached as an image file when the
+platform's share sheet accepts files.

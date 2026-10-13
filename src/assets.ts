@@ -22,6 +22,8 @@ export const PHOTOS: Record<string, number> = {
 
 export const BRAND = {
   logo: require('../assets/brand/logo-sticker.png') as number,
+  /** 3D render of the closed Food Passports (design/passport-3d, scene=hero). */
+  passportHero: require('../assets/brand/passport-hero.jpg') as number,
 };
 
 /** Ordered pool used by the photo-upload + place-gallery seeding logic. */

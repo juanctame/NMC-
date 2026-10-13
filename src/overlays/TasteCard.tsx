@@ -1,8 +1,9 @@
 /**
- * Taste card — a shareable "passport of taste". A compact, striking card of the
- * member's archetype, palate radar, and flavor DNA that reads like a collectible
- * stamp. Share copies a one-line summary (or uses the native share sheet where
- * available). Rendered as a centered overlay above the profile.
+ * Taste card — a shareable "passport of taste". It opens on the 3D render of
+ * the Food Passport (the brand's hero shot), then the member's archetype, palate
+ * radar and flavor DNA. Share sends the render with a one-line summary through
+ * the native share sheet where files are supported, else the text alone, else
+ * copies it. Rendered as a centered overlay above the profile.
  */
 import React, { useState } from 'react';
 import { View, Pressable } from 'react-native';
@@ -14,6 +15,7 @@ import { computePalate, PALATE_AXES } from '../data/palate';
 import { C } from '../theme/tokens';
 import { BRAND } from '../assets';
 import { Image } from 'expo-image';
+import { Asset } from 'expo-asset';
 import { Display, Banner, SerifItalic, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { PalateRadar } from '../components/PalateRadar';
@@ -39,8 +41,21 @@ export function TasteCard() {
     const text = `${archTitle} — ${cuisines}. ${me.handle} · CRTQ`;
     try {
       const nav: any = (globalThis as any).navigator;
+      // Attach the passport render when the platform can share files.
+      let files: any[] | undefined;
+      try {
+        const F: any = (globalThis as any).File;
+        const src = Asset.fromModule(BRAND.passportHero).uri;
+        if (nav?.canShare && F && src) {
+          const blob = await (await fetch(src)).blob();
+          const f = new F([blob], 'crtq-food-passport.jpg', { type: 'image/jpeg' });
+          if (nav.canShare({ files: [f] })) files = [f];
+        }
+      } catch {
+        files = undefined;
+      }
       if (nav?.share) {
-        await nav.share({ title: 'CRTQ', text });
+        await nav.share(files ? { title: 'CRTQ', text, files } : { title: 'CRTQ', text });
       } else if (nav?.clipboard?.writeText) {
         await nav.clipboard.writeText(text);
         setCopied(true);
@@ -58,6 +73,15 @@ export function TasteCard() {
         {/* the card */}
         <StickerView offset="lg" style={{ backgroundColor: C.ink700, borderWidth: 3, borderColor: C.inkBlack, padding: 20, overflow: 'hidden' }}>
           <Grain opacity={0.1} />
+          {/* the hero: the Food Passport, rendered in 3D */}
+          <View style={{ marginTop: -20, marginHorizontal: -20, marginBottom: 14, height: 176, borderBottomWidth: 3, borderBottomColor: C.inkBlack, backgroundColor: C.ink400, overflow: 'hidden' }}>
+            <Image source={BRAND.passportHero} style={{ width: '100%', height: '100%' }} contentFit="cover" accessibilityLabel="The CRTQ Food Passport and press passport, rendered in 3D" />
+            <View style={{ position: 'absolute', left: 12, bottom: 10, backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 3, paddingHorizontal: 8, transform: [{ rotate: '-3deg' }] }}>
+              <Banner s={8.5} tk={0.16} c={C.inkDeep}>
+                FOOD PASSPORT · Nº {String(me.passportNo).padStart(6, '0')}
+              </Banner>
+            </View>
+          </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
             <Image source={BRAND.logo} style={{ width: 34, height: 34, transform: [{ rotate: '-6deg' }] }} contentFit="contain" />
             <View style={{ flex: 1 }}>
@@ -70,7 +94,7 @@ export function TasteCard() {
             </View>
           </View>
 
-          <Display s={26} c={C.paper0} style={{ marginTop: 14, lineHeight: 27 }}>
+          <Display s={24} c={C.paper0} style={{ marginTop: 10, lineHeight: 25 }}>
             {archTitle}
           </Display>
           <SerifItalic s={12.5} c={C.sun300} style={{ marginTop: 3, lineHeight: 18 }}>
@@ -78,7 +102,7 @@ export function TasteCard() {
           </SerifItalic>
 
           <View style={{ alignItems: 'center', marginTop: 6 }}>
-            <PalateRadar axes={palate.axes} labels={axisLabels} size={186} showLabels={false} fill={C.sun400} />
+            <PalateRadar axes={palate.axes} labels={axisLabels} size={150} showLabels={false} fill={C.sun400} />
           </View>
 
           {/* DNA dots */}
@@ -106,7 +130,7 @@ export function TasteCard() {
         {/* actions */}
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 14 }}>
           <StickerPressable offset="sm" radius={999} onPress={share} style={{ flex: 1, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.sun400, paddingVertical: 13 }}>
-            <Banner s={12} tk={0.1} c={C.inkDeep}>
+            <Banner s={11} tk={0.05} c={C.inkDeep} numberOfLines={1}>
               {copied ? t('tasteCard.copied') : t('tasteCard.share')}
             </Banner>
           </StickerPressable>
