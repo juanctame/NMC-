@@ -271,6 +271,10 @@ const DISHES = [
   ['mezcal', /mezcal/, /mezcal/],
 ];
 const MEX = /mexic|cdmx|ciudad de mexico|mexico city|oaxaca|puebla|jalisco|yucatan|chilango/;
+// Dishes that are Mexican by definition need no separate Mexico cue.
+const MEXICAN_DISH = new Set(['tacos al pastor', 'suadero', 'mole', 'tamales', 'pozole', 'birria', 'carnitas', 'tlacoyos', 'quesadillas', 'mezcal']);
+// Films, trailers and festival shorts merely named after a dish aren't footage of it.
+const NOT_FOOTAGE = /\bficm\b|cortometraje|short film|trailer|trailer oficial|pelicula|film festival|festival de cine|\bmovie\b|videoclip|music video|karaoke|lyrics|letra/;
 
 function dishesOf(v) {
   const text = fold([...(v.dishes || []), v.category, v.cuisine, v.name].join(' '));
@@ -397,7 +401,10 @@ async function openFiles(R, venues) {
     for (const [dish, , inTitle] of dishesOf(v)) {
       if (mine.filter((c) => c.scope === 'dish').length >= 2) break;
       for (const [src, search] of [['commons', commonsSearch], ['archive', archiveSearch]]) {
-        const hits = (await search(`"${dish}"`)).filter((f) => inTitle.test(words(f.title)) && MEX.test(fold(f.title + ' ' + f.description)));
+        const hits = (await search(`"${dish}"`)).filter((f) => {
+          const all = words(f.title + ' ' + f.description);
+          return inTitle.test(words(f.title)) && !NOT_FOOTAGE.test(all) && (MEXICAN_DISH.has(dish) || MEX.test(all));
+        });
         if (hits[0]) mine.push(fileClip(v, hits[0], 'dish', dish, src));
         if (mine.filter((c) => c.scope === 'dish').length >= 2) break;
       }
@@ -407,7 +414,13 @@ async function openFiles(R, venues) {
     const hood = v.hood === 'Centro' ? 'Centro Histórico' : v.hood;
     if (hood && mine.length < 2) {
       const hits = (await commonsSearch(`"${hood}" "Ciudad de México"`)).concat(await commonsSearch(`"${hood}" Mexico City`));
-      const f = hits.find((x) => (' ' + words(x.title) + ' ').includes(' ' + words(hood) + ' ') && /ciudad de mexico|mexico city|\bcdmx\b|\bdf\b/.test(words(x.title + ' ' + x.description)));
+      const h = words(hood);
+      const f = hits.find((x) => {
+        const t = ' ' + words(x.title) + ' ';
+        // the colonia, not a street named after it ("Avenida Cuauhtémoc")
+        if (!t.includes(' ' + h + ' ') || new RegExp(`(avenida|av|eje|calle|calzada|metro|estacion) ${h}`).test(t)) return false;
+        return !NOT_FOOTAGE.test(words(x.title + ' ' + x.description)) && /ciudad de mexico|mexico city|\bcdmx\b|\bdf\b/.test(words(x.title + ' ' + x.description));
+      });
       if (f) mine.push(fileClip(v, f, 'area', hood, 'commons'));
     }
     out.push(...mine);
