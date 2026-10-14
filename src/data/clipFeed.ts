@@ -6,22 +6,28 @@
  * when opened from a restaurant, that restaurant's clips lead.
  */
 import type { Place } from '../store/data';
-import type { TrendingVideo } from './videos';
-import { collectedClips } from './clips';
+import { byId as seedById } from '../store/data';
+import { isPlayable, type TrendingVideo } from './videos';
+import { collectedClips, collectedVenueIds } from './clips';
 
 export type FeedClip = { clip: TrendingVideo & { views?: number; likes?: number; hd?: boolean; score?: number }; place: Place };
 
-const PER_VENUE = 3;
+const PER_VENUE = 4;
 
 export function buildClipFeed(places: Place[], extra: TrendingVideo[], focusPlaceId?: string | null): FeedClip[] {
   const byPlace: Record<string, Place> = {};
   places.forEach((p) => (byPlace[p.id] = p));
+  // CDMX's own seed venues (e.g. Panadería Rosetta) aren't in the guide list but have clips too.
+  if (places.some((p) => p.id.startsWith('cx-')))
+    collectedVenueIds().forEach((id) => {
+      if (!byPlace[id] && seedById[id]) places = [...places, (byPlace[id] = seedById[id])];
+    });
 
   const seen = new Set<string>();
   const perVenue: Record<string, FeedClip[]> = {};
   const add = (c: TrendingVideo) => {
     const place = byPlace[c.placeId];
-    if (!place || !c.embedId || seen.has(c.id)) return;
+    if (!place || !isPlayable(c) || seen.has(c.id)) return;
     seen.add(c.id);
     (perVenue[place.id] = perVenue[place.id] || []).push({ clip: c, place });
   };

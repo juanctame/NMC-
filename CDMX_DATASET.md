@@ -79,6 +79,30 @@ Trayectoria), and **awards**.
   free daily quota), with a cached live search as fallback. **Requires the
   "YouTube Data API v3" to be enabled on the Google Cloud project of the site's
   key**; until then the sections stay hidden rather than showing placeholders.
+- **Clips from every medium** — beyond the YouTube hashtag search, a second CI
+  collector (`scripts/collect-clips-open.mjs` → `src/data/clipsOpen.json`) needs
+  no API key:
+  - **Hand-found clips** (`src/data/clipsCurated.json`) — third-party YouTube
+    videos / Shorts and TikToks about guide venues, found by searching each
+    restaurant across YouTube, TikTok, Instagram, Vimeo and Dailymotion. Every one
+    is re-checked through the platform's **oEmbed** on each run: removed,
+    private or non-embeddable clips are dropped, as is anything posted by the
+    venue or its chef; title, creator and thumbnail come from the platform.
+  - **Dailymotion** — its public search, per restaurant, with the same
+    about-the-venue and third-party rules as YouTube.
+  - **Real video files (MP4 / WebM)** from **Wikimedia Commons** and the
+    **Internet Archive**, credited with their author and licence and played
+    natively in a `<video>` element. A file about the venue itself comes first;
+    otherwise footage of one of its **dishes** (e.g. tacos al pastor) or its
+    **neighbourhood** may be added, always labelled **"Related · …"** /
+    **"Around · …"**. That footage is never presented as the restaurant, and it
+    never counts towards "Trending now".
+
+  The Clips feed and the Media tab play each source in place: YouTube, TikTok
+  (player v1), Vimeo and Dailymotion through their official embeds (paused,
+  resumed and muted from our own controls), Instagram reels through the reel
+  embed, and files natively. The credit line names the source (and the licence
+  for files).
 - **Clips (TikTok-style), beside the map** — a full-screen vertical feed of
   those creator clips, opened from the button next to the map in the feed
   header or the Map | Clips switch on the map (`src/screens/Clips.tsx`). One

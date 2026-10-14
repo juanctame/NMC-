@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore, resolvePlace, reviewsFor, popularDishFor, type ScoredReview } from '../store/useStore';
 import { RANK } from '../store/data';
 import { scoreStyle, verdictOf, fmt, metaOf } from '../store/helpers';
-import { embedUrlFor, type TrendingVideo } from '../data/videos';
+import { embedUrlFor, isPlayable, SOURCE_LABEL, type TrendingVideo } from '../data/videos';
 import { hashtagOf } from '../data/hashtags';
 import { computePalate } from '../data/palate';
 import { drawAndKnow, priceLabel, fitFor, type GReview } from '../data/placeDetails';
@@ -184,10 +184,10 @@ function VideoThumb({ v, onPress }: { v: TrendingVideo; onPress: () => void }) {
             <PlayIcon size={14} color={C.paper0} />
           </View>
         </View>
-        {c.hd ? (
+        {c.hd || (v.scope && v.scope !== 'venue') ? (
           <View style={{ position: 'absolute', top: 5, left: 5, backgroundColor: C.sun400, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 3, paddingHorizontal: 4 }}>
             <Banner s={7} tk={0.06} c={C.inkDeep}>
-              HD
+              {v.scope && v.scope !== 'venue' ? (v.scope === 'area' ? 'AROUND' : 'RELATED') : 'HD'}
             </Banner>
           </View>
         ) : null}
@@ -204,8 +204,7 @@ function VideoThumb({ v, onPress }: { v: TrendingVideo; onPress: () => void }) {
           {v.caption}
         </Serif>
         <Mono s={8} c={C.inkSoft} numberOfLines={1}>
-          {v.creator}
-          {views ? ` · ${views} views` : ''}
+          {[v.creator, SOURCE_LABEL[v.platform] || v.platform, views ? `${views} ${v.src ? 'plays' : 'views'}` : ''].filter(Boolean).join(' · ')}
         </Mono>
       </View>
     </StickerPressable>
@@ -866,7 +865,7 @@ export function PlaceDetail() {
                     {videos[0].caption}
                   </Serif>
                   <Mono s={8.5} c={C.ink100} numberOfLines={1}>
-                    {['@' + videos[0].creator, (videos[0] as { views?: number }).views ? `${compactN((videos[0] as { views?: number }).views!)} views` : '', (videos[0] as { hd?: boolean }).hd ? 'HD' : ''].filter(Boolean).join(' · ')}
+                    {[(videos[0].src ? '' : '@') + videos[0].creator, SOURCE_LABEL[videos[0].platform], (videos[0] as { views?: number }).views ? `${compactN((videos[0] as { views?: number }).views!)} views` : '', (videos[0] as { hd?: boolean }).hd ? 'HD' : ''].filter(Boolean).join(' · ')}
                   </Mono>
                   <View style={{ flex: 1 }} />
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, alignSelf: 'flex-start', backgroundColor: C.ink400, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 10 }}>
@@ -1307,9 +1306,9 @@ export function PlaceDetail() {
                           key={v.id}
                           v={v}
                           onPress={() =>
-                            v.embedId
+                            isPlayable(v)
                               ? openClips(base.id, v.id)
-                              : url && openVideo(url + '&autoplay=1', { title: v.caption, creator: v.creator, platform: 'YouTube', views: c.views, hd: c.hd, placeName: base.name })
+                              : url && openVideo(url + '&autoplay=1', { title: v.caption, creator: v.creator, platform: SOURCE_LABEL[v.platform] || v.platform, views: c.views, hd: c.hd, placeName: base.name })
                           }
                         />
                       );

@@ -13,8 +13,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useStore } from '../store/useStore';
+import { useStore, resolvePlace } from '../store/useStore';
 import { buildClipFeed, type FeedClip } from '../data/clipFeed';
+import { isPlayable, SOURCE_LABEL } from '../data/videos';
 import { guideBadgeOf } from '../data/chefs';
 import { hashtagOf } from '../data/hashtags';
 import { C } from '../theme/tokens';
@@ -65,14 +66,16 @@ function ClipPage({
   const { clip, place } = item;
   const badge = guideBadgeOf(place);
   const likes = (clip.likes || 0) + (liked ? 1 : 0);
+  // Footage of a dish or the neighbourhood rather than the venue itself is labelled as such.
+  const related = !!clip.scope && clip.scope !== 'venue' && !!clip.relatedTo;
 
   return (
     <View style={{ height, width: '100%', backgroundColor: '#000' }}>
       {/* poster, then the live player once this clip is on screen */}
       {clip.thumb ? <Image source={{ uri: clip.thumb }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.55 }} contentFit="cover" blurRadius={active ? 18 : 0} /> : null}
-      {active && clip.embedId ? (
+      {active && isPlayable(clip) ? (
         <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-          <ClipPlayer embedId={clip.embedId} paused={paused} muted={muted} />
+          <ClipPlayer clip={clip} paused={paused} muted={muted} />
         </View>
       ) : null}
 
@@ -136,14 +139,21 @@ function ClipPage({
 
       {/* credits + the restaurant this clip is about */}
       <View style={{ position: 'absolute', left: 14, right: 78, bottom: insets.bottom + 22, gap: 6 }}>
+        {related ? (
+          <View style={{ alignSelf: 'flex-start', backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 2, paddingHorizontal: 7, transform: [{ rotate: '-2deg' }] }}>
+            <Banner s={8.5} tk={0.12} c={C.inkDeep} numberOfLines={1}>
+              {clip.scope === 'area' ? 'Around' : 'Related'} · {clip.relatedTo}
+            </Banner>
+          </View>
+        ) : null}
         <Banner s={11} tk={0.04} c={C.paper0} numberOfLines={1}>
-          @{clip.creator}
+          {clip.src ? clip.creator : '@' + clip.creator}
         </Banner>
         <Serif s={13} c={C.paper0} numberOfLines={2} style={{ lineHeight: 18 }}>
           {clip.caption}
         </Serif>
         <Mono s={8.5} c={C.ink100} numberOfLines={1}>
-          {['YouTube', clip.views ? `${compact(clip.views)} views` : '', clip.hd ? 'HD' : '', `#${hashtagOf(place)}`].filter(Boolean).join(' · ')}
+          {[SOURCE_LABEL[clip.platform] || clip.platform, clip.license || '', clip.views ? `${compact(clip.views)} ${clip.src ? 'plays' : 'views'}` : '', clip.hd ? 'HD' : '', `#${hashtagOf(place)}`].filter(Boolean).join(' · ')}
         </Mono>
         <Pressable
           onPress={() => openPlace(place.id)}
@@ -207,7 +217,8 @@ export function Clips() {
     setIndex(i);
     setTimeout(() => scroller.current?.scrollTo({ y: i * pageH, animated: false }), 0);
   }, [startId, pageH, feed]);
-  const focusName = focusId ? nearby.find((p) => p.id === focusId)?.name : undefined;
+  const nearbyById = useStore((s) => s.nearbyById);
+  const focusName = resolvePlace(focusId, nearbyById)?.name;
   const cur = Math.min(index, Math.max(0, feed.length - 1));
 
   return (
@@ -231,7 +242,7 @@ export function Clips() {
             {loading ? 'Finding clips…' : 'No clips yet'}
           </Banner>
           <Serif s={13} c={C.ink100} style={{ textAlign: 'center', lineHeight: 19 }}>
-            Creator clips land here as they're found by each restaurant's hashtag: independent creators only, in HD, played right here.
+            Creator clips land here as they're found for each restaurant: independent creators only, played right here.
           </Serif>
         </View>
       )}

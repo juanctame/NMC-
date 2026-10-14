@@ -9,7 +9,7 @@ import React from 'react';
 import { View, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
-import { embedUrlFor } from '../data/videos';
+import { embedUrlFor, SOURCE_LABEL } from '../data/videos';
 import { C } from '../theme/tokens';
 import { Display, Banner, Serif, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
@@ -59,7 +59,7 @@ export function Reel() {
         <>
           {/* the clip, playing here */}
           <View style={{ flex: 1, marginHorizontal: 14, borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: '#000', overflow: 'hidden' }}>
-            <VideoEmbed key={item.video.id} url={url + '&autoplay=1'} />
+            <VideoEmbed key={item.video.id} url={item.video.src ? url : url + '&autoplay=1'} />
           </View>
 
           {/* credits + controls */}
@@ -73,7 +73,7 @@ export function Reel() {
               {item.video.caption}
             </Serif>
             <Mono s={9} c={C.sun300} numberOfLines={1}>
-              {[item.video.creator, 'YouTube', clip?.views ? `${compact(clip.views)} views` : '', clip?.hd ? 'HD' : '', `${item.mentions} creator clip${item.mentions === 1 ? '' : 's'}`]
+              {[item.video.creator, SOURCE_LABEL[item.video.platform] || item.video.platform, clip?.views ? `${compact(clip.views)} views` : '', clip?.hd ? 'HD' : '', `${item.mentions} creator clip${item.mentions === 1 ? '' : 's'}`]
                 .filter(Boolean)
                 .join(' · ')}
             </Mono>

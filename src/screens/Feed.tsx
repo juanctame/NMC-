@@ -9,7 +9,7 @@ import { useStore } from '../store/useStore';
 import { useT } from '../i18n';
 import { FEED, RECS, byId, type Place } from '../store/data';
 import { CREATOR_REVIEWS, PLATFORM_LABEL } from '../data/creators';
-import { embedUrlFor } from '../data/videos';
+import { embedUrlFor, SOURCE_LABEL } from '../data/videos';
 import type { BuzzResult } from '../data/trending';
 import { computePalate } from '../data/palate';
 import { recommend, type Rec, type ReasonTag } from '../data/recommend';
@@ -94,7 +94,7 @@ function MonthlyTrendCard({ item, rank }: { item: BuzzResult; rank: number }) {
         </View>
         <View style={{ position: 'absolute', top: 6, right: 6, backgroundColor: C.inkBlack, borderRadius: 3, paddingVertical: 1, paddingHorizontal: 5 }}>
           <Banner s={7} tk={0.06} c={C.paper0}>
-            {(item.video as { hd?: boolean }).hd ? 'HD · ' : ''}YouTube
+            {(item.video as { hd?: boolean }).hd ? 'HD · ' : ''}{SOURCE_LABEL[item.video.platform] || item.video.platform}
           </Banner>
         </View>
         <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
