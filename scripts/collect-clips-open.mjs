@@ -273,7 +273,8 @@ const DISHES = [
 ];
 const MEX = /mexic|cdmx|ciudad de mexico|mexico city|oaxaca|puebla|jalisco|yucatan|chilango/;
 // Dishes that are Mexican by definition need no separate Mexico cue.
-const MEXICAN_DISH = new Set(['tacos al pastor', 'suadero', 'mole', 'tamales', 'pozole', 'birria', 'carnitas', 'tlacoyos', 'quesadillas', 'mezcal']);
+// (Not "mole" — the word alone also finds mole-rats and moles.)
+const MEXICAN_DISH = new Set(['tacos al pastor', 'suadero', 'tamales', 'pozole', 'birria', 'carnitas', 'tlacoyos', 'quesadillas', 'mezcal']);
 // Films, trailers and festival shorts merely named after a dish aren't footage of it.
 const NOT_FOOTAGE = /\bficm\b|cortometraje|short film|trailer|trailer oficial|pelicula|film festival|festival de cine|\bmovie\b|videoclip|music video|karaoke|lyrics|letra/;
 
