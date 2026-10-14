@@ -238,7 +238,8 @@ async function dailymotion(R, venues) {
         likes: 0,
         durationSec: x.duration,
         hd: (x.height || 0) >= 720,
-        score: Math.log10((x.views_total || 0) + 1) + ((x.height || 0) >= 720 ? 0.5 : 0),
+        // Below hand-verified clips (3): searched, not chosen, and usually landscape TV segments.
+        score: 1.6 + 0.25 * Math.log10((x.views_total || 0) + 1) + ((x.height || 0) >= 720 ? 0.2 : 0),
         scope: 'venue',
         via: 'dailymotion',
       });

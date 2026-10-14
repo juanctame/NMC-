@@ -43,11 +43,22 @@ export function buildClipFeed(places: Place[], extra: TrendingVideo[], focusPlac
   const focus = focusPlaceId ? pools.find((l) => l[0]?.place.id === focusPlaceId) : undefined;
   if (focus) out.push(...focus.splice(0, focus.length));
   let rest = pools.flat();
+  // Each pick: the best clip once a venue's earlier appearances count against it,
+  // never the same venue twice in a row, and — among near-equals — a different
+  // source than the last clip, so TikToks, Shorts, Dailymotion and files mix.
+  const shown: Record<string, number> = {};
+  const eff = (f: FeedClip) => score(f) - 0.35 * (shown[f.place.id] || 0);
   while (rest.length) {
-    rest.sort((a, b) => score(b) - score(a));
-    const last = out[out.length - 1]?.place.id;
-    const i = rest.findIndex((f) => f.place.id !== last);
-    out.push(...rest.splice(i < 0 ? 0 : i, 1));
+    rest.sort((a, b) => eff(b) - eff(a));
+    const last = out[out.length - 1];
+    const okVenue = (f: FeedClip) => f.place.id !== last?.place.id;
+    const first = rest.find(okVenue);
+    const tier = first ? eff(first) - 0.5 : -Infinity;
+    let i = rest.findIndex((f) => okVenue(f) && eff(f) >= tier && f.clip.platform !== last?.clip.platform);
+    if (i < 0) i = rest.findIndex(okVenue);
+    if (i < 0) i = 0;
+    shown[rest[i].place.id] = (shown[rest[i].place.id] || 0) + 1;
+    out.push(...rest.splice(i, 1));
   }
   return out;
 }
