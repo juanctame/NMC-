@@ -55,7 +55,7 @@ const SEED_VENUES = { rosetta: { id: 'rosetta', name: 'Panadería Rosetta', hood
 async function getJson(url, tries = 2) {
   for (let i = 0; i <= tries; i++) {
     try {
-      const r = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'application/json' } });
+      const r = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'application/json' }, signal: AbortSignal.timeout(15000) });
       if (r.status === 404 || r.status === 401 || r.status === 403 || r.status === 400) return { __status: r.status };
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return await r.json();
@@ -263,7 +263,7 @@ async function archiveSearch(q) {
   if (cache['a:' + q]) return cache['a:' + q];
   const query = `(title:(${q}) OR subject:(${q}) OR description:(${q})) AND mediatype:movies`;
   const fl = ['identifier', 'title', 'creator', 'description', 'downloads', 'licenseurl', 'publicdate'].map((f) => 'fl[]=' + f).join('&');
-  const d = await getJson(`https://archive.org/advancedsearch.php?q=${encodeURIComponent(query)}&${fl}&rows=6&sort[]=downloads+desc&output=json`);
+  const d = await getJson(`https://archive.org/advancedsearch.php?q=${encodeURIComponent(query)}&${fl}&rows=4&sort[]=downloads+desc&output=json`);
   await sleep(300);
   const res = [];
   for (const doc of d?.response?.docs || []) {
@@ -317,9 +317,17 @@ function fileClip(v, f, scope, relatedTo, source) {
   };
 }
 
+/** Wall-clock budget for the file searches, so a slow archive never stalls the deploy. */
+const FILE_BUDGET_MS = Number(process.env.FILE_BUDGET_S || 420) * 1000;
+
 async function openFiles(R, venues) {
   const out = [];
+  const t0 = Date.now();
   for (const v of venues) {
+    if (Date.now() - t0 > FILE_BUDGET_MS) {
+      console.log(`  file budget spent after ${venues.indexOf(v)} venues`);
+      break;
+    }
     const ref = { id: v.id, name: v.name, hood: v.hood, instagram: v.instagram, website: v.website, chef: v.chef };
     const mine = [];
     // about the venue itself

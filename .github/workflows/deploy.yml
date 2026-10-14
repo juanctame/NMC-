@@ -62,6 +62,7 @@ jobs:
       - name: Collect open clips (curated + oEmbed-verified, Dailymotion, Commons / Internet Archive MP4s)
         run: node scripts/collect-clips-open.mjs
         continue-on-error: true
+        timeout-minutes: 15
         env:
           FORCE: ${{ github.event.inputs.force_media == 'true' && '1' || '' }}
       - name: Export web bundle
