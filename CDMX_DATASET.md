@@ -120,7 +120,7 @@ Trayectoria), and **awards**.
   no follower counts for diners). Every page shares the same stock — stitched
   binding, guilloché print, emblem watermark, the document number perforated
   through every page, a running header and a page number — and you swipe
-  through it (or use the page control) like turning pages; the open page is
+  through it like turning pages — the booklet lies on the 3D render's vermillion table (stickers peeking from under it), every page is lit like the render (gutter shadow, sheen, page-block edges, back board, soft cast shadow), and dragging sideways lifts the page around the spine in 3D (or use the page control); the open page is
   remembered when you step into a restaurant and come back.
   **Cover** — leather, gold foil emblem, the e-passport chip mark (tap or swipe
   to open). **p.1 Data page** — surname / given names, *paladar* (your palate

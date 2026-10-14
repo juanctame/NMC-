@@ -24,8 +24,9 @@
  * Verified critics carry a PRESS passport (type D): a darker cover, beat and
  * readers on the data page, and the Critic's Desk for hosting events.
  */
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { View, ScrollView, Pressable, TextInput } from 'react-native';
+import React, { useMemo, useRef, useState } from 'react';
+import { View, ScrollView, Pressable, TextInput, Animated, PanResponder, Easing } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import Svg, { Path, Circle, Ellipse, Line } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -742,18 +743,127 @@ const NOTES_PAGE = PAGES.findIndex((p) => p.key === 'notes');
 /** Survives leaving the tab (e.g. opening a restaurant from a page) for the session. */
 let lastPage = 0;
 
-/** A full-height page with the hard sticker shadow (StickerView sizes to content). */
-function PageSticker({ children }: { children: React.ReactNode }) {
+/**
+ * The page edge every booklet page sits in. The booklet lies on the render's
+ * table: these insets leave room for the page block, the back board and the
+ * soft cast shadow drawn by <BookletBase>.
+ */
+const PAGE_PAD = { paddingLeft: 16, paddingRight: 24, paddingTop: 10, paddingBottom: 18 } as const;
+
+/**
+ * Light on the page, as in the 3D render (key light from the top-left): a gutter
+ * shadow down the spine and a soft sheen falling off toward the outer corner.
+ */
+function PageLight({ dark }: { dark?: boolean }) {
   return (
-    <View style={{ flex: 1 }}>
-      <View pointerEvents="none" style={{ position: 'absolute', left: 6, top: 6, right: -6, bottom: -6, backgroundColor: C.inkBlack, opacity: 0.85 }} />
-      {children}
+    <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+      <LinearGradient
+        colors={['rgba(255,253,245,0.16)', 'rgba(255,253,245,0)', 'rgba(27,16,4,0.08)']}
+        locations={[0, 0.45, 1]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+      />
+      <LinearGradient
+        colors={[dark ? 'rgba(27,16,4,0.45)' : 'rgba(27,16,4,0.26)', 'rgba(27,16,4,0)']}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: 42 }}
+      />
     </View>
   );
 }
 
-/** The page edge every booklet page sits in: room for the hard sticker shadow. */
-const PAGE_PAD = { paddingLeft: 12, paddingRight: 18, paddingTop: 6, paddingBottom: 12 } as const;
+/**
+ * What the pages lie on, drawn once beneath the pager: the soft cast shadow on
+ * the table, the back board peeking out (sun-yellow; vermillion for the press),
+ * and the page block's edges.
+ */
+function BookletBase({ w, h, press }: { w: number; h: number; press: boolean }) {
+  const x = PAGE_PAD.paddingLeft, y = PAGE_PAD.paddingTop;
+  const pw = w - PAGE_PAD.paddingLeft - PAGE_PAD.paddingRight;
+  const ph = h - PAGE_PAD.paddingTop - PAGE_PAD.paddingBottom;
+  return (
+    <View pointerEvents="none" style={{ position: 'absolute', left: x, top: y, width: pw, height: ph }}>
+      {/* soft shadow, layered */}
+      {[
+        { d: 16, o: 0.08, r: 14 },
+        { d: 11, o: 0.1, r: 10 },
+        { d: 7, o: 0.14, r: 6 },
+      ].map((sh) => (
+        <View key={sh.d} style={{ position: 'absolute', left: sh.d * 0.4, top: sh.d * 0.7, right: -sh.d, bottom: -sh.d, borderRadius: sh.r, backgroundColor: C.inkDeep, opacity: sh.o }} />
+      ))}
+      {/* the back board */}
+      <View style={{ position: 'absolute', left: -2, top: 2, right: -7, bottom: -8, backgroundColor: press ? C.ink400 : C.sun400, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 3 }} />
+      {/* the page block's edges */}
+      {[4, 3, 2, 1].map((k) => (
+        <View key={k} style={{ position: 'absolute', left: 0, top: k * 0.6, right: -k * 1.2, bottom: -k * 1.2, backgroundColor: k % 2 ? C.paper100 : C.paper0, borderWidth: 1, borderColor: C.paper300 }} />
+      ))}
+    </View>
+  );
+}
+
+/**
+ * A page that turns in 3D. The pages lie stacked on the booklet (earliest on
+ * top); `pos` is the open page as a float (1.4 = turning from p.1 to p.2). The
+ * page being left lifts around the spine (perspective rotateY), shading as it
+ * turns, revealing the next page beneath it.
+ */
+function TurnPage({ i, w, h, pos, active, children }: { i: number; w: number; h: number; pos: Animated.Value; active: boolean; children: React.ReactNode }) {
+  const pivot = w / 2 - PAGE_PAD.paddingLeft; // spine = the page's left edge
+  const rotateY = pos.interpolate({ inputRange: [i, i + 1], outputRange: ['0deg', '-88deg'], extrapolate: 'clamp' });
+  const shade = pos.interpolate({ inputRange: [i, i + 1], outputRange: [0, 0.5], extrapolate: 'clamp' });
+  const opacity = pos.interpolate({ inputRange: [i + 0.98, i + 1], outputRange: [1, 0], extrapolate: 'clamp' });
+  return (
+    <Animated.View
+      pointerEvents={active ? 'auto' : 'none'}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: w,
+        height: h,
+        zIndex: 100 - i,
+        opacity,
+        transform: [{ perspective: 1600 }, { translateX: -pivot }, { rotateY }, { translateX: pivot }],
+        backfaceVisibility: 'hidden',
+      }}
+    >
+      {children}
+      <Animated.View
+        pointerEvents="none"
+        style={{ position: 'absolute', left: PAGE_PAD.paddingLeft, top: PAGE_PAD.paddingTop, right: PAGE_PAD.paddingRight, bottom: PAGE_PAD.paddingBottom, backgroundColor: C.inkDeep, opacity: shade }}
+      />
+    </Animated.View>
+  );
+}
+
+/** The table from the render: vermillion stock (near-black for the press), grain, a vignette, and brand stickers peeking from under the booklet. */
+function Table({ press, city, joined }: { press: boolean; city: string; joined: string }) {
+  return (
+    <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: press ? C.inkDeep : C.ink400 }}>
+      <Grain opacity={0.12} />
+      <LinearGradient colors={['rgba(27,16,4,0.28)', 'rgba(27,16,4,0)', 'rgba(27,16,4,0)', 'rgba(27,16,4,0.32)']} locations={[0, 0.2, 0.75, 1]} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
+      {/* stickers on the table */}
+      <View style={{ position: 'absolute', top: 24, left: -18, width: 64, height: 64, borderRadius: 32, backgroundColor: C.stampGreen, borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-18deg' }] }}>
+        <Banner s={9} tk={0.06} c={C.paper0} style={{ marginLeft: 16 }}>
+          {city.toUpperCase().slice(0, 6)}
+        </Banner>
+      </View>
+      <View style={{ position: 'absolute', top: '42%', right: -52, width: 96, height: 96, borderRadius: 48, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', transform: [{ rotate: '12deg' }] }}>
+        <Image source={BRAND.logo} style={{ width: 90, height: 90 }} contentFit="contain" />
+      </View>
+      <View style={{ position: 'absolute', top: '64%', left: -30, width: 58, height: 58, borderRadius: 29, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-10deg' }] }}>
+        <Banner s={7.5} tk={0.08} c={C.ink400} style={{ marginLeft: 12 }}>
+          EST.
+        </Banner>
+        <Display s={10} c={C.ink400} style={{ marginLeft: 12 }}>
+          {joined.slice(-4)}
+        </Display>
+      </View>
+    </View>
+  );
+}
 
 /**
  * One page of the passport, in CRTQ's sticker stock: thick black outline and a
@@ -792,7 +902,7 @@ function PassportPage({
   const spine = press ? C.ink400 : C.sun400;
   return (
     <View style={{ width: w, height: h, ...PAGE_PAD }}>
-      <PageSticker>
+      <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row', backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
           {/* the spine, stitched */}
           <View style={{ width: 14, backgroundColor: spine, borderRightWidth: 2, borderRightColor: C.inkBlack }}>
@@ -850,8 +960,9 @@ function PassportPage({
               </View>
             </View>
           </View>
+          <PageLight />
         </View>
-      </PageSticker>
+      </View>
     </View>
   );
 }
@@ -863,7 +974,7 @@ function CoverPage({ w, h, press, city, joined, onOpen, onShare }: { w: number; 
   const ink = press ? C.paper0 : C.inkDeep;
   return (
     <View style={{ width: w, height: h, ...PAGE_PAD }}>
-      <PageSticker>
+      <View style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'row', backgroundColor: stock, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
           <Grain opacity={0.09} />
           {/* the spine, stitched */}
@@ -936,8 +1047,9 @@ function CoverPage({ w, h, press, city, joined, onOpen, onShare }: { w: number; 
               <Path d="M12 15V3M7 8l5-5 5 5M5 13v7h14v-7" stroke={C.ink400} strokeWidth={2.4} fill="none" strokeLinecap="round" strokeLinejoin="round" />
             </Svg>
           </Pressable>
+          <PageLight dark />
         </View>
-      </PageSticker>
+      </View>
     </View>
   );
 }
@@ -962,7 +1074,7 @@ export function Passport() {
   const t = useT();
   const [area, setArea] = useState({ w: 0, h: 0 });
   const [idx, setIdx] = useState(lastPage);
-  const pager = useRef<ScrollView | null>(null);
+  const pos = useRef(new Animated.Value(lastPage)).current; // the open page, as a float while turning
 
   const me = identity(profile);
   const critic = isCritic(profile);
@@ -1004,16 +1116,40 @@ export function Passport() {
       ];
   const header = critic ? 'PASAPORTE DE PRENSA · PRESS' : 'PASAPORTE · FOOD PASSPORT';
 
-  // Pages: swipe, or use the page control. The open page is remembered for the session.
-  useEffect(() => {
-    if (area.w && idx) setTimeout(() => pager.current?.scrollTo({ x: idx * area.w, animated: false }), 0);
-  }, [area.w]); // only when the booklet is first laid out
+  // Pages: drag sideways to turn (the page follows your finger around the
+  // spine), or use the page control. The open page is remembered for the session.
+  const last = PAGES.length - 1;
   const goTo = (i: number) => {
-    const n = Math.max(0, Math.min(PAGES.length - 1, i));
+    const n = Math.max(0, Math.min(last, i));
     lastPage = n;
     setIdx(n);
-    pager.current?.scrollTo({ x: n * area.w, animated: true });
+    Animated.timing(pos, { toValue: n, duration: 460, easing: Easing.out(Easing.cubic), useNativeDriver: false }).start();
   };
+  const drag = useRef({ start: lastPage, w: 1 });
+  drag.current.w = area.w || 1;
+  const pan = useMemo(
+    () =>
+      PanResponder.create({
+        // only claim clearly horizontal drags, so inner pages still scroll vertically
+        onMoveShouldSetPanResponder: (_e, g) => Math.abs(g.dx) > 12 && Math.abs(g.dx) > Math.abs(g.dy) * 1.4,
+        onMoveShouldSetPanResponderCapture: (_e, g) => Math.abs(g.dx) > 18 && Math.abs(g.dx) > Math.abs(g.dy) * 2,
+        onPanResponderTerminationRequest: () => false, // keep the turn once it has started
+        onShouldBlockNativeResponder: () => true,
+        onPanResponderGrant: () => {
+          pos.stopAnimation((v: number) => (drag.current.start = v));
+        },
+        onPanResponderMove: (_e, g) => {
+          const v = drag.current.start - g.dx / drag.current.w;
+          pos.setValue(Math.max(-0.08, Math.min(last + 0.08, v)));
+        },
+        onPanResponderRelease: (_e, g) => {
+          const v = drag.current.start - g.dx / drag.current.w - g.vx * 0.35;
+          goTo(Math.round(v));
+        },
+        onPanResponderTerminate: () => goTo(Math.round(drag.current.start)),
+      }),
+    [area.w], // goTo and pos are stable for the gesture's lifetime
+  );
 
   const hostEvent = () => {
     go('table');
@@ -1241,53 +1377,53 @@ export function Passport() {
 
   const cur = PAGES[idx] || PAGES[0];
 
+  const pages: React.ReactNode[] = [
+    <CoverPage key="cover" w={area.w} h={area.h} press={critic} city={homeCity.name} joined={me.joined} onOpen={() => goTo(1)} onShare={openTasteCard} />,
+    page('data', () => dataPage(), mrz),
+    page('visas', () => <VisasPage sets={album} pending={pending} />),
+    page('stamps', (w) => <StampsPage tiles={terr.tiles} visited={terr.visited} elsewhere={terr.elsewhere} ranked={ranked} width={w} />),
+    page('bio', (w) => <BioPage palate={palate} avg={avg} chase={chase} seed={me.handle || me.name} width={w} />),
+    page('notes', () => <NotesPage courses={courses} bio={me.bio} canEdit={!!profile} archBlurb={archBlurb} />),
+    page('settings', () => settingsPage()),
+  ];
+
   return (
     <ScreenIn>
-      <View style={{ flex: 1, paddingTop: insets.top + 4, paddingBottom: Math.max(insets.bottom, 12) + 74, backgroundColor: C.paper50 }}>
+      <View style={{ flex: 1, paddingTop: insets.top + 4, paddingBottom: Math.max(insets.bottom, 12) + 74 }}>
+        {/* the table from the 3D render, with stickers peeking from under the booklet */}
+        <Table press={critic} city={homeCity.name} joined={me.joined} />
         <View style={{ flex: 1 }} onLayout={(e) => setArea({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}>
+          {area.w ? <BookletBase w={area.w} h={area.h} press={critic} /> : null}
           {area.w ? (
-            <ScrollView
-              ref={pager}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              scrollEventThrottle={32}
-              onScroll={(e) => {
-                const i = Math.round(e.nativeEvent.contentOffset.x / area.w);
-                if (i !== idx && i >= 0 && i < PAGES.length) {
-                  lastPage = i;
-                  setIdx(i);
-                }
-              }}
-            >
-              <CoverPage w={area.w} h={area.h} press={critic} city={homeCity.name} joined={me.joined} onOpen={() => goTo(1)} onShare={openTasteCard} />
-              {page('data', () => dataPage(), mrz)}
-              {page('visas', () => <VisasPage sets={album} pending={pending} />)}
-              {page('stamps', (w) => <StampsPage tiles={terr.tiles} visited={terr.visited} elsewhere={terr.elsewhere} ranked={ranked} width={w} />)}
-              {page('bio', (w) => <BioPage palate={palate} avg={avg} chase={chase} seed={me.handle || me.name} width={w} />)}
-              {page('notes', () => <NotesPage courses={courses} bio={me.bio} canEdit={!!profile} archBlurb={archBlurb} />)}
-              {page('settings', () => settingsPage())}
-            </ScrollView>
+            <View {...pan.panHandlers} style={{ position: 'absolute', top: 0, left: 0, width: area.w, height: area.h }}>
+              {pages.map((node, i) =>
+                i >= idx - 1 && i <= idx + 2 ? (
+                  <TurnPage key={PAGES[i].key} i={i} w={area.w} h={area.h} pos={pos} active={i === idx}>
+                    {node}
+                  </TurnPage>
+                ) : null,
+              )}
+            </View>
           ) : null}
         </View>
 
         {/* the page control */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingTop: 4 }}>
-          <StickerPressable offset={idx === 0 ? 'none' : 'sm'} radius={999} onPress={() => goTo(idx - 1)} disabled={idx === 0} accessibilityLabel="Previous page" style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 2.5, borderColor: idx === 0 ? C.paper300 : C.inkBlack, alignItems: 'center', justifyContent: 'center', backgroundColor: idx === 0 ? C.paper50 : C.sun400 }}>
-            <Chevron dir="left" color={idx === 0 ? C.paper300 : C.inkDeep} />
+          <StickerPressable offset={idx === 0 ? 'none' : 'sm'} radius={999} onPress={() => goTo(idx - 1)} disabled={idx === 0} accessibilityLabel="Previous page" style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 2.5, borderColor: idx === 0 ? 'rgba(255,253,245,0.35)' : C.inkBlack, alignItems: 'center', justifyContent: 'center', backgroundColor: idx === 0 ? 'transparent' : C.sun400 }}>
+            <Chevron dir="left" color={idx === 0 ? 'rgba(255,253,245,0.45)' : C.inkDeep} />
           </StickerPressable>
           <View style={{ flex: 1, alignItems: 'center', gap: 5 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               {PAGES.map((p, i) => (
-                <Pressable key={p.key} onPress={() => goTo(i)} accessibilityLabel={`Page: ${p.name}`} accessibilityState={{ selected: i === idx }} hitSlop={8} style={{ width: i === idx ? 24 : 11, height: 11, borderRadius: 6, backgroundColor: i === idx ? C.ink400 : i === 0 ? (critic ? C.ink400 : C.sun400) : C.paper0, borderWidth: 2, borderColor: C.inkBlack }} />
+                <Pressable key={p.key} onPress={() => goTo(i)} accessibilityLabel={`Page: ${p.name}`} accessibilityState={{ selected: i === idx }} hitSlop={8} style={{ width: i === idx ? 24 : 11, height: 11, borderRadius: 6, backgroundColor: i === idx ? C.sun400 : C.paper0, borderWidth: 2, borderColor: C.inkBlack, opacity: i === idx ? 1 : 0.85 }} />
               ))}
             </View>
-            <Mono s={9.5} c={C.inkDeep} numberOfLines={1}>
+            <Mono s={9.5} c={C.paper0} numberOfLines={1}>
               {cur.key === 'cover' ? 'COVER · PORTADA' : cur.key === 'data' ? 'p. 1 · DATA PAGE' : `p. ${cur.no} · ${cur.title}`}
             </Mono>
           </View>
-          <StickerPressable offset={idx === PAGES.length - 1 ? 'none' : 'sm'} radius={999} onPress={() => goTo(idx + 1)} disabled={idx === PAGES.length - 1} accessibilityLabel="Next page" style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 2.5, borderColor: idx === PAGES.length - 1 ? C.paper300 : C.inkBlack, alignItems: 'center', justifyContent: 'center', backgroundColor: idx === PAGES.length - 1 ? C.paper50 : C.sun400 }}>
-            <Chevron dir="right" color={idx === PAGES.length - 1 ? C.paper300 : C.inkDeep} />
+          <StickerPressable offset={idx === PAGES.length - 1 ? 'none' : 'sm'} radius={999} onPress={() => goTo(idx + 1)} disabled={idx === PAGES.length - 1} accessibilityLabel="Next page" style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 2.5, borderColor: idx === PAGES.length - 1 ? 'rgba(255,253,245,0.35)' : C.inkBlack, alignItems: 'center', justifyContent: 'center', backgroundColor: idx === PAGES.length - 1 ? 'transparent' : C.sun400 }}>
+            <Chevron dir="right" color={idx === PAGES.length - 1 ? 'rgba(255,253,245,0.45)' : C.inkDeep} />
           </StickerPressable>
         </View>
       </View>
