@@ -150,6 +150,60 @@ async function curated(R, venueById) {
   return { out, dropped };
 }
 
+// ── relevance for full-text sources ─────────────────────────────────────────
+// Dailymotion / Commons / Archive search full text, so a venue whose name is an
+// ordinary word ("Máximo", "Hugo", "Mesa", "Kill Bill") pulls in news, songs and
+// films. A clip counts as about the venue only when the venue's name is in its
+// title AND the context says restaurant + Mexico City as needed:
+//  - generic names need both a food cue and a CDMX cue;
+//  - one-word names need one of them;
+//  - distinctive multi-word names ("Comedor Jacinta") need neither;
+//  - CDMX food outlets (Gourmet de México, Chilango, Dónde Ir…) count as both;
+//  - anything placed in another city (and not in CDMX) is dropped.
+const GENERIC = new Set(
+  [
+    'em', 'maximo', 'nicos', 'gaba', 'rosetta', 'ajoblanco', 'al andalus', 'alfil', 'arango', 'baldio', 'botanico', 'cana', 'cascabel',
+    'chapulin', 'cuina', 'eloise', 'emilio', 'fierro', 'galea', 'lina', 'lorea', 'los danzantes', 'marea', 'migrante', 'prendes', 'raiz',
+    'sarde', 'sartoria', 'sesame', 'the palm', 'tierra adentro', 'tori', 'vega', 'voraz', 'another', 'bajel', 'brutal', 'bulla', 'charco',
+    'chevere', 'el bajio', 'el cardenal', 'filigrana', 'fugaz', 'fugu', 'gia', 'hank s', 'hugo', 'issi', 'kill bill', 'la 89', 'la cabrera',
+    'liona', 'los panchos', 'lotti', 'magazzino', 'maleza', 'martinez', 'mistral', 'plumbago', 'propio', 'sin nombre', 'tenampa',
+    'the lamb', 'vigneron', 'xuna', 'ideal', 'boca grande', 'cursi', 'enzu', 'max', 'mesa', 'tosco', 'entremar', 'mattea', 'limosneros',
+  ],
+);
+const FOOD =
+  /restaurant|restaurante|taquer|\btacos?\b|comida|cocina|\bchefs?\b|\bmenu\b|gourmet|\bfood|foodie|cantina|panader|brunch|critica|michelin|50 best|platillo|gastronom|garnacha|donde ir|bistr|mezcal|tequila|\bbar\b|desayun|\bfonda\b|comedor|chilango|maspormas|time out|local traveller|conde nast|food and wine|\bcomer\b|sabor|chile en nogada|\bmole\b|pozole|tamal|barbacoa|antojit|cerveza|vino|wine|cocktail|coctel|sushi|ramen|pizza|pan dulce/;
+const CDMX =
+  /\bcdmx\b|ciudad de mexico|mexico city|\bdf\b|chilango|zocalo|polanco|roma norte|roma sur|condesa|coyoacan|azcapotzalco|claveria|narvarte|juarez|cuauhtemoc|san rafael|san angel|santa maria la ribera|santa fe|lomas de chapultepec|chapultepec|tabacalera|anzures|pedregal|portales|del valle|iztacalco|iztapalapa|tlalpan|xochimilco|miguel hidalgo|benito juarez|alvaro obregon|garibaldi|reforma|insurgentes|centro historico/;
+const ELSEWHERE =
+  /puebla|monterrey|guadalajara|tijuana|queretaro|cancun|merida|bolivia|barcelona|spain|espana|madrid|dubai|florida|santo domingo|dominican|argentina|buenos aires|colombia|bogota|italia|italy|paris|france|new york|miami|texas|california|venezuela|costa rica|honduras|guatemala|satelite|naucalpan/;
+const TRUSTED = /gourmet de mexico|chilango|donde ir|maspormas|la ruta de la garnacha|time out|food and wine|conde nast|local traveller/;
+
+const words = (s) => fold(s).replace(/[^a-z0-9]+/g, ' ').trim();
+
+function strictAbout(v, { title, description = '', creator = '' }) {
+  const name = words(v.name);
+  if (!name || !(' ' + words(title) + ' ').includes(' ' + name + ' ')) return false;
+  // the context, minus the venue's own name (so "Guzina Oaxaca" isn't "elsewhere")
+  const ctx = (' ' + words([title, description, creator].join(' ')) + ' ').split(' ' + name + ' ').join(' ');
+  const food = FOOD.test(ctx);
+  const city = CDMX.test(ctx) || (!!v.hood && ctx.includes(words(v.hood)));
+  if (!city && ELSEWHERE.test(ctx)) return false;
+  // the venue's own chef named alongside it ("Gabriela Cámara … Contramar")
+  const chef = words(String(v.chef || '').split(/[,(/]| y /)[0]);
+  if (chef.split(' ').length >= 2 && ctx.includes(' ' + chef + ' ')) return true;
+  if (GENERIC.has(name)) {
+    // A CDMX food outlet's episode titled after the venue ("ARANGO | Gourmet de México")
+    // counts; otherwise a generic name needs a food cue in the title and a CDMX cue.
+    const rest = (' ' + words(title) + ' ').split(' ' + name + ' ').join(' ').trim();
+    if (TRUSTED.test(words(creator))) return !rest || FOOD.test(' ' + rest + ' ') || CDMX.test(' ' + rest + ' ');
+    return FOOD.test(' ' + words(title) + ' ') && city;
+  }
+  if (TRUSTED.test(words(creator))) return true;
+  const sig = name.split(' ').filter((w) => !['el', 'la', 'los', 'las', 'the', 'de', 'del', 'y'].includes(w));
+  if (sig.length >= 2) return true;
+  return food || city;
+}
+
 // ── 2. Dailymotion ───────────────────────────────────────────────────────────
 
 async function dailymotion(R, venues) {
@@ -165,8 +219,8 @@ async function dailymotion(R, venues) {
       if (!x.allow_embed || x.private) continue;
       if (x.duration < 10 || x.duration > 1800) continue;
       const item = { title: x.title || '', description: x.description || '', tags: [] };
-      if (!R.isAboutVenue(ref, item)) continue;
       const creator = x['owner.screenname'] || x['owner.username'] || 'Dailymotion creator';
+      if (!strictAbout(v, { title: item.title, description: item.description, creator })) continue;
       if (!R.isThirdParty(ref, creator) || !R.isThirdParty(ref, x['owner.username'] || '')) continue;
       out.push({
         id: 'dailymotion:' + x.id,
@@ -196,30 +250,31 @@ async function dailymotion(R, venues) {
 // ── 3./4. Commons + Internet Archive (files played natively) ────────────────
 
 /** Signature dishes worth a related clip, from the guide's own dish list / category. */
+// [label, what the guide's text must mention, what the file's TITLE must say]
 const DISHES = [
-  ['al pastor', /pastor/],
-  ['suadero', /suadero/],
-  ['mole', /\bmole\b/],
-  ['tostada', /tostada/],
-  ['tamales', /tamal/],
-  ['pozole', /pozole/],
-  ['birria', /birria/],
-  ['barbacoa', /barbacoa/],
-  ['carnitas', /carnitas/],
-  ['churros', /churro/],
-  ['pan dulce', /concha|pan dulce|panader/],
-  ['tlacoyo', /tlacoyo/],
-  ['quesadilla', /quesadilla/],
-  ['ceviche', /ceviche|aguachile/],
-  ['tortillas', /tortilla|nixtamal|maiz|maíz|masa/],
-  ['tacos', /taco|taquer/],
-  ['mezcal', /mezcal/],
+  ['tacos al pastor', /pastor/, /tacos? al pastor/],
+  ['suadero', /suadero/, /suadero/],
+  ['mole', /\bmole\b/, /\bmole\b/],
+  ['tostadas', /tostada/, /tostadas?\b/],
+  ['tamales', /tamal/, /\btamal(es)?\b/],
+  ['pozole', /pozole/, /pozole/],
+  ['birria', /birria/, /birria/],
+  ['barbacoa', /barbacoa/, /barbacoa/],
+  ['carnitas', /carnitas/, /carnitas/],
+  ['churros', /churro/, /churros?\b/],
+  ['pan dulce', /concha|pan dulce|panader/, /pan dulce|\bconchas?\b/],
+  ['tlacoyos', /tlacoyo/, /tlacoyos?\b/],
+  ['quesadillas', /quesadilla/, /quesadillas?\b/],
+  ['ceviche', /ceviche|aguachile/, /ceviche|aguachile/],
+  ['tortillas', /tortilla|nixtamal|maiz|masa/, /tortillas?\b|nixtamal/],
+  ['tacos', /taco|taquer/, /\btacos\b/],
+  ['mezcal', /mezcal/, /mezcal/],
 ];
-const MEX = /mexic|méxic|cdmx|ciudad de mexico|mexico city|oaxaca|puebla/i;
+const MEX = /mexic|cdmx|ciudad de mexico|mexico city|oaxaca|puebla|jalisco|yucatan|chilango/;
 
 function dishesOf(v) {
   const text = fold([...(v.dishes || []), v.category, v.cuisine, v.name].join(' '));
-  return DISHES.filter(([, re]) => re.test(text)).map(([k]) => k).slice(0, 2);
+  return DISHES.filter(([, re]) => re.test(text)).slice(0, 2);
 }
 
 const cache = {};
@@ -236,10 +291,12 @@ async function commonsSearch(q) {
     const vi = (p.videoinfo || [])[0];
     if (!vi || !/^video\/|application\/ogg/.test(vi.mime || '')) continue;
     const ders = (vi.derivatives || []).filter((x) => x.src);
-    const pick =
-      ders.find((x) => /mp4/.test(x.type || '') && (x.height || 0) <= 720) ||
-      ders.filter((x) => /webm/.test(x.type || '') && (x.height || 0) <= 720).sort((a, b) => (b.height || 0) - (a.height || 0))[0] ||
-      { src: vi.url, type: vi.mime, height: 0 };
+    // Only what browsers play: H.264 MP4 (everywhere, iOS included) or WebM;
+    // never the original .mov / MPEG-4 Part 2 / Ogg upload.
+    const playable = (t) => /^video\/webm/.test(t) || (/^video\/mp4/.test(t) && !/mp4v/.test(t));
+    const best = (re) => ders.filter((x) => re.test(x.type || '') && playable(x.type) && (x.height || 0) <= 720).sort((a, b) => (b.height || 0) - (a.height || 0))[0];
+    const pick = best(/mp4/) || best(/webm/) || (playable(vi.mime || '') ? { src: vi.url, type: vi.mime, height: vi.height || 0 } : null);
+    if (!pick) continue;
     const em = vi.extmetadata || {};
     const title = String(p.title || '').replace(/^File:/, '').replace(/\.[a-z0-9]+$/i, '').replace(/_/g, ' ');
     res.push({
@@ -333,23 +390,25 @@ async function openFiles(R, venues) {
     // about the venue itself
     for (const [src, search] of [['commons', commonsSearch], ['archive', archiveSearch]]) {
       for (const f of await search(`"${v.name}"`)) {
-        if (R.isAboutVenue(ref, { title: f.title, description: f.description, tags: [] })) mine.push(fileClip(v, f, 'venue', '', src));
+        if (strictAbout(v, f) && R.isThirdParty(ref, f.creator)) mine.push(fileClip(v, f, 'venue', '', src));
       }
     }
     // its signature dishes (related, clearly labelled)
-    for (const dish of dishesOf(v)) {
+    for (const [dish, , inTitle] of dishesOf(v)) {
       if (mine.filter((c) => c.scope === 'dish').length >= 2) break;
       for (const [src, search] of [['commons', commonsSearch], ['archive', archiveSearch]]) {
-        const hits = (await search(`"${dish}"`)).filter((f) => fold(f.title + ' ' + f.description).includes(fold(dish).split(' ')[0]) && MEX.test(f.title + ' ' + f.description));
+        const hits = (await search(`"${dish}"`)).filter((f) => inTitle.test(words(f.title)) && MEX.test(fold(f.title + ' ' + f.description)));
         if (hits[0]) mine.push(fileClip(v, hits[0], 'dish', dish, src));
         if (mine.filter((c) => c.scope === 'dish').length >= 2) break;
       }
     }
     // its neighbourhood (related)
-    if (v.hood && mine.length < 2) {
-      const hits = (await commonsSearch(`"${v.hood}" "Ciudad de México"`)).concat(await commonsSearch(`"${v.hood}" Mexico City`));
-      const f = hits.find((x) => fold(x.title + ' ' + x.description).includes(fold(v.hood)));
-      if (f) mine.push(fileClip(v, f, 'area', v.hood, 'commons'));
+    // ("Centro" alone is too vague a title match — use the historic centre's full name)
+    const hood = v.hood === 'Centro' ? 'Centro Histórico' : v.hood;
+    if (hood && mine.length < 2) {
+      const hits = (await commonsSearch(`"${hood}" "Ciudad de México"`)).concat(await commonsSearch(`"${hood}" Mexico City`));
+      const f = hits.find((x) => (' ' + words(x.title) + ' ').includes(' ' + words(hood) + ' ') && /ciudad de mexico|mexico city|\bcdmx\b|\bdf\b/.test(words(x.title + ' ' + x.description)));
+      if (f) mine.push(fileClip(v, f, 'area', hood, 'commons'));
     }
     out.push(...mine);
   }
@@ -360,7 +419,8 @@ async function openFiles(R, venues) {
 
 async function main() {
   const prev = fs.existsSync(OUT) ? JSON.parse(fs.readFileSync(OUT, 'utf8')) : {};
-  const curatedHash = crypto.createHash('sha1').update(fs.readFileSync(CURATED)).digest('hex').slice(0, 12);
+  // Hash of the curated list AND this script, so changed rules re-collect on the next deploy.
+  const curatedHash = crypto.createHash('sha1').update(fs.readFileSync(CURATED)).update(fs.readFileSync(new URL(import.meta.url))).digest('hex').slice(0, 12);
   const since = (Date.now() - Date.parse(prev.generatedAt || 0)) / 36e5;
   if (!process.env.FORCE && since < MIN_GAP_HOURS && prev.curatedHash === curatedHash) {
     console.log(`open clips collected ${since.toFixed(1)} h ago — skipping (FORCE=1 to override)`);

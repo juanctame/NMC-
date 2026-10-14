@@ -88,13 +88,21 @@ Trayectoria), and **awards**.
     is re-checked through the platform's **oEmbed** on each run: removed,
     private or non-embeddable clips are dropped, as is anything posted by the
     venue or its chef; title, creator and thumbnail come from the platform.
-  - **Dailymotion** — its public search, per restaurant, with the same
-    about-the-venue and third-party rules as YouTube.
+  - **Dailymotion** — its public search, per restaurant. Because full-text
+    search pulls in anything sharing a venue's name (a "Máximo" record, a
+    "Hugo" interview), a clip only counts when the venue's name is in its title
+    and the context fits: ordinary-word names ("Mesa", "Brutal", "El Cardenal")
+    need a food cue *and* a Mexico City cue, one-word names need one of them,
+    the venue's chef named alongside it counts, CDMX food outlets (Gourmet de
+    México, Chilango, Dónde Ir, Máspormás…) are trusted, and anything set in
+    another city is dropped. Uploaders must be third-party.
   - **Real video files (MP4 / WebM)** from **Wikimedia Commons** and the
     **Internet Archive**, credited with their author and licence and played
-    natively in a `<video>` element. A file about the venue itself comes first;
+    natively in a `<video>` element (H.264 MP4 or WebM only — never formats
+    browsers can't play). Files go through the same relevance rule; one about the venue itself comes first;
     otherwise footage of one of its **dishes** (e.g. tacos al pastor) or its
-    **neighbourhood** may be added, always labelled **"Related · …"** /
+    **neighbourhood** may be added (the dish or neighbourhood must be named in the
+    file's title, with a Mexico cue), always labelled **"Related · …"** /
     **"Around · …"**. That footage is never presented as the restaurant, and it
     never counts towards "Trending now".
 
