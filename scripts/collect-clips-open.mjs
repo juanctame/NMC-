@@ -57,10 +57,16 @@ async function getJson(url, tries = 2) {
     try {
       const r = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'application/json' }, signal: AbortSignal.timeout(15000) });
       if (r.status === 404 || r.status === 401 || r.status === 403 || r.status === 400) return { __status: r.status };
+      if (r.status === 429) {
+        // rate-limited: back off harder, then report it as transient (not "removed")
+        if (i === tries) return { __error: 'HTTP 429', __transient: true };
+        await sleep(4000 * (i + 1));
+        continue;
+      }
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return await r.json();
     } catch (e) {
-      if (i === tries) return { __error: String(e.message || e) };
+      if (i === tries) return { __error: String(e.message || e), __transient: true };
       await sleep(800 * (i + 1));
     }
   }
@@ -100,10 +106,11 @@ const OEMBED = {
   dailymotion: (u) => `https://www.dailymotion.com/services/oembed?format=json&url=${encodeURIComponent(u)}`,
 };
 
-async function curated(R, venueById) {
+async function curated(R, venueById, prevById = {}) {
   const list = JSON.parse(fs.readFileSync(CURATED, 'utf8')).clips || [];
   const out = [];
   const dropped = [];
+  const carried = [];
   for (const c of list) {
     const v = venueById[c.placeId];
     const p = parseUrl(c.url);
@@ -113,8 +120,16 @@ async function curated(R, venueById) {
     }
     let meta = {};
     if (OEMBED[p.platform]) {
-      meta = await getJson(OEMBED[p.platform](c.url));
-      await sleep(250);
+      meta = await getJson(OEMBED[p.platform](c.url), 3);
+      await sleep(p.platform === 'tiktok' ? 1500 : 250); // TikTok's oEmbed rate-limits quickly
+      // A transient failure (rate limit, network) isn't evidence the clip is gone:
+      // keep the copy verified on an earlier run.
+      const prev = prevById[p.platform + ':' + p.embedId];
+      if (meta.__transient && prev) {
+        out.push(prev);
+        carried.push([c.url, meta.__error]);
+        continue;
+      }
       if (meta.__status || meta.__error) {
         dropped.push([c.url, meta.__status ? 'oEmbed ' + meta.__status + ' (removed / private / not embeddable)' : meta.__error]);
         continue;
@@ -147,7 +162,7 @@ async function curated(R, venueById) {
       via: 'curated',
     });
   }
-  return { out, dropped };
+  return { out, dropped, carried };
 }
 
 // ── relevance for full-text sources ─────────────────────────────────────────
@@ -447,8 +462,11 @@ async function main() {
   venues.forEach((v) => (venueById[v.id] = v));
 
   const t0 = Date.now();
-  const cur = await curated(R, venueById);
-  console.log(`curated: ${cur.out.length} kept, ${cur.dropped.length} dropped`);
+  const prevById = {};
+  Object.values(prev.venues || {}).forEach((v) => (v.clips || []).forEach((c) => c.via === 'curated' && (prevById[c.id] = c)));
+  const cur = await curated(R, venueById, prevById);
+  console.log(`curated: ${cur.out.length} kept (${cur.carried.length} carried over after a transient error), ${cur.dropped.length} dropped`);
+  cur.carried.forEach(([u, why]) => console.log('  carried', u, '—', why));
   cur.dropped.forEach(([u, why]) => console.log('  dropped', u, '—', why));
   const dm = await dailymotion(R, venues);
   console.log(`dailymotion: ${dm.out.length} clips from ${dm.calls} searches`);
@@ -478,6 +496,7 @@ async function main() {
       related: count((c) => c.scope !== 'venue'),
     },
     dropped: cur.dropped.map(([url, why]) => ({ url, why })),
+    carried: cur.carried.map(([url, why]) => ({ url, why })),
     venues: venuesOut,
   };
   fs.writeFileSync(OUT, JSON.stringify(out, null, 1) + '\n');
