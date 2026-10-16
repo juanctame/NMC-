@@ -94,6 +94,7 @@ const STRINGS: Record<string, [string, string, string]> = {
   'board.sub': ['Ranked by the critics’ table', 'Clasificado por la mesa de críticos', 'Classé par la table des critiques'],
   'board.restaurants': ['Restaurants', 'Restaurantes', 'Restaurants'],
   'board.diners': ['Diners', 'Comensales', 'Convives'],
+  'board.critics': ['Critics', 'Críticos', 'Critiques'],
   'board.all': ['All', 'Todo', 'Tout'],
 
   // ── log / guide ──

@@ -144,7 +144,9 @@ Trayectoria), and **awards**.
   follow button; restaurants get a **"What critics say"** block with a SIM
   consensus; creator names in the Clips feed and the trending cards open the
   profile; and the feed's tastemakers rail is these real critics (the earlier
-  invented creators were removed).
+  invented creators were removed). The **Leaderboard** has a **Critics** tab: all of
+  them, filterable to creators or food media, sorted by restaurants covered,
+  highest SIM average, or palate match with you.
 - **A calmer place page** — a swipeable, credited photo hero, a compact header
   (key chips + a collapsible blurb), and sticky tabs: **Overview** (the guide
   card, the draw / good to know, taste match), **Menu** (what to order,
