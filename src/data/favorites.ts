@@ -5,7 +5,12 @@
  * restaurant they rank highest in it, so favourites fall straight out of
  * everyone's rankings. On top of that, everyone features four restaurants as
  * their "Top 4" on their profile. A restaurant's "Biggest fans" are the people
- * whose favourite it is, in each category, flagging who also features it.
+ * whose favourite it is, in each category, flagging who also features it;
+ * its "supporters" are the people who keep it on their shortlist there — their
+ * Nº2 to Nº8 in that category — the regulars just behind the crown. A chef's
+ * fans are the people who crown, feature or rank one of their kitchens in
+ * their top three (friends also follow the chefs whose kitchens they keep
+ * going back to).
  *
  * People: you (from your rankings + your Top 4), your friends in the app (from
  * their taste profiles — the app's demo community), and — when the shared
@@ -16,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Place } from '../store/data';
 import { FRIENDS, byId as seedById } from '../store/data';
 import { CARTE_CDMX } from './carte';
+import { CHEFS, type Chef } from './chefs';
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config';
 import { sharedEnabled } from './shared';
 
@@ -60,6 +66,20 @@ export function favoritesFromRanked(ranked: Place[]): Partial<Record<FavCat, Pla
     const curScore = cur ? (typeof cur.score === 'number' ? cur.score : 10 - ranked.indexOf(cur) * 0.01) : -1;
     if (!cur || score > curScore) out[c] = p;
   });
+  return out;
+}
+
+/** How deep a shortlist runs: your favourite plus the runners-up behind it. */
+export const SHORTLIST = 8;
+/** Ranked this high (or crowned, or featured), you're a fan of the chef behind it. */
+export const FOLLOW_RANK = 3;
+
+/** Your shortlist in each category: the restaurants you rank highest there, best first. */
+export function lovesFromRanked(ranked: Place[]): Partial<Record<FavCat, Place[]>> {
+  const out: Partial<Record<FavCat, Place[]>> = {};
+  const scoreOf = (p: Place) => (typeof p.score === 'number' ? p.score : 10 - ranked.indexOf(p) * 0.01);
+  ranked.forEach((p) => (out[categoryOf(p)] = out[categoryOf(p)] || []).push(p));
+  (Object.keys(out) as FavCat[]).forEach((c) => (out[c] = out[c]!.sort((a, b) => scoreOf(b) - scoreOf(a)).slice(0, SHORTLIST)));
   return out;
 }
 
@@ -118,32 +138,113 @@ export type Fan = {
   kind: 'me' | 'friend' | 'community';
 };
 
-export type PersonFavs = { person: Fan; favorites: Partial<Record<FavCat, string>>; top: TopFour };
+export type PersonFavs = {
+  person: Fan;
+  favorites: Partial<Record<FavCat, string>>;
+  top: TopFour;
+  /** Their shortlist per category, best first — [0] is the favourite. */
+  loves?: Partial<Record<FavCat, string[]>>;
+};
 
 /**
- * Each friend's favourite in every category (their best-loved by acclaim and
- * taste, varied per friend) and their Top 4: the favourites of the categories
- * they care about most.
+ * Each friend's shortlist in every category — their best-loved by acclaim and
+ * taste, varied per friend: eight deep in the categories they care about, five
+ * elsewhere. The first is their favourite; their Top 4 is the favourites of
+ * the categories they care about most.
  */
 const FRIEND_FAVS: PersonFavs[] = FRIENDS.map((f) => {
+  const cares = FRIEND_CATS[f.id] || ['tacos', 'mexican', 'seafood', 'world'];
   const favorites: Partial<Record<FavCat, string>> = {};
+  const loves: Partial<Record<FavCat, string[]>> = {};
   for (const c of FAV_CATS) {
-    const pool = byCat[c.id] || [];
-    let best: Place | undefined;
-    let bestScore = -1;
-    for (const p of pool) {
-      const s = (p.acclaim || 30) * 0.5 + hash(f.id + p.id) * 60;
-      if (s > bestScore) {
-        bestScore = s;
-        best = p;
-      }
+    const pool = (byCat[c.id] || []).map((p) => ({ p, s: (p.acclaim || 30) * 0.5 + hash(f.id + p.id) * 60 })).sort((a, b) => b.s - a.s);
+    const list = pool.slice(0, cares.includes(c.id) ? SHORTLIST : 5).map((x) => x.p.id);
+    if (list.length) {
+      loves[c.id] = list;
+      favorites[c.id] = list[0];
     }
-    if (best) favorites[c.id] = best.id;
   }
-  const cats = FRIEND_CATS[f.id] || ['tacos', 'mexican', 'seafood', 'world'];
-  const top: TopFour = cats.slice(0, 4).map((c) => (favorites[c] ? { placeId: favorites[c]!, category: c } : null));
-  return { person: { id: f.id, name: f.name, initials: f.initials, color: f.color, kind: 'friend' as const }, favorites, top };
+  const top: TopFour = cares.slice(0, 4).map((c) => (favorites[c] ? { placeId: favorites[c]!, category: c } : null));
+  return { person: { id: f.id, name: f.name, initials: f.initials, color: f.color, kind: 'friend' as const }, favorites, top, loves };
 });
+
+const isChefKitchen = (id: string) => !!ALL_PLACES.find((p) => p.id === id)?.chef;
+
+/**
+ * Every kitchen the guide credits to a chef is a regular haunt of at least one
+ * friend: a credited venue nobody shortlisted joins the shortlist of the
+ * friend it suits best (a category they care about, then taste affinity) —
+ * where a shortlist has room, else in its last uncredited spot. No shortlist
+ * runs past eight; favourites don't move.
+ */
+(() => {
+  const count = new Map<string, number>();
+  FRIEND_FAVS.forEach((f) => Object.values(f.loves || {}).flat().forEach((id) => count.set(id, (count.get(id) || 0) + 1)));
+  for (const p of ALL_PLACES) {
+    if (!p.chef || count.get(p.id)) continue;
+    const c = categoryOf(p);
+    const ranked = FRIEND_FAVS.map((f) => ({ f, s: ((FRIEND_CATS[f.person.id] || []).includes(c) ? 1 : 0) + hash(f.person.id + ':' + p.id) })).sort((a, b) => b.s - a.s);
+    // room on a shorter shortlist first, then the last uncredited spot on a full one
+    const roomy = ranked.find(({ f }) => (f.loves?.[c]?.length || 0) >= 1 && f.loves![c]!.length < SHORTLIST);
+    if (roomy) {
+      roomy.f.loves![c]!.push(p.id);
+      count.set(p.id, 1);
+      continue;
+    }
+    for (const { f } of ranked) {
+      const list = f.loves?.[c];
+      if (!list || list.length < 2) continue;
+      // the lowest-ranked spot (never the favourite) held by an uncredited venue someone else also lists,
+      // else any uncredited one, else one that stays on someone else's list
+      let at = -1;
+      for (let i = list.length - 1; i > 0 && at < 0; i--) if (!isChefKitchen(list[i]) && (count.get(list[i]) || 0) > 1) at = i;
+      for (let i = list.length - 1; i > 0 && at < 0; i--) if (!isChefKitchen(list[i])) at = i;
+      for (let i = list.length - 1; i > 0 && at < 0; i--) if ((count.get(list[i]) || 0) > 1) at = i; // a kitchen others list too
+      if (at < 0) continue;
+      count.set(list[at], (count.get(list[at]) || 1) - 1);
+      list[at] = p.id;
+      count.set(p.id, 1);
+      break;
+    }
+  }
+})();
+
+/**
+ * The chefs a friend follows: the ones behind a kitchen they crown, feature or
+ * rank in their top three — and, so every chef has a fan, each remaining chef
+ * is followed by the friend who ranks one of their kitchens highest.
+ */
+const FRIEND_CHEFS: Record<string, Set<string>> = (() => {
+  const out: Record<string, Set<string>> = {};
+  FRIEND_FAVS.forEach((f) => (out[f.person.id] = new Set()));
+  const rankIn = (f: PersonFavs, id: string) => {
+    for (const ids of Object.values(f.loves || {})) {
+      const i = ids.indexOf(id);
+      if (i >= 0) return i + 1;
+    }
+    return f.top.some((t) => t?.placeId === id) ? 1 : 99;
+  };
+  for (const chef of CHEFS) {
+    let best: { f: PersonFavs; r: number } | null = null;
+    for (const f of FRIEND_FAVS) {
+      const r = Math.min(...chef.placeIds.map((id) => rankIn(f, id)));
+      if (r <= FOLLOW_RANK) out[f.person.id].add(chef.id);
+      if (r < 99 && (!best || r < best.r || (r === best.r && hash(f.person.id + chef.id) > hash(best.f.person.id + chef.id)))) best = { f, r };
+    }
+    if (best && !FRIEND_FAVS.some((f) => out[f.person.id].has(chef.id))) out[best.f.person.id].add(chef.id);
+  }
+  return out;
+})();
+
+/** The chefs a friend follows, most-loved kitchen first. */
+export function chefsFollowedBy(friendId: string): Chef[] {
+  const ids = FRIEND_CHEFS[friendId];
+  const f = FRIEND_FAVS.find((x) => x.person.id === friendId);
+  if (!ids || !f) return [];
+  const lists = Object.values(f.loves || {});
+  const best = (c: Chef) => Math.min(...c.placeIds.map((id) => Math.min(...lists.map((l) => (l.indexOf(id) < 0 ? 99 : l.indexOf(id))))));
+  return CHEFS.filter((c) => ids.has(c.id)).sort((a, b) => best(a) - best(b));
+}
 
 export const friendFavs = (id: string) => FRIEND_FAVS.find((x) => x.person.id === id);
 
@@ -237,6 +338,74 @@ export function fansOf(
   return FAV_CATS.filter((c) => groups[c.id]?.length).map((c) => ({ category: c.id, fans: groups[c.id]!.sort((a, b) => order(a) - order(b)) }));
 }
 
+export type Supporter = { fan: Fan; category: FavCat; rank: number }; // rank: 2 = their Nº2 there
+
+/**
+ * The people who keep this place on their shortlist without crowning it —
+ * their Nº2 to Nº5 in its category. Anyone already among its fans is left out.
+ * You first, then friends by how high they rank it.
+ */
+export function supportersOf(placeId: string, me: { fan: Fan; loves: Partial<Record<FavCat, Place[]>> } | null, fans: FanGroup[] = []): Supporter[] {
+  const isFan = new Set(fans.flatMap((g) => g.fans.map((f) => f.fan.id)));
+  const out: Supporter[] = [];
+  const people: { fan: Fan; loves: Partial<Record<FavCat, string[]>> }[] = [];
+  if (me) {
+    const loves: Partial<Record<FavCat, string[]>> = {};
+    (Object.entries(me.loves) as [FavCat, Place[]][]).forEach(([c, ps]) => (loves[c] = ps.map((p) => p.id)));
+    people.push({ fan: me.fan, loves });
+  }
+  FRIEND_FAVS.forEach((f) => people.push({ fan: f.person, loves: f.loves || {} }));
+  for (const p of people) {
+    if (isFan.has(p.fan.id)) continue;
+    for (const [c, ids] of Object.entries(p.loves) as [FavCat, string[]][]) {
+      const i = ids.indexOf(placeId);
+      if (i > 0) {
+        out.push({ fan: p.fan, category: c, rank: i + 1 });
+        break;
+      }
+    }
+  }
+  return out.sort((a, b) => (a.fan.kind === 'me' ? -1 : b.fan.kind === 'me' ? 1 : a.rank - b.rank));
+}
+
+export type ChefBacker = { fan: Fan; placeId: string; category: FavCat; rank: number; featured: boolean };
+
+/**
+ * A chef's fans and supporters, across all their kitchens. Fans crown one of
+ * their kitchens, feature it in their Top 4, rank it in their top three, or
+ * (friends) follow the chef; supporters keep one further down their
+ * shortlist. Each person appears once, at their best rank.
+ */
+export function chefBackers(
+  chef: Pick<Chef, 'id' | 'placeIds'>,
+  me: { fan: Fan; loves: Partial<Record<FavCat, Place[]>>; top: TopFour } | null,
+): { fans: ChefBacker[]; supporters: ChefBacker[] } {
+  const people: { fan: Fan; loves: Partial<Record<FavCat, string[]>>; top: TopFour; follows: boolean }[] = [];
+  if (me) {
+    const loves: Partial<Record<FavCat, string[]>> = {};
+    (Object.entries(me.loves) as [FavCat, Place[]][]).forEach(([c, ps]) => (loves[c] = ps.map((p) => p.id)));
+    people.push({ fan: me.fan, loves, top: me.top, follows: false });
+  }
+  FRIEND_FAVS.forEach((f) => people.push({ fan: f.person, loves: f.loves || {}, top: f.top, follows: !!FRIEND_CHEFS[f.person.id]?.has(chef.id) }));
+  const fans: ChefBacker[] = [];
+  const supporters: ChefBacker[] = [];
+  for (const p of people) {
+    let best: ChefBacker | null = null;
+    for (const id of chef.placeIds) {
+      const slot = p.top.findIndex((t) => t?.placeId === id);
+      for (const [c, ids] of Object.entries(p.loves) as [FavCat, string[]][]) {
+        const i = ids.indexOf(id);
+        if (i >= 0 && (!best || i + 1 < best.rank)) best = { fan: p.fan, placeId: id, category: c, rank: i + 1, featured: slot >= 0 };
+      }
+      if (slot >= 0 && (!best || !best.featured)) best = { fan: p.fan, placeId: id, category: p.top[slot]!.category, rank: best ? Math.min(best.rank, 1) : 1, featured: true };
+    }
+    if (!best) continue;
+    (best.featured || best.rank <= FOLLOW_RANK || p.follows ? fans : supporters).push(best);
+  }
+  const order = (b: ChefBacker) => (b.fan.kind === 'me' ? -1 : b.featured ? 0 : b.rank);
+  return { fans: fans.sort((a, b) => order(a) - order(b)), supporters: supporters.sort((a, b) => order(a) - order(b)) };
+}
+
 /** Resolve a place id from the guide or the seed data. */
 export const favPlace = (id: string): Place | undefined => ALL_PLACES.find((p) => p.id === id) || seedById[id];
 
@@ -256,16 +425,20 @@ export async function fetchPersonFavs(handle: string): Promise<PersonFavs | null
     if (!Array.isArray(rows) || !rows.length) return null;
     const r0 = rows[0];
     const favorites: Partial<Record<FavCat, string>> = {};
+    const loves: Partial<Record<FavCat, string[]>> = {};
     const top: TopFour = emptyTopFour();
     let n = 0;
     for (const r of rows) {
       if (!favorites[r.category]) favorites[r.category] = r.place_id;
+      const l = (loves[r.category] = loves[r.category] || []);
+      if (!l.includes(r.place_id)) l.push(r.place_id);
       if (r.featured && n < 4 && !top.some((t) => t?.placeId === r.place_id)) top[n++] = { placeId: r.place_id, category: r.category };
     }
     return {
       person: { id: 'h:' + handle, name: r0.name, initials: r0.initials || r0.name.slice(0, 2).toUpperCase(), color: r0.color || 'var(--ink-400)', avatarUrl: r0.avatar_url, kind: 'community' },
       favorites,
       top,
+      loves,
     };
   } catch {
     return null;

@@ -181,7 +181,7 @@ export type Screen =
 
 /** Profile screens (place / chef / group) share one back-trail. */
 const PROFILE_SCREENS: Screen[] = ['place', 'chef', 'group', 'critic'];
-type NavSnap = { screen: Screen; activePlaceId: string | null; activeChefId: string | null; activeGroupId: string | null; activeCriticId: string | null };
+type NavSnap = { screen: Screen; activePlaceId: string | null; activeChefId: string | null; activeGroupId: string | null; activeCriticId: string | null; activeFoodieId?: string | null; foodieReturn?: Screen };
 
 export type PinRef = { kind: string; id: string } | null;
 export type CreatedTable = (typeof EVENTS)[number] & { mine: true };
@@ -638,8 +638,9 @@ function openProfile(
 ): Partial<State> {
   const key = ({ place: 'activePlaceId', chef: 'activeChefId', group: 'activeGroupId', critic: 'activeCriticId' } as const)[screen];
   if (s.screen === screen && s[key] === ids[key]) return {}; // already here
-  if (PROFILE_SCREENS.includes(s.screen)) {
-    const snap: NavSnap = { screen: s.screen, activePlaceId: s.activePlaceId, activeChefId: s.activeChefId, activeGroupId: s.activeGroupId, activeCriticId: s.activeCriticId };
+  // A foodie's profile joins the trail too, so Back from a chef or place opened there returns to them.
+  if (PROFILE_SCREENS.includes(s.screen) || s.screen === 'foodie') {
+    const snap: NavSnap = { screen: s.screen, activePlaceId: s.activePlaceId, activeChefId: s.activeChefId, activeGroupId: s.activeGroupId, activeCriticId: s.activeCriticId, activeFoodieId: s.activeFoodieId, foodieReturn: s.foodieReturn };
     return { ...ids, screen, profileStack: [...s.profileStack, snap] };
   }
   return { ...ids, screen, profileStack: [], profileReturnTo: s.screen };
@@ -648,7 +649,10 @@ function openProfile(
 /** Back from a profile screen: retrace the trail, else return to where it began. */
 function closeProfile(s: State): Partial<State> {
   const prev = s.profileStack[s.profileStack.length - 1];
-  if (prev) return { ...prev, profileStack: s.profileStack.slice(0, -1) };
+  if (prev) {
+    const { activeFoodieId, foodieReturn, ...rest } = prev;
+    return { ...rest, ...(prev.screen === 'foodie' ? { activeFoodieId: activeFoodieId ?? null, foodieReturn: foodieReturn || 'board' } : {}), profileStack: s.profileStack.slice(0, -1) };
+  }
   return { screen: s.profileReturnTo || 'feed', activePlaceId: null, profileStack: [] };
 }
 

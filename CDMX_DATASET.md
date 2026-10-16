@@ -58,8 +58,10 @@ Trayectoria), and **awards**.
   restaurant); **Awards & recognition**; **In the guide's words**; **On camera**
   — creator clips of their restaurants, with the ones that name the chef
   marked "Features them" and listed first; **What critics say** (the simulated
-  critics' takes, labelled SIM); **Fans of their kitchens** (each a profile to
-  visit); what they cook, their groups and their restaurants.
+  critics' takes, labelled SIM); **Fans & supporters** — fans crown one of their
+  kitchens, feature it in a Top 4, rank it in their top three or (friends)
+  follow the chef; supporters keep a kitchen further down their shortlist —
+  each a profile to visit; what they cook, their groups and their restaurants.
 - **Pictures from every kind of source, grouped by who took them** — each
   restaurant's gallery (Media tab) is split into **From the restaurant** (every
   real photo on its own website: the home page plus its gallery / menu / about
@@ -249,7 +251,17 @@ Trayectoria), and **awards**.
   on a restaurant's Biggest fans or a chef's "Fans of their kitchens" — is a
   profile you can visit (friends, and testers by handle through the shared
   table); "You" opens your own passport on its data page, and Back returns to
-  where you were. Real critics never get favourites assigned.
+  where you were (a chef or restaurant opened from someone's profile returns
+  to them). Everyone also keeps a **shortlist** per category — the favourite
+  plus the runners-up behind it, up to eight deep (yours from your rankings;
+  friends' eight deep in the categories they care about, five elsewhere) — and
+  the people with a restaurant at Nº2–Nº8 there show as its **supporters**.
+  Friends' profiles list each shortlist under the favourite and the **chefs
+  they follow** (those behind a kitchen they crown, feature or rank in their
+  top three). The demo friends are seeded so that every kitchen the guide
+  credits to a chef is on at least one friend's shortlist and every chef has at
+  least one fan: today all 71 chefs have fans (1.3 on average) and 118 of 166
+  restaurants have supporters. Real critics never get favourites assigned.
 - **Brand marks** — each venue and chef carries an original **monogram** seal
   (initials on a deterministic colour, in the app's sticker look). These are our
   own marks, not the restaurants' trademarked logos, so they're safe to ship and

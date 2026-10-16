@@ -4,14 +4,16 @@
  * feature it in their profile's Top 4 marked and listed first. You, your
  * friends and — with the shared backend — every other tester. Every fan is a
  * profile you can visit (yours opens your passport). Ends with the invitation
- * to feature it yourself.
+ * to feature it yourself. Below them, its supporters: people who keep it on
+ * their shortlist (their Nº2 to Nº8 there) without crowning it.
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import { useStore } from '../store/useStore';
 import type { Place } from '../store/data';
-import { fansOf, favoritesFromRanked, fetchSharedFans, catLabel, FAV_CATS, categoryOf, type FanEntry } from '../data/favorites';
+import { fansOf, favoritesFromRanked, lovesFromRanked, supportersOf, fetchSharedFans, catLabel, FAV_CATS, categoryOf, type FanEntry } from '../data/favorites';
+import { FanChip } from './FanChip';
 import { identity } from '../data/profile';
 import { C, col } from '../theme/tokens';
 import { Banner, Mono, Serif, Display } from './Text';
@@ -58,7 +60,12 @@ export function BiggestFans({ place }: { place: Place }) {
       ),
     [place.id, ranked, topFour, shared, me.initials, me.color, me.avatarUrl],
   );
+  const supporters = useMemo(
+    () => supportersOf(place.id, { fan: { id: 'me', name: 'You', initials: me.initials, color: me.color, avatarUrl: me.avatarUrl, kind: 'me' }, loves: lovesFromRanked(ranked) }, groups),
+    [place.id, ranked, groups, me.initials, me.color, me.avatarUrl],
+  );
   const total = new Set(groups.flatMap((g) => g.fans.map((f) => f.fan.id))).size;
+  const count = [total && `${total} ${total === 1 ? 'fan' : 'fans'}`, supporters.length && `${supporters.length} ${supporters.length === 1 ? 'supporter' : 'supporters'}`].filter(Boolean).join(' · ');
   const mySlot = topFour.findIndex((t) => t?.placeId === place.id);
   const cat = categoryOf(place);
   const glyph = (c: string) => FAV_CATS.find((x) => x.id === c)?.glyph || '♥';
@@ -71,7 +78,7 @@ export function BiggestFans({ place }: { place: Place }) {
         </Banner>
         <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
         <Mono s={9} c={C.inkSoft}>
-          {total ? `${total} ${total === 1 ? 'fan' : 'fans'}` : 'none yet'}
+          {count || 'none yet'}
         </Mono>
       </View>
 
@@ -134,6 +141,19 @@ export function BiggestFans({ place }: { place: Place }) {
           </Serif>
         </View>
       )}
+
+      {supporters.length ? (
+        <View style={{ marginTop: 12 }} accessibilityLabel="Supporters">
+          <Mono s={8.5} c={C.inkMuted} style={{ marginBottom: 7 }}>
+            Supporters — on their shortlist, just behind the crown
+          </Mono>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+            {supporters.map((x) => (
+              <FanChip key={x.fan.id} fan={x.fan} quiet line={`${x.fan.kind === 'me' ? 'Your' : 'Their'} Nº${x.rank} ${catLabel(x.category).toLowerCase()}`} />
+            ))}
+          </View>
+        </View>
+      ) : null}
 
       {mySlot >= 0 ? (
         <Mono s={9} c={C.stampGreen} style={{ marginTop: 8 }}>

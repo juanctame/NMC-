@@ -29,7 +29,8 @@ import { groupsForChef } from '../data/groups';
 import { resolveChefBio, resolveChefCommons, type ChefBio, type WikiImgResolved } from '../data/wikiPhotos';
 import { collectedClips } from '../data/clips';
 import { takesForPlace } from '../data/critics';
-import { fansOf, favoritesFromRanked, catLabel } from '../data/favorites';
+import { chefBackers, lovesFromRanked, catLabel, favPlace, type ChefBacker } from '../data/favorites';
+import { FanChip } from '../components/FanChip';
 import { SOURCE_LABEL } from '../data/videos';
 import { identity } from '../data/profile';
 import { C, col } from '../theme/tokens';
@@ -43,6 +44,14 @@ import { Grain } from '../components/Grain';
 import { ScreenIn } from '../components/Anim';
 import { SimTag, VerdictStamp } from '../components/CriticMarks';
 import { PlayIcon } from '../components/icons';
+
+/** Why someone backs the chef: "Fav fine dining · Pujol", "Nº3 seafood", "Top 4 Nº1". */
+function backerLine(b: ChefBacker, multi: boolean): string {
+  const place = multi ? ` · ${favPlace(b.placeId)?.name || ''}` : '';
+  const cat = catLabel(b.category).toLowerCase();
+  if (b.featured) return `Top 4 · ${cat}${place}`;
+  return (b.rank === 1 ? `Fav ${cat}` : `Nº${b.rank} ${cat}`) + place;
+}
 
 function Head({ label, right, dot = C.ink400 }: { label: string; right?: string; dot?: string }) {
   return (
@@ -72,8 +81,6 @@ export function ChefProfile() {
   const openGroup = useStore((s) => s.openGroup);
   const openClips = useStore((s) => s.openClips);
   const openCritic = useStore((s) => s.openCritic);
-  const openFoodie = useStore((s) => s.openFoodie);
-  const openMyProfile = useStore((s) => s.openMyProfile);
   const chefPhotos = useStore((s) => s.chefPhotos);
   const ensureChefPhoto = useStore((s) => s.ensureChefPhoto);
   const ranked = useStore((s) => s.ranked);
@@ -100,15 +107,12 @@ export function ChefProfile() {
 
   const dossier = useMemo(() => (chef ? chefDossier(chef) : null), [chef]);
   const me = identity(profile);
-  const fans = useMemo(() => {
-    if (!dossier) return [];
-    const mine = { fan: { id: 'me', name: 'You', initials: me.initials, color: me.color, avatarUrl: me.avatarUrl, kind: 'me' as const }, favorites: favoritesFromRanked(ranked), top: topFour };
-    const out: { fan: ReturnType<typeof fansOf>[number]['fans'][number]; category: string; place: string }[] = [];
-    for (const p of dossier.places) {
-      for (const g of fansOf(p.id, mine)) for (const f of g.fans) if (!out.some((o) => o.fan.fan.id === f.fan.id)) out.push({ fan: f, category: g.category, place: p.name });
-    }
-    return out;
-  }, [dossier, ranked, topFour, me.initials, me.color, me.avatarUrl]);
+  // Fans (crown, feature, top-three or follow one of their kitchens) and supporters (further down a shortlist).
+  const backers = useMemo(() => {
+    if (!chef) return { fans: [] as ChefBacker[], supporters: [] as ChefBacker[] };
+    const mine = { fan: { id: 'me', name: 'You', initials: me.initials, color: me.color, avatarUrl: me.avatarUrl, kind: 'me' as const }, loves: lovesFromRanked(ranked), top: topFour };
+    return chefBackers(chef, mine);
+  }, [chef, ranked, topFour, me.initials, me.color, me.avatarUrl]);
 
   if (!chef || !dossier) return <View style={{ flex: 1, backgroundColor: C.paper50 }} />;
   const { places } = dossier;
@@ -432,44 +436,37 @@ export function ChefProfile() {
           </View>
         ) : null}
 
-        {/* fans of their kitchens — each a profile to visit */}
-        <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
-          <Head label="Fans of their kitchens" right={fans.length ? `${fans.length}` : 'none yet'} dot={C.stampPink} />
-          {fans.length ? (
+        {/* fans & supporters of their kitchens — each a profile to visit */}
+        <View style={{ paddingTop: 22, paddingHorizontal: 16 }} accessibilityLabel="Fans and supporters">
+          <Head
+            label="Fans & supporters"
+            right={[backers.fans.length && `${backers.fans.length} ${backers.fans.length === 1 ? 'fan' : 'fans'}`, backers.supporters.length && `${backers.supporters.length} ${backers.supporters.length === 1 ? 'supporter' : 'supporters'}`].filter(Boolean).join(' · ') || 'none yet'}
+            dot={C.stampPink}
+          />
+          {backers.fans.length ? (
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-              {fans.map(({ fan, category, place }) => (
-                <Pressable
-                  key={fan.fan.id}
-                  onPress={() => (fan.fan.kind === 'me' ? openMyProfile() : openFoodie(fan.fan.id))}
-                  accessibilityLabel={`Fan: ${fan.fan.name}`}
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 7, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 4, paddingLeft: 4, paddingRight: 11 }}
-                >
-                  <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: col(fan.fan.color), borderWidth: 1.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                    {fan.fan.avatarUrl ? (
-                      <Image source={{ uri: fan.fan.avatarUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
-                    ) : (
-                      <Banner s={8.5} c={C.paper0}>
-                        {fan.fan.initials}
-                      </Banner>
-                    )}
-                  </View>
-                  <View>
-                    <Banner s={9} tk={0.03} c={C.inkDeep}>
-                      {fan.fan.name}
-                      {fan.featured ? ' ★' : ''}
-                    </Banner>
-                    <Mono s={7} c={C.inkMuted} numberOfLines={1}>
-                      fav {catLabel(category as never).toLowerCase()} · {place}
-                    </Mono>
-                  </View>
-                </Pressable>
+              {backers.fans.map((b) => (
+                <FanChip key={b.fan.id} fan={b.fan} star={b.featured} line={backerLine(b, multi)} />
               ))}
             </View>
-          ) : (
+          ) : null}
+          {backers.supporters.length ? (
+            <>
+              <Mono s={8.5} c={C.inkMuted} style={{ marginTop: backers.fans.length ? 12 : 0, marginBottom: 7 }}>
+                Supporters — on their shortlist, just behind the crown
+              </Mono>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                {backers.supporters.map((b) => (
+                  <FanChip key={b.fan.id} fan={b.fan} quiet line={backerLine(b, multi)} />
+                ))}
+              </View>
+            </>
+          ) : null}
+          {!backers.fans.length && !backers.supporters.length ? (
             <Serif s={12.5} c={C.inkMuted} style={{ lineHeight: 18 }}>
               Nobody has crowned one of {chef.name.split(' ')[0]}’s kitchens their favourite yet.
             </Serif>
-          )}
+          ) : null}
         </View>
 
         {/* what they cook */}
