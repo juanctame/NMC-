@@ -40,6 +40,9 @@ import { TasteCard } from './overlays/TasteCard';
 import { PhotoImport } from './overlays/PhotoImport';
 import { VideoOverlay } from './components/VideoOverlay';
 import { DecideFab } from './components/DecideFab';
+import { TopFourPicker } from './overlays/TopFourPicker';
+import { favoritesFromRanked, publishFavorites } from './data/favorites';
+import { identity } from './data/profile';
 
 const SCREENS: Record<Screen, React.ComponentType> = {
   feed: Feed,
@@ -83,11 +86,28 @@ export function Root() {
   const loadNearby = useStore((s) => s.loadNearby);
   const hasPlaces = useStore((s) => s.nearby.length > 0);
   const loadDecideState = useStore((s) => s.loadDecideState);
+  const loadTopFourState = useStore((s) => s.loadTopFourState);
+  const topPickerOpen = useStore((s) => !!s.topPicker);
+  const topFour = useStore((s) => s.topFour);
+  const ranked = useStore((s) => s.ranked);
+  const profile = useStore((s) => s.profile);
 
-  // Today's "Can't decide?" swipes / pick, remembered on the device.
+  // Today's "Can't decide?" swipes / pick, and your Top 4, remembered on the device.
   useEffect(() => {
     loadDecideState();
-  }, [loadDecideState]);
+    loadTopFourState();
+  }, [loadDecideState, loadTopFourState]);
+
+  // Publish your favourites + Top 4 so you show up among each place's biggest fans
+  // for other testers (no-op until the shared `favorites` table exists).
+  useEffect(() => {
+    if (!profile?.handle) return;
+    const t = setTimeout(() => {
+      const me = identity(profile);
+      void publishFavorites({ handle: me.handle, name: me.name, initials: me.initials, color: me.color, avatarUrl: me.avatarUrl }, favoritesFromRanked(ranked), topFour);
+    }, 2500);
+    return () => clearTimeout(t);
+  }, [profile, ranked, topFour]);
 
   // Pull live places for the selected city on first launch.
   useEffect(() => {
@@ -95,7 +115,7 @@ export function Root() {
   }, [nearbyStatus, loadNearby]);
 
   const Active = SCREENS[screen] ?? Feed;
-  const anyOverlay = rankOpen || attachOpen || createOpen || citySheetOpen || reviewOpen || videoOpen || channelComposerOpen || tasteCardOpen || photoImportOpen;
+  const anyOverlay = topPickerOpen || rankOpen || attachOpen || createOpen || citySheetOpen || reviewOpen || videoOpen || channelComposerOpen || tasteCardOpen || photoImportOpen;
   const showTabBar = ROOT_TABS.includes(screen) && !anyOverlay;
 
   return (
@@ -111,6 +131,7 @@ export function Root() {
       {channelComposerOpen ? <ChannelComposer /> : null}
       {tasteCardOpen ? <TasteCard /> : null}
       {photoImportOpen ? <PhotoImport /> : null}
+      {topPickerOpen ? <TopFourPicker /> : null}
       <VideoOverlay />
     </View>
   );

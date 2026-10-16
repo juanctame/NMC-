@@ -10,6 +10,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { useT } from '../i18n';
 import { FRIENDS } from '../store/data';
+import { friendFavs, favPlace, FAV_CATS } from '../data/favorites';
+import { TopFourGrid } from '../components/TopFour';
 import { identity } from '../data/profile';
 import { computePalate, friendPalate, tasteMatch, PALATE_AXES } from '../data/palate';
 import { C, col } from '../theme/tokens';
@@ -22,7 +24,8 @@ import { ScreenIn } from '../components/Anim';
 export function FoodieProfile() {
   const insets = useSafeAreaInsets();
   const id = useStore((s) => s.activeFoodieId);
-  const go = useStore((s) => s.go);
+  const closeFoodie = useStore((s) => s.closeFoodie);
+  const openPlace = useStore((s) => s.openPlace);
   const follows = useStore((s) => s.follows);
   const toggleFollow = useStore((s) => s.toggleFollow);
   const ranked = useStore((s) => s.ranked);
@@ -32,6 +35,7 @@ export function FoodieProfile() {
   const t = useT();
 
   const friend = FRIENDS.find((f) => f.id === id);
+  const favs = id ? friendFavs(id) : undefined;
   if (!friend) return <View style={{ flex: 1, backgroundColor: C.paper50 }} />;
 
   const palate = friendPalate(friend);
@@ -51,7 +55,7 @@ export function FoodieProfile() {
         {/* header card */}
         <View style={{ paddingTop: insets.top + 8, paddingHorizontal: 16 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-            <Pressable onPress={() => go('board' as any)} style={{ paddingRight: 8, paddingVertical: 4 }}>
+            <Pressable onPress={closeFoodie} accessibilityLabel="Back" style={{ paddingRight: 8, paddingVertical: 4 }}>
               <Display s={20} c={C.ink400}>
                 ←
               </Display>
@@ -105,6 +109,44 @@ export function FoodieProfile() {
             ) : null}
           </StickerView>
         </View>
+
+        {/* their Top 4 + their favourite in each category */}
+        {favs ? (
+          <View style={{ paddingTop: 20, paddingHorizontal: 16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 12 }}>
+              <Banner s={10} tk={0.16} c={C.ink400}>
+                {friend.name.split(' ')[0]}'s Top 4
+              </Banner>
+              <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+            </View>
+            <TopFourGrid top={favs.top} owner={friend.name.split(' ')[0]} />
+            <View style={{ marginTop: 18, gap: 6 }}>
+              <Banner s={9} tk={0.16} c={C.inkMuted}>
+                Favourite in each category
+              </Banner>
+              {FAV_CATS.filter((c) => favs.favorites[c.id]).map((c) => {
+                const p = favPlace(favs.favorites[c.id]!);
+                if (!p) return null;
+                return (
+                  <Pressable key={c.id} onPress={() => openPlace(p.id)} accessibilityLabel={`${friend.name.split(' ')[0]}'s favourite ${c.label}: ${p.name}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 6, borderBottomWidth: 1.5, borderColor: C.ink100 }}>
+                    <Display s={12} c={C.ink400} style={{ width: 18, textAlign: 'center' }}>
+                      {c.glyph}
+                    </Display>
+                    <Mono s={9} c={C.inkMuted} style={{ width: 118 }} numberOfLines={1}>
+                      {c.label}
+                    </Mono>
+                    <Serif s={13.5} c={C.inkDeep} numberOfLines={1} style={{ flex: 1 }}>
+                      {p.name}
+                    </Serif>
+                    <Display s={12} c={C.inkSoft}>
+                      →
+                    </Display>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+        ) : null}
 
         {/* archetype + radar */}
         <View style={{ paddingTop: 20, paddingHorizontal: 16 }}>

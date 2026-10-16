@@ -3,6 +3,7 @@
  * its methods. Per-screen view-models are derived inside the screen components
  * from this state plus the static data in ./data.
  */
+import { emptyTopFour, loadTopFour, saveTopFour, type TopFour, type TopPick } from '../data/favorites';
 import { freshDecide, forToday, loadDecide, saveDecide, type DecideState, type DecideAction } from '../data/decide';
 import { create } from 'zustand';
 import {
@@ -310,6 +311,11 @@ export type State = {
   /** "Can't decide?" deck: today's swipes, today's pick, and where it was opened from. */
   decide: DecideState;
   decideReturn: Screen;
+  /** The four restaurants featured on your profile (slots may be empty). */
+  topFour: TopFour;
+  /** Open Top 4 picker: which slot is being filled and/or which place is being featured. */
+  topPicker: { slot: number | null; placeId: string | null } | null;
+  foodieReturn: Screen;
   // Restaurant groups (venues the guide ties together)
   activeGroupId: string | null;
   // Back-trail across profile screens: where the trail began + each step since.
@@ -354,6 +360,10 @@ export type Actions = {
   closeChef: () => void;
   openCritic: (id: string) => void;
   openDecide: () => void;
+  loadTopFourState: () => Promise<void>;
+  setTopSlot: (slot: number, pick: TopPick | null) => void;
+  openTopPicker: (slot?: number | null, placeId?: string | null) => void;
+  closeTopPicker: () => void;
   closeDecide: () => void;
   loadDecideState: () => Promise<void>;
   decideAct: (id: string, action: DecideAction) => void;
@@ -471,6 +481,7 @@ export type Actions = {
   postToChannel: () => void;
   // taste identity
   openFoodie: (id: string) => void;
+  closeFoodie: () => void;
   openTasteCard: () => void;
   closeTasteCard: () => void;
 };
@@ -583,6 +594,9 @@ const initialState = (): State => ({
   activeCriticId: null,
   decide: freshDecide(),
   decideReturn: 'feed',
+  topFour: emptyTopFour(),
+  foodieReturn: 'board',
+  topPicker: null,
   activeGroupId: null,
   profileReturnTo: 'feed',
   profileStack: [],
@@ -673,6 +687,7 @@ async function profileForAuthUser(user: AuthUser): Promise<Profile> {
 }
 
 let decideLoaded = false;
+let topFourLoaded = false;
 
 export const useStore = create<State & Actions>((set, get) => ({
   ...initialState(),
@@ -686,6 +701,22 @@ export const useStore = create<State & Actions>((set, get) => ({
   closeChef: () => set((s) => closeProfile(s)),
   openCritic: (id) => set((s) => openProfile(s, 'critic', { activeCriticId: id })),
   closeCritic: () => set((s) => closeProfile(s)),
+  loadTopFourState: async () => {
+    if (topFourLoaded) return;
+    topFourLoaded = true;
+    const t = await loadTopFour();
+    if (get().topFour.every((x) => !x)) set({ topFour: t });
+  },
+  setTopSlot: (slot, pick) => {
+    const cur = get().topFour.slice() as TopFour;
+    // A restaurant appears once: featuring it in a new slot moves it there.
+    if (pick) cur.forEach((t, i) => t?.placeId === pick.placeId && i !== slot && (cur[i] = null));
+    cur[slot] = pick;
+    set({ topFour: cur });
+    void saveTopFour(cur);
+  },
+  openTopPicker: (slot = null, placeId = null) => set({ topPicker: { slot, placeId } }),
+  closeTopPicker: () => set({ topPicker: null }),
   openDecide: () => set((s) => ({ screen: 'decide', decideReturn: s.screen === 'decide' ? s.decideReturn : s.screen, decide: forToday(s.decide) })),
   closeDecide: () => set((s) => ({ screen: s.decideReturn || 'feed' })),
   loadDecideState: async () => {
@@ -1478,7 +1509,8 @@ export const useStore = create<State & Actions>((set, get) => ({
   },
 
   // ── taste identity ──
-  openFoodie: (id) => set({ activeFoodieId: id, screen: 'foodie' }),
+  openFoodie: (id) => set((s) => ({ activeFoodieId: id, screen: 'foodie', foodieReturn: s.screen === 'foodie' ? s.foodieReturn : s.screen })),
+  closeFoodie: () => set((s) => ({ screen: s.foodieReturn || 'board' })),
   openTasteCard: () => set({ tasteCardOpen: true }),
   closeTasteCard: () => set({ tasteCardOpen: false }),
 }));

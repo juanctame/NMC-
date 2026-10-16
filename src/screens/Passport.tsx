@@ -31,6 +31,8 @@ import { Image } from 'expo-image';
 import Svg, { Path, Circle, Ellipse, Line } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
+import { favoritesFromRanked, FAV_CATS, type TopFour } from '../data/favorites';
+import { TopFourGrid } from '../components/TopFour';
 import { useT } from '../i18n';
 import { fmt } from '../store/helpers';
 import { C, col } from '../theme/tokens';
@@ -726,17 +728,60 @@ function NotesPage({ courses, bio, canEdit, archBlurb }: { courses: Course[]; bi
   );
 }
 
+/** p.2 — Mis cuatro: the four restaurants you feature, and your favourite in each category. */
+function FavsPage({ top, ranked, canEdit }: { top: TopFour; ranked: Place[]; canEdit: boolean }) {
+  const openPlace = useStore((s) => s.openPlace);
+  const favs = favoritesFromRanked(ranked);
+  const filled = top.filter(Boolean).length;
+  return (
+    <View accessibilityLabel="Passport Top 4 page">
+      <SerifItalic s={12.5} c={C.inkMuted} style={{ lineHeight: 17, marginBottom: 12 }}>
+        {filled
+          ? 'The four tables you’d send anyone to. They lead your profile, and they put you among each restaurant’s biggest fans.'
+          : 'Feature four restaurants — the ones you’d send anyone to. They lead your profile and make you one of their biggest fans.'}
+      </SerifItalic>
+      <TopFourGrid top={top} editable={canEdit} />
+      <View style={{ marginTop: 18, gap: 4 }}>
+        <FieldLabel>FAVORITO POR CATEGORÍA / FAVOURITE IN EACH CATEGORY</FieldLabel>
+        {FAV_CATS.filter((c) => favs[c.id]).length ? (
+          FAV_CATS.filter((c) => favs[c.id]).map((c) => {
+            const p = favs[c.id]!;
+            return (
+              <Pressable key={c.id} onPress={() => openPlace(p.id)} accessibilityLabel={`Your favourite ${c.label}: ${p.name}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 5, borderBottomWidth: 1.5, borderColor: 'rgba(42,26,6,0.14)' }}>
+                <Display s={11} c={C.ink400} style={{ width: 16, textAlign: 'center' }}>
+                  {c.glyph}
+                </Display>
+                <Mono s={8.5} c={C.inkMuted} style={{ width: 108 }} numberOfLines={1}>
+                  {c.es.toUpperCase()}
+                </Mono>
+                <Serif s={13} c={C.inkDeep} numberOfLines={1} style={{ flex: 1 }}>
+                  {p.name}
+                </Serif>
+              </Pressable>
+            );
+          })
+        ) : (
+          <Mono s={9} c={C.inkMuted} style={{ lineHeight: 14 }}>
+            Rank places and your favourite in each category appears here — your top-ranked tacos, seafood, fine dining…
+          </Mono>
+        )}
+      </View>
+    </View>
+  );
+}
+
 // ── The booklet ───────────────────────────────────────────────────────────────
 
-type PageKey = 'cover' | 'data' | 'visas' | 'stamps' | 'bio' | 'notes' | 'settings';
+type PageKey = 'cover' | 'data' | 'favs' | 'visas' | 'stamps' | 'bio' | 'notes' | 'settings';
 const PAGES: { key: PageKey; name: string; title: string; sub: string; no: string; wash: string }[] = [
   { key: 'cover', name: 'Cover', title: '', sub: '', no: '', wash: '' },
   { key: 'data', name: 'Data page', title: '', sub: '', no: '1', wash: C.sun200 },
-  { key: 'visas', name: 'Visas', title: 'VISAS', sub: 'Guide collections · pending visits', no: '2', wash: C.ink100 },
-  { key: 'stamps', name: 'Sellos', title: 'SELLOS', sub: 'Entry stamps · colonias crossed', no: '3', wash: C.sun200 },
-  { key: 'bio', name: 'Biometría', title: 'BIOMETRÍA', sub: 'Palate print', no: '4', wash: C.ink100 },
-  { key: 'notes', name: 'Observaciones', title: 'OBSERVACIONES', sub: 'Endorsements', no: '5', wash: C.sun200 },
-  { key: 'settings', name: 'Ajustes', title: 'AJUSTES', sub: 'Settings · inside back cover', no: '6', wash: C.paper200 },
+  { key: 'favs', name: 'Top 4', title: 'MIS CUATRO', sub: 'Top 4 · your favourites, featured', no: '2', wash: C.ink100 },
+  { key: 'visas', name: 'Visas', title: 'VISAS', sub: 'Guide collections · pending visits', no: '3', wash: C.sun200 },
+  { key: 'stamps', name: 'Sellos', title: 'SELLOS', sub: 'Entry stamps · colonias crossed', no: '4', wash: C.ink100 },
+  { key: 'bio', name: 'Biometría', title: 'BIOMETRÍA', sub: 'Palate print', no: '5', wash: C.sun200 },
+  { key: 'notes', name: 'Observaciones', title: 'OBSERVACIONES', sub: 'Endorsements', no: '6', wash: C.ink100 },
+  { key: 'settings', name: 'Ajustes', title: 'AJUSTES', sub: 'Settings · inside back cover', no: '7', wash: C.paper200 },
 ];
 const NOTES_PAGE = PAGES.findIndex((p) => p.key === 'notes');
 
@@ -1059,6 +1104,7 @@ function CoverPage({ w, h, press, city, joined, onOpen, onShare }: { w: number; 
 export function Passport() {
   const insets = useSafeAreaInsets();
   const ranked = useStore((s) => s.ranked);
+  const topFour = useStore((s) => s.topFour);
   const profile = useStore((s) => s.profile);
   const signOut = useStore((s) => s.signOut);
   const becomeCritic = useStore((s) => s.becomeCritic);
@@ -1380,6 +1426,7 @@ export function Passport() {
   const pages: React.ReactNode[] = [
     <CoverPage key="cover" w={area.w} h={area.h} press={critic} city={homeCity.name} joined={me.joined} onOpen={() => goTo(1)} onShare={openTasteCard} />,
     page('data', () => dataPage(), mrz),
+    page('favs', () => <FavsPage top={topFour} ranked={ranked} canEdit />),
     page('visas', () => <VisasPage sets={album} pending={pending} />),
     page('stamps', (w) => <StampsPage tiles={terr.tiles} visited={terr.visited} elsewhere={terr.elsewhere} ranked={ranked} width={w} />),
     page('bio', (w) => <BioPage palate={palate} avg={avg} chase={chase} seed={me.handle || me.name} width={w} />),

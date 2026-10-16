@@ -13,6 +13,7 @@ import { RANK } from '../store/data';
 import { scoreStyle, verdictOf, fmt, metaOf } from '../store/helpers';
 import { embedUrlFor, isPlayable, SOURCE_LABEL, type TrendingVideo } from '../data/videos';
 import { takesForPlace, consensusFor } from '../data/critics';
+import { BiggestFans } from '../components/BiggestFans';
 import { VerdictStamp, SimTag, VERDICT_COLOR } from '../components/CriticMarks';
 import { hashtagOf } from '../data/hashtags';
 import { computePalate } from '../data/palate';
@@ -954,6 +955,9 @@ export function PlaceDetail() {
                 </Mono>
               </View>
             ) : null}
+
+            {/* biggest fans — whose favourite it is, in each category */}
+            <BiggestFans place={base} />
 
             {/* taste match — how it fits the signed-in foodie's palate */}
             {fit != null ? (

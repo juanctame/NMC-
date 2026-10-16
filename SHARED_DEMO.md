@@ -85,6 +85,35 @@ below. When a tester creates a username it's saved here (and checked for
 availability as they type); "Already have a passport? Connect" on the welcome
 screen restores an account by handle.
 
+## 2c. Create the favourites table (Biggest fans + Top 4)
+
+Each tester's favourite restaurant per category (their top-ranked tacos,
+seafood, fine dining…) and their profile's Top 4 are published here, so every
+restaurant's **Biggest fans** section shows everyone — not only you and your
+in-app friends. Without this table the app simply keeps them on the device.
+
+```sql
+create table if not exists public.favorites (
+  id          bigint generated always as identity primary key,
+  handle      text not null,            -- the tester's @handle
+  name        text not null,
+  initials    text,
+  color       text,
+  avatar_url  text,
+  place_id    text not null,
+  category    text not null,            -- tacos | mexican | seafood | fine | cafe | bar | world
+  featured    boolean default false,    -- in their Top 4
+  created_at  timestamptz default now()
+);
+create index if not exists favorites_place_idx on public.favorites (place_id);
+create index if not exists favorites_handle_idx on public.favorites (handle);
+
+alter table public.favorites enable row level security;
+create policy "favorites are readable by anyone"  on public.favorites for select using (true);
+create policy "testers can add favorites"         on public.favorites for insert with check (true);
+create policy "testers can replace their own"     on public.favorites for delete using (true);
+```
+
 ## 3. Paste your keys
 In **Project Settings → API**, copy the **Project URL** and the **anon public**
 key, then put them in `src/config.ts`:

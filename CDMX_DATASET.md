@@ -219,6 +219,18 @@ Trayectoria), and **awards**.
   back. The deck sits on a papel picado cut from your palate. Today's swipes and
   pick are kept on the device and reset each day; once you've chosen, the
   corner sticker carries a green check and names today's table.
+- **Biggest fans & Top 4** (`src/data/favorites.ts`) — everyone's favourite in
+  each category (tacos & street, Mexican kitchen, seafood, fine dining, bakery &
+  café, bars & mezcal, around the world) is simply the restaurant they rank
+  highest there. Each restaurant's Overview shows its **Biggest fans**, grouped
+  by category — you, your friends and (with the shared `favorites` table,
+  SHARED_DEMO.md) every other tester — with anyone who features it in their
+  **Top 4** marked and listed first, and a "Feature in my Top 4" button. Your Top
+  4 is page 2 of the passport (*Mis cuatro*): four sticker tiles with the
+  restaurants' real covers, each naming the category it's your favourite in,
+  plus your favourite in every category; tap a slot to choose or swap (search
+  your log or the city), pick the category and the slot. Friends' profiles lead
+  with their Top 4 and favourites. Real critics never get favourites assigned.
 - **Brand marks** — each venue and chef carries an original **monogram** seal
   (initials on a deterministic colour, in the app's sticker look). These are our
   own marks, not the restaurants' trademarked logos, so they're safe to ship and
