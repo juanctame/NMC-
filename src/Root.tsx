@@ -27,6 +27,7 @@ import { FoodieProfile } from './screens/FoodieProfile';
 import { ChefProfile } from './screens/ChefProfile';
 import { GroupProfile } from './screens/GroupProfile';
 import { CriticProfile } from './screens/CriticProfile';
+import { Decide } from './screens/Decide';
 import { Clips } from './screens/Clips';
 import { NearbyMap } from './screens/NearbyMap';
 import { Reel } from './screens/Reel';
@@ -56,6 +57,7 @@ const SCREENS: Record<Screen, React.ComponentType> = {
   chef: ChefProfile,
   group: GroupProfile,
   critic: CriticProfile,
+  decide: Decide,
   clips: Clips,
   map: NearbyMap,
   reel: Reel,

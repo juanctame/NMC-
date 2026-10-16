@@ -3,6 +3,7 @@
  * its methods. Per-screen view-models are derived inside the screen components
  * from this state plus the static data in ./data.
  */
+import { freshDecide, forToday, loadDecide, saveDecide, type DecideState, type DecideAction } from '../data/decide';
 import { create } from 'zustand';
 import {
   RANKED0,
@@ -172,6 +173,7 @@ export type Screen =
   | 'chef'
   | 'group'
   | 'critic'
+  | 'decide'
   | 'clips'
   | 'map'
   | 'reel';
@@ -305,6 +307,9 @@ export type State = {
   // Chef profiles (guide credits; same chef across venues links into one)
   activeChefId: string | null;
   activeCriticId: string | null;
+  /** "Can't decide?" deck: today's swipes, today's pick, and where it was opened from. */
+  decide: DecideState;
+  decideReturn: Screen;
   // Restaurant groups (venues the guide ties together)
   activeGroupId: string | null;
   // Back-trail across profile screens: where the trail began + each step since.
@@ -348,6 +353,12 @@ export type Actions = {
   openChef: (id: string) => void;
   closeChef: () => void;
   openCritic: (id: string) => void;
+  openDecide: () => void;
+  closeDecide: () => void;
+  loadDecideState: () => Promise<void>;
+  decideAct: (id: string, action: DecideAction) => void;
+  decideUndo: () => void;
+  decideReshuffle: () => void;
   closeCritic: () => void;
   openGroup: (id: string) => void;
   closeGroup: () => void;
@@ -570,6 +581,8 @@ const initialState = (): State => ({
   hoodPhotos: {},
   activeChefId: null,
   activeCriticId: null,
+  decide: freshDecide(),
+  decideReturn: 'feed',
   activeGroupId: null,
   profileReturnTo: 'feed',
   profileStack: [],
@@ -659,6 +672,8 @@ async function profileForAuthUser(user: AuthUser): Promise<Profile> {
   return p;
 }
 
+let decideLoaded = false;
+
 export const useStore = create<State & Actions>((set, get) => ({
   ...initialState(),
 
@@ -671,6 +686,56 @@ export const useStore = create<State & Actions>((set, get) => ({
   closeChef: () => set((s) => closeProfile(s)),
   openCritic: (id) => set((s) => openProfile(s, 'critic', { activeCriticId: id })),
   closeCritic: () => set((s) => closeProfile(s)),
+  openDecide: () => set((s) => ({ screen: 'decide', decideReturn: s.screen === 'decide' ? s.decideReturn : s.screen, decide: forToday(s.decide) })),
+  closeDecide: () => set((s) => ({ screen: s.decideReturn || 'feed' })),
+  loadDecideState: async () => {
+    if (decideLoaded) return; // once per session: later, the in-memory deck is the truth
+    decideLoaded = true;
+    const d = await loadDecide();
+    // Swipes made while it loaded win over the stored copy.
+    if (!get().decide.history.length) set({ decide: d });
+  },
+  decideAct: (id, action) => {
+    const s = get();
+    const d = forToday(s.decide);
+    // "Maybe" saves it to want-to-try (remembering whether we added it, for undo).
+    const addedWant = action === 'later' && !s.wantIds.includes(id) && !s.ranked.some((r) => r.id === id);
+    const next: DecideState = {
+      ...d,
+      seen: d.seen.includes(id) ? d.seen : [...d.seen, id],
+      pick: action === 'go' ? id : d.pick,
+      history: [...d.history, { id, action, addedWant }].slice(-50),
+    };
+    set({
+      decide: next,
+      ...(addedWant ? { wantIds: [...s.wantIds, id], saved: { ...s.saved, [id]: true } } : null),
+    });
+    void saveDecide(next);
+  },
+  decideUndo: () => {
+    const s = get();
+    const d = forToday(s.decide);
+    const last = d.history[d.history.length - 1];
+    if (!last) return;
+    const prevGo = [...d.history.slice(0, -1)].reverse().find((h) => h.action === 'go');
+    const next: DecideState = {
+      ...d,
+      seen: d.seen.filter((x) => x !== last.id),
+      pick: last.action === 'go' && d.pick === last.id ? (prevGo?.id ?? null) : d.pick,
+      history: d.history.slice(0, -1),
+    };
+    set({
+      decide: next,
+      ...(last.addedWant ? { wantIds: s.wantIds.filter((w) => w !== last.id), saved: { ...s.saved, [last.id]: false } } : null),
+    });
+    void saveDecide(next);
+  },
+  decideReshuffle: () => {
+    const d = forToday(get().decide);
+    const next: DecideState = { ...d, seen: d.pick ? [d.pick] : [], history: [] };
+    set({ decide: next });
+    void saveDecide(next);
+  },
   openGroup: (id) => set((s) => openProfile(s, 'group', { activeGroupId: id })),
   closeGroup: () => set((s) => closeProfile(s)),
   // Clips remembers the whole navigation state it was opened from, so Back

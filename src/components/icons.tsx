@@ -157,3 +157,28 @@ export function GlobeMark({ size = 30, color = C.ink400, sw = 2.2 }: IconProps) 
     </Svg>
   );
 }
+
+export function CrossIcon({ size = 18, color = C.ink400, sw = 3 }: IconProps) {
+  return (
+    <Svg viewBox="0 0 24 24" width={size} height={size}>
+      <Path d="M6 6l12 12M18 6 6 18" {...stroke(color, sw)} />
+    </Svg>
+  );
+}
+
+export function CheckIcon({ size = 18, color = C.paper0, sw = 3 }: IconProps) {
+  return (
+    <Svg viewBox="0 0 24 24" width={size} height={size}>
+      <Path d="M4.5 12.5l5 5L19.5 7" {...stroke(color, sw)} />
+    </Svg>
+  );
+}
+
+export function UndoIcon({ size = 16, color = C.inkDeep, sw = 2.4 }: IconProps) {
+  return (
+    <Svg viewBox="0 0 24 24" width={size} height={size}>
+      <Path d="M9 14 4 9l5-5" {...stroke(color, sw)} />
+      <Path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" {...stroke(color, sw)} />
+    </Svg>
+  );
+}

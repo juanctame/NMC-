@@ -7,12 +7,14 @@
 import React, { useMemo } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useStore } from '../store/useStore';
+import { useStore, resolvePlace } from '../store/useStore';
 import { useT } from '../i18n';
 import { byId, RECS, type Place } from '../store/data';
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { C } from '../theme/tokens';
 import { photo, placePhoto } from '../assets';
+import { staticCover } from '../data/media';
+import { PlaceCover } from '../components/Cover';
 import { Display, Banner, Serif, SerifItalic, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
@@ -215,11 +217,15 @@ function BeenRow({ item, rank }: { item: Place; rank: number }) {
 function WantRow({ id }: { id: string }) {
   const openPlace = useStore((s) => s.openPlace);
   const startRank = useStore((s) => s.startRank);
-  const w = byId[id];
+  const nearbyById = useStore((s) => s.nearbyById);
+  // Seed places and the city's guide venues alike (anything can be saved for later).
+  const w = resolvePlace(id, nearbyById);
+  if (!w) return null;
+  const pic = staticCover(w);
   return (
     <StickerView offset="sm" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, flexDirection: 'row' }}>
-      <Pressable onPress={() => openPlace(id)} style={{ borderRightWidth: 2, borderColor: C.inkBlack }}>
-        <Photo source={photo(w.photo)} style={{ width: 66, height: '100%' }} />
+      <Pressable onPress={() => openPlace(id)} style={{ borderRightWidth: 2, borderColor: C.inkBlack, width: 66, minHeight: 74 }}>
+        <PlaceCover place={w} photoUrl={pic?.url} style={{ width: 66, height: '100%' }} crestSize={30} />
       </Pressable>
       <View style={{ flex: 1, paddingVertical: 10, paddingHorizontal: 12, gap: 4 }}>
         <Pressable onPress={() => openPlace(id)}>
@@ -255,6 +261,7 @@ function RecRow({ placeId, match, reason }: { placeId: string; match: string; re
   const toggleSave = useStore((s) => s.toggleSave);
   const savedOn = useStore((s) => !!s.saved[placeId]);
   const p = byId[placeId];
+  if (!p) return null;
   return (
     <StickerView offset="sm" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
       <Pressable onPress={() => openPlace(placeId)}>

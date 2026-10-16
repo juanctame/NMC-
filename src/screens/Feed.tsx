@@ -9,6 +9,7 @@ import { useStore, resolvePlace } from '../store/useStore';
 import { useT } from '../i18n';
 import { FEED, RECS, byId, type Place } from '../store/data';
 import { FEATURED_CRITICS, criticForClip, type Critic } from '../data/critics';
+import { today } from '../data/decide';
 import { VerdictStamp, SimTag, VERDICT_COLOR } from '../components/CriticMarks';
 import { embedUrlFor, SOURCE_LABEL } from '../data/videos';
 import type { BuzzResult } from '../data/trending';
@@ -618,6 +619,85 @@ function CriticCard({ critic }: { critic: Critic }) {
   );
 }
 
+/**
+ * "Can't decide?" — the way into the swipe deck. A little fan of cards in the
+ * brand's sticker stock; once you've picked, it shows today's table instead.
+ */
+function CantDecideCard() {
+  const openDecide = useStore((s) => s.openDecide);
+  const openPlace = useStore((s) => s.openPlace);
+  const pick = useStore((s) => (s.decide.day === today() ? s.decide.pick : null));
+  const nearbyById = useStore((s) => s.nearbyById);
+  const picked = pick ? resolvePlace(pick, nearbyById) : undefined;
+  const fan = [
+    { rot: '-12deg', x: 0, bg: C.paper0, glyph: '✕', c: C.ink400 },
+    { rot: '-2deg', x: 25, bg: C.sun300, glyph: '?', c: C.inkDeep },
+    { rot: '10deg', x: 50, bg: C.stampGreen, glyph: '✓', c: C.paper0 },
+  ];
+  return (
+    <StickerPressable
+      offset="lg"
+      onPress={openDecide}
+      accessibilityLabel="Can't decide? Swipe for today's table"
+      style={{ backgroundColor: C.ink700, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden', flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 14, paddingLeft: 14, paddingRight: 12 }}
+    >
+      <Grain opacity={0.08} />
+      <View style={{ width: 92, height: 82 }}>
+        {fan.map((f, i) => (
+          <View key={i} style={{ position: 'absolute', left: f.x, top: 6, width: 40, height: 62, backgroundColor: f.bg, borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'flex-start', paddingTop: 5, paddingLeft: 6, transform: [{ rotate: f.rot }] }}>
+            <SerifDisplay s={19} c={f.c} style={{ lineHeight: 21 }}>
+              {f.glyph}
+            </SerifDisplay>
+          </View>
+        ))}
+      </View>
+      <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
+        {picked ? (
+          <>
+            <Banner s={8.5} tk={0.18} c={C.sun300}>
+              Today's table
+            </Banner>
+            <Display s={19} c={C.paper0} numberOfLines={1} style={{ lineHeight: 21 }}>
+              {picked.name}
+            </Display>
+            <View style={{ flexDirection: 'row', gap: 8, marginTop: 4 }}>
+              <Pressable onPress={() => openPlace(picked.id)} accessibilityLabel={`Open today's table: ${picked.name}`} style={{ backgroundColor: C.stampGreen, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 10 }}>
+                <Banner s={8.5} tk={0.08} c={C.paper0}>
+                  See it →
+                </Banner>
+              </Pressable>
+              <View style={{ borderWidth: 2, borderColor: C.paper0, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 10 }}>
+                <Banner s={8.5} tk={0.08} c={C.paper0}>
+                  Swipe again
+                </Banner>
+              </View>
+            </View>
+          </>
+        ) : (
+          <>
+            <Banner s={8.5} tk={0.18} c={C.sun300}>
+              ¿No te decides?
+            </Banner>
+            <Display s={21} c={C.paper0} style={{ lineHeight: 23 }}>
+              Can't decide?
+            </Display>
+            <Serif s={12} c={C.ink100} style={{ lineHeight: 16 }} numberOfLines={3}>
+              Tables that fit your taste. Swipe right to go today, left to skip.
+            </Serif>
+          </>
+        )}
+      </View>
+      {!picked ? (
+        <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+          <Display s={16} c={C.inkDeep}>
+            →
+          </Display>
+        </View>
+      ) : null}
+    </StickerPressable>
+  );
+}
+
 export function Feed() {
   const insets = useSafeAreaInsets();
   const tapLogo = useStore((s) => s.tapLogo);
@@ -650,6 +730,12 @@ export function Feed() {
     const wantSet = new Set(wantIds);
     return recommend(nearby, { palate, tastes, beenIds, wantIds: wantSet }).slice(0, 7);
   }, [nearby, ranked, tastes, userReviews, wantIds]);
+
+  // Today's "Can't decide?" swipes / pick, remembered on the device.
+  const loadDecideState = useStore((s) => s.loadDecideState);
+  useEffect(() => {
+    loadDecideState();
+  }, [loadDecideState]);
 
   // Rank the most-mentioned restaurants this month (cached; recomputes ~daily).
   useEffect(() => {
@@ -700,6 +786,8 @@ export function Feed() {
 
       {/* body */}
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 100, gap: 16 }} showsVerticalScrollIndicator={false}>
+        {nearby.length ? <CantDecideCard /> : null}
+
         {/* Ideal for you — quality × your taste, from the live venues */}
         {recs.length ? (
           <View>
