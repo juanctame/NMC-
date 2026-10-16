@@ -125,6 +125,26 @@ Trayectoria), and **awards**.
   each opens the feed *at that clip*), a **top-clip card** on every restaurant's
   Overview tab, and the Media tab's thumbnails, which open the feed at the
   tapped clip.
+- **Critics — real creators, connected from their clips** (`src/data/critics.ts`,
+  `src/screens/CriticProfile.tsx`) — everyone whose clips are in the app (57 at
+  the last collection: 29 independent creators such as Anders & Kaitlin, Mike
+  Chen, El Arturito, Luis Carlos Zara, La Ruta de la Garnacha, and food media such
+  as Gourmet de México, Chilango, Milenio, Dónde Ir) gets a critic profile,
+  merged across platforms by handle. Each profile is **simulated, and labelled
+  so**: their words are quoted exactly as posted (the clip's own title) or, for a
+  take the press reported, paraphrased with a link to the article; CRTQ reads
+  each title into a verdict (rave · recommends · features · weighs it up ·
+  reports acclaim · critical) and a 0–10 score marked **SIM**, and derives a
+  palate (and your match with it) from where they ate. Scores are never presented
+  as ratings they gave, no follower counts are guessed, and every profile says it
+  isn't affiliated with or endorsed by them. **Connected accounts** are only ones
+  with evidence: the accounts their clips were posted from, plus links their own
+  site lists (`src/data/creatorLinks.ts`, each with its source). Profiles show
+  their takes (watch the clip in-app, or open the source), their palate, and a
+  follow button; restaurants get a **"What critics say"** block with a SIM
+  consensus; creator names in the Clips feed and the trending cards open the
+  profile; and the feed's tastemakers rail is these real critics (the earlier
+  invented creators were removed).
 - **A calmer place page** — a swipeable, credited photo hero, a compact header
   (key chips + a collapsible blurb), and sticky tabs: **Overview** (the guide
   card, the draw / good to know, taste match), **Menu** (what to order,

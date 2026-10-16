@@ -12,6 +12,8 @@ import { useStore, resolvePlace, reviewsFor, popularDishFor, type ScoredReview }
 import { RANK } from '../store/data';
 import { scoreStyle, verdictOf, fmt, metaOf } from '../store/helpers';
 import { embedUrlFor, isPlayable, SOURCE_LABEL, type TrendingVideo } from '../data/videos';
+import { takesForPlace, consensusFor } from '../data/critics';
+import { VerdictStamp, SimTag, VERDICT_COLOR } from '../components/CriticMarks';
 import { hashtagOf } from '../data/hashtags';
 import { computePalate } from '../data/palate';
 import { drawAndKnow, priceLabel, fitFor, type GReview } from '../data/placeDetails';
@@ -22,7 +24,7 @@ import { galleryFor, pressFor } from '../data/media';
 import { useT } from '../i18n';
 import { C, col } from '../theme/tokens';
 import { photo, PHOTO_POOL } from '../assets';
-import { Display, Banner, Serif, SerifDisplay, Mono } from '../components/Text';
+import { Display, Banner, Serif, SerifDisplay, Mono, SerifItalic } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
 import { Monogram } from '../components/Monogram';
@@ -506,6 +508,8 @@ export function PlaceDetail() {
     setTabState(k);
   };
   const [moreBlurb, setMoreBlurb] = useState(false);
+  const [criticsAll, setCriticsAll] = useState(false);
+  const openCritic = useStore((s) => s.openCritic);
   const [heroW, setHeroW] = useState(0);
   const [heroIdx, setHeroIdx] = useState(0);
   const [viewer, setViewer] = useState<number | null>(null);
@@ -589,6 +593,8 @@ export function PlaceDetail() {
   // Hashtag videos: the venue's tag, its live clips, and platform feed links.
   const tag = hashtagOf(base);
   const videos = placeVideosMap[activePlaceId] || [];
+  const criticTakes = takesForPlace(base.id);
+  const consensus = consensusFor(base.id);
   const videosStatus = placeVideosStatusMap[activePlaceId] || 'idle';
 
   // Rich "before you go" details + honest highlights + taste fit.
@@ -876,6 +882,74 @@ export function PlaceDetail() {
                   </View>
                 </View>
               </StickerPressable>
+            ) : null}
+
+            {/* what critics say — real creators' takes, read by CRTQ (simulated) */}
+            {criticTakes.length ? (
+              <View style={{ marginTop: 16 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 8 }}>
+                  <Banner s={10} tk={0.14} c={C.inkMuted}>
+                    What critics say
+                  </Banner>
+                  <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+                  {consensus ? (
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                      <Banner s={12} c={C.inkDeep}>
+                        {consensus.score.toFixed(1)}
+                      </Banner>
+                      <SimTag />
+                      <Mono s={8.5} c={C.inkSoft}>
+                        · {consensus.n} {consensus.n === 1 ? 'critic' : 'critics'}
+                      </Mono>
+                    </View>
+                  ) : null}
+                </View>
+                <View style={{ gap: 8 }}>
+                  {criticTakes.slice(0, criticsAll ? undefined : 3).map(({ critic, take }) => (
+                    <StickerPressable
+                      key={critic.id}
+                      offset="sm"
+                      onPress={() => openCritic(critic.id)}
+                      accessibilityLabel={`Critic: ${critic.name}`}
+                      style={{ flexDirection: 'row', gap: 10, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, padding: 9 }}
+                    >
+                      <Monogram name={critic.name} size={34} rot="-4deg" />
+                      <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                          <Banner s={9.5} tk={0.04} c={C.inkDeep} numberOfLines={1} style={{ flexShrink: 1 }}>
+                            {critic.name}
+                          </Banner>
+                          <VerdictStamp v={take.verdict} small />
+                        </View>
+                        <SerifItalic s={12} c={C.inkMuted} numberOfLines={2} style={{ lineHeight: 16 }}>
+                          {take.kind === 'clip' ? `“${take.quote}”` : take.quote}
+                        </SerifItalic>
+                        <Mono s={7.5} c={C.inkSoft} numberOfLines={1}>
+                          {[critic.kind === 'outlet' ? 'Food media' : 'Creator', take.kind === 'reported' ? `reported by ${take.outlet}` : take.clip ? SOURCE_LABEL[take.clip.platform] : ''].filter(Boolean).join(' · ')}
+                        </Mono>
+                      </View>
+                      <View style={{ alignItems: 'center', gap: 3 }}>
+                        <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: VERDICT_COLOR[take.verdict].bg, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+                          <Display s={12} c={VERDICT_COLOR[take.verdict].fg}>
+                            {take.score.toFixed(1)}
+                          </Display>
+                        </View>
+                        <SimTag />
+                      </View>
+                    </StickerPressable>
+                  ))}
+                </View>
+                {criticTakes.length > 3 ? (
+                  <Pressable onPress={() => setCriticsAll((v) => !v)} hitSlop={6} style={{ marginTop: 8, alignSelf: 'flex-start' }}>
+                    <Mono s={9} c={C.ink400}>
+                      {criticsAll ? 'Show fewer' : `All ${criticTakes.length} critics →`}
+                    </Mono>
+                  </Pressable>
+                ) : null}
+                <Mono s={7.5} c={C.inkSoft} style={{ marginTop: 6, lineHeight: 11 }}>
+                  Their words, quoted as posted. Verdicts &amp; SIM scores are CRTQ’s reading of their content, not ratings they gave.
+                </Mono>
+              </View>
             ) : null}
 
             {/* taste match — how it fits the signed-in foodie's palate */}

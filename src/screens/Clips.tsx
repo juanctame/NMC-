@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore, resolvePlace } from '../store/useStore';
 import { buildClipFeed, type FeedClip } from '../data/clipFeed';
 import { isPlayable, SOURCE_LABEL } from '../data/videos';
+import { criticForClip } from '../data/critics';
 import { guideBadgeOf } from '../data/chefs';
 import { hashtagOf } from '../data/hashtags';
 import { C } from '../theme/tokens';
@@ -60,10 +61,12 @@ function ClipPage({
   const toggleWant = useStore((s) => s.toggleWant);
   const liked = useStore((s) => !!s.liked['clip:' + item.clip.id]);
   const saved = useStore((s) => s.wantIds.includes(item.place.id) || !!s.saved[item.place.id]);
+  const openCritic = useStore((s) => s.openCritic);
   const [paused, setPaused] = useState(false);
   useEffect(() => setPaused(false), [active]);
 
   const { clip, place } = item;
+  const critic = clip.src ? undefined : criticForClip(clip);
   const badge = guideBadgeOf(place);
   const likes = (clip.likes || 0) + (liked ? 1 : 0);
   // Footage of a dish or the neighbourhood rather than the venue itself is labelled as such.
@@ -146,9 +149,22 @@ function ClipPage({
             </Banner>
           </View>
         ) : null}
-        <Banner s={11} tk={0.04} c={C.paper0} numberOfLines={1}>
-          {clip.src ? clip.creator : '@' + clip.creator}
-        </Banner>
+        {critic ? (
+          <Pressable onPress={() => openCritic(critic.id)} accessibilityLabel={`Critic profile: ${critic.name}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start' }}>
+            <Banner s={11} tk={0.04} c={C.paper0} numberOfLines={1}>
+              @{clip.creator}
+            </Banner>
+            <View style={{ backgroundColor: 'rgba(251,245,229,0.18)', borderWidth: 1, borderColor: C.paper0, borderRadius: 999, paddingHorizontal: 6, paddingVertical: 1 }}>
+              <Mono s={7.5} c={C.paper0}>
+                profile →
+              </Mono>
+            </View>
+          </Pressable>
+        ) : (
+          <Banner s={11} tk={0.04} c={C.paper0} numberOfLines={1}>
+            {clip.src ? clip.creator : '@' + clip.creator}
+          </Banner>
+        )}
         <Serif s={13} c={C.paper0} numberOfLines={2} style={{ lineHeight: 18 }}>
           {clip.caption}
         </Serif>

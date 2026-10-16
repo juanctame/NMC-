@@ -171,13 +171,14 @@ export type Screen =
   | 'foodie'
   | 'chef'
   | 'group'
+  | 'critic'
   | 'clips'
   | 'map'
   | 'reel';
 
 /** Profile screens (place / chef / group) share one back-trail. */
-const PROFILE_SCREENS: Screen[] = ['place', 'chef', 'group'];
-type NavSnap = { screen: Screen; activePlaceId: string | null; activeChefId: string | null; activeGroupId: string | null };
+const PROFILE_SCREENS: Screen[] = ['place', 'chef', 'group', 'critic'];
+type NavSnap = { screen: Screen; activePlaceId: string | null; activeChefId: string | null; activeGroupId: string | null; activeCriticId: string | null };
 
 export type PinRef = { kind: string; id: string } | null;
 export type CreatedTable = (typeof EVENTS)[number] & { mine: true };
@@ -303,6 +304,7 @@ export type State = {
 
   // Chef profiles (guide credits; same chef across venues links into one)
   activeChefId: string | null;
+  activeCriticId: string | null;
   // Restaurant groups (venues the guide ties together)
   activeGroupId: string | null;
   // Back-trail across profile screens: where the trail began + each step since.
@@ -345,6 +347,8 @@ export type Actions = {
   closePlace: () => void;
   openChef: (id: string) => void;
   closeChef: () => void;
+  openCritic: (id: string) => void;
+  closeCritic: () => void;
   openGroup: (id: string) => void;
   closeGroup: () => void;
   openClips: (focusPlaceId?: string | null, startClipId?: string | null) => void;
@@ -565,6 +569,7 @@ const initialState = (): State => ({
   nearbyPhotos: {},
   hoodPhotos: {},
   activeChefId: null,
+  activeCriticId: null,
   activeGroupId: null,
   profileReturnTo: 'feed',
   profileStack: [],
@@ -597,14 +602,13 @@ const initialState = (): State => ({
  */
 function openProfile(
   s: State,
-  screen: 'place' | 'chef' | 'group',
-  ids: Partial<Pick<State, 'activePlaceId' | 'activeChefId' | 'activeGroupId'>>,
+  screen: 'place' | 'chef' | 'group' | 'critic',
+  ids: Partial<Pick<State, 'activePlaceId' | 'activeChefId' | 'activeGroupId' | 'activeCriticId'>>,
 ): Partial<State> {
-  const cur = screen === 'place' ? s.activePlaceId : screen === 'chef' ? s.activeChefId : s.activeGroupId;
-  const next = screen === 'place' ? ids.activePlaceId : screen === 'chef' ? ids.activeChefId : ids.activeGroupId;
-  if (s.screen === screen && cur === next) return {}; // already here
+  const key = ({ place: 'activePlaceId', chef: 'activeChefId', group: 'activeGroupId', critic: 'activeCriticId' } as const)[screen];
+  if (s.screen === screen && s[key] === ids[key]) return {}; // already here
   if (PROFILE_SCREENS.includes(s.screen)) {
-    const snap: NavSnap = { screen: s.screen, activePlaceId: s.activePlaceId, activeChefId: s.activeChefId, activeGroupId: s.activeGroupId };
+    const snap: NavSnap = { screen: s.screen, activePlaceId: s.activePlaceId, activeChefId: s.activeChefId, activeGroupId: s.activeGroupId, activeCriticId: s.activeCriticId };
     return { ...ids, screen, profileStack: [...s.profileStack, snap] };
   }
   return { ...ids, screen, profileStack: [], profileReturnTo: s.screen };
@@ -665,6 +669,8 @@ export const useStore = create<State & Actions>((set, get) => ({
   closePlace: () => set((s) => closeProfile(s)),
   openChef: (id) => set((s) => openProfile(s, 'chef', { activeChefId: id })),
   closeChef: () => set((s) => closeProfile(s)),
+  openCritic: (id) => set((s) => openProfile(s, 'critic', { activeCriticId: id })),
+  closeCritic: () => set((s) => closeProfile(s)),
   openGroup: (id) => set((s) => openProfile(s, 'group', { activeGroupId: id })),
   closeGroup: () => set((s) => closeProfile(s)),
   // Clips remembers the whole navigation state it was opened from, so Back
@@ -682,6 +688,7 @@ export const useStore = create<State & Actions>((set, get) => ({
               activePlaceId: s.activePlaceId,
               activeChefId: s.activeChefId,
               activeGroupId: s.activeGroupId,
+              activeCriticId: s.activeCriticId,
               profileReturnTo: s.profileReturnTo,
               profileStack: s.profileStack,
             },

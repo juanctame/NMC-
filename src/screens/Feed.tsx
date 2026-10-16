@@ -5,10 +5,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, ScrollView, Pressable, Image, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useStore } from '../store/useStore';
+import { useStore, resolvePlace } from '../store/useStore';
 import { useT } from '../i18n';
 import { FEED, RECS, byId, type Place } from '../store/data';
-import { CREATOR_REVIEWS, PLATFORM_LABEL } from '../data/creators';
+import { FEATURED_CRITICS, criticForClip, type Critic } from '../data/critics';
+import { VerdictStamp, SimTag, VERDICT_COLOR } from '../components/CriticMarks';
 import { embedUrlFor, SOURCE_LABEL } from '../data/videos';
 import type { BuzzResult } from '../data/trending';
 import { computePalate } from '../data/palate';
@@ -75,6 +76,8 @@ function MonthlyTrendCard({ item, rank }: { item: BuzzResult; rank: number }) {
   const openPlace = useStore((s) => s.openPlace);
   const t = useT();
   const url = embedUrlFor(item.video);
+  const openCritic = useStore((s) => s.openCritic);
+  const heroCritic = criticForClip(item.video);
   return (
     <View style={{ width: 168, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack }}>
       {/* hero clip */}
@@ -119,9 +122,10 @@ function MonthlyTrendCard({ item, rank }: { item: BuzzResult; rank: number }) {
         <Mono s={8.5} c={C.inkSoft} numberOfLines={1}>
           {t('feed.via')} {item.creator.name}
         </Mono>
-        {item.appCreatorId && item.appCreatorPlaceId ? (
+        {heroCritic ? (
           <Pressable
-            onPress={() => openPlace(item.appCreatorPlaceId!)}
+            onPress={() => openCritic(heroCritic.id)}
+            accessibilityLabel={`Critic profile: ${heroCritic.name}`}
             style={{ flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', marginTop: 1, backgroundColor: C.sun400, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 7 }}
           >
             <Banner s={7.5} tk={0.06} c={C.inkDeep}>
@@ -536,72 +540,81 @@ function ClubTeaser() {
   );
 }
 
-function CreatorCard({ cr }: { cr: (typeof CREATOR_REVIEWS)[number] }) {
-  const openPlace = useStore((s) => s.openPlace);
-  const [following, setFollowing] = useState(false);
-  const p = byId[cr.placeId];
-  const ss = scoreStyle(cr.score);
+/**
+ * A real critic from the clips — their best take, read by CRTQ (simulated
+ * verdict + score, their own words quoted). Opens their critic profile.
+ */
+function CriticCard({ critic }: { critic: Critic }) {
+  const openCritic = useStore((s) => s.openCritic);
+  const nearbyById = useStore((s) => s.nearbyById);
+  const following = useStore((s) => !!s.follows['critic:' + critic.id]);
+  const toggleFollow = useStore((s) => s.toggleFollow);
+  const top = critic.takes[0];
+  const place = top ? resolvePlace(top.placeId, nearbyById) : undefined;
+  const col = top ? VERDICT_COLOR[top.verdict] : { bg: C.paper0, fg: C.inkDeep };
   return (
-    <StickerView offset="lg" style={{ width: 300, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack }}>
+    <StickerPressable
+      offset="lg"
+      onPress={() => openCritic(critic.id)}
+      accessibilityLabel={`Critic: ${critic.name}`}
+      style={{ width: 286, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack }}
+    >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 11, paddingHorizontal: 12 }}>
-        <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: col(cr.color), borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
-          <Banner s={12} c={C.paper0}>
-            {cr.initials}
-          </Banner>
-        </View>
+        <Monogram name={critic.name} size={40} rot="-4deg" />
         <View style={{ flex: 1, minWidth: 0 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-            <Banner s={11} tk={0.04} c={C.inkDeep} numberOfLines={1}>
-              {cr.creator}
-            </Banner>
-            {cr.verified ? (
-              <View style={{ width: 13, height: 13, borderRadius: 7, backgroundColor: C.ink400, borderWidth: 1.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
-                <Display s={7} c={C.paper0}>
-                  ✓
-                </Display>
-              </View>
-            ) : null}
-          </View>
-          <Mono s={9} c={C.inkSoft} style={{ marginTop: 1 }}>
-            {cr.handle} · {cr.followers}
+          <Banner s={11} tk={0.04} c={C.inkDeep} numberOfLines={1}>
+            {critic.name}
+          </Banner>
+          <Mono s={8.5} c={C.inkSoft} style={{ marginTop: 1 }} numberOfLines={1}>
+            {[critic.handle, critic.platforms.map((p) => SOURCE_LABEL[p]).join(' · ')].join(' · ')}
           </Mono>
         </View>
-        <StickerPressable offset="sm" radius={999} onPress={() => setFollowing((v) => !v)} style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: following ? C.stampGreen : C.ink400, paddingVertical: 6, paddingHorizontal: 11 }}>
-          <Banner s={9} tk={0.1} c={C.paper0}>
+        <StickerPressable
+          offset="sm"
+          radius={999}
+          onPress={() => toggleFollow('critic:' + critic.id)}
+          accessibilityLabel={following ? `Following ${critic.name}` : `Follow ${critic.name}`}
+          style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: following ? C.stampGreen : C.ink400, paddingVertical: 6, paddingHorizontal: 10 }}
+        >
+          <Banner s={8.5} tk={0.1} c={C.paper0}>
             {following ? 'Following' : 'Follow'}
           </Banner>
         </StickerPressable>
       </View>
-      <Pressable onPress={() => openPlace(cr.placeId)} style={{ borderTopWidth: 2, borderBottomWidth: 2, borderColor: C.inkBlack }}>
-        <Photo source={photo(p.photo)} style={{ width: '100%', height: 120 }} />
-        <View style={{ position: 'absolute', left: 10, bottom: 10 }}>
-          <StickerView offset="sm" style={{ backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 4, paddingHorizontal: 9 }}>
-            <SerifDisplay s={13} c={C.inkDeep}>
-              {p.name}
-            </SerifDisplay>
-          </StickerView>
-        </View>
-        <View style={{ position: 'absolute', right: 10, bottom: 10, transform: [{ rotate: '-6deg' }] }}>
-          <StickerView offset="sm" radius={999}>
-            <View style={{ width: 46, height: 46, borderRadius: 23, backgroundColor: ss.bg, borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
-              <Display s={16} c={ss.fg}>
-                {fmt(cr.score)}
-              </Display>
+      {top && place ? (
+        <View style={{ borderTopWidth: 2, borderColor: C.inkBlack, backgroundColor: C.sun100, paddingVertical: 10, paddingHorizontal: 12, gap: 7 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
+              <SerifDisplay s={14} c={C.inkDeep} numberOfLines={1}>
+                {place.name}
+              </SerifDisplay>
+              <VerdictStamp v={top.verdict} small />
             </View>
-          </StickerView>
+            <View style={{ alignItems: 'center', gap: 3 }}>
+              <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: col.bg, borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-6deg' }] }}>
+                <Display s={15} c={col.fg}>
+                  {top.score.toFixed(1)}
+                </Display>
+              </View>
+              <SimTag />
+            </View>
+          </View>
+          <Serif s={12.5} c={C.inkDeep} numberOfLines={3} style={{ lineHeight: 17 }}>
+            {top.kind === 'clip' ? `“${top.quote}”` : top.quote}
+          </Serif>
         </View>
-      </Pressable>
-      <Serif s={13} style={{ paddingHorizontal: 13, paddingTop: 10, paddingBottom: 6, lineHeight: 19 }}>
-        {cr.text}
-      </Serif>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 13, paddingBottom: 12 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 9 }}>
-          <Banner s={8.5} tk={0.1} c={C.paper0}>
-            {PLATFORM_LABEL[cr.platform]} creator
+      ) : null}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 9, borderTopWidth: 2, borderColor: C.inkBlack }}>
+        <View style={{ backgroundColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 }}>
+          <Banner s={7.5} tk={0.1} c={C.paper0}>
+            {critic.kind === 'outlet' ? 'Food media' : 'Creator'}
           </Banner>
         </View>
+        <Mono s={8.5} c={C.inkMuted} numberOfLines={1} style={{ flexShrink: 1 }}>
+          {critic.takes.length} {critic.takes.length === 1 ? 'restaurant' : 'restaurants'} · {critic.clipCount} {critic.clipCount === 1 ? 'clip' : 'clips'}
+        </Mono>
       </View>
-    </StickerView>
+    </StickerPressable>
   );
 }
 
@@ -808,12 +821,12 @@ export function Feed() {
               {t('feed.tastemakers')}
             </Banner>
             <Mono s={9} c={C.inkSoft}>
-              creators we love →
+              real creators · simulated reads
             </Mono>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 4, paddingRight: 4 }}>
-            {CREATOR_REVIEWS.map((cr) => (
-              <CreatorCard key={cr.id} cr={cr} />
+            {FEATURED_CRITICS.map((c) => (
+              <CriticCard key={c.id} critic={c} />
             ))}
           </ScrollView>
         </View>
