@@ -29,7 +29,7 @@ import { Display, Banner, Serif, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
 import { Monogram } from '../components/Monogram';
-import { PlaceCover } from '../components/Cover';
+import { PlaceCover, VenueCover } from '../components/Cover';
 import { CacheChip } from '../components/CacheChip';
 import { Grain } from '../components/Grain';
 import { ScreenIn } from '../components/Anim';
@@ -194,7 +194,8 @@ function FeedCover({ p, height, crest, border, darken }: { p: Place; height: num
     <PlaceCover
       place={p}
       photoUrl={pic?.url}
-      credit={pic?.credit.replace(/^Photo:\s*/, '')}
+      fallbackUrl={pic?.fallback}
+      credit={pic?.credit.replace(/^(Photo|Still):\s*/, '')}
       style={{ width: '100%', height, ...(border ? { borderBottomWidth: 2, borderColor: C.inkBlack } : null) }}
       crestSize={crest}
       darken={darken}
@@ -394,7 +395,7 @@ function ActivityCard({ item, index }: { item: Extract<(typeof FEED)[number], { 
       </View>
 
       <Pressable onPress={() => openPlace(item.placeId)} style={{ borderTopWidth: 2, borderBottomWidth: 2, borderColor: C.inkBlack }}>
-        <Photo source={photo(p.photo)} style={{ width: '100%', height: 200 }} />
+        <VenueCover place={p} style={{ width: '100%', height: 200 }} crestSize={56} />
         <View style={{ position: 'absolute', left: 12, bottom: 12, right: 12, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', gap: 10 }}>
           <StickerView offset="sm" style={{ backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 6, paddingHorizontal: 11, maxWidth: '74%' }}>
             <SerifDisplay s={15} c={C.inkDeep} style={{ lineHeight: 16 }}>
@@ -465,7 +466,7 @@ function RecCard({ placeId, reason, match }: { placeId: string; reason: string; 
       onPress={() => openPlace(placeId)}
       style={{ flexDirection: 'row', backgroundColor: C.ink700, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
     >
-      <Photo source={photo(p.photo)} style={{ width: 92, borderRightWidth: 2.5, borderColor: C.inkBlack }} />
+      <VenueCover place={p} style={{ width: 92, borderRightWidth: 2.5, borderColor: C.inkBlack }} crestSize={34} credit={false} />
       <View style={{ flex: 1, paddingVertical: 12, paddingHorizontal: 14 }}>
         <Banner s={9} tk={0.16} c={C.sun400}>
           Recommended for you

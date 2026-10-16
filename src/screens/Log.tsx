@@ -14,7 +14,7 @@ import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { C } from '../theme/tokens';
 import { photo, placePhoto } from '../assets';
 import { staticCover } from '../data/media';
-import { PlaceCover } from '../components/Cover';
+import { PlaceCover, VenueCover } from '../components/Cover';
 import { Display, Banner, Serif, SerifItalic, SerifDisplay, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
@@ -162,7 +162,7 @@ function PodiumCard({ item, rank }: { item: Place; rank: number }) {
       style={{ flex: 1, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
     >
       <View>
-        <Photo source={placePhoto(item)} style={{ width: '100%', height: 74, borderBottomWidth: 2, borderColor: C.inkBlack }} />
+        <VenueCover place={item} style={{ width: '100%', height: 74, borderBottomWidth: 2, borderColor: C.inkBlack }} crestSize={30} credit={false} />
         <View style={{ position: 'absolute', top: 5, left: 5, width: 24, height: 24, borderRadius: 12, backgroundColor: m.bg, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-6deg' }] }}>
           <Display s={12} c={C.inkDeep}>
             {rank}
@@ -200,7 +200,7 @@ function BeenRow({ item, rank }: { item: Place; rank: number }) {
           {rank}
         </Display>
       </View>
-      <Photo source={placePhoto(item)} style={{ width: 56, height: 56, borderWidth: 2, borderColor: C.inkBlack }} />
+      <VenueCover place={item} style={{ width: 56, height: 56, borderWidth: 2, borderColor: C.inkBlack }} crestSize={26} credit={false} />
       <View style={{ flex: 1, minWidth: 0 }}>
         <SerifDisplay s={15.5} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 17 }}>
           {item.name}
@@ -225,7 +225,7 @@ function WantRow({ id }: { id: string }) {
   return (
     <StickerView offset="sm" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, flexDirection: 'row' }}>
       <Pressable onPress={() => openPlace(id)} style={{ borderRightWidth: 2, borderColor: C.inkBlack, width: 66, minHeight: 74 }}>
-        <PlaceCover place={w} photoUrl={pic?.url} style={{ width: 66, height: '100%' }} crestSize={30} />
+        <PlaceCover place={w} photoUrl={pic?.url} fallbackUrl={pic?.fallback} style={{ width: 66, height: '100%' }} crestSize={30} />
       </Pressable>
       <View style={{ flex: 1, paddingVertical: 10, paddingHorizontal: 12, gap: 4 }}>
         <Pressable onPress={() => openPlace(id)}>
@@ -265,7 +265,7 @@ function RecRow({ placeId, match, reason }: { placeId: string; match: string; re
   return (
     <StickerView offset="sm" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
       <Pressable onPress={() => openPlace(placeId)}>
-        <Photo source={photo(p.photo)} style={{ width: '100%', height: 132, borderBottomWidth: 2, borderColor: C.inkBlack }} />
+        <VenueCover place={p} style={{ width: '100%', height: 132, borderBottomWidth: 2, borderColor: C.inkBlack }} crestSize={44} />
         <View style={{ position: 'absolute', top: 10, right: 10, transform: [{ rotate: '3deg' }] }}>
           <StickerView offset="sm" radius={999} style={{ backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 10 }}>
             <Banner s={10} tk={0.06} c={C.inkDeep}>

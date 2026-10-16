@@ -16,6 +16,7 @@ import { FRIENDS, byId, type Place } from '../store/data';
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { identity } from '../data/profile';
 import { computePalate, friendPalate, tasteMatch } from '../data/palate';
+import { VenueCover } from '../components/Cover';
 import { CRITICS, type Critic } from '../data/critics';
 import { SOURCE_LABEL } from '../data/videos';
 import { SimTag } from '../components/CriticMarks';
@@ -168,7 +169,7 @@ function RestaurantsBoard() {
                   {i + 1}
                 </Display>
               </View>
-              <Photo source={photo(p.photo)} style={{ width: 52, height: 52, borderWidth: 2, borderColor: C.inkBlack }} />
+              <VenueCover place={p} style={{ width: 52, height: 52, borderWidth: 2, borderColor: C.inkBlack }} crestSize={26} credit={false} />
               <View style={{ flex: 1, minWidth: 0 }}>
                 <SerifDisplay s={15.5} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 17 }}>
                   {p.name}

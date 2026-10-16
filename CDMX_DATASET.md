@@ -47,24 +47,34 @@ Trayectoria), and **awards**.
   Núñez, Eduardo "Lalo" García, … — those venues gather under **one** profile
   (matched on an accent- and nickname-insensitive key). A feed rail ("The chefs
   behind it") surfaces them.
-- **Pictures from every kind of source** — each restaurant's gallery merges, best
-  first: live Google Maps photos (with a Places key); the restaurant's **own
-  website**; **guide & press pages about the venue** (Time Out, Chilango, Food and
-  Pleasure, El Financiero, N+…); a Wikipedia photo / Commons files named after it;
-  photos **geotagged around the corner** (Commons, labelled with the distance);
-  and its **neighbourhood's** photo (labelled). Every picture carries its credit
-  and a link back, and anything that fails to load is dropped silently — so every
-  restaurant has a real visual presence, never a broken one.
-  - Site / guide / press images come from `src/data/media.json`, collected in CI
-    by `scripts/collect-media.mjs` (the deploy workflow refreshes it weekly, on a
-    version bump, or on demand). It reads each page's own link-preview image
-    (og:image / twitter:image / JSON-LD), validates it, and for a restaurant's
-    own site falls back to the first real photo on the page. Images are
-    hot-linked with credit, never re-hosted. Roundup articles appear as press
-    cards but their image is never used as the venue's own photo. Guía Michelin
-    answers automated requests with a bot challenge, so its listings show as
-    links without a picture; Instagram is linked (its image URLs expire and
-    can't be embedded).
+- **Pictures from every kind of source, grouped by who took them** — each
+  restaurant's gallery (Media tab) is split into **From the restaurant** (every
+  real photo on its own website: the home page plus its gallery / menu / about
+  pages, not just the preview image), **From diners & creators** (visitors'
+  photos of the venue on Wikimedia Commons, with author and licence, and stills
+  from the third-party creator clips about it — YouTube / Dailymotion frames,
+  credited and linking to the clip), **In the press** (pages about the venue,
+  never roundups) and **Around it** (around the corner / the neighbourhood,
+  always labelled, never a cover). Every picture is credited and links back;
+  anything that fails to load falls back to a smaller copy or drops out.
+  - **Covers fit the restaurant and are unique.** A fine-dining room leads with
+    its own photography (then the press, then diners'); a taquería or fonda with
+    a diner's or creator's shot of the counter; a bakery or café with its own
+    photos. The best-known venues choose first and no two restaurants share a
+    cover — every list, card, deck and map pin uses it. With no real picture, a
+    cover is the venue's brand art (its colour, its cuisine's motif, its
+    monogram), never a stock photo of some other food.
+  - Collected in CI by `scripts/collect-media.mjs` into `src/data/media.json`
+    (weekly, on a version bump, or on demand): it reads each page's own images,
+    retries sites that rate-limit, drops logos / icons / thumbnails (anything
+    under 20 KB), keeps each photo once at its largest size, and keeps Commons
+    photos only when they're really about the venue (the same rule as the clip
+    collector, `scripts/lib/relevance.mjs`). Images are hot-linked with credit,
+    never re-hosted.
+  - **Google Maps photos** (the owner's and diners' photos on Google) plug into
+    the same groups automatically, but need **billing enabled on the Google
+    Cloud project** of the site's key — the Places API currently answers
+    "enable Billing" — so they don't appear yet.
 - **Creator clips, played in the app** — each restaurant's hashtag (e.g.
   `#Pujol`) and name find YouTube clips, kept only if they are **about the
   venue**, posted by **third-party creators** (never the restaurant's own channel

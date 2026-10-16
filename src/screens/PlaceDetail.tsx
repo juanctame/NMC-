@@ -20,7 +20,7 @@ import { drawAndKnow, priceLabel, fitFor, type GReview } from '../data/placeDeta
 import { combosFor, peerComparison, currencyCode, type Combo, type ValueRow } from '../data/combos';
 import { chefForPlace } from '../data/chefs';
 import { groupForPlace, placesOfGroup } from '../data/groups';
-import { galleryFor, pressFor } from '../data/media';
+import { galleryFor, pressFor, GROUP_LABEL, type PicGroup } from '../data/media';
 import { useT } from '../i18n';
 import { C, col } from '../theme/tokens';
 import { photo, PHOTO_POOL } from '../assets';
@@ -584,7 +584,10 @@ export function PlaceDetail() {
     commons: commonsMap[activePlaceId],
     nearby: nearbyMap[activePlaceId],
     hood: hoodMap[base.hood],
-  }).filter((p) => !failed[p.url]);
+  })
+    // a failed picture falls back to its smaller copy when it has one, else drops out
+    .map((p) => (failed[p.url] && p.fallback ? { ...p, url: p.fallback, fallback: undefined } : p))
+    .filter((p) => !failed[p.url]);
   const markFailed = (url: string) => setFailed((f) => (f[url] ? f : { ...f, [url]: true }));
   const cur = pics.length ? pics[Math.min(heroIdx, pics.length - 1)] : undefined;
   const press = pressFor(base);
@@ -1313,9 +1316,24 @@ export function PlaceDetail() {
               {/* photos — every picture we found, each credited */}
               <Head label="Photos" right={pics.length ? `${pics.length} · ${new Set(pics.map((p) => p.kind)).size} sources` : undefined} />
               {pics.length ? (
+                <View style={{ gap: 14 }}>
+                {(['brand', 'diners', 'press', 'around'] as PicGroup[]).map((g) => {
+                  const inGroup = pics.map((p, i) => ({ p, i })).filter(({ p }) => (p.group || 'brand') === g);
+                  if (!inGroup.length) return null;
+                  return (
+                    <View key={g} style={{ gap: 8 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+                        <Banner s={8.5} tk={0.16} c={C.ink400}>
+                          {GROUP_LABEL[g]}
+                        </Banner>
+                        <View style={{ flex: 1, height: 1.5, backgroundColor: C.ink100 }} />
+                        <Mono s={8.5} c={C.inkSoft}>
+                          {inGroup.length}
+                        </Mono>
+                      </View>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                  {pics.map((p, i) => (
-                    <Pressable key={p.url} onPress={() => setViewer(i)} style={{ width: '48.6%', borderWidth: 2, borderColor: C.inkBlack, backgroundColor: C.paper0, overflow: 'hidden' }}>
+                  {inGroup.map(({ p, i }) => (
+                    <Pressable key={p.url} onPress={() => setViewer(i)} accessibilityLabel={`${GROUP_LABEL[g]}: ${p.credit}`} style={{ width: '48.6%', borderWidth: 2, borderColor: C.inkBlack, backgroundColor: C.paper0, overflow: 'hidden' }}>
                       <Photo source={{ uri: p.url }} style={{ width: '100%', aspectRatio: 4 / 3 }} warm={0.04} onError={() => markFailed(p.url)} />
                       <View style={{ paddingVertical: 5, paddingHorizontal: 7, borderTopWidth: 2, borderColor: C.inkBlack, gap: 1 }}>
                         {p.label ? (
@@ -1329,6 +1347,10 @@ export function PlaceDetail() {
                       </View>
                     </Pressable>
                   ))}
+                </View>
+                    </View>
+                  );
+                })}
                 </View>
               ) : (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, borderStyle: 'dashed', padding: 12 }}>

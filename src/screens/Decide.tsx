@@ -70,7 +70,7 @@ function CardFace({ card, onDetails }: { card: DeckCard; onDetails?: () => void 
   return (
     <View style={{ flex: 1, backgroundColor: C.paper0, borderWidth: 3, borderColor: C.inkBlack, overflow: 'hidden' }}>
       <View style={{ flex: 1.05, minHeight: 150 }}>
-        <PlaceCover place={p} photoUrl={pic?.url} credit={pic?.credit.replace(/^Photo:\s*/, '')} style={{ width: '100%', height: '100%' }} crestSize={64} darken={0.18} />
+        <PlaceCover place={p} photoUrl={pic?.url} fallbackUrl={pic?.fallback} credit={pic?.credit.replace(/^(Photo|Still):\s*/, '')} style={{ width: '100%', height: '100%' }} crestSize={64} darken={0.18} />
         {/* a clear layer over the photo, so a desktop drag swipes the card instead of dragging the image */}
         <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
         {badge ? (
