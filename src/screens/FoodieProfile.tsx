@@ -1,16 +1,22 @@
 /**
- * Another foodie's taste identity. Opened from the leaderboard or the "palates
- * like yours" module. Shows their archetype + palate radar (derived from their
- * taste lean), their flavor DNA, and — the social hook — how closely their
- * palate matches yours. Follow them right from here.
+ * Another foodie's profile — a friend, or any other CRTQ tester you meet among a
+ * restaurant's biggest fans. Their Top 4 leads the header card, then their
+ * favourite in each category, their archetype + palate radar and flavour DNA,
+ * and how closely their palate matches yours. Follow them right from here.
+ *
+ * Friends' palates come from their taste leans; another tester's is read from
+ * the restaurants they've crowned (their published favourites, loaded from the
+ * shared backend by handle).
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { useT } from '../i18n';
 import { FRIENDS } from '../store/data';
-import { friendFavs, favPlace, FAV_CATS } from '../data/favorites';
+import { friendFavs, favPlace, FAV_CATS, fetchPersonFavs, type PersonFavs } from '../data/favorites';
+import { Image } from 'expo-image';
+import { ActivityIndicator } from 'react-native';
 import { TopFourGrid } from '../components/TopFour';
 import { identity } from '../data/profile';
 import { computePalate, friendPalate, tasteMatch, PALATE_AXES } from '../data/palate';
@@ -34,16 +40,55 @@ export function FoodieProfile() {
   const profile = useStore((s) => s.profile);
   const t = useT();
 
-  const friend = FRIENDS.find((f) => f.id === id);
-  const favs = id ? friendFavs(id) : undefined;
-  if (!friend) return <View style={{ flex: 1, backgroundColor: C.paper50 }} />;
+  const friendRow = FRIENDS.find((f) => f.id === id);
+  const handleId = id?.startsWith('h:') ? id.slice(2) : null;
+  const [remote, setRemote] = useState<PersonFavs | null | 'loading'>(handleId ? 'loading' : null);
+  useEffect(() => {
+    if (!handleId) return;
+    let live = true;
+    setRemote('loading');
+    fetchPersonFavs(handleId).then((r) => live && setRemote(r));
+    return () => {
+      live = false;
+    };
+  }, [handleId]);
 
-  const palate = friendPalate(friend);
+  const favs: PersonFavs | undefined = friendRow ? friendFavs(friendRow.id) : remote && remote !== 'loading' ? remote : undefined;
+  // One shape for a friend and for any other tester.
+  const friend = friendRow
+    ? { ...friendRow, avatarUrl: undefined as string | undefined, handle: '@' + friendRow.name.split(' ')[0].toLowerCase(), line: `${friendRow.year} ${t('foodie.placesYear')}` }
+    : favs
+      ? {
+          id: favs.person.id,
+          name: favs.person.name,
+          initials: favs.person.initials,
+          color: favs.person.color,
+          avatarUrl: favs.person.avatarUrl,
+          handle: handleId!,
+          line: 'CRTQ tester',
+        }
+      : null;
+  if (!friend) {
+    return (
+      <View style={{ flex: 1, backgroundColor: C.paper50, alignItems: 'center', justifyContent: 'center', gap: 12, padding: 24 }}>
+        {remote === 'loading' ? <ActivityIndicator color={C.ink400} /> : <Serif s={14} c={C.inkMuted}>This profile isn’t available right now.</Serif>}
+        <Pressable onPress={closeFoodie} accessibilityLabel="Back">
+          <Mono s={10} c={C.ink400}>
+            ← Back
+          </Mono>
+        </Pressable>
+      </View>
+    );
+  }
+
+  // A friend's palate from their taste lean; a tester's from the places they've crowned.
+  const crowned = favs ? [...new Set([...Object.values(favs.favorites), ...favs.top.filter(Boolean).map((x) => x!.placeId)])].map((pid) => favPlace(pid as string)).filter(Boolean) : [];
+  const palate = friendRow ? friendPalate(friendRow) : computePalate(crowned as NonNullable<(typeof crowned)[number]>[]);
   const mine = computePalate(ranked, tastes, userReviews);
   const match = tasteMatch(mine, palate);
   const axisLabels = PALATE_AXES.map((k) => t('axis.' + k));
   const following = !!follows[friend.id];
-  const handle = '@' + friend.name.split(' ')[0].toLowerCase();
+  const handle = friend.handle;
   const me = identity(profile);
   const dnaTotal = palate.topCuisines.reduce((sum, c) => sum + c.count, 0) || 1;
 
@@ -69,10 +114,14 @@ export function FoodieProfile() {
             <Grain opacity={0.08} />
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
               <StickerView offset="sm" radius={999} style={{ transform: [{ rotate: '-4deg' }] }}>
-                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: col(friend.color), borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
-                  <Banner s={18} c={C.paper0}>
-                    {friend.initials}
-                  </Banner>
+                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: col(friend.color), borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                  {friend.avatarUrl ? (
+                    <Image source={{ uri: friend.avatarUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                  ) : (
+                    <Banner s={18} c={C.paper0}>
+                      {friend.initials}
+                    </Banner>
+                  )}
                 </View>
               </StickerView>
               <View style={{ flex: 1, minWidth: 0 }}>
@@ -80,7 +129,7 @@ export function FoodieProfile() {
                   {friend.name}
                 </Display>
                 <Mono s={9.5} c={C.sun300} style={{ marginTop: 4 }}>
-                  {handle} · {friend.year} {t('foodie.placesYear')}
+                  {handle} · {friend.line}
                 </Mono>
               </View>
             </View>

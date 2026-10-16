@@ -158,3 +158,87 @@ export function placesOfChef(chef: Chef): Place[] {
     .filter((p): p is Place => !!p)
     .sort((a, b) => (b.acclaim ?? 0) - (a.acclaim ?? 0));
 }
+
+// ── The chef's dossier: everything the guide says about their kitchens ─────
+
+export type ChefDossier = {
+  places: Place[];
+  /** Signature dishes from the guide's "what to order", with the kitchen they're from. */
+  dishes: { dish: string; place: Place }[];
+  /** Every distinction across their restaurants (Michelin, 50 Best, guides…). */
+  awards: { text: string; place: Place }[];
+  /** The guide's own words about each of their kitchens. */
+  words: { place: Place; text: string; why?: string; tip?: string }[];
+  /** Per-person spend across their restaurants (MXN), when the guide gives it. */
+  spend: { lo: number; hi: number } | null;
+  /** "Apertura 2026", "Trayectoria"… and what each room is ideal for. */
+  moments: string[];
+  occasions: string[];
+  /** Surname / name forms used to recognise them in clip titles. */
+  aliases: string[];
+};
+
+const foldText = (s: string) =>
+  (s || '')
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase();
+
+export function chefDossier(chef: Chef): ChefDossier {
+  const places = placesOfChef(chef);
+  const dishes: ChefDossier['dishes'] = [];
+  const seenDish = new Set<string>();
+  // Two per kitchen first, so every restaurant is represented, then the rest.
+  for (const round of [0, 1, 2]) {
+    for (const p of places) {
+      const d = p.dishes?.[round];
+      if (d && !seenDish.has(foldText(d))) {
+        seenDish.add(foldText(d));
+        dishes.push({ dish: d, place: p });
+      }
+    }
+  }
+  const awards: ChefDossier['awards'] = [];
+  const seenAward = new Set<string>();
+  for (const p of places) {
+    for (const a of (p.awards || '').split(';').map((x) => x.trim()).filter(Boolean)) {
+      const k = foldText(a) + '|' + p.id;
+      if (!seenAward.has(k)) {
+        seenAward.add(k);
+        awards.push({ text: a, place: p });
+      }
+    }
+  }
+  const words = places.filter((p) => p.blurb).map((p) => ({ place: p, text: p.blurb, why: p.why, tip: p.tip }));
+  const mids = places.map((p) => p.ticketMid).filter((n): n is number => typeof n === 'number' && n > 0);
+  // Full names only (a bare surname like "Martínez" is also a restaurant); teams split into people.
+  const aliases = chefPeople(chef).map(foldText).filter((a) => a.split(' ').length >= 2);
+  const nick = /\(([^)]+)\)/.exec(chef.name)?.[1];
+  const surname = chefPeople(chef)[0]?.split(' ').slice(-1)[0];
+  if (nick && surname && nick.length >= 3 && !/grupo|direcci/i.test(nick)) aliases.push(foldText(nick + ' ' + surname));
+  return {
+    places,
+    dishes: dishes.slice(0, 12),
+    awards,
+    words,
+    spend: mids.length ? { lo: Math.min(...mids), hi: Math.max(...mids) } : null,
+    moments: [...new Set(places.map((p) => p.moment).filter((m): m is string => !!m))],
+    occasions: [...new Set(places.map((p) => p.occasion).filter((m): m is string => !!m))],
+    aliases: [...new Set(aliases)],
+  };
+}
+
+/** The people behind a credit: "Jorge Vallejo y Alejandra Flores" → two names. */
+export function chefPeople(chef: Chef): string[] {
+  const clean = chef.name.replace(/\s*\([^)]*\)\s*/g, ' ').replace(/[·|].*$/, '').replace(/\s+/g, ' ').trim();
+  return clean
+    .split(/\s+y\s+|\s*&\s*|\s*,\s*|\s+and\s+/i)
+    .map((x) => x.trim())
+    .filter((x) => x.split(' ').length >= 2);
+}
+
+/** Does a clip title / creator name mention this chef? */
+export function mentionsChef(d: ChefDossier, ...texts: (string | undefined)[]): boolean {
+  const t = foldText(texts.filter(Boolean).join(' '));
+  return d.aliases.some((a) => new RegExp(`(^|[^a-z])${a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}([^a-z]|$)`).test(t));
+}

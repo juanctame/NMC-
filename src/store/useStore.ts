@@ -316,6 +316,8 @@ export type State = {
   /** Open Top 4 picker: which slot is being filled and/or which place is being featured. */
   topPicker: { slot: number | null; placeId: string | null } | null;
   foodieReturn: Screen;
+  /** A passport page to open the You tab on (e.g. 'data' from "You" in a fan list). */
+  passportAt: string | null;
   // Restaurant groups (venues the guide ties together)
   activeGroupId: string | null;
   // Back-trail across profile screens: where the trail began + each step since.
@@ -482,6 +484,7 @@ export type Actions = {
   // taste identity
   openFoodie: (id: string) => void;
   closeFoodie: () => void;
+  openMyProfile: () => void;
   openTasteCard: () => void;
   closeTasteCard: () => void;
 };
@@ -596,6 +599,7 @@ const initialState = (): State => ({
   decideReturn: 'feed',
   topFour: emptyTopFour(),
   foodieReturn: 'board',
+  passportAt: null,
   topPicker: null,
   activeGroupId: null,
   profileReturnTo: 'feed',
@@ -1511,6 +1515,7 @@ export const useStore = create<State & Actions>((set, get) => ({
   // ── taste identity ──
   openFoodie: (id) => set((s) => ({ activeFoodieId: id, screen: 'foodie', foodieReturn: s.screen === 'foodie' ? s.foodieReturn : s.screen })),
   closeFoodie: () => set((s) => ({ screen: s.foodieReturn || 'board' })),
+  openMyProfile: () => set({ tab: 'you', screen: 'you', activePlaceId: null, profileStack: [], passportAt: 'data' }),
   openTasteCard: () => set({ tasteCardOpen: true }),
   closeTasteCard: () => set({ tasteCardOpen: false }),
 }));

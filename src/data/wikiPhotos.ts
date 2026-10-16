@@ -69,12 +69,12 @@ function firstPage(data: any): WikiPage | null {
 }
 
 /** One Wikipedia article's lead image + intro text, by exact title (redirects followed). */
-async function wikiPage(title: string, lang: string): Promise<WikiPage | null> {
+async function wikiPage(title: string, lang: string, chars = 500): Promise<WikiPage | null> {
   // `extracts` (intro text) is enough for the keyword gate; we avoid `description`
   // because an unrecognised prop value errors the whole query on some wikis.
   const u =
     `https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1` +
-    `&prop=pageimages|extracts&piprop=thumbnail&pithumbsize=900&exintro=1&explaintext=1&exchars=500` +
+    `&prop=pageimages|extracts&piprop=thumbnail&pithumbsize=900&exintro=1&explaintext=1&exchars=${chars}` +
     `&titles=${encodeURIComponent(title)}`;
   return firstPage(await jget(u));
 }
@@ -133,6 +133,65 @@ export async function resolveChefPhoto(name: string): Promise<WikiImg> {
   mem[key] = res;
   saveCache();
   return res;
+}
+
+export type ChefBio = { extract: string; title: string; lang: string; pageUrl: string; thumb?: string };
+
+const cleanChefName = (name: string) =>
+  name
+    .replace(/\s*\([^)]*\)\s*/g, ' ')
+    .replace(/[«»"'·|].*$/g, '')
+    .replace(/[«»"']/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+/**
+ * The chef's Wikipedia introduction (Spanish first, then English) — only when
+ * the article is about a cook (same gate as the portrait), so a namesake never
+ * lends their biography.
+ */
+export async function resolveChefBio(name: string): Promise<ChefBio | null> {
+  const key = 'cb:' + name.toLowerCase();
+  if (key in mem) return (mem[key] as unknown as ChefBio) || null;
+  const clean = cleanChefName(name);
+  let res: ChefBio | null = null;
+  for (const lang of LANGS) {
+    let p = await wikiPage(clean, lang, 1100);
+    if (!(p?.extract && matches(RE_CHEF, p.extract))) {
+      const t = await wikiSearchTitle(clean + ' chef', lang);
+      p = t ? await wikiPage(t, lang, 1100) : null;
+    }
+    if (p?.extract && matches(RE_CHEF, p.extract) && fold(p.title || '').includes(fold(clean.split(' ').slice(-1)[0]))) {
+      res = { extract: p.extract, title: p.title || clean, lang, pageUrl: pageUrl(lang, p.title || clean), thumb: p.thumb };
+      break;
+    }
+  }
+  mem[key] = res as unknown as Cached;
+  saveCache();
+  return res;
+}
+
+/** Photos of the chef on Wikimedia Commons (their full name in the file title). */
+export async function resolveChefCommons(name: string): Promise<WikiImgResolved[]> {
+  const clean = cleanChefName(name);
+  const key = 'cc:' + fold(clean);
+  if (key in mem) return (mem[key] as WikiImgResolved[]) || [];
+  let out: WikiImgResolved[] = [];
+  if (clean.split(' ').length >= 2) {
+    const d = await jget(
+      `${COMMONS}&generator=search&gsrnamespace=6&gsrlimit=10&gsrsearch=${encodeURIComponent(`intitle:"${clean}" filetype:bitmap`)}` +
+        `&prop=imageinfo&iiprop=url|mime|extmetadata&iiurlwidth=900`,
+    );
+    const pages: CommonsPage[] = Object.values(d?.query?.pages || {});
+    out = pages
+      .filter((p) => fold(p.title).includes(fold(clean)) && !/logo|signature|firma/i.test(p.title))
+      .map((p) => commonsImg(p, 'Wikimedia Commons'))
+      .filter((x): x is WikiImgResolved => !!x && !!x.url)
+      .slice(0, 6);
+  }
+  mem[key] = out;
+  saveCache();
+  return out;
 }
 
 // ── Venues ───────────────────────────────────────────────────────────────────

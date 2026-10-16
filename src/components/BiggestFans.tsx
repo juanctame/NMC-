@@ -2,8 +2,9 @@
  * Biggest fans — everyone whose favourite this restaurant is, category by
  * category (their top-ranked tacos, seafood, fine dining…), with the people who
  * feature it in their profile's Top 4 marked and listed first. You, your
- * friends and — with the shared backend — every other tester. Ends with the
- * invitation to feature it yourself.
+ * friends and — with the shared backend — every other tester. Every fan is a
+ * profile you can visit (yours opens your passport). Ends with the invitation
+ * to feature it yourself.
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Pressable } from 'react-native';
@@ -35,6 +36,7 @@ export function BiggestFans({ place }: { place: Place }) {
   const topFour = useStore((s) => s.topFour);
   const profile = useStore((s) => s.profile);
   const openFoodie = useStore((s) => s.openFoodie);
+  const openMyProfile = useStore((s) => s.openMyProfile);
   const openTopPicker = useStore((s) => s.openTopPicker);
   const [shared, setShared] = useState<Awaited<ReturnType<typeof fetchSharedFans>>>([]);
 
@@ -89,13 +91,14 @@ export function BiggestFans({ place }: { place: Place }) {
                 </Mono>
               </View>
               {g.fans.map((e, i) => {
-                const tappable = e.fan.kind === 'friend';
+                // Every fan is a profile you can visit — yours opens your passport.
+                const visit = () => (e.fan.kind === 'me' ? openMyProfile() : openFoodie(e.fan.id));
                 return (
                   <Pressable
                     key={e.fan.id}
-                    disabled={!tappable}
-                    onPress={() => openFoodie(e.fan.id)}
+                    onPress={visit}
                     accessibilityLabel={`Fan: ${e.fan.name}`}
+                    accessibilityHint="Opens their profile"
                     style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, paddingHorizontal: 10, borderTopWidth: i ? 1.5 : 0, borderColor: C.ink100, backgroundColor: e.fan.kind === 'me' ? C.sun50 : undefined }}
                   >
                     <Avatar e={e} />
@@ -115,11 +118,9 @@ export function BiggestFans({ place }: { place: Place }) {
                         </Banner>
                       </View>
                     ) : null}
-                    {tappable ? (
-                      <Display s={13} c={C.inkSoft}>
-                        →
-                      </Display>
-                    ) : null}
+                    <Display s={13} c={C.inkSoft}>
+                      →
+                    </Display>
                   </Pressable>
                 );
               })}

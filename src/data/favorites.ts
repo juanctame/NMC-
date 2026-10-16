@@ -239,3 +239,35 @@ export function fansOf(
 
 /** Resolve a place id from the guide or the seed data. */
 export const favPlace = (id: string): Place | undefined => ALL_PLACES.find((p) => p.id === id) || seedById[id];
+
+/**
+ * Another tester's favourites + Top 4, from the shared backend (null without
+ * the table, or if they've published nothing). Their Top 4 is the rows they
+ * marked featured, in the order they were saved.
+ */
+export async function fetchPersonFavs(handle: string): Promise<PersonFavs | null> {
+  if (!sharedEnabled()) return null;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/favorites?handle=eq.${encodeURIComponent(handle)}&select=*&order=id.asc&limit=40`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
+    });
+    if (!res.ok) return null;
+    const rows = (await res.json()) as FavRow[];
+    if (!Array.isArray(rows) || !rows.length) return null;
+    const r0 = rows[0];
+    const favorites: Partial<Record<FavCat, string>> = {};
+    const top: TopFour = emptyTopFour();
+    let n = 0;
+    for (const r of rows) {
+      if (!favorites[r.category]) favorites[r.category] = r.place_id;
+      if (r.featured && n < 4 && !top.some((t) => t?.placeId === r.place_id)) top[n++] = { placeId: r.place_id, category: r.category };
+    }
+    return {
+      person: { id: 'h:' + handle, name: r0.name, initials: r0.initials || r0.name.slice(0, 2).toUpperCase(), color: r0.color || 'var(--ink-400)', avatarUrl: r0.avatar_url, kind: 'community' },
+      favorites,
+      top,
+    };
+  } catch {
+    return null;
+  }
+}

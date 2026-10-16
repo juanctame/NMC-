@@ -24,7 +24,7 @@
  * Verified critics carry a PRESS passport (type D): a darker cover, beat and
  * readers on the data page, and the Critic's Desk for hosting events.
  */
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, ScrollView, Pressable, TextInput, Animated, PanResponder, Easing } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
@@ -1114,6 +1114,15 @@ export function Passport() {
   const openTasteCard = useStore((s) => s.openTasteCard);
   const t = useT();
   const [area, setArea] = useState({ w: 0, h: 0 });
+  // Opened on a specific page (e.g. your data page from "You" in a fan list).
+  const passportAt = useStore((s) => s.passportAt);
+  if (passportAt) {
+    const at = PAGES.findIndex((p) => p.key === passportAt);
+    if (at >= 0) lastPage = at;
+  }
+  useEffect(() => {
+    if (passportAt) useStore.setState({ passportAt: null });
+  }, [passportAt]);
   const [idx, setIdx] = useState(lastPage);
   const pos = useRef(new Animated.Value(lastPage)).current; // the open page, as a float while turning
 

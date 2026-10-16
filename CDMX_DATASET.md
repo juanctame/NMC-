@@ -46,7 +46,20 @@ Trayectoria), and **awards**.
   Martínez · Ultramarinos Demar), Enrique Olvera (Pujol · Pujol.itto), Edgar
   Núñez, Eduardo "Lalo" García, … — those venues gather under **one** profile
   (matched on an accent- and nickname-insensitive key). A feed rail ("The chefs
-  behind it") surfaces them.
+  behind it") surfaces them. A profile is a full dossier built from everything
+  the guide and the collected media say about their kitchens: a cover (their
+  Wikipedia portrait, else a Commons photo of them, else their restaurant's
+  cover), awards, acclaim and a numbers row (restaurants · colonias · spend per
+  person · distinctions); **About** — the Wikipedia introduction (Spanish, then
+  English) shown only when the article is about a cook and carries their
+  surname, linked to the source; **Pictures** — Commons photos whose file names
+  carry their full name (logos and signatures dropped), with author and
+  licence, then their dining rooms; **Known for** (signature dishes, by
+  restaurant); **Awards & recognition**; **In the guide's words**; **On camera**
+  — creator clips of their restaurants, with the ones that name the chef
+  marked "Features them" and listed first; **What critics say** (the simulated
+  critics' takes, labelled SIM); **Fans of their kitchens** (each a profile to
+  visit); what they cook, their groups and their restaurants.
 - **Pictures from every kind of source, grouped by who took them** — each
   restaurant's gallery (Media tab) is split into **From the restaurant** (every
   real photo on its own website: the home page plus its gallery / menu / about
@@ -232,7 +245,11 @@ Trayectoria), and **awards**.
   favourite in; tap a slot to choose or swap (search your log or the city), pick
   the category and the slot. Page 2 (*Favoritos*) lists your favourite in every
   category. Someone else's profile shows their Top 4 inside its header card,
-  right under their name, then their favourite in each category. Real critics never get favourites assigned.
+  right under their name, then their favourite in each category. Every fan —
+  on a restaurant's Biggest fans or a chef's "Fans of their kitchens" — is a
+  profile you can visit (friends, and testers by handle through the shared
+  table); "You" opens your own passport on its data page, and Back returns to
+  where you were. Real critics never get favourites assigned.
 - **Brand marks** — each venue and chef carries an original **monogram** seal
   (initials on a deterministic colour, in the app's sticker look). These are our
   own marks, not the restaurants' trademarked logos, so they're safe to ship and
