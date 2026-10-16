@@ -1,6 +1,6 @@
 {
- "version": 3,
- "generatedAt": "2026-10-10T16:21:56.971Z",
+ "version": 4,
+ "generatedAt": "2026-10-16T16:33:26.322Z",
  "userAgent": "Mozilla/5.0 (compatible; CRTQ-LinkPreview/1.0; +https://juanctame.github.io/NMC-/)",
  "venues": {
   "cx-pujol": {
@@ -57,6 +57,20 @@
    ],
    "site": {
     "image": "https://itsemilia.rest/meta-tags.jpg",
+    "images": [
+     "https://itsemilia.rest/meta-tags.jpg",
+     "https://cdn.sanity.io/images/tfcfpe1e/production/0d446a8fda584668c5f4430eb211471b410f766d-2906x4359.jpg",
+     "https://cdn.sanity.io/images/tfcfpe1e/production/98266b003b40233c41c48bc4fb287e4c8021b89a-6879x6777.jpg",
+     "https://cdn.sanity.io/images/tfcfpe1e/production/d5c8b15beb212ab92c5e3e56506946d6a01c1b3b-3929x5234.jpg",
+     "https://cdn.sanity.io/images/tfcfpe1e/production/b40b7165f3031f49454ca44ff1d006a2bd637908-1718x1145.jpg",
+     "https://cdn.sanity.io/images/tfcfpe1e/production/8f5ecf14ed28d789cc2e1185ed6a666d12f0364a-3504x2336.jpg",
+     "https://cdn.sanity.io/images/tfcfpe1e/production/a082cec0b4888369016749dcfa6e5f56a21e8b42-1792x1195.jpg",
+     "https://cdn.sanity.io/images/tfcfpe1e/production/ff49a59b626d978dc8fe3ccf4fe4ccc3d9b1f951-1107x1661.jpg",
+     "https://cdn.sanity.io/images/tfcfpe1e/production/ef8eb7ba0c46ef995c24c4d32a0e03cfd0bb46d6-6000x4000.jpg",
+     "https://cdn.sanity.io/images/tfcfpe1e/production/d0947a09c8fcbd2a7fc6098eaeee84e35c6712eb-4943x7411.jpg",
+     "https://cdn.sanity.io/images/tfcfpe1e/production/795f46447ac8889debeeb1c5fc434a3c03308d83-5304x7952.jpg",
+     "https://cdn.sanity.io/images/tfcfpe1e/production/0e8f39c279eab981656c8b1dcf5ef495aef56f77-1528x2292.jpg"
+    ],
     "link": "https://itsemilia.rest",
     "credit": "itsemilia.rest",
     "title": "Em"
@@ -90,7 +104,21 @@
     }
    ],
    "site": {
-    "image": "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Recurso-1-1024x576.png",
+    "image": "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Maximo11.jpg",
+    "images": [
+     "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Maximo11.jpg",
+     "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Maximo2.jpg",
+     "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Maximo4-scaled.jpg",
+     "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Maximo5.jpg",
+     "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Maximo6.jpg",
+     "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Maximo8.jpg",
+     "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Maximo9.jpg",
+     "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Maximo10.jpg",
+     "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Maximo12.jpg",
+     "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Maximo14.jpg",
+     "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Maximo15.jpg",
+     "https://www.maximobistrot.com.mx/wp-content/uploads/2022/05/Maximo16.jpg"
+    ],
     "link": "https://maximobistrot.com.mx",
     "credit": "maximobistrot.com.mx",
     "title": "Restaurante Máximo"
@@ -143,10 +171,67 @@
    ],
    "site": {
     "image": "https://quintonil.com/wp-content/uploads/2024/06/Banner-1-WEB-600x303.jpg",
+    "images": [
+     "https://quintonil.com/wp-content/uploads/2024/06/Banner-1-WEB-600x303.jpg",
+     "https://quintonil.com/wp-content/uploads/2024/06/Banner-2-WEB-600x303.jpg",
+     "https://quintonil.com/wp-content/uploads/2024/06/Banner-3-WEB-600x303.jpg",
+     "https://quintonil.com/wp-content/uploads/2024/06/Banner-4-WEB-600x303.jpg",
+     "https://quintonil.com/wp-content/uploads/2024/06/Banner-1-Movil-600x1036.jpg",
+     "https://quintonil.com/wp-content/uploads/2024/06/Banner-2-Movil-600x1036.jpg",
+     "https://quintonil.com/wp-content/uploads/2024/06/Banner-3-Movil-600x1036.jpg",
+     "https://quintonil.com/wp-content/uploads/2024/06/Banner-4-Movil-600x1036.jpg",
+     "https://quintonil.com/wp-content/uploads/2024/11/Barra-Nueva-WEB-1-600x334.jpg",
+     "https://quintonil.com/wp-content/uploads/2021/12/Mole-591x350.jpg",
+     "https://quintonil.com/wp-content/uploads/2021/12/Tamal-591x350.jpg"
+    ],
     "link": "https://quintonil.com",
     "credit": "quintonil.com",
     "title": "Quintonil"
-   }
+   },
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/Inside_Quintonil_%2811303567345%29.jpg/1280px-Inside_Quintonil_%2811303567345%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Inside_Quintonil_(11303567345).jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Inside Quintonil (11303567345)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Quintonil_Menu_%2811303623974%29.jpg/1280px-Quintonil_Menu_%2811303623974%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Quintonil_Menu_(11303623974).jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Quintonil Menu (11303623974)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Quintonil_10.jpg/1280px-Quintonil_10.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Quintonil_10.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Quintonil 10"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Quintonil_14.jpg/1280px-Quintonil_14.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Quintonil_14.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Quintonil 14"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/Quintonil_13.jpg/1280px-Quintonil_13.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Quintonil_13.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Quintonil 13"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Quintonil_15.jpg/1280px-Quintonil_15.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Quintonil_15.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Quintonil 15"
+    }
+   ]
   },
   "cx-esquina-comun": {
    "press": [
@@ -161,6 +246,50 @@
      "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
+    }
+   ],
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Esquina_Com%C3%BAn_%282024%29.jpg/1280px-Esquina_Com%C3%BAn_%282024%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Esquina_Com%C3%BAn_(2024).jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Esquina Común (2024)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Esquina_Com%C3%BAn_%282024%29_%28cropped%29.jpg/1280px-Esquina_Com%C3%BAn_%282024%29_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Esquina_Com%C3%BAn_(2024)_(cropped).jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Esquina Común (2024) (cropped)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Esquina_Com%C3%BAn_%282025%29_1.jpg/1280px-Esquina_Com%C3%BAn_%282025%29_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Esquina_Com%C3%BAn_(2025)_1.jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Esquina Común (2025) 1"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Esquina_Com%C3%BAn_%282025%29_2.jpg/1280px-Esquina_Com%C3%BAn_%282025%29_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Esquina_Com%C3%BAn_(2025)_2.jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Esquina Común (2025) 2"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Esquina_Com%C3%BAn_%282025%29_3.jpg/1280px-Esquina_Com%C3%BAn_%282025%29_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Esquina_Com%C3%BAn_(2025)_3.jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Esquina Común (2025) 3"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Esquina_Com%C3%BAn_%282025%29_4.jpg/1280px-Esquina_Com%C3%BAn_%282025%29_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Esquina_Com%C3%BAn_(2025)_4.jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Esquina Común (2025) 4"
     }
    ]
   },
@@ -186,6 +315,20 @@
    ],
    "site": {
     "image": "https://gabarestaurante.com/wp-content/uploads/2024/12/6W4A0199-scaled.webp",
+    "images": [
+     "https://gabarestaurante.com/wp-content/uploads/2024/12/6W4A0199-scaled.webp",
+     "https://gabarestaurante.com/wp-content/uploads/2025/01/6W4A8326-scaled.webp",
+     "https://gabarestaurante.com/wp-content/uploads/2025/01/6W4A9605-scaled.webp",
+     "https://gabarestaurante.com/wp-content/uploads/2025/01/6W4A9886-scaled.webp",
+     "https://gabarestaurante.com/wp-content/uploads/2025/01/6W4A9054-scaled.webp",
+     "https://gabarestaurante.com/wp-content/uploads/2025/01/6W4A9150-scaled.webp",
+     "https://gabarestaurante.com/wp-content/uploads/2025/01/6W4A9824-scaled.webp",
+     "https://gabarestaurante.com/wp-content/uploads/2025/01/6W4A1239-scaled.webp",
+     "https://gabarestaurante.com/wp-content/uploads/2025/01/6W4A9408-scaled.webp",
+     "https://gabarestaurante.com/wp-content/uploads/2025/01/6W4A9330-scaled.webp",
+     "https://gabarestaurante.com/wp-content/uploads/2025/01/6W4A9911-scaled.webp",
+     "https://gabarestaurante.com/wp-content/uploads/2025/01/6W4A8249-scaled.webp"
+    ],
     "link": "https://gabarestaurante.com",
     "credit": "gabarestaurante.com",
     "title": "Gaba Condesa"
@@ -217,6 +360,15 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
+   ],
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/La_Once_Mil_Roma_%282026%29_1.jpg/1280px-La_Once_Mil_Roma_%282026%29_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:La_Once_Mil_Roma_(2026)_1.jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "La Once Mil Roma (2026) 1"
+    }
    ]
   },
   "cx-rosetta": {
@@ -235,7 +387,17 @@
     }
    ],
    "site": {
-    "image": "https://rosetta.com.mx/wp-content/uploads/2025/06/home-rec-01.png",
+    "image": "https://rosetta.com.mx/wp-content/uploads/2025/06/rosetta_home_01.webp",
+    "images": [
+     "https://rosetta.com.mx/wp-content/uploads/2025/06/rosetta_home_01.webp",
+     "https://rosetta.com.mx/wp-content/uploads/2025/06/rosetta_home_02.webp",
+     "https://rosetta.com.mx/wp-content/uploads/2025/06/rosetta_home_04.webp",
+     "https://rosetta.com.mx/wp-content/uploads/2025/08/Group-15-2000x1124.webp",
+     "https://rosetta.com.mx/wp-content/uploads/2025/06/slider-mobile-02-1.jpg",
+     "https://rosetta.com.mx/wp-content/uploads/2025/06/slider-mobile-02-4.jpg",
+     "https://rosetta.com.mx/wp-content/uploads/2025/07/slider-mobile-02.webp",
+     "https://rosetta.com.mx/wp-content/uploads/2025/06/slider-mobile-02-6.jpg"
+    ],
     "link": "https://rosetta.com.mx",
     "credit": "rosetta.com.mx",
     "title": "Rosetta"
@@ -255,6 +417,50 @@
      "image": "https://www.elfinanciero.com.mx/resizer/v2/QEVHYPWCU5C33PYMH732IFAA4Y.jpeg?smart=true&auth=b0f81f4ff493a4b3dd7c3d3334d571362ff1513f4d9b5a084f7fd3f60fb8d8b0&width=1200&height=630",
      "specific": false
     }
+   ],
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f1/Sud_777_2.jpg/1280px-Sud_777_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Sud_777_2.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Sud 777 2"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Sud_777_1.jpg/1280px-Sud_777_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Sud_777_1.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Sud 777 1"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/67/Sud_777_8.jpg/1280px-Sud_777_8.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Sud_777_8.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Sud 777 8"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/Sud_777_7.jpg/1280px-Sud_777_7.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Sud_777_7.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Sud 777 7"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/16/Sud_777_10.jpg/1280px-Sud_777_10.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Sud_777_10.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Sud 777 10"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Sud_777_9.jpg/1280px-Sud_777_9.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Sud_777_9.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Sud 777 9"
+    }
    ]
   },
   "cx-expendio-de-maiz": {
@@ -266,11 +472,37 @@
     }
    ],
    "site": {
-    "image": "https://images.squarespace-cdn.com/content/v1/6a0392652cde9f6bd9d342b5/1778618982085-DQXGLRTQQY0AEU75PLSF/DSCF0172+%281%29.jpg",
+    "image": "https://images.squarespace-cdn.com/content/v1/6a0392652cde9f6bd9d342b5/1778618982085-DQXGLRTQQY0AEU75PLSF/DSCF0172+%281%29.jpg?format=1500w",
+    "images": [
+     "https://images.squarespace-cdn.com/content/v1/6a0392652cde9f6bd9d342b5/1778618982085-DQXGLRTQQY0AEU75PLSF/DSCF0172+%281%29.jpg?format=1500w"
+    ],
     "link": "https://expendiodemaizsinnombre.com",
     "credit": "expendiodemaizsinnombre.com",
     "title": "Expendio de Maíz"
-   }
+   },
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/Horty%2C_Expendio_de_Ma%C3%ADz%2C_P%C3%A1ramo.jpg/1280px-Horty%2C_Expendio_de_Ma%C3%ADz%2C_P%C3%A1ramo.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Horty,_Expendio_de_Ma%C3%ADz,_P%C3%A1ramo.jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Horty, Expendio de Maíz, Páramo"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Horty%2C_Expendio_de_Ma%C3%ADz%2C_y_P%C3%A1ramo_2.jpg/1280px-Horty%2C_Expendio_de_Ma%C3%ADz%2C_y_P%C3%A1ramo_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Horty,_Expendio_de_Ma%C3%ADz,_y_P%C3%A1ramo_2.jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Horty, Expendio de Maíz, y Páramo 2"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/de/Horty%2C_Expendio_de_Ma%C3%ADz%2C_P%C3%A1ramo_%28cropped%29.jpg/1280px-Horty%2C_Expendio_de_Ma%C3%ADz%2C_P%C3%A1ramo_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Horty,_Expendio_de_Ma%C3%ADz,_P%C3%A1ramo_(cropped).jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Horty, Expendio de Maíz, Páramo (cropped)"
+    }
+   ]
   },
   "cx-masala-y-maiz": {
    "press": [
@@ -281,11 +513,48 @@
     }
    ],
    "site": {
-    "image": "https://static1.squarespace.com/static/59238808e6f2e10edd5a1057/t/59af59bdbebafb7afc6af8bf/1504663998110/RUBRICA+b%26w+%28masala+%26+maiz%29.png?format=1500w",
+    "image": "https://images.squarespace-cdn.com/content/v1/59238808e6f2e10edd5a1057/130d9b4d-f9fc-47ad-b485-bb34f35da406/Credit_Ana+Lorenzana_Norma%26Saqib.jpg?format=1500w",
+    "images": [
+     "https://images.squarespace-cdn.com/content/v1/59238808e6f2e10edd5a1057/130d9b4d-f9fc-47ad-b485-bb34f35da406/Credit_Ana+Lorenzana_Norma%26Saqib.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/59238808e6f2e10edd5a1057/f89f5e49-f802-46be-b09c-bff94fbfec6c/Credit_Ana+Lorenzana_DetallesMasalaEspacio8+copie.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/59238808e6f2e10edd5a1057/956fcda1-c190-4451-ac0d-420f770963f0/MyM_pescadeldia3_PhotoCredit.AnaLorenzana.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/59238808e6f2e10edd5a1057/28154d20-44a8-4083-96b8-dfdcff96db07/MyM_camarones1_PhotoCredit.AnaLorenzana.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/59238808e6f2e10edd5a1057/2e823990-093f-4a3a-91a3-de4fd66c3a33/MyM_tetela2_PhotoCredit.AnaLorenzana.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/59238808e6f2e10edd5a1057/0bbc37d0-92dc-4ed9-bcf8-1e0b2acd014f/DetallesMasalaEspacio6+copie+%281%29.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/59238808e6f2e10edd5a1057/72cfc7bc-6cee-4496-a551-5891b7683c4a/MyM_crudo6_PhotoCredit.AnaLorenzana.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/59238808e6f2e10edd5a1057/1611364828981-NNJYMCMHLVQ2P48GKHVO/postre2+%282%29.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/59238808e6f2e10edd5a1057/d357c206-5471-4984-a84b-8ca8d7238974/1_Norma+Listman+and+Saqib+Keval_Photo+Credit+Ana+Lorenzana.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/59238808e6f2e10edd5a1057/2e925815-b268-413a-bb58-e2c2b137f4fc/Credit_Ana+Lorenzana_TableSpread.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/59238808e6f2e10edd5a1057/3c84267c-8f03-4ab5-8b28-9c5b064ab8b2/Credit_Ana+Lorenzana_PlatilloAlmejas3+copie.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/59238808e6f2e10edd5a1057/ceaf7c6b-fa3e-498c-8ef2-d99d9f2678d3/CoctelesMasalaNuevos4I+copie+%281%29.jpg?format=1500w"
+    ],
     "link": "https://masalaymaiz.com",
     "credit": "masalaymaiz.com",
     "title": "Masala y Maiz"
-   }
+   },
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/Masala_y_Maiz_%282025%29_1.jpg/1280px-Masala_y_Maiz_%282025%29_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Masala_y_Maiz_(2025)_1.jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Masala y Maiz (2025) 1"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b8/Masala_y_Maiz_%282025%29_2.jpg/1280px-Masala_y_Maiz_%282025%29_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Masala_y_Maiz_(2025)_2.jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Masala y Maiz (2025) 2"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Masala_y_Ma%C3%ADz_%282025_logo%29.png/1280px-Masala_y_Ma%C3%ADz_%282025_logo%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Masala_y_Ma%C3%ADz_(2025_logo).png",
+     "credit": "Masala y Maíz",
+     "license": "Public domain",
+     "title": "Masala y Maíz (2025 logo)"
+    }
+   ]
   },
   "cx-ajoblanco": {
    "press": [
@@ -359,7 +628,10 @@
     }
    ],
    "site": {
-    "image": "https://static.wixstatic.com/media/c0a6ec_d006505249784565a934d48d807f8972~mv2.jpg/v1/fill/w_704,h_692,al_c/c0a6ec_d006505249784565a934d48d807f8972~mv2.jpg",
+    "image": "https://static.wixstatic.com/media/c0a6ec_d006505249784565a934d48d807f8972~mv2.jpg",
+    "images": [
+     "https://static.wixstatic.com/media/c0a6ec_d006505249784565a934d48d807f8972~mv2.jpg"
+    ],
     "link": "https://arangorestaurante.com",
     "credit": "arangorestaurante.com",
     "title": "Arango Restaurante | Alta Cocina Mexicana | Rooftop & Eventos CDMX | Monumento a la Revolución"
@@ -398,6 +670,20 @@
    ],
    "site": {
     "image": "https://cdn.foodyvo.com/1300-fyv-photo-1.jpg",
+    "images": [
+     "https://cdn.foodyvo.com/1300-fyv-photo-1.jpg",
+     "https://cdn.foodyvo.com/1300-fyv-photo-2.jpg",
+     "https://cdn.foodyvo.com/1300-fyv-photo-3.jpg",
+     "https://cdn.foodyvo.com/1300-fyv-photo-4.jpg",
+     "https://cdn.foodyvo.com/1300-fyv-photo-5.jpg",
+     "https://cdn.foodyvo.com/1300-fyv-photo-6.jpg",
+     "https://cdn.foodyvo.com/1300-fyv-photo-7.jpg",
+     "https://cdn.foodyvo.com/1300-fyv-photo-8.jpg",
+     "https://cdn.foodyvo.com/1300-fyv-photo-9.jpg",
+     "https://cdn.foodyvo.com/1300-fyv-photo-10.jpg",
+     "https://cdn.foodyvo.com/1299-fyv-photo-1.jpg",
+     "https://cdn.foodyvo.com/1298-fyv-photo-1.jpg"
+    ],
     "link": "https://botanico.website",
     "credit": "botanico.website",
     "title": "Botánico Restaurant · Upscale Dining in Condesa, Mexico City"
@@ -437,7 +723,11 @@
     }
    ],
    "site": {
-    "image": "https://images.squarespace-cdn.com/content/v1/69bab62adfc3963bb605c0e3/f6229f26-81a1-4739-862c-12b8300e26e3/DSCF7378.jpg?format=2500w",
+    "image": "https://images.squarespace-cdn.com/content/v1/69bab62adfc3963bb605c0e3/f6229f26-81a1-4739-862c-12b8300e26e3/DSCF7378.jpg?format=1500w",
+    "images": [
+     "https://images.squarespace-cdn.com/content/v1/69bab62adfc3963bb605c0e3/f6229f26-81a1-4739-862c-12b8300e26e3/DSCF7378.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/69bab62adfc3963bb605c0e3/2a2d9d7e-e592-457e-af3e-17090e592180/_DSF5035.jpg?format=1500w"
+    ],
     "link": "https://canacdmx.com",
     "credit": "canacdmx.com",
     "title": "CANA BISTRO"
@@ -456,6 +746,50 @@
      "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
+    }
+   ],
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/Carmela_y_Sal_%2831624494297%29.jpg/1280px-Carmela_y_Sal_%2831624494297%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Carmela_y_Sal_(31624494297).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Carmela y Sal (31624494297)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/Carmela_y_Sal_%2844747844930%29.jpg/1280px-Carmela_y_Sal_%2844747844930%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Carmela_y_Sal_(44747844930).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Carmela y Sal (44747844930)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3d/Carmela_y_Sal_%2845841643944%29.jpg/1280px-Carmela_y_Sal_%2845841643944%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Carmela_y_Sal_(45841643944).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Carmela y Sal (45841643944)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/Carmela_y_Sal_%2831624490997%29.jpg/1280px-Carmela_y_Sal_%2831624490997%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Carmela_y_Sal_(31624490997).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Carmela y Sal (31624490997)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/Carmela_y_Sal_%2845841636454%29.jpg/1280px-Carmela_y_Sal_%2845841636454%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Carmela_y_Sal_(45841636454).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Carmela y Sal (45841636454)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Carmela_y_Sal_%2845841633114%29.jpg/1280px-Carmela_y_Sal_%2845841633114%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Carmela_y_Sal_(45841633114).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Carmela y Sal (45841633114)"
     }
    ]
   },
@@ -519,10 +853,59 @@
    ],
    "site": {
     "image": "https://contramar.com.mx/upload/06.jpg",
+    "images": [
+     "https://contramar.com.mx/upload/06.jpg",
+     "https://contramar.com.mx/upload/08.jpg",
+     "https://contramar.com.mx/upload/09.jpg"
+    ],
     "link": "https://contramar.com.mx",
     "credit": "contramar.com.mx",
     "title": "Contramar"
-   }
+   },
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Contramar_%2846565410711%29.jpg/1280px-Contramar_%2846565410711%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Contramar_(46565410711).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Contramar (46565410711)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Contramar_%2846565418311%29.jpg/1280px-Contramar_%2846565418311%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Contramar_(46565418311).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Contramar (46565418311)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/Contramar_%2846565426261%29.jpg/1280px-Contramar_%2846565426261%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Contramar_(46565426261).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Contramar (46565426261)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Contramar_%2845651408955%29.jpg/1280px-Contramar_%2845651408955%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Contramar_(45651408955).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Contramar (45651408955)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/Contramar_%2844747687650%29.jpg/1280px-Contramar_%2844747687650%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Contramar_(44747687650).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Contramar (44747687650)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/Contramar_%2832691928888%29.jpg/1280px-Contramar_%2832691928888%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Contramar_(32691928888).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Contramar (32691928888)"
+    }
+   ]
   },
   "cx-cuina": {
    "press": [
@@ -542,7 +925,12 @@
     }
    ],
    "site": {
-    "image": "https://cuina.com.mx/wp-content/plugins/revslider/sr6/assets/assets/dummy.png",
+    "image": "https://cuina.com.mx/wp-content/uploads/2022/05/rest3-1.jpg",
+    "images": [
+     "https://cuina.com.mx/wp-content/uploads/2022/05/rest3-1.jpg",
+     "https://cuina.com.mx/wp-content/uploads/2022/05/rest4-1.jpg",
+     "https://cuina.com.mx/wp-content/uploads/2022/05/restaurant2-1.jpg"
+    ],
     "link": "https://cuina.com.mx",
     "credit": "cuina.com.mx",
     "title": "Cuina"
@@ -596,7 +984,6 @@
      "outlet": "Food and Pleasure",
      "url": "https://foodandpleasure.com/restaurantes-para-negocios-polanco",
      "title": "8 restaurantes en Polanco perfectos para una comida de negocios",
-     "image": "https://i0.wp.com/foodandpleasure.com/wp-content/uploads/2022/06/restaurantes-para-negocios-polanco-blanco-castelar-josemargaleff.jpg?fit=1080%2C719&ssl=1",
      "specific": false
     }
    ]
@@ -618,6 +1005,17 @@
    ],
    "site": {
     "image": "https://static.wixstatic.com/media/2259ef_c45db211a5394b3ab5e8b72d6cfa41d0~mv2.jpg",
+    "images": [
+     "https://static.wixstatic.com/media/2259ef_c45db211a5394b3ab5e8b72d6cfa41d0~mv2.jpg",
+     "https://static.wixstatic.com/media/2259ef_0c9e24bf5d4d46768d6fcb54bd34c0ef~mv2.jpg",
+     "https://static.wixstatic.com/media/2259ef_3d4942a67ee74910b1242101bc8d84ae~mv2.jpg",
+     "https://static.wixstatic.com/media/2259ef_72379614f9c942bea90c8d24b2dfb964~mv2.jpg",
+     "https://static.wixstatic.com/media/2259ef_1cf64ce0da8e44b4a7ec3e9508fad326~mv2.jpg",
+     "https://static.wixstatic.com/media/2259ef_b586e5c0d4cf4fa697555a42f23b8758~mv2.jpg",
+     "https://static.wixstatic.com/media/2259ef_00efbd07e5bc48d3b8130fd577ad0dff~mv2.jpg",
+     "https://static.wixstatic.com/media/2259ef_6fc6e14c02b64dcb98761508ec8a2a20~mv2.jpg",
+     "https://static.wixstatic.com/media/af83f0_fb8657a5fda449468440a3594cd523f8~mv2.png"
+    ],
     "link": "https://errreunbistro.com",
     "credit": "errreunbistro.com",
     "title": "Inicio | Er Rre"
@@ -675,6 +1073,50 @@
      "image": "https://media.timeout.com/images/100613001/image.jpg",
      "specific": true
     }
+   ],
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/Fonda_Margarita_DF_01.JPG/1280px-Fonda_Margarita_DF_01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Fonda_Margarita_DF_01.JPG",
+     "credit": "AlejandroLinaresGarcia",
+     "license": "CC BY-SA 4.0",
+     "title": "Fonda Margarita DF 01"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Fonda_Margarita_1.jpg/1280px-Fonda_Margarita_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Fonda_Margarita_1.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Fonda Margarita 1"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9d/Fonda_Margarita_2.jpg/1280px-Fonda_Margarita_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Fonda_Margarita_2.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Fonda Margarita 2"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/Fonda_Margarita_4.jpg/1280px-Fonda_Margarita_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Fonda_Margarita_4.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Fonda Margarita 4"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Fonda_Margarita_3.jpg/1280px-Fonda_Margarita_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Fonda_Margarita_3.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Fonda Margarita 3"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Fonda_Margarita_5.jpg/1280px-Fonda_Margarita_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Fonda_Margarita_5.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Fonda Margarita 5"
+    }
    ]
   },
   "cx-fonico": {
@@ -718,7 +1160,14 @@
     }
    ],
    "site": {
-    "image": "https://www.galea.mx/wp-content/plugins/translatepress-multilingual/assets/images/flags/en_US.png",
+    "image": "https://www.galea.mx/wp-content/uploads/2025/07/Galea-2222-scaled.jpg",
+    "images": [
+     "https://www.galea.mx/wp-content/uploads/2025/07/Galea-2222-scaled.jpg",
+     "https://www.galea.mx/wp-content/uploads/2025/07/Galea-2015-scaled.jpg",
+     "https://www.galea.mx/wp-content/uploads/2025/07/Galea_167-scaled.jpg",
+     "https://www.galea.mx/wp-content/uploads/2024/07/Bebidas-galea.jpg",
+     "https://www.galea.mx/wp-content/uploads/2024/09/Galea-1836.jpg"
+    ],
     "link": "https://galea.mx",
     "credit": "galea.mx",
     "title": "Galea - Cocina Italiana"
@@ -758,7 +1207,21 @@
     }
    ],
    "site": {
-    "image": "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/2be0df84-e23b-40ff-a7fc-e56ea847e783/1D8A7527+copia.jpg?format=2500w",
+    "image": "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/2be0df84-e23b-40ff-a7fc-e56ea847e783/1D8A7527+copia.jpg?format=1500w",
+    "images": [
+     "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/2be0df84-e23b-40ff-a7fc-e56ea847e783/1D8A7527+copia.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/58eb8e63-f490-471c-b2d3-9bb2829ac601/Short+Rib+Braseado-Pipian+de+frijol+santanero%2C+chile+costen%CC%83o%2C+pepita+de+chilacayota%2C+zanahoria+de+colores.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/eeb81181-7170-423c-8ae9-be4031404ed2/1D8A6053.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/1740466013813-JUF0NIA1YDHO2TBTYYWH/Short%2BRib%2BBraseado-Pipian%2Bde%2Bfrijol%2Bsantanero%252C%2Bchile%2Bcosten%25CC%2583o%252C%2Bpepita%2Bde%2Bchilacayota%252C%2Bzanahoria%2Bde%2Bcolores.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/3c76c3d0-dc7a-46af-942a-699859bd1dbf/tamale_h12.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/c3ee584a-9744-4c2b-9e74-f6702f4e5c79/salsaab_v1.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/3de53edc-9ca4-4056-80b7-f79c34a2d0a1/Cocktail_cp_v.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/c797de8e-d4e7-4299-a847-0f6e0c9fbbe7/1D8A5894.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/ee998eb9-fb93-49d6-bbbc-9f73f1faad45/COCKTAIL_1_V.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/839c69e9-eee2-4afc-be2e-81f55e1baea3/1D8A6053.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/33178d7f-c6c4-459d-9df9-c84fc8f11895/cockat_ax_h32.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/66ff3bd60e7fdb2a1284bbf5/b5d53846-8f27-400c-83f6-71a45350e80f/pshocolote_sq112.jpg?format=1500w"
+    ],
     "link": "https://guzinaoaxaca.org",
     "credit": "guzinaoaxaca.org",
     "title": "GUZINA OAXACA"
@@ -799,6 +1262,13 @@
    ],
    "site": {
     "image": "https://limosneros.com.mx/images/espacio.webp",
+    "images": [
+     "https://limosneros.com.mx/images/espacio.webp",
+     "https://limosneros.com.mx/images/primavera_2.webp",
+     "https://limosneros.com.mx/images/primavera_1.webp",
+     "https://limosneros.com.mx/images/diciembre.webp",
+     "https://limosneros.com.mx/images/muertos.webp"
+    ],
     "link": "https://limosneros.com.mx",
     "credit": "limosneros.com.mx",
     "title": "Limosneros | Gastronomía Mexicana"
@@ -821,6 +1291,12 @@
    ],
    "site": {
     "image": "https://lina.mx/wp-content/uploads/2026/08/KatieJuneBurton_Lina-98-scaled.jpg",
+    "images": [
+     "https://lina.mx/wp-content/uploads/2026/08/KatieJuneBurton_Lina-98-scaled.jpg",
+     "https://lina.mx/wp-content/uploads/2026/09/KatieJuneBurton_Lina-61-scaled.jpg",
+     "https://lina.mx/wp-content/uploads/2026/07/FernandoFarfan_Lina_15-scaled.jpg",
+     "https://lina.mx/wp-content/uploads/2026/09/A7405432.jpg"
+    ],
     "link": "https://lina.mx",
     "credit": "lina.mx",
     "title": "Lina &#8211; Restaurante CDMX"
@@ -843,6 +1319,14 @@
    ],
    "site": {
     "image": "https://lorea.mx/wp-content/uploads/2025/10/OSWALDO-OLIVA-683x1024.webp",
+    "images": [
+     "https://lorea.mx/wp-content/uploads/2025/10/OSWALDO-OLIVA-683x1024.webp",
+     "https://lorea.mx/wp-content/uploads/2026/09/Quinto-Cuarto-Menu-de-temporada-en-Restaurante-Lorea-Colonia-Roma-Norte-CDMX.webp",
+     "https://lorea.mx/wp-content/uploads/elementor/thumbs/DAN_2442-rbh5sk8sctruujjfrvnlve8kd73bzhmqxwrgvrm468.webp",
+     "https://lorea.mx/wp-content/uploads/elementor/thumbs/lorea-mejores-restaurantes-cdmx-qcmteg4ossp77xzbvbh5khq5c30ae4rg7w4nq5l7ds.webp",
+     "https://lorea.mx/wp-content/uploads/elementor/thumbs/salon-privado-restaurante-Lorea-CDMX-rt4gbz2x8jcxn13tvvbg7k9abzxfic0y9n14hy26xs.webp",
+     "https://lorea.mx/wp-content/uploads/2025/10/COCINA-ABIERTA.webp"
+    ],
     "link": "https://lorea.mx",
     "credit": "lorea.mx",
     "title": "Lorea | Restaurante Alta cocina mexicana Roma Norte, CDMX"
@@ -864,11 +1348,34 @@
     }
    ],
    "site": {
-    "image": "https://www.losdanzantescoyoacan.com/wp-content/themes/Divi/includes/builder/styles/images/preloader.gif",
+    "image": "https://www.losdanzantescoyoacan.com/wp-content/uploads/2023/11/38801602_1962291140489914_1281805153808154624_o.jpg",
+    "images": [
+     "https://www.losdanzantescoyoacan.com/wp-content/uploads/2023/11/38801602_1962291140489914_1281805153808154624_o.jpg",
+     "https://www.losdanzantescoyoacan.com/wp-content/uploads/2023/11/hojasantaweb-480x320.jpg",
+     "https://www.losdanzantescoyoacan.com/wp-content/uploads/2023/11/los-danzantes-coyoacan-eventos-slide-4.jpg",
+     "https://www.losdanzantescoyoacan.com/wp-content/uploads/2023/11/nosotros_18.jpg",
+     "https://www.losdanzantescoyoacan.com/wp-content/uploads/2023/11/nosotros_19.jpg",
+     "https://www.losdanzantescoyoacan.com/wp-content/uploads/2023/11/nosotrosprivado_21.jpg",
+     "https://www.losdanzantescoyoacan.com/wp-content/uploads/2023/11/nosotros_26-480x160.jpg",
+     "https://www.losdanzantescoyoacan.com/wp-content/uploads/2023/11/nosotros_20.jpg",
+     "https://www.losdanzantescoyoacan.com/wp-content/uploads/2023/11/nosotros_24.jpg",
+     "https://www.losdanzantescoyoacan.com/wp-content/uploads/2023/11/holaredonda-480x480.jpg",
+     "https://www.losdanzantescoyoacan.com/wp-content/uploads/2023/11/nosotros_fachada.jpg",
+     "https://www.losdanzantescoyoacan.com/wp-content/uploads/2023/11/nosotros-mobil.jpg"
+    ],
     "link": "https://losdanzantescoyoacan.com",
     "credit": "losdanzantescoyoacan.com",
     "title": "Los Danzantes Coyoacán |"
-   }
+   },
+   "visitors": [
+    {
+     "url": "https://upload.wikimedia.org/wikipedia/commons/4/47/Los_Danzantes_Mezcal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "page": "https://commons.wikimedia.org/wiki/File:Los_Danzantes_Mezcal.jpg",
+     "credit": "https://www.flickr.com/photos/scaredykat/",
+     "license": "CC BY 2.0",
+     "title": "Los Danzantes Mezcal"
+    }
+   ]
   },
   "cx-maizajo": {
    "press": [
@@ -886,7 +1393,21 @@
     }
    ],
    "site": {
-    "image": "https://www.maizajo.com/cdn/shop/files/meta_2.png?v=1749138942",
+    "image": "https://www.maizajo.com/cdn/shop/files/molino_640x.jpg?v=1744392510",
+    "images": [
+     "https://www.maizajo.com/cdn/shop/files/molino_640x.jpg?v=1744392510",
+     "https://www.maizajo.com/cdn/shop/files/molino.jpg?v=1744392510",
+     "https://www.maizajo.com/cdn/shop/files/taqueria_640x.jpg?v=1744393219",
+     "https://www.maizajo.com/cdn/shop/files/taqueria.jpg?v=1744393219",
+     "https://www.maizajo.com/cdn/shop/files/restaurante_640x.jpg?v=1744393219",
+     "https://www.maizajo.com/cdn/shop/files/restaurante.jpg?v=1744393219",
+     "https://www.maizajo.com/cdn/shop/files/taqueria-cover_640x.jpg?v=1744393219",
+     "https://www.maizajo.com/cdn/shop/files/taqueria-cover.jpg?v=1744393219",
+     "https://www.maizajo.com/cdn/shop/files/restaurante-cover_640x.jpg?v=1744393219",
+     "https://www.maizajo.com/cdn/shop/files/restaurante-cover.jpg?v=1744393219",
+     "https://www.maizajo.com/cdn/shop/files/michelin_640x.webp?v=1746506026",
+     "https://www.maizajo.com/cdn/shop/files/traveler_640x.webp?v=1746506027"
+    ],
     "link": "https://maizajo.com",
     "credit": "maizajo.com",
     "title": "MAIZAJO"
@@ -945,10 +1466,64 @@
    ],
    "site": {
     "image": "https://static1.squarespace.com/static/5d094a8f0e0c3f00013c7241/t/5d0953d090f93c00011cf7ed/1560892381214/Restauranteesoacio6.jpg?format=1500w",
+    "images": [
+     "https://static1.squarespace.com/static/5d094a8f0e0c3f00013c7241/t/5d0953d090f93c00011cf7ed/1560892381214/Restauranteesoacio6.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/5d094a8f0e0c3f00013c7241/1560893282916-AE0S6YREL6CESO4921VK/Productos17.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/5d094a8f0e0c3f00013c7241/1625529473251-EDQDSNV7B9NGT7R2MGWC/OricchietteMeroma1.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/5d094a8f0e0c3f00013c7241/1625528345987-85DPYMHZFQU1DM7FTA4C/MeromaEspacio1.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/5d094a8f0e0c3f00013c7241/0fffcafa-3ddc-4252-81da-0a54b89251e9/MesaMeromaDeDia3+copie.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/5d094a8f0e0c3f00013c7241/1611281165901-D1METXUFGPB6XJYNFPJD/Meromachefs1.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/5d094a8f0e0c3f00013c7241/1625536379919-V87E0UWC4BV5WN1CI1WL/AlcachofasMeroma2.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/5d094a8f0e0c3f00013c7241/1625536564929-QELU7EHFR9FL7KTBGEPP/BebidasMeroma4.jpg?format=1500w"
+    ],
     "link": "https://meroma.mx",
     "credit": "meroma.mx",
     "title": "Meroma CDMX"
-   }
+   },
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Meroma_%2845841473974%29.jpg/1280px-Meroma_%2845841473974%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Meroma_(45841473974).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Meroma (45841473974)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Meroma_%2846513374732%29.jpg/1280px-Meroma_%2846513374732%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Meroma_(46513374732).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Meroma (46513374732)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Meroma_%2846513367742%29.jpg/1280px-Meroma_%2846513367742%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Meroma_(46513367742).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Meroma (46513367742)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/Meroma_%2846513364242%29.jpg/1280px-Meroma_%2846513364242%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Meroma_(46513364242).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Meroma (46513364242)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Meroma_%2845841466514%29.jpg/1280px-Meroma_%2845841466514%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Meroma_(45841466514).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Meroma (45841466514)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/Meroma_%2845841461334%29.jpg/1280px-Meroma_%2845841461334%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Meroma_(45841461334).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Meroma (45841461334)"
+    }
+   ]
   },
   "cx-migrante": {
    "press": [
@@ -967,6 +1542,20 @@
    ],
    "site": {
     "image": "https://migranteroma.com/wp-content/uploads/2025/04/migrante-roma-6-1.jpg",
+    "images": [
+     "https://migranteroma.com/wp-content/uploads/2025/04/migrante-roma-6-1.jpg",
+     "https://migranteroma.com/wp-content/uploads/2025/04/migrante-roma-fer-martinez-3.jpg",
+     "https://migranteroma.com/wp-content/uploads/2025/03/migrante-roma-4-3-1024x620.jpg",
+     "https://migranteroma.com/wp-content/uploads/2025/04/migrante-roma-6-2-1024x620.jpg",
+     "https://migranteroma.com/wp-content/uploads/2025/04/migrante-roma-5-4-1-1024x620.jpg",
+     "https://migranteroma.com/wp-content/uploads/2025/04/migrante-roma-3-5-2048x1241.jpg",
+     "https://migranteroma.com/wp-content/uploads/2025/04/migrante-roma-10.jpg",
+     "https://migranteroma.com/wp-content/uploads/2025/04/migrante-roma-2-5.jpg",
+     "https://migranteroma.com/wp-content/uploads/2025/04/migrante-roma-3-6.jpg",
+     "https://migranteroma.com/wp-content/uploads/2025/04/migrante-roma-4-8.jpg",
+     "https://migranteroma.com/wp-content/uploads/2025/04/migrante-roma-5-5.jpg",
+     "https://migranteroma.com/wp-content/uploads/2025/03/migrante-platillos-2.jpg"
+    ],
     "link": "https://migranteroma.com",
     "credit": "migranteroma.com",
     "title": "Migrante Roma | Sitio Oficial"
@@ -1036,7 +1625,21 @@
     }
    ],
    "site": {
-    "image": "https://static.wixstatic.com/media/efa6e0_89920f4822114af19277e49608296585~mv2.png/v1/fill/w_67,h_100,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/efa6e0_89920f4822114af19277e49608296585~mv2.png",
+    "image": "https://static.wixstatic.com/media/efa6e0_bfeb2de6c1754bd99ae32c5006727e49~mv2.jpg",
+    "images": [
+     "https://static.wixstatic.com/media/efa6e0_bfeb2de6c1754bd99ae32c5006727e49~mv2.jpg",
+     "https://static.wixstatic.com/media/efa6e0_b10ce588fd764089a11a14d1b327d705~mv2.jpg",
+     "https://static.wixstatic.com/media/efa6e0_8a5405797c644ebc8366df2d2de449fe~mv2.jpg",
+     "https://static.wixstatic.com/media/efa6e0_a9394d5ffa7a4a7ba5df00fbb6fac72f~mv2.jpg",
+     "https://static.wixstatic.com/media/efa6e0_e79e4f817ba3412c9f5584eb4fa8263a~mv2.jpg",
+     "https://static.wixstatic.com/media/efa6e0_b9c92d5958f14cba98b3cb90f272014e~mv2.jpg",
+     "https://static.wixstatic.com/media/b898f8_b021e6fe35544b32a6198d736be00f7f%7Emv2.jpg",
+     "https://static.wixstatic.com/media/efa6e0_3513aa4892bb40fb9f8e78d39dc60ac2f000.jpg",
+     "https://static.wixstatic.com/media/efa6e0_1c8ffa0a7b024360a02b0bd9c904289d~mv2.jpg",
+     "https://static.wixstatic.com/media/b898f8_46f936cdf633412ab2fa38e77313fe1b~mv2.jpg",
+     "https://static.wixstatic.com/media/efa6e0_41122f685e2a4efea7e431ed5923c24e~mv2.png",
+     "https://static.wixstatic.com/media/efa6e0_7ba4459c1fd34d24863123e08742dd57~mv2.png"
+    ],
     "link": "https://plonk.mx",
     "credit": "plonk.mx",
     "title": "Home | Plonk"
@@ -1083,7 +1686,13 @@
     }
    ],
    "site": {
-    "image": "https://static.wixstatic.com/media/6ad2ef_f1256207126e41488acc38c5a3c73dd2~mv2.jpeg/v1/fill/w_148,h_49,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/PHOTO-2022-01-24-11-42-57.jpeg",
+    "image": "https://static.wixstatic.com/media/a46f7a_8a902fba706245388bd6cfbb97fc137f~mv2.jpg",
+    "images": [
+     "https://static.wixstatic.com/media/a46f7a_8a902fba706245388bd6cfbb97fc137f~mv2.jpg",
+     "https://static.wixstatic.com/media/30a998_488dbcf713394c34a3194004acd4ac27~mv2.jpg",
+     "https://static.wixstatic.com/media/a46f7a_649d4fc2776e44229b2355a6f240fdf9~mv2.jpg",
+     "https://static.wixstatic.com/media/a46f7a_b27359e609104934951f6e260a46c51e~mv2.jpg"
+    ],
     "link": "https://restauranteraiz.com",
     "credit": "restauranteraiz.com",
     "title": "Cocina Mexicana Contemporanea | Restaurante Raíz | Ciudad De México"
@@ -1142,6 +1751,12 @@
    ],
    "site": {
     "image": "https://sartoria.mx/wp-content/uploads/2022/07/featured2.jpg",
+    "images": [
+     "https://sartoria.mx/wp-content/uploads/2022/07/featured2.jpg",
+     "https://sartoria.mx/wp-content/uploads/2022/07/restaurante-1.jpg?id=26",
+     "https://sartoria.mx/wp-content/uploads/2022/07/pasta.jpg?id=25",
+     "https://sartoria.mx/wp-content/uploads/2022/07/marco-carboni.jpg?id=27"
+    ],
     "link": "https://sartoria.mx",
     "credit": "sartoria.mx",
     "title": "Sartoria | Modern Osteria"
@@ -1183,7 +1798,18 @@
     }
    ],
    "site": {
-    "image": "https://siempresiembra.com.mx/cdn/shopifycloud/storefront/assets/no-image-100-2a702f30_small.gif",
+    "image": "https://siempresiembra.com.mx/cdn/shop/files/siembra.tortilleria_312234560_2337200389788036_8031284885123808951_n_2048x2048.jpg?v=1671818856",
+    "images": [
+     "https://siempresiembra.com.mx/cdn/shop/files/siembra.tortilleria_312234560_2337200389788036_8031284885123808951_n_2048x2048.jpg?v=1671818856",
+     "https://siempresiembra.com.mx/cdn/shop/files/Banner_Comedor_34faec00-c159-498a-9d03-ef68b75d2694_2048x2048.png?v=1673622860",
+     "https://siempresiembra.com.mx/cdn/shop/files/Banner_Comedor_mob_2048x2048.png?v=1673574780",
+     "https://siempresiembra.com.mx/cdn/shop/files/Banner_Tortilleria_2048x2048.png?v=1673568832",
+     "https://siempresiembra.com.mx/cdn/shop/files/Banner_Tortilleria_mob_2048x2048.png?v=1673575483",
+     "https://siempresiembra.com.mx/cdn/shop/files/Banner_Taqueria_4006e01f-cea9-49f3-ab2f-ebd5bd62df22_2048x2048.png?v=1674774364",
+     "https://siempresiembra.com.mx/cdn/shop/files/Banner_Taqueria_Mob_72bac2ae-1918-405d-9ff1-7f49302baa50_2048x2048.png?v=1674774433",
+     "https://siempresiembra.com.mx/cdn/shop/files/Captura_de_pantalla_2025-05-29_a_la_s_3.55.11_p.m._2048x2048.png?v=1748555731",
+     "https://siempresiembra.com.mx/cdn/shop/files/Captura_de_pantalla_2025-05-29_a_la_s_3.55.19_p.m._2048x2048.png?v=1748555732"
+    ],
     "link": "https://siempresiembra.com.mx",
     "credit": "siempresiembra.com.mx",
     "title": "Siembra Tortilleria"
@@ -1223,7 +1849,11 @@
     }
    ],
    "site": {
-    "image": "https://tacotastingroom.com/wp-content/uploads/2025/06/8479.08-1.png",
+    "image": "https://tacotastingroom.com/wp-content/uploads/2025/07/HZM04191_ok-1-683x1024.jpg",
+    "images": [
+     "https://tacotastingroom.com/wp-content/uploads/2025/07/HZM04191_ok-1-683x1024.jpg",
+     "https://tacotastingroom.com/wp-content/uploads/2025/07/HZM04279-scaled.jpg"
+    ],
     "link": "https://tacotastingroom.com",
     "credit": "tacotastingroom.com",
     "title": "Inicio - https://tacotastingroom.com"
@@ -1242,12 +1872,25 @@
      "outlet": "Food and Pleasure",
      "url": "https://foodandpleasure.com/restaurantes-para-negocios-polanco",
      "title": "8 restaurantes en Polanco perfectos para una comida de negocios",
-     "image": "https://i0.wp.com/foodandpleasure.com/wp-content/uploads/2022/06/restaurantes-para-negocios-polanco-blanco-castelar-josemargaleff.jpg?fit=1080%2C719&ssl=1",
      "specific": false
     }
    ],
    "site": {
-    "image": "https://grupopresidente.com.mx/wp-content/uploads/2024/07/15-1024x491.png",
+    "image": "https://grupopresidente.com.mx/wp-content/uploads/2025/07/ihg-cdmx-near-museums-galleries-cultural-centers-presidente-intercontinental.webp",
+    "images": [
+     "https://grupopresidente.com.mx/wp-content/uploads/2025/07/ihg-cdmx-near-museums-galleries-cultural-centers-presidente-intercontinental.webp",
+     "https://grupopresidente.com.mx/wp-content/uploads/2020/07/Master-Suite-Polanco-home.jpg",
+     "https://grupopresidente.com.mx/wp-content/uploads/2021/05/Hoteles-Presidente-InterContinental.jpg",
+     "https://grupopresidente.com.mx/wp-content/uploads/2021/05/KIMPTON.jpg",
+     "https://grupopresidente.com.mx/wp-content/uploads/2021/05/HI.jpg",
+     "https://grupopresidente.com.mx/wp-content/uploads/2021/05/HIR.jpg",
+     "https://grupopresidente.com.mx/wp-content/uploads/2021/05/HIE.jpg",
+     "https://grupopresidente.com.mx/wp-content/uploads/2021/05/STAYBRIDGE.jpg",
+     "https://grupopresidente.com.mx/wp-content/uploads/2021/05/COURTYARD.jpg",
+     "https://grupopresidente.com.mx/wp-content/uploads/2021/05/ALOFT.jpg",
+     "https://grupopresidente.com.mx/wp-content/uploads/2021/05/HYATT-HOUSE-1.jpg",
+     "https://grupopresidente.com.mx/wp-content/uploads/2024/09/PALM.jpg"
+    ],
     "link": "https://grupopresidente.com.mx",
     "credit": "grupopresidente.com.mx",
     "title": "Home - Grupo Presidente"
@@ -1289,7 +1932,21 @@
     }
    ],
    "site": {
-    "image": "https://toritori.com.mx/wp-content/uploads/2018/05/tori-tori-white.png",
+    "image": "https://toritori.com.mx/wp-content/uploads/2018/06/Temistocles-32-Tori-1024x680.jpg",
+    "images": [
+     "https://toritori.com.mx/wp-content/uploads/2018/06/Temistocles-32-Tori-1024x680.jpg",
+     "https://toritori.com.mx/wp-content/uploads/2018/07/historia-tori-768x511.jpg",
+     "https://toritori.com.mx/wp-content/uploads/2018/06/Temistocles-2-tori-1024x678.jpg",
+     "https://toritori.com.mx/wp-content/uploads/2018/05/Tori-Tori-46-682x1024.jpg",
+     "https://toritori.com.mx/wp-content/uploads/2018/05/Tori-Tori-23-682x1024.jpg",
+     "https://toritori.com.mx/wp-content/uploads/2018/05/Tori-Tori-5-682x1024.jpg",
+     "https://toritori.com.mx/wp-content/uploads/2018/05/Tori-Tori-38-682x1024.jpg",
+     "https://toritori.com.mx/wp-content/uploads/2018/05/Tori-Tori-33-682x1024.jpg",
+     "https://toritori.com.mx/wp-content/uploads/2018/05/Tori-Tori-15-682x1024.jpg",
+     "https://toritori.com.mx/wp-content/uploads/2024/11/PREMIO_MARCO_BETETA.jpg",
+     "https://toritori.com.mx/wp-content/uploads/2024/11/PREMIO_GMG.jpg",
+     "https://toritori.com.mx/wp-content/uploads/2024/11/PREMIO_DEZZEN.jpg"
+    ],
     "link": "https://toritori.com.mx",
     "credit": "toritori.com.mx",
     "title": "TORI TORI By Kumoto | Restaurante de alta cocina japonesa en CDMX"
@@ -1372,6 +2029,15 @@
      "image": "https://media.timeout.com/images/105880346/image.jpg",
      "specific": true
     }
+   ],
+   "visitors": [
+    {
+     "url": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Ashikaga_Yoshimi.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "page": "https://commons.wikimedia.org/wiki/File:Ashikaga_Yoshimi.jpg",
+     "credit": "緑亭川柳：編輯 北斎卍老人等：画",
+     "license": "CC BY 4.0",
+     "title": "Ashikaga Yoshimi"
+    }
    ]
   },
   "cx-zeru": {
@@ -1420,10 +2086,33 @@
    ],
    "site": {
     "image": "https://alelirooftop.com/wp-content/uploads/2025/02/DAN_9436-Mejorado-NR.webp",
+    "images": [
+     "https://alelirooftop.com/wp-content/uploads/2025/02/DAN_9436-Mejorado-NR.webp",
+     "https://alelirooftop.com/wp-content/uploads/2025/01/aleli-rooftop-W-1536x783.webp",
+     "https://alelirooftop.com/wp-content/uploads/2025/01/aleli-rooftop.webp",
+     "https://alelirooftop.com/wp-content/uploads/2025/03/WhatsApp-Image-2025-03-18-at-12.43.09.webp",
+     "https://alelirooftop.com/wp-content/uploads/2025/02/DAN_9271-1024x1536.webp",
+     "https://alelirooftop.com/wp-content/uploads/2025/03/lifestyle-2-1024x1536.webp",
+     "https://alelirooftop.com/wp-content/uploads/2025/02/DAN_2028-1479x1536.webp",
+     "https://alelirooftop.com/wp-content/uploads/2025/01/DAN_9436-Mejorado-NR-1536x1024.webp",
+     "https://alelirooftop.com/wp-content/uploads/2025/02/DAN_1954-1024x1536.webp",
+     "https://alelirooftop.com/wp-content/uploads/2025/03/pollito-a-la-brasa-1024x1536.webp",
+     "https://alelirooftop.com/wp-content/uploads/2023/12/Oswaldo-Oliva-1.jpg",
+     "https://alelirooftop.com/wp-content/uploads/2026/09/QUESADILLAS-DE-CHICHARRON-DE-RIB-EYE.-De-tortilla-de-maiz-rellenas-de-quesillo-y-acompanadas-de-salsa-de-jalapeno-1536x1536.jpg"
+    ],
     "link": "https://alelirooftop.com",
     "credit": "alelirooftop.com",
     "title": "Alelí Rooftop"
-   }
+   },
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Alel%C3%AD_Rooftop_y_Lorea_%282025%29.jpg/1280px-Alel%C3%AD_Rooftop_y_Lorea_%282025%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Alel%C3%AD_Rooftop_y_Lorea_(2025).jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Alelí Rooftop y Lorea (2025)"
+    }
+   ]
   },
   "cx-almara-comida-mediterranea": {
    "press": [
@@ -1437,6 +2126,20 @@
    ],
    "site": {
     "image": "https://almara.rest/wp-content/uploads/2025/09/EXPERIENCIA-3-scaled.jpg",
+    "images": [
+     "https://almara.rest/wp-content/uploads/2025/09/EXPERIENCIA-3-scaled.jpg",
+     "https://almara.rest/wp-content/uploads/2025/09/REST-scaled.jpg",
+     "https://almara.rest/wp-content/uploads/2026/08/chilewordpress-463x1024.jpg",
+     "https://almara.rest/wp-content/uploads/2026/08/alta-463x1024.jpg",
+     "https://almara.rest/wp-content/uploads/2026/08/1.jpg",
+     "https://almara.rest/wp-content/uploads/2026/08/Diseno-sin-titulo-1.jpg",
+     "https://almara.rest/wp-content/uploads/2026/08/3.jpg",
+     "https://almara.rest/wp-content/uploads/2026/08/2-1-2048x1536.jpg",
+     "https://almara.rest/wp-content/uploads/2026/08/3-1-2048x1536.jpg",
+     "https://almara.rest/wp-content/uploads/2026/08/1920.jpg",
+     "https://almara.rest/wp-content/uploads/2026/05/almra.jpg",
+     "https://almara.rest/wp-content/uploads/2026/07/WhatsApp-Image-2026-07-27-at-12.25.32-PM.jpeg"
+    ],
     "link": "https://almara.rest",
     "credit": "almara.rest",
     "title": "Almara Restaurante - Almara Restaurante"
@@ -1462,6 +2165,15 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
+   ],
+   "visitors": [
+    {
+     "url": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Au_Pied_de_Cochon_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "page": "https://commons.wikimedia.org/wiki/File:Au_Pied_de_Cochon_logo.png",
+     "credit": "Au Pied de Cochon",
+     "license": "Public domain",
+     "title": "Au Pied de Cochon logo"
+    }
    ]
   },
   "cx-azul-historico": {
@@ -1472,6 +2184,50 @@
      "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
+    }
+   ],
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Restaurant_Az%C3%BAl_Historico%2C_Mexico_City.jpg/1280px-Restaurant_Az%C3%BAl_Historico%2C_Mexico_City.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Restaurant_Az%C3%BAl_Historico,_Mexico_City.jpg",
+     "credit": "https://www.flickr.com/photos/blok70/",
+     "license": "CC BY 2.0",
+     "title": "Restaurant Azúl Historico, Mexico City"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Restaurant_Az%C3%BAl_Historico%2C_Mexico_City_2.jpg/1280px-Restaurant_Az%C3%BAl_Historico%2C_Mexico_City_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Restaurant_Az%C3%BAl_Historico,_Mexico_City_2.jpg",
+     "credit": "https://www.flickr.com/photos/blok70/",
+     "license": "CC BY 2.0",
+     "title": "Restaurant Azúl Historico, Mexico City 2"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/Azul_Hist%C3%B3rico_Terraza.jpg/1280px-Azul_Hist%C3%B3rico_Terraza.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Azul_Hist%C3%B3rico_Terraza.jpg",
+     "credit": "https://www.flickr.com/photos/blok70/",
+     "license": "CC BY 2.0",
+     "title": "Azul Histórico Terraza"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Basurita_or_Tiny_Trash_Can_at_Azul_Hist%C3%B3rico_%2826724397138%29.jpg/1280px-Basurita_or_Tiny_Trash_Can_at_Azul_Hist%C3%B3rico_%2826724397138%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Basurita_or_Tiny_Trash_Can_at_Azul_Hist%C3%B3rico_(26724397138).jpg",
+     "credit": "Nan Palmero from San Antonio, TX, USA",
+     "license": "CC BY 2.0",
+     "title": "Basurita or Tiny Trash Can at Azul Histórico (26724397138)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Tortillas_at_Azul_Hist%C3%B3rico_%2839701057415%29.jpg/1280px-Tortillas_at_Azul_Hist%C3%B3rico_%2839701057415%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Tortillas_at_Azul_Hist%C3%B3rico_(39701057415).jpg",
+     "credit": "Nan Palmero from San Antonio, TX, USA",
+     "license": "CC BY 2.0",
+     "title": "Tortillas at Azul Histórico (39701057415)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Tortilla_Soup_at_Azul_Hist%C3%B3rico_%2826724396508%29.jpg/1280px-Tortilla_Soup_at_Azul_Hist%C3%B3rico_%2826724396508%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Tortilla_Soup_at_Azul_Hist%C3%B3rico_(26724396508).jpg",
+     "credit": "Nan Palmero from San Antonio, TX, USA",
+     "license": "CC BY 2.0",
+     "title": "Tortilla Soup at Azul Histórico (26724396508)"
     }
    ]
   },
@@ -1485,6 +2241,20 @@
    ],
    "site": {
     "image": "https://m.ahstatic.com/is/image/accorhotels/2607_mkt_0014:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80",
+    "images": [
+     "https://m.ahstatic.com/is/image/accorhotels/2607_mkt_0014:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80",
+     "https://m.ahstatic.com/is/image/accorhotels/aja_p_5778-41:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80",
+     "https://m.ahstatic.com/is/image/accorhotels/aja_p_7052-36:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80",
+     "https://m.ahstatic.com/is/image/accorhotels/aja_p_6071-78:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80",
+     "https://m.ahstatic.com/is/image/accorhotels/aja_p_4444-16:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80",
+     "https://m.ahstatic.com/is/image/accorhotels/aja_p_5140-76-1:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80",
+     "https://m.ahstatic.com/is/image/accorhotels/aja_p_4587-90:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80",
+     "https://m.ahstatic.com/is/image/accorhotels/HCM_P_0000363:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80",
+     "https://m.ahstatic.com/is/image/accorhotels/Friends_Happy%20Hour_Celebration:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80",
+     "https://m.ahstatic.com/is/image/accorhotels/aja_p_5121-10:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80",
+     "https://m.ahstatic.com/is/image/accorhotels/Sofitel_Bedding:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80",
+     "https://m.ahstatic.com/is/image/accorhotels/sofitel-towel-set:16by9?fmt=jpg&op_usm=1.75,0.3,2,0&resMode=sharp2&iccEmbed=true&icc=sRGB&dpr=on,1.5&wid=335&hei=188&qlt=80"
+    ],
     "link": "https://sofitel.accor.com/en/hotels/9615/R004.restaurant.html",
     "credit": "sofitel.accor.com",
     "title": "Bajel"
@@ -1519,7 +2289,10 @@
     }
    ],
    "site": {
-    "image": "https://bellaaurora.mx/img/Recurso%201.png",
+    "image": "https://bellaaurora.mx/img/BellaAurora%20Terraza.jpg",
+    "images": [
+     "https://bellaaurora.mx/img/BellaAurora%20Terraza.jpg"
+    ],
     "link": "https://bellaaurora.mx",
     "credit": "bellaaurora.mx",
     "title": "Bella Aurora"
@@ -1536,7 +2309,14 @@
     }
    ],
    "site": {
-    "image": "https://brutalbrutal.mx/cdn/shop/files/Captura_de_pantalla_2023-10-24_a_la_s_11.10.35_530x_crop_top@2x.png?v=1698167482",
+    "image": "https://brutalbrutal.mx/cdn/shop/files/BRUTAL_S01-124_2048x.jpg?v=1698165579",
+    "images": [
+     "https://brutalbrutal.mx/cdn/shop/files/BRUTAL_S01-124_2048x.jpg?v=1698165579",
+     "https://brutalbrutal.mx/cdn/shop/files/038eda2e-bfb0-4eee-aa7b-77f7fc675099_2048x.jpg?v=1690393576",
+     "https://brutalbrutal.mx/cdn/shop/files/daaf0374-a84b-447b-9da6-f300d1eb37aa_2048x.jpg?v=1690393582",
+     "https://brutalbrutal.mx/cdn/shop/files/Captura_de_pantalla_2023-10-24_a_la_s_11.10.35_530x_crop_top@2x.png?v=1698167482",
+     "https://brutalbrutal.mx/cdn/shop/files/Captura_de_pantalla_2023-10-24_a_la_s_12.08.32_530x_crop_top@2x.png?v=1698171035"
+    ],
     "link": "https://brutalbrutal.mx",
     "credit": "brutalbrutal.mx",
     "title": "Brutal"
@@ -1589,7 +2369,15 @@
     }
    ],
    "site": {
-    "image": "https://caracoldemar.com.mx/wp-content/uploads/2026/05/caracol-blanco-480x113.png",
+    "image": "https://caracoldemar.com.mx/wp-content/uploads/2026/05/IMG_7805-380x480.jpg",
+    "images": [
+     "https://caracoldemar.com.mx/wp-content/uploads/2026/05/IMG_7805-380x480.jpg",
+     "https://caracoldemar.com.mx/wp-content/uploads/2026/05/IMG_7806-1106x1366.jpg",
+     "https://caracoldemar.com.mx/wp-content/uploads/2026/05/IMG_7804-1087x1366.jpg",
+     "https://caracoldemar.com.mx/wp-content/uploads/2026/05/IMG_7812-387x480.jpg",
+     "https://caracoldemar.com.mx/wp-content/uploads/2026/05/pescadoalatalla2FEED-389x480.jpg",
+     "https://caracoldemar.com.mx/wp-content/uploads/2026/05/almeja1FEED-389x480.jpg"
+    ],
     "link": "https://caracoldemar.com.mx",
     "credit": "caracoldemar.com.mx",
     "title": "Caracol de Mar"
@@ -1621,6 +2409,50 @@
      "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
+    }
+   ],
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_1.jpg/1280px-Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_1.jpg",
+     "credit": "Zarateman",
+     "license": "CC0",
+     "title": "Burgos - Centro Castellano de Creación Artística Francisco Salinas 1"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_3.jpg/1280px-Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_3.jpg",
+     "credit": "Zarateman",
+     "license": "CC0",
+     "title": "Burgos - Centro Castellano de Creación Artística Francisco Salinas 3"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_2.jpg/1280px-Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_2.jpg",
+     "credit": "Zarateman",
+     "license": "CC0",
+     "title": "Burgos - Centro Castellano de Creación Artística Francisco Salinas 2"
+    },
+    {
+     "url": "https://upload.wikimedia.org/wikipedia/commons/9/98/Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_6.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "page": "https://commons.wikimedia.org/wiki/File:Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_6.jpg",
+     "credit": "Zarateman",
+     "license": "CC0",
+     "title": "Burgos - Centro Castellano de Creación Artística Francisco Salinas 6"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_5.jpg/1280px-Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_5.jpg",
+     "credit": "Zarateman",
+     "license": "CC0",
+     "title": "Burgos - Centro Castellano de Creación Artística Francisco Salinas 5"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_4.jpg/1280px-Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_4.jpg",
+     "credit": "Zarateman",
+     "license": "CC0",
+     "title": "Burgos - Centro Castellano de Creación Artística Francisco Salinas 4"
     }
    ]
   },
@@ -1701,6 +2533,20 @@
    ],
    "site": {
     "image": "https://cdn.prod.website-files.com/69fe10382d9176b6b5051136/6a6244589e6c43eadb302536_DANTE-brasa-y-fuego.webp",
+    "images": [
+     "https://cdn.prod.website-files.com/69fe10382d9176b6b5051136/6a6244589e6c43eadb302536_DANTE-brasa-y-fuego.webp",
+     "https://cdn.prod.website-files.com/69fe10382d9176b6b5051136/69fe10382d9176b6b505118f_DANTE-whoweare-2.avif",
+     "https://cdn.prod.website-files.com/69fe10382d9176b6b5051136/69fe10382d9176b6b5051190_DANTE-whoweare-3.avif",
+     "https://cdn.prod.website-files.com/69fe10382d9176b6b5051136/69fe10382d9176b6b5051191_DANTE-whoweare-4.avif",
+     "https://cdn.prod.website-files.com/69fe10382d9176b6b5051136/69fe10382d9176b6b5051193_DANTE-menu-3.avif",
+     "https://cdn.prod.website-files.com/69fe10382d9176b6b5051136/69fe10382d9176b6b5051198_DANTE-menu-1.avif",
+     "https://cdn.prod.website-files.com/69fe10382d9176b6b5051136/69fe10382d9176b6b5051196_DANTE-menu-6.avif",
+     "https://cdn.prod.website-files.com/69fe10382d9176b6b5051136/69fe10382d9176b6b5051195_DANTE-menu-5.avif",
+     "https://cdn.prod.website-files.com/69fe10382d9176b6b5051136/69fe10382d9176b6b5051194_DANTE-menu-4.avif",
+     "https://cdn.prod.website-files.com/69fe10382d9176b6b5051136/69fe10382d9176b6b505119a_DANTE-reservations-1.avif",
+     "https://cdn.prod.website-files.com/69fe10382d9176b6b5051136/69fe10382d9176b6b505119c_DANTE-reservations-2.avif",
+     "https://cdn.prod.website-files.com/5e594b111ed6c5763d581098/5e8374673b54124d2dd170f9_DANTE-gallery-food-024.jpg"
+    ],
     "link": "https://dantebrasayfuego.com",
     "credit": "dantebrasayfuego.com",
     "title": "DANTE Brasa y Fuego | Steakhouse en Polanco"
@@ -1765,10 +2611,36 @@
    ],
    "site": {
     "image": "https://elvilsito.com/wp-content/uploads/2026/02/c1b5e54a-62b3-47ff-a628-4787cf9e75ba-2.jpeg",
+    "images": [
+     "https://elvilsito.com/wp-content/uploads/2026/02/c1b5e54a-62b3-47ff-a628-4787cf9e75ba-2.jpeg"
+    ],
     "link": "https://elvilsito.com",
     "credit": "elvilsito.com",
     "title": "El Vilsito - elvilsito.com"
-   }
+   },
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dd/Tacos_el_Vilsito_1.jpg/1280px-Tacos_el_Vilsito_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Tacos_el_Vilsito_1.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Tacos el Vilsito 1"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Tacos_el_Vilsito_2.jpg/1280px-Tacos_el_Vilsito_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Tacos_el_Vilsito_2.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Tacos el Vilsito 2"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/Tacos_el_Vilsito_3.jpg/1280px-Tacos_el_Vilsito_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Tacos_el_Vilsito_3.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Tacos el Vilsito 3"
+    }
+   ]
   },
   "cx-entremar": {
    "press": [
@@ -1780,6 +2652,11 @@
    ],
    "site": {
     "image": "https://entremar.com/upload/06.jpg",
+    "images": [
+     "https://entremar.com/upload/06.jpg",
+     "https://entremar.com/upload/08.jpg",
+     "https://entremar.com/upload/09.jpg"
+    ],
     "link": "https://entremar.com",
     "credit": "entremar.com",
     "title": "Entremar"
@@ -1802,6 +2679,20 @@
    ],
    "site": {
     "image": "https://www.filigrana.com.mx/wp-content/uploads/2022/11/1.jpg",
+    "images": [
+     "https://www.filigrana.com.mx/wp-content/uploads/2022/11/1.jpg",
+     "https://www.filigrana.com.mx/wp-content/uploads/2022/11/2.jpg",
+     "https://www.filigrana.com.mx/wp-content/uploads/2022/11/3.jpg",
+     "https://www.filigrana.com.mx/wp-content/uploads/2022/11/1-1.jpg",
+     "https://www.filigrana.com.mx/wp-content/uploads/2022/11/Slider-Restaurante-1.jpg",
+     "https://www.filigrana.com.mx/wp-content/uploads/2022/11/Slider-Restaurante-2.jpg",
+     "https://www.filigrana.com.mx/wp-content/uploads/2023/11/Desayuno.jpg",
+     "https://www.filigrana.com.mx/wp-content/uploads/2023/11/Desayuno2.jpg",
+     "https://www.filigrana.com.mx/wp-content/uploads/2023/11/Desayuno3.jpg",
+     "https://www.filigrana.com.mx/wp-content/uploads/2023/11/Comida.jpg",
+     "https://www.filigrana.com.mx/wp-content/uploads/2023/11/Comida2.jpg",
+     "https://www.filigrana.com.mx/wp-content/uploads/2023/11/Comida3.jpg"
+    ],
     "link": "https://filigrana.com.mx",
     "credit": "filigrana.com.mx",
     "title": "Filigrana | Los hilos de sabor que nos unen a todos. El nuevo espacio gastronómico de la chef Martha Ortiz."
@@ -1893,6 +2784,9 @@
    ],
    "site": {
     "image": "https://hugoelwinebar.com/assets/images/card.jpg?v=2dd217b3",
+    "images": [
+     "https://hugoelwinebar.com/assets/images/card.jpg?v=2dd217b3"
+    ],
     "link": "https://hugoelwinebar.com",
     "credit": "hugoelwinebar.com",
     "title": "Hugo"
@@ -1925,11 +2819,24 @@
     }
    ],
    "site": {
-    "image": "https://static.wixstatic.com/media/11062b_cef3b719166a4815b446d4dcfcb6120d~mv2.png/v1/fill/w_34,h_34,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/11062b_cef3b719166a4815b446d4dcfcb6120d~mv2.png",
+    "image": "https://static.wixstatic.com/media/947808_8bf37a6448bb412388e3c6cb92a4a160~mv2.jpg",
+    "images": [
+     "https://static.wixstatic.com/media/947808_8bf37a6448bb412388e3c6cb92a4a160~mv2.jpg",
+     "https://static.wixstatic.com/media/947808_615d2a553afa490b90dfc679a06d5760~mv2.png"
+    ],
     "link": "https://jowong.mx",
     "credit": "jowong.mx",
     "title": "COMIDA"
-   }
+   },
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Jowong_%282025%29.jpg/1280px-Jowong_%282025%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Jowong_(2025).jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Jowong (2025)"
+    }
+   ]
   },
   "cx-kill-bill": {
    "press": [
@@ -1940,13 +2847,7 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ],
-   "site": {
-    "image": "https://killbill.mx/wp-content/uploads/2023/12/ELEMENTS.png",
-    "link": "https://killbill.mx",
-    "credit": "killbill.mx",
-    "title": "Kill Bill - Hi-Fi Sushi & Robata"
-   }
+   ]
   },
   "cx-la-89": {
    "press": [
@@ -1973,7 +2874,13 @@
     }
    ],
    "site": {
-    "image": "https://static.wixstatic.com/media/608b2e_8fb75dc4c3b845ba86c2ee28b62a2bb1~mv2_d_3092_1302_s_2.jpg/v1/fill/w_196,h_82,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/608b2e_8fb75dc4c3b845ba86c2ee28b62a2bb1~mv2_d_3092_1302_s_2.jpg",
+    "image": "https://static.wixstatic.com/media/608b2e_8fb75dc4c3b845ba86c2ee28b62a2bb1~mv2_d_3092_1302_s_2.jpg",
+    "images": [
+     "https://static.wixstatic.com/media/608b2e_8fb75dc4c3b845ba86c2ee28b62a2bb1~mv2_d_3092_1302_s_2.jpg",
+     "https://static.wixstatic.com/media/608b2e_f743bc169c1c4722b3f9fb80f0a9ce2d~mv2.jpg",
+     "https://static.wixstatic.com/media/608b2e_9779f2ad68c549b2af78d08d63e76196~mv2.jpg",
+     "https://static.wixstatic.com/media/608b2e_5059b82e094a4681b0a2c4906e042728~mv2.jpg"
+    ],
     "link": "https://labarradefran.com",
     "credit": "labarradefran.com",
     "title": "Taberna Contemporánea Española , Polanco, La Barra de Fran"
@@ -2017,7 +2924,21 @@
     }
    ],
    "site": {
-    "image": "https://losconsentidos.com/wp-content/uploads/2026/06/elementos_landing-12rEf30.png",
+    "image": "https://losconsentidos.com/wp-content/uploads/2026/07/DSC003651-1-scaled-e1788817188888-1928x2048.jpg",
+    "images": [
+     "https://losconsentidos.com/wp-content/uploads/2026/07/DSC003651-1-scaled-e1788817188888-1928x2048.jpg",
+     "https://losconsentidos.com/wp-content/uploads/2026/06/IMG_0524-scaled.jpg",
+     "https://losconsentidos.com/wp-content/uploads/2026/07/DSC00363-scaled-e1784838845330.jpg",
+     "https://losconsentidos.com/wp-content/uploads/2026/09/IMG_4197-scaled-e1788894631266-1489x1536.jpg",
+     "https://losconsentidos.com/wp-content/uploads/2026/09/DSC00373-1538x2048.jpg",
+     "https://losconsentidos.com/wp-content/uploads/2026/09/IMG_0442-scaled-e1788895046444-1339x2048.jpg",
+     "https://losconsentidos.com/wp-content/uploads/2026/07/DSC00441-scaled-e1788894727469-1536x1358.jpg",
+     "https://losconsentidos.com/wp-content/uploads/2026/08/patron_los-consentidos-2048x241.png",
+     "https://losconsentidos.com/wp-content/uploads/2026/08/lc4613-768x440.png",
+     "https://losconsentidos.com/wp-content/uploads/2026/08/Banner_foto_-04-2048x483.png",
+     "https://losconsentidos.com/wp-content/uploads/2026/08/taxi.png",
+     "https://losconsentidos.com/wp-content/uploads/2026/09/rapi.png"
+    ],
     "link": "https://losconsentidos.com",
     "credit": "losconsentidos.com",
     "title": "Home - Los Consentidos"
@@ -2035,6 +2956,20 @@
    ],
    "site": {
     "image": "https://lospanchos.mx/wp-content/uploads/2023/11/sucursal-panchos-coyoacan-6.webp",
+    "images": [
+     "https://lospanchos.mx/wp-content/uploads/2023/11/sucursal-panchos-coyoacan-6.webp",
+     "https://lospanchos.mx/wp-content/uploads/2021/03/header-equipo.jpg",
+     "https://lospanchos.mx/wp-content/uploads/2025/03/los-panchos-anzures-12.webp",
+     "https://lospanchos.mx/wp-content/uploads/2025/03/los-panchos-anzures-11.webp",
+     "https://lospanchos.mx/wp-content/uploads/2022/09/2022-plato-ranchero-restaurant-los-panchos.jpg",
+     "https://lospanchos.mx/wp-content/uploads/2023/12/estacionamiento.jpg",
+     "https://lospanchos.mx/wp-content/uploads/2023/10/img-fachada-anzures.webp",
+     "https://lospanchos.mx/wp-content/uploads/2019/06/restaurant-los-panchos-sucursal-polanco-home.jpg",
+     "https://lospanchos.mx/wp-content/uploads/2019/06/restaurant-los-panchos-sucursal-santa-fe-home.jpg",
+     "https://lospanchos.mx/wp-content/uploads/2019/06/restaurant-los-panchos-sucursal-perisur-home.jpg",
+     "https://lospanchos.mx/wp-content/uploads/2022/09/los-panchos-coyoacan.jpg",
+     "https://lospanchos.mx/wp-content/uploads/2023/11/sucursal-panchos-satelite-5.webp"
+    ],
     "link": "https://lospanchos.mx",
     "credit": "lospanchos.mx",
     "title": "Los Panchos Restaurant | Nuestra especialidad: Las Carnitas."
@@ -2080,7 +3015,21 @@
     }
    ],
    "site": {
-    "image": "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/04326f17-a89a-4d9e-abef-4252dd2b9202/HT3A0306.jpg?format=2500w",
+    "image": "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/04326f17-a89a-4d9e-abef-4252dd2b9202/HT3A0306.jpg?format=1500w",
+    "images": [
+     "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/04326f17-a89a-4d9e-abef-4252dd2b9202/HT3A0306.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/4cd45afd-8d3f-4d68-9a21-d1812f423719/6W4A0147.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/1e221c17-0195-4584-b6fe-e727facae5c0/HT3A0912.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/9b2647ab-dcb5-435d-b9ab-b3b4beb832c5/6W4A0256.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/a3f13c66-c8dd-40b1-85b9-f5ff7522d3c7/Malix_byMikcas%C2%AE-189.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/9e91eafa-eb11-4ef1-b2ed-f13d66e50ede/Malix_2An%CC%83os_76PPI_RB-16.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/8fb6c1c5-a2f5-4f93-b3cc-b691795c1e62/6W4A1230.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/9e9f478e-b85d-419e-aa44-2730e22db52e/0O3A5333.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/27ace5b5-8a49-4e32-a5ea-e65255e41a7e/6W4A0331.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/ecb199b0-78aa-41b9-ab2c-9f1a053ae4d7/6W4A0316.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/575d514f-002a-4123-89e3-e7889a9abdfa/6W4A0470.jpg?format=1500w",
+     "https://images.squarespace-cdn.com/content/v1/6213e0ff2bb9a478f3fae011/bdb72a95-5c20-47f0-ada9-ee18a4cf7303/6W4A0650.jpg?format=1500w"
+    ],
     "link": "https://malixresto.com",
     "credit": "malixresto.com",
     "title": "Malix"
@@ -2096,6 +3045,9 @@
    ],
    "site": {
     "image": "https://freight.cargo.site/w/1000/i/B1773549660274010923612963117442/screenshot-1550631637.jpg",
+    "images": [
+     "https://freight.cargo.site/w/1000/i/B1773549660274010923612963117442/screenshot-1550631637.jpg"
+    ],
     "link": "https://martinez.rest",
     "credit": "martinez.rest",
     "title": "Martinez"
@@ -2109,12 +3061,36 @@
      "specific": true
     }
    ],
-   "site": {
-    "image": "https://merotoro.mx/assets/img/fondo-curvas-2.png",
-    "link": "https://merotoro.mx",
-    "credit": "merotoro.mx",
-    "title": "MEROTORO"
-   }
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/47/MeroToro_Menu_%2811380046036%29.jpg/1280px-MeroToro_Menu_%2811380046036%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:MeroToro_Menu_(11380046036).jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "MeroToro Menu (11380046036)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/Inside_MeroToro_%2811380086424%29.jpg/1280px-Inside_MeroToro_%2811380086424%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Inside_MeroToro_(11380086424).jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Inside MeroToro (11380086424)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/MeroToro_Octopus_and_Pototo_Salad.jpg/1280px-MeroToro_Octopus_and_Pototo_Salad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:MeroToro_Octopus_and_Pototo_Salad.jpg",
+     "credit": "Nicholas Lundgaard from Houston, TX, USA",
+     "license": "CC BY-SA 2.0",
+     "title": "MeroToro Octopus and Pototo Salad"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/MeroToro_Lamb_salad.jpg/1280px-MeroToro_Lamb_salad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:MeroToro_Lamb_salad.jpg",
+     "credit": "Nicholas Lundgaard from Houston, TX, USA",
+     "license": "CC BY-SA 2.0",
+     "title": "MeroToro Lamb salad"
+    }
+   ]
   },
   "cx-mi-compa-chava": {
    "press": [
@@ -2151,6 +3127,50 @@
      "title": "List of Michelin Bib Gourmand restaurants in Mexico - Wikipedia",
      "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
      "specific": false
+    }
+   ],
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Molino_El_Pujol_%2844747821970%29.jpg/1280px-Molino_El_Pujol_%2844747821970%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Molino_El_Pujol_(44747821970).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Molino El Pujol (44747821970)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/86/Molino_El_Pujol_%2846513522652%29.jpg/1280px-Molino_El_Pujol_%2846513522652%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Molino_El_Pujol_(46513522652).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Molino El Pujol (46513522652)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/Molino_El_Pujol_%2832692061158%29.jpg/1280px-Molino_El_Pujol_%2832692061158%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Molino_El_Pujol_(32692061158).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Molino El Pujol (32692061158)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e6/Molino_El_Pujol_%2845841619374%29.jpg/1280px-Molino_El_Pujol_%2845841619374%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Molino_El_Pujol_(45841619374).jpg",
+     "credit": "T.Tseng",
+     "license": "CC BY 2.0",
+     "title": "Molino El Pujol (45841619374)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Corn_at_Molino_El_Pujol_%2832514051557%29.jpg/1280px-Corn_at_Molino_El_Pujol_%2832514051557%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Corn_at_Molino_El_Pujol_(32514051557).jpg",
+     "credit": "Nan Palmero from San Antonio, TX, USA",
+     "license": "CC BY 2.0",
+     "title": "Corn at Molino El Pujol (32514051557)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Molino_El_Pujol_%282025%29.jpg/1280px-Molino_El_Pujol_%282025%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Molino_El_Pujol_(2025).jpg",
+     "credit": "Tbhotch",
+     "license": "CC BY-SA 4.0",
+     "title": "Molino El Pujol (2025)"
     }
    ]
   },
@@ -2223,7 +3243,18 @@
     }
    ],
    "site": {
-    "image": "https://siempresiembra.com.mx/cdn/shopifycloud/storefront/assets/no-image-100-2a702f30_small.gif",
+    "image": "https://siempresiembra.com.mx/cdn/shop/files/siembra.tortilleria_312234560_2337200389788036_8031284885123808951_n_2048x2048.jpg?v=1671818856",
+    "images": [
+     "https://siempresiembra.com.mx/cdn/shop/files/siembra.tortilleria_312234560_2337200389788036_8031284885123808951_n_2048x2048.jpg?v=1671818856",
+     "https://siempresiembra.com.mx/cdn/shop/files/Banner_Comedor_34faec00-c159-498a-9d03-ef68b75d2694_2048x2048.png?v=1673622860",
+     "https://siempresiembra.com.mx/cdn/shop/files/Banner_Comedor_mob_2048x2048.png?v=1673574780",
+     "https://siempresiembra.com.mx/cdn/shop/files/Banner_Tortilleria_2048x2048.png?v=1673568832",
+     "https://siempresiembra.com.mx/cdn/shop/files/Banner_Tortilleria_mob_2048x2048.png?v=1673575483",
+     "https://siempresiembra.com.mx/cdn/shop/files/Banner_Taqueria_4006e01f-cea9-49f3-ab2f-ebd5bd62df22_2048x2048.png?v=1674774364",
+     "https://siempresiembra.com.mx/cdn/shop/files/Banner_Taqueria_Mob_72bac2ae-1918-405d-9ff1-7f49302baa50_2048x2048.png?v=1674774433",
+     "https://siempresiembra.com.mx/cdn/shop/files/Captura_de_pantalla_2025-05-29_a_la_s_3.55.11_p.m._2048x2048.png?v=1748555731",
+     "https://siempresiembra.com.mx/cdn/shop/files/Captura_de_pantalla_2025-05-29_a_la_s_3.55.19_p.m._2048x2048.png?v=1748555732"
+    ],
     "link": "https://siempresiembra.com.mx",
     "credit": "siempresiembra.com.mx",
     "title": "Siembra Tortilleria"
@@ -2254,6 +3285,15 @@
      "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
      "specific": false
     }
+   ],
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Tacos_de_suadero_en_Tacos_Charly.jpg/1280px-Tacos_de_suadero_en_Tacos_Charly.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Tacos_de_suadero_en_Tacos_Charly.jpg",
+     "credit": "ProtoplasmaKid",
+     "license": "CC BY-SA 4.0",
+     "title": "Tacos de suadero en Tacos Charly"
+    }
    ]
   },
   "cx-tacos-de-canasta-los-especiales": {
@@ -2281,11 +3321,48 @@
     }
    ],
    "site": {
-    "image": "https://tacosdelvalle.com/images/michelin.webp",
+    "image": "https://tacosdelvalle.com/images/heading/heading-1.webp",
+    "images": [
+     "https://tacosdelvalle.com/images/heading/heading-1.webp",
+     "https://tacosdelvalle.com/images/heading/heading-2.webp",
+     "https://tacosdelvalle.com/images/heading/heading-3.webp",
+     "https://tacosdelvalle.com/images/heading/heading-4.webp",
+     "https://tacosdelvalle.com/images/heading/heading-5.webp",
+     "https://tacosdelvalle.com/images/heading/heading-6.webp",
+     "https://tacosdelvalle.com/images/heading/heading-7.webp",
+     "https://tacosdelvalle.com/images/heading/heading-8.webp",
+     "https://tacosdelvalle.com/images/heading/heading-9.webp",
+     "https://tacosdelvalle.com/images/tagline/tagline3.webp",
+     "https://tacosdelvalle.com/images/tagline/tagline5.webp",
+     "https://tacosdelvalle.com/images/tagline/tagline4.webp"
+    ],
     "link": "https://tacosdelvalle.com",
     "credit": "tacosdelvalle.com",
     "title": "Tacos Del Valle"
-   }
+   },
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/Tacos_del_Valle_%2811863501455%29.jpg/1280px-Tacos_del_Valle_%2811863501455%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Tacos_del_Valle_(11863501455).jpg",
+     "credit": "Hernán García Crespo from Querétaro, Mexico",
+     "license": "CC BY 2.0",
+     "title": "Tacos del Valle (11863501455)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/Tacos_del_Valle_%2811863945514%29.jpg/1280px-Tacos_del_Valle_%2811863945514%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Tacos_del_Valle_(11863945514).jpg",
+     "credit": "Hernán García Crespo from Querétaro, Mexico",
+     "license": "CC BY 2.0",
+     "title": "Tacos del Valle (11863945514)"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/Tacos_del_Valle_%2811864352796%29.jpg/1280px-Tacos_del_Valle_%2811864352796%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Tacos_del_Valle_(11864352796).jpg",
+     "credit": "Hernán García Crespo from Querétaro, Mexico",
+     "license": "CC BY 2.0",
+     "title": "Tacos del Valle (11864352796)"
+    }
+   ]
   },
   "cx-tacos-hola-el-guero": {
    "press": [
@@ -2329,10 +3406,33 @@
    ],
    "site": {
     "image": "https://cdn.placejoys.com/5793-oy-photo-1.jpg",
+    "images": [
+     "https://cdn.placejoys.com/5793-oy-photo-1.jpg",
+     "https://cdn.placejoys.com/5793-oy-photo-2.jpg",
+     "https://cdn.placejoys.com/5793-oy-photo-3.jpg",
+     "https://cdn.placejoys.com/5793-oy-photo-4.jpg",
+     "https://cdn.placejoys.com/5793-oy-photo-5.jpg",
+     "https://cdn.placejoys.com/5793-oy-photo-6.jpg",
+     "https://cdn.placejoys.com/5793-oy-photo-7.jpg",
+     "https://cdn.placejoys.com/5793-oy-photo-8.jpg",
+     "https://cdn.placejoys.com/5793-oy-photo-9.jpg",
+     "https://cdn.placejoys.com/5793-oy-photo-10.jpg",
+     "https://cdn.placejoys.com/5602-oy-photo-1.jpg",
+     "https://cdn.placejoys.com/5388-oy-photo-1.jpg"
+    ],
     "link": "https://el-califa-de-leon.shop",
     "credit": "el-califa-de-leon.shop",
     "title": "El Califa de León - Vibrant Tacos & Authentic Flavors in CDMX"
-   }
+   },
+   "visitors": [
+    {
+     "url": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Taquer%C3%ADa_El_Califa_de_Le%C3%B3n_%282020%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+     "page": "https://commons.wikimedia.org/wiki/File:Taquer%C3%ADa_El_Califa_de_Le%C3%B3n_(2020).jpg",
+     "credit": "kaart_1 @ Mapillary",
+     "license": "CC BY-SA 4.0",
+     "title": "Taquería El Califa de León (2020)"
+    }
+   ]
   },
   "cx-taqueria-el-gran-abanico": {
    "press": [
@@ -2360,6 +3460,19 @@
    ],
    "site": {
     "image": "https://taqueriaeljarocho.com.mx/wp-content/uploads/2013/03/fachada-1020x425.jpg",
+    "images": [
+     "https://taqueriaeljarocho.com.mx/wp-content/uploads/2013/03/fachada-1020x425.jpg",
+     "https://taqueriaeljarocho.com.mx/wp-content/uploads/2014/01/bannerTaquizas-1020x402.jpg",
+     "https://taqueriaeljarocho.com.mx/wp-content/uploads/2014/01/bannerInstalaciones-1020x402.jpg",
+     "https://taqueriaeljarocho.com.mx/wp-content/uploads/2013/03/IMG_4637-1020x680.jpg",
+     "https://taqueriaeljarocho.com.mx/wp-content/uploads/2013/03/IMG_5372-2-1020x680.jpg",
+     "https://taqueriaeljarocho.com.mx/wp-content/uploads/2013/03/IMG_4926-1020x680.jpg",
+     "https://taqueriaeljarocho.com.mx/wp-content/uploads/2014/01/cuadroTaquiza.jpg",
+     "https://taqueriaeljarocho.com.mx/wp-content/uploads/2014/01/cuadroMenu.jpg",
+     "https://taqueriaeljarocho.com.mx/wp-content/uploads/2013/05/IMG_4889.jpg",
+     "https://taqueriaeljarocho.com.mx/wp-content/uploads/2013/05/IMG_4763.jpg",
+     "https://taqueriaeljarocho.com.mx/wp-content/uploads/2013/05/IMG_5376.jpg"
+    ],
     "link": "https://taqueriaeljarocho.com.mx",
     "credit": "taqueriaeljarocho.com.mx",
     "title": "Taqueria-Restaurante El Jarocho"
@@ -2388,6 +3501,43 @@
      "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg/1280px-La_Cocina_de_Do%C3%B1a_Esthela_%2821787134941%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
      "specific": false
     }
+   ],
+   "visitors": [
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Taquer%C3%ADa_Los_Cocuyos_1.jpg/1280px-Taquer%C3%ADa_Los_Cocuyos_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Taquer%C3%ADa_Los_Cocuyos_1.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Taquería Los Cocuyos 1"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ec/Taquer%C3%ADa_Los_Cocuyos_2.jpg/1280px-Taquer%C3%ADa_Los_Cocuyos_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Taquer%C3%ADa_Los_Cocuyos_2.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Taquería Los Cocuyos 2"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/Taquer%C3%ADa_Los_Cocuyos_3.jpg/1280px-Taquer%C3%ADa_Los_Cocuyos_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Taquer%C3%ADa_Los_Cocuyos_3.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Taquería Los Cocuyos 3"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9f/Taquer%C3%ADa_Los_Cocuyos_5.jpg/1280px-Taquer%C3%ADa_Los_Cocuyos_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Taquer%C3%ADa_Los_Cocuyos_5.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Taquería Los Cocuyos 5"
+    },
+    {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Taquer%C3%ADa_Los_Cocuyos_4.jpg/1280px-Taquer%C3%ADa_Los_Cocuyos_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "page": "https://commons.wikimedia.org/wiki/File:Taquer%C3%ADa_Los_Cocuyos_4.jpg",
+     "credit": "City Foodsters",
+     "license": "CC BY 2.0",
+     "title": "Taquería Los Cocuyos 4"
+    }
    ]
   },
   "cx-taqueria-los-milanesos": {
@@ -2406,7 +3556,19 @@
     }
    ],
    "site": {
-    "image": "https://losmilanesos.com/wp-content/uploads/2024/12/cropped-taqueria-cdmx-los-milanesos.png",
+    "image": "https://losmilanesos.com/assets/img/hero.webp",
+    "images": [
+     "https://losmilanesos.com/assets/img/hero.webp",
+     "https://losmilanesos.com/assets/img/taco-milanesa.webp",
+     "https://losmilanesos.com/assets/img/taco-mixto.webp",
+     "https://losmilanesos.com/assets/img/galeria-1.webp",
+     "https://losmilanesos.com/assets/img/galeria-2.webp",
+     "https://losmilanesos.com/assets/img/galeria-3.webp",
+     "https://losmilanesos.com/assets/img/galeria-4.webp",
+     "https://losmilanesos.com/assets/img/galeria-5.webp",
+     "https://losmilanesos.com/assets/img/galeria-6.webp",
+     "https://losmilanesos.com/assets/img/rappi-promo.webp"
+    ],
     "link": "https://losmilanesos.com",
     "credit": "losmilanesos.com",
     "title": "En CDMX - Los Mejores Tacos - Los Milanesos"
@@ -2422,6 +3584,20 @@
    ],
    "site": {
     "image": "https://los-parados.com/images/about-main.jpg",
+    "images": [
+     "https://los-parados.com/images/about-main.jpg",
+     "https://los-parados.com/images/special-menu-1.jpg",
+     "https://los-parados.com/images/special-menu-2.jpg",
+     "https://los-parados.com/images/special-menu-3.jpg",
+     "https://los-parados.com/images/staff-01.jpg",
+     "https://los-parados.com/images/staff-02.jpg",
+     "https://los-parados.com/images/staff-03.jpg",
+     "https://los-parados.com/images/gallery_01.jpg",
+     "https://los-parados.com/images/gallery_02.jpg",
+     "https://los-parados.com/images/gallery_03.jpg",
+     "https://los-parados.com/images/gallery_04.jpg",
+     "https://los-parados.com/images/gallery_05.jpg"
+    ],
     "link": "https://los-parados.com",
     "credit": "los-parados.com",
     "title": "Los Parados - La mejor taqueria en CDMX desde 1965"
@@ -2460,7 +3636,21 @@
     }
    ],
    "site": {
-    "image": "https://static.wixstatic.com/media/7e1b73_b0d7d4f448f14c519229a95ab27fa06e%7Emv2.png/v1/fit/w_2500,h_1330,al_c/7e1b73_b0d7d4f448f14c519229a95ab27fa06e%7Emv2.png",
+    "image": "https://static.wixstatic.com/media/7e1b73_28a16cf2096644249ceb105d4c3786a3f000.jpg",
+    "images": [
+     "https://static.wixstatic.com/media/7e1b73_28a16cf2096644249ceb105d4c3786a3f000.jpg",
+     "https://static.wixstatic.com/media/7e1b73_667c2b7e58c74f9597571d1797e5198a~mv2.jpeg",
+     "https://static.wixstatic.com/media/7e1b73_226b16d9af7d4973a4a4d7f50b03994d~mv2.jpg",
+     "https://static.wixstatic.com/media/7e1b73_31956fe0ac49443390abd7141facd0ab~mv2.jpg",
+     "https://static.wixstatic.com/media/7e1b73_294947e862ad496b8e93fe448fa6fb02~mv2.jpg",
+     "https://static.wixstatic.com/media/7e1b73_83657b5c71d8460fafba374b46b4a3a0~mv2.jpg",
+     "https://static.wixstatic.com/media/7e1b73_57a2bd82217b4d41a7d3b8d9cc0a05d8~mv2.jpg",
+     "https://static.wixstatic.com/media/7e1b73_b1915ab129984030b4e9426e231391df~mv2.jpg",
+     "https://static.wixstatic.com/media/7e1b73_2e734876bd354251b1a9b995865eddbdf000.jpg",
+     "https://static.wixstatic.com/media/7e1b73_f6d1c9756ecf4b618c536ec02c1ac378~mv2.jpg",
+     "https://static.wixstatic.com/media/7e1b73_fad575ace2504c12863dba5fbacd6dba~mv2.jpg",
+     "https://static.wixstatic.com/media/7e1b73_b93fdcb2d1844bcfa0cb676402db4ad9f001.jpg"
+    ],
     "link": "https://grupocastellano.com.mx",
     "credit": "grupocastellano.com.mx",
     "title": "Gastronomía Española"
@@ -2483,6 +3673,10 @@
    ],
    "site": {
     "image": "https://demar.rest/ULTRAMARINOS_metaImg.jpg",
+    "images": [
+     "https://demar.rest/ULTRAMARINOS_metaImg.jpg",
+     "https://demar.rest/_next/static/media/background-img.83c5796d.jpg"
+    ],
     "link": "https://demar.rest",
     "credit": "demar.rest",
     "title": "ULTRAMARINOS DEMAR"
@@ -2511,13 +3705,7 @@
      "url": "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/xuna",
      "specific": true
     }
-   ],
-   "site": {
-    "image": "https://xunarestaurante.com.mx/wp-content/themes/yootheme/cache/c8/Untitled-design-23-c851d338.png",
-    "link": "https://xunarestaurante.com.mx",
-    "credit": "xunarestaurante.com.mx",
-    "title": "Xuna Restaurante"
-   }
+   ]
   },
   "cx-zagala": {
    "press": [
@@ -2530,7 +3718,17 @@
     }
    ],
    "site": {
-    "image": "https://zagalarestaurante.com/wp-content/uploads/2022/04/Zagala_Beige-1.png",
+    "image": "https://zagalarestaurante.com/wp-content/uploads/2023/10/Zagala-6.jpg",
+    "images": [
+     "https://zagalarestaurante.com/wp-content/uploads/2023/10/Zagala-6.jpg",
+     "https://zagalarestaurante.com/wp-content/uploads/2023/10/Zagala-2.jpg",
+     "https://zagalarestaurante.com/wp-content/uploads/2023/10/Zagala-3-768x1152.jpg",
+     "https://zagalarestaurante.com/wp-content/uploads/2023/10/Zagala-4-1.jpg",
+     "https://zagalarestaurante.com/wp-content/uploads/2023/10/Zagala-9-1536x1024.jpg",
+     "https://zagalarestaurante.com/wp-content/uploads/2023/10/Zagala-20.jpg",
+     "https://zagalarestaurante.com/wp-content/uploads/2023/10/Zagala-17.jpg",
+     "https://zagalarestaurante.com/wp-content/uploads/2022/03/shape-3-768x687.png"
+    ],
     "link": "https://zagalarestaurante.com",
     "credit": "zagalarestaurante.com",
     "title": "Zagala Restaurante"
@@ -2743,10 +3941,6 @@
   }
  },
  "diagnostics": {
-  "https://pujol.com.mx": {
-   "status": 429,
-   "bytes": 0
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/pujol": {
    "status": 202,
    "bytes": 2399,
@@ -2770,10 +3964,6 @@
    "bytes": 2399,
    "candidates": 0,
    "rejected": []
-  },
-  "https://nicosmexico.mx": {
-   "status": 403,
-   "bytes": 0
   },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/azcapotzalco_1993967/restaurante/nicos": {
    "status": 202,
@@ -2811,13 +4001,6 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://sud777.com.mx": {
-   "status": 200,
-   "bytes": 511337,
-   "title": "SUD 777 | restaurante en Pedregal | Blvrd de la Luz 777, Jardines del Pedregal, ",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/alvaro-obregon_2003790/restaurante/sud-777": {
    "status": 202,
    "bytes": 2399,
@@ -2835,22 +4018,6 @@
    "bytes": 2399,
    "candidates": 0,
    "rejected": []
-  },
-  "https://baldio.mx": {
-   "status": 200,
-   "bytes": 36677,
-   "title": "Baldío",
-   "candidates": 2,
-   "rejected": [
-    {
-     "url": "https://www.baldio.mx/wp-content/uploads/2024/06/logo.png",
-     "why": "looks like a logo/icon"
-    },
-    {
-     "url": "https://www.baldio.mx/wp-content/uploads/2024/06/logo-300x85.png",
-     "why": "looks like a logo/icon"
-    }
-   ]
   },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/baldio": {
    "status": 202,
@@ -2870,17 +4037,11 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://carmelaysal.mx": {
-   "status": "fetch failed"
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/carmela-y-sal": {
    "status": 202,
    "bytes": 2399,
    "candidates": 0,
    "rejected": []
-  },
-  "https://chapulin.rest": {
-   "status": "fetch failed"
   },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/contramar": {
    "status": 202,
@@ -2890,7 +4051,7 @@
   },
   "https://theinfatuation.com/mexico-city/reviews/eloise-chic-cuisine-san-angel": {
    "status": 200,
-   "bytes": 731857,
+   "bytes": 733732,
    "title": "Eloise Chic Cuisine - Review - San Ángel - Mexico City - The Infatuation",
    "candidates": 1,
    "rejected": [
@@ -2900,8 +4061,21 @@
     }
    ]
   },
-  "https://emiliorestaurante.com.mx": {
-   "status": "fetch failed"
+  "https://foodandpleasure.com/restaurantes-para-negocios-polanco": {
+   "status": 200,
+   "bytes": 197840,
+   "title": "8 restaurantes en Polanco perfectos para una comida de negocios",
+   "candidates": 2,
+   "rejected": [
+    {
+     "url": "https://i0.wp.com/foodandpleasure.com/wp-content/uploads/2022/06/restaurantes-para-negocios-polanco-blanco-castelar-josemargaleff.jpg?fit=1080%2C719&ssl=1",
+     "why": "looks like a logo/icon"
+    },
+    {
+     "url": "https://secure.gravatar.com/avatar/1ea8c76c0fe96c37d42affbfae368fcd4126ed9290f407722142928ceb5939df?s=96&d=mm&r=g",
+     "why": "looks like a logo/icon"
+    }
+   ]
   },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/er-rre-un-bistro": {
    "status": 202,
@@ -2975,9 +4149,6 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://prendes.com.mx": {
-   "status": "fetch failed"
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/raiz-1208231": {
    "status": 202,
    "bytes": 2399,
@@ -3006,12 +4177,6 @@
    "status": 403,
    "bytes": 0
   },
-  "https://grupopresidente.com": {
-   "status": "fetch failed"
-  },
-  "https://azul.rest.com": {
-   "status": "fetch failed"
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/bajel": {
    "status": 202,
    "bytes": 2399,
@@ -3034,16 +4199,9 @@
    "status": 403,
    "bytes": 0
   },
-  "https://bulla.mx": {
-   "status": 403,
-   "bytes": 0
-  },
   "https://www.opentable.com.mx/r/bulla-ciudad-de-mexico": {
    "status": 403,
    "bytes": 0
-  },
-  "https://campobaja.com.mx": {
-   "status": "fetch failed"
   },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/campobaja": {
    "status": 202,
@@ -3069,17 +4227,11 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://centrocastellano.com.mx": {
-   "status": "fetch failed"
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/comal-oculto": {
    "status": 202,
    "bytes": 2399,
    "candidates": 0,
    "rejected": []
-  },
-  "https://comedorjacinta.com": {
-   "status": "fetch failed"
   },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/miguel-hidalgo_1999281/restaurante/comedor-jacinta": {
    "status": 202,
@@ -3088,10 +4240,6 @@
    "rejected": []
   },
   "https://www.opentable.com.mx/r/dante-ciudad-de-mexico": {
-   "status": 403,
-   "bytes": 0
-  },
-  "https://eltigresilencioso.mx": {
    "status": 403,
    "bytes": 0
   },
@@ -3124,9 +4272,6 @@
    "bytes": 2399,
    "candidates": 0,
    "rejected": []
-  },
-  "https://galangathaihouse.com": {
-   "status": "fetch failed"
   },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/galanga-thai-house": {
    "status": 202,
@@ -3172,13 +4317,6 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://lotti.mx": {
-   "status": 200,
-   "bytes": 44052,
-   "title": "LOTTI RESTAURANTE",
-   "candidates": 0,
-   "rejected": []
-  },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/lotti": {
    "status": 202,
    "bytes": 2399,
@@ -3202,10 +4340,6 @@
    "bytes": 2399,
    "candidates": 0,
    "rejected": []
-  },
-  "https://pujol.com.mx/molino-el-pujol": {
-   "status": 429,
-   "bytes": 0
   },
   "https://guide.michelin.com/mx/es/ciudad-de-mexico/cuauhtemoc_1995126/restaurante/molino-el-pujol": {
    "status": 202,
@@ -3297,9 +4431,6 @@
    "candidates": 0,
    "rejected": []
   },
-  "https://salontenampa.com.mx": {
-   "status": "fetch failed"
-  },
   "https://www.opentable.ie/r/the-lamb-ciudad-de-mexico": {
    "status": 403,
    "bytes": 0
@@ -3329,12 +4460,132 @@
   "https://www.opentable.com.mx/r/zagala-ciudad-de-mexico": {
    "status": 403,
    "bytes": 0
+  },
+  "https://pujol.com.mx": {
+   "status": 429
+  },
+  "https://nicosmexico.mx": {
+   "status": 403
+  },
+  "https://sud777.com.mx": {
+   "status": 200,
+   "pages": 1,
+   "candidates": 0,
+   "rejected": []
+  },
+  "https://baldio.mx": {
+   "status": 200,
+   "pages": 1,
+   "candidates": 0,
+   "rejected": []
+  },
+  "https://carmelaysal.mx": {
+   "status": 200,
+   "pages": 1,
+   "candidates": 0,
+   "rejected": []
+  },
+  "https://chapulin.rest": {
+   "status": "UND_ERR_CONNECT_TIMEOUT"
+  },
+  "https://emiliorestaurante.com.mx": {
+   "status": "ECONNRESET"
+  },
+  "https://prendes.com.mx": {
+   "status": "ERR_SSL_SSLV3_ALERT_HANDSHAKE_FAILURE"
+  },
+  "https://grupopresidente.com": {
+   "status": "ERR_TLS_CERT_ALTNAME_INVALID"
+  },
+  "https://azul.rest.com": {
+   "status": "ENOTFOUND"
+  },
+  "https://bulla.mx": {
+   "status": 403
+  },
+  "https://campobaja.com.mx": {
+   "status": "fetch failed"
+  },
+  "https://centrocastellano.com.mx": {
+   "status": "ENOTFOUND"
+  },
+  "https://comedorjacinta.com": {
+   "status": "CERT_HAS_EXPIRED"
+  },
+  "https://eltigresilencioso.mx": {
+   "status": 403
+  },
+  "https://galangathaihouse.com": {
+   "status": "ENOTFOUND"
+  },
+  "https://killbill.mx": {
+   "status": 200,
+   "pages": 2,
+   "candidates": 1,
+   "rejected": [
+    {
+     "url": "https://killbill.mx/wp-content/uploads/2023/12/ELEMENTS-1.png",
+     "why": "too small (1268 B)"
+    }
+   ]
+  },
+  "https://lotti.mx": {
+   "status": 200,
+   "pages": 1,
+   "candidates": 0,
+   "rejected": []
+  },
+  "https://merotoro.mx": {
+   "status": 200,
+   "pages": 1,
+   "candidates": 0,
+   "rejected": []
+  },
+  "https://pujol.com.mx/molino-el-pujol": {
+   "status": 429
+  },
+  "https://salontenampa.com.mx": {
+   "status": "ENOTFOUND"
+  },
+  "https://xunarestaurante.com.mx": {
+   "status": 200,
+   "pages": 1,
+   "candidates": 6,
+   "rejected": [
+    {
+     "url": "https://xunarestaurante.com.mx/wp-content/themes/yootheme/cache/c8/Untitled-design-23-c851d338.png",
+     "why": "too small (14369 B)"
+    },
+    {
+     "url": "https://xunarestaurante.com.mx/wp-content/themes/yootheme/cache/8f/Untitled-design-24-8fbc7f49.png",
+     "why": "too small (14321 B)"
+    },
+    {
+     "url": "https://xunarestaurante.com.mx/wp-content/themes/yootheme/cache/eb/Untitled-design-13-eb118d17.png",
+     "why": "too small (19074 B)"
+    },
+    {
+     "url": "https://xunarestaurante.com.mx/wp-content/themes/yootheme/cache/e7/Untitled-design-12-e786e1e1.png",
+     "why": "too small (19704 B)"
+    },
+    {
+     "url": "https://xunarestaurante.com.mx/wp-content/themes/yootheme/cache/41/Untitled-design-scaled-41d612d2.png",
+     "why": "too small (16445 B)"
+    },
+    {
+     "url": "https://xunarestaurante.com.mx/wp-content/themes/yootheme/cache/a0/Diseno-sin-titulo-10-a065dcf0.png",
+     "why": "too small (3876 B)"
+    }
+   ]
   }
  },
  "stats": {
   "venues": 166,
-  "withPhoto": 79,
-  "sitePhotos": 58,
+  "withPhoto": 86,
+  "sitePhotos": 55,
+  "siteImages": 437,
+  "visitorPhotos": 89,
+  "venuesWithVisitors": 24,
   "specificPress": 24,
   "pressCards": 269,
   "failedPages": 9
