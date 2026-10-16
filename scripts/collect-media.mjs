@@ -28,13 +28,13 @@
  *   FORCE=1 node scripts/collect-media.mjs    # always refresh
  */
 import fs from 'node:fs';
-import { strictAbout } from './lib/relevance.mjs';
+import { strictAbout, CDMX, words } from './lib/relevance.mjs';
 
 const CARTE = 'src/data/carte.ts';
 const OUT = 'src/data/media.json';
 const UA = 'Mozilla/5.0 (compatible; CRTQ-LinkPreview/1.0; +https://juanctame.github.io/NMC-/)';
 const MAX_AGE_DAYS = 7;
-const VERSION = 4; // bump when collection logic changes → forces a refresh
+const VERSION = 5; // bump when collection logic changes → forces a refresh
 const SITE_PHOTOS = 12; // brand photos kept per restaurant
 const VISITOR_PHOTOS = 6; // Commons photos kept per restaurant
 const MIN_BYTES = 20000; // smaller than this is an icon / thumbnail, not a photo
@@ -351,6 +351,10 @@ async function commonsVisitorPhotos(v) {
     const title = String(p.title || '').replace(/^File:/, '').replace(/\.[a-z0-9]+$/i, '').replace(/_/g, ' ');
     const description = stripTags(em.ImageDescription?.value) + ' ' + stripTags(em.Categories?.value);
     if (!strictAbout(v, { title, description })) continue;
+    // A photo of *this* venue is filed under Mexico City (or its neighbourhood); logos aren't photos.
+    const ctx = ' ' + words(title + ' ' + description) + ' ';
+    if (!(CDMX.test(ctx) || (v.hood && ctx.includes(' ' + words(v.hood) + ' ')) || /mexico city|ciudad de mexico/.test(ctx))) continue;
+    if (/\blogo\b/i.test(title)) continue;
     out.push({
       url: ii.thumburl || ii.url,
       page: ii.descriptionurl,
