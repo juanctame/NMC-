@@ -1,6 +1,6 @@
 {
- "version": 5,
- "generatedAt": "2026-10-16T16:38:47.360Z",
+ "version": 6,
+ "generatedAt": "2026-10-16T16:44:18.943Z",
  "userAgent": "Mozilla/5.0 (compatible; CRTQ-LinkPreview/1.0; +https://juanctame.github.io/NMC-/)",
  "venues": {
   "cx-pujol": {
@@ -2323,50 +2323,6 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ],
-   "visitors": [
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_1.jpg/1280px-Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_1.jpg",
-     "credit": "Zarateman",
-     "license": "CC0",
-     "title": "Burgos - Centro Castellano de Creación Artística Francisco Salinas 1"
-    },
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_3.jpg/1280px-Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_3.jpg",
-     "credit": "Zarateman",
-     "license": "CC0",
-     "title": "Burgos - Centro Castellano de Creación Artística Francisco Salinas 3"
-    },
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_2.jpg/1280px-Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_2.jpg",
-     "credit": "Zarateman",
-     "license": "CC0",
-     "title": "Burgos - Centro Castellano de Creación Artística Francisco Salinas 2"
-    },
-    {
-     "url": "https://upload.wikimedia.org/wikipedia/commons/9/98/Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_6.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
-     "page": "https://commons.wikimedia.org/wiki/File:Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_6.jpg",
-     "credit": "Zarateman",
-     "license": "CC0",
-     "title": "Burgos - Centro Castellano de Creación Artística Francisco Salinas 6"
-    },
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_5.jpg/1280px-Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_5.jpg",
-     "credit": "Zarateman",
-     "license": "CC0",
-     "title": "Burgos - Centro Castellano de Creación Artística Francisco Salinas 5"
-    },
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_4.jpg/1280px-Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Burgos_-_Centro_Castellano_de_Creaci%C3%B3n_Art%C3%ADstica_Francisco_Salinas_4.jpg",
-     "credit": "Zarateman",
-     "license": "CC0",
-     "title": "Burgos - Centro Castellano de Creación Artística Francisco Salinas 4"
-    }
    ]
   },
   "cx-charco": {
@@ -4478,11 +4434,11 @@
  },
  "stats": {
   "venues": 166,
-  "withPhoto": 84,
+  "withPhoto": 83,
   "sitePhotos": 55,
   "siteImages": 437,
-  "visitorPhotos": 76,
-  "venuesWithVisitors": 18,
+  "visitorPhotos": 70,
+  "venuesWithVisitors": 17,
   "specificPress": 24,
   "pressCards": 269,
   "failedPages": 9
