@@ -1,6 +1,6 @@
 {
- "version": 4,
- "generatedAt": "2026-10-16T16:33:26.322Z",
+ "version": 5,
+ "generatedAt": "2026-10-16T16:38:47.360Z",
  "userAgent": "Mozilla/5.0 (compatible; CRTQ-LinkPreview/1.0; +https://juanctame.github.io/NMC-/)",
  "venues": {
   "cx-pujol": {
@@ -247,50 +247,6 @@
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
     }
-   ],
-   "visitors": [
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Esquina_Com%C3%BAn_%282024%29.jpg/1280px-Esquina_Com%C3%BAn_%282024%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Esquina_Com%C3%BAn_(2024).jpg",
-     "credit": "Tbhotch",
-     "license": "CC BY-SA 4.0",
-     "title": "Esquina Común (2024)"
-    },
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Esquina_Com%C3%BAn_%282024%29_%28cropped%29.jpg/1280px-Esquina_Com%C3%BAn_%282024%29_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Esquina_Com%C3%BAn_(2024)_(cropped).jpg",
-     "credit": "Tbhotch",
-     "license": "CC BY-SA 4.0",
-     "title": "Esquina Común (2024) (cropped)"
-    },
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Esquina_Com%C3%BAn_%282025%29_1.jpg/1280px-Esquina_Com%C3%BAn_%282025%29_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Esquina_Com%C3%BAn_(2025)_1.jpg",
-     "credit": "Tbhotch",
-     "license": "CC BY-SA 4.0",
-     "title": "Esquina Común (2025) 1"
-    },
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Esquina_Com%C3%BAn_%282025%29_2.jpg/1280px-Esquina_Com%C3%BAn_%282025%29_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Esquina_Com%C3%BAn_(2025)_2.jpg",
-     "credit": "Tbhotch",
-     "license": "CC BY-SA 4.0",
-     "title": "Esquina Común (2025) 2"
-    },
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Esquina_Com%C3%BAn_%282025%29_3.jpg/1280px-Esquina_Com%C3%BAn_%282025%29_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Esquina_Com%C3%BAn_(2025)_3.jpg",
-     "credit": "Tbhotch",
-     "license": "CC BY-SA 4.0",
-     "title": "Esquina Común (2025) 3"
-    },
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Esquina_Com%C3%BAn_%282025%29_4.jpg/1280px-Esquina_Com%C3%BAn_%282025%29_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Esquina_Com%C3%BAn_(2025)_4.jpg",
-     "credit": "Tbhotch",
-     "license": "CC BY-SA 4.0",
-     "title": "Esquina Común (2025) 4"
-    }
    ]
   },
   "cx-gaba": {
@@ -359,15 +315,6 @@
      "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
-    }
-   ],
-   "visitors": [
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/La_Once_Mil_Roma_%282026%29_1.jpg/1280px-La_Once_Mil_Roma_%282026%29_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:La_Once_Mil_Roma_(2026)_1.jpg",
-     "credit": "Tbhotch",
-     "license": "CC BY-SA 4.0",
-     "title": "La Once Mil Roma (2026) 1"
     }
    ]
   },
@@ -546,13 +493,6 @@
      "credit": "Tbhotch",
      "license": "CC BY-SA 4.0",
      "title": "Masala y Maiz (2025) 2"
-    },
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Masala_y_Ma%C3%ADz_%282025_logo%29.png/1280px-Masala_y_Ma%C3%ADz_%282025_logo%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Masala_y_Ma%C3%ADz_(2025_logo).png",
-     "credit": "Masala y Maíz",
-     "license": "Public domain",
-     "title": "Masala y Maíz (2025 logo)"
     }
    ]
   },
@@ -2029,15 +1969,6 @@
      "image": "https://media.timeout.com/images/105880346/image.jpg",
      "specific": true
     }
-   ],
-   "visitors": [
-    {
-     "url": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Ashikaga_Yoshimi.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
-     "page": "https://commons.wikimedia.org/wiki/File:Ashikaga_Yoshimi.jpg",
-     "credit": "緑亭川柳：編輯 北斎卍老人等：画",
-     "license": "CC BY 4.0",
-     "title": "Ashikaga Yoshimi"
-    }
    ]
   },
   "cx-zeru": {
@@ -2103,16 +2034,7 @@
     "link": "https://alelirooftop.com",
     "credit": "alelirooftop.com",
     "title": "Alelí Rooftop"
-   },
-   "visitors": [
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Alel%C3%AD_Rooftop_y_Lorea_%282025%29.jpg/1280px-Alel%C3%AD_Rooftop_y_Lorea_%282025%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Alel%C3%AD_Rooftop_y_Lorea_(2025).jpg",
-     "credit": "Tbhotch",
-     "license": "CC BY-SA 4.0",
-     "title": "Alelí Rooftop y Lorea (2025)"
-    }
-   ]
+   }
   },
   "cx-almara-comida-mediterranea": {
    "press": [
@@ -2164,15 +2086,6 @@
      "title": "¿Dónde comer en CDMX? Conoce los restaurantes más top del 2026 según la Guía México Gastronómico",
      "image": "https://img.chilango.com/cdn-cgi/image/quality=75,format=auto,onerror=redirect/cdn-cgi/image/width=1200,height=675,quality=75,format=auto,onerror=redirect/2026/02/Mejores-restaurantes-de-CDMX-en-la-Guia-Mexico-Gastronomico-2026-donde-estan.jpg",
      "specific": false
-    }
-   ],
-   "visitors": [
-    {
-     "url": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Au_Pied_de_Cochon_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
-     "page": "https://commons.wikimedia.org/wiki/File:Au_Pied_de_Cochon_logo.png",
-     "credit": "Au Pied de Cochon",
-     "license": "Public domain",
-     "title": "Au Pied de Cochon logo"
     }
    ]
   },
@@ -3164,13 +3077,6 @@
      "credit": "Nan Palmero from San Antonio, TX, USA",
      "license": "CC BY 2.0",
      "title": "Corn at Molino El Pujol (32514051557)"
-    },
-    {
-     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Molino_El_Pujol_%282025%29.jpg/1280px-Molino_El_Pujol_%282025%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-     "page": "https://commons.wikimedia.org/wiki/File:Molino_El_Pujol_(2025).jpg",
-     "credit": "Tbhotch",
-     "license": "CC BY-SA 4.0",
-     "title": "Molino El Pujol (2025)"
     }
    ]
   },
@@ -3423,16 +3329,7 @@
     "link": "https://el-califa-de-leon.shop",
     "credit": "el-califa-de-leon.shop",
     "title": "El Califa de León - Vibrant Tacos & Authentic Flavors in CDMX"
-   },
-   "visitors": [
-    {
-     "url": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Taquer%C3%ADa_El_Califa_de_Le%C3%B3n_%282020%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
-     "page": "https://commons.wikimedia.org/wiki/File:Taquer%C3%ADa_El_Califa_de_Le%C3%B3n_(2020).jpg",
-     "credit": "kaart_1 @ Mapillary",
-     "license": "CC BY-SA 4.0",
-     "title": "Taquería El Califa de León (2020)"
-    }
-   ]
+   }
   },
   "cx-taqueria-el-gran-abanico": {
    "press": [
@@ -4051,7 +3948,7 @@
   },
   "https://theinfatuation.com/mexico-city/reviews/eloise-chic-cuisine-san-angel": {
    "status": 200,
-   "bytes": 733732,
+   "bytes": 733733,
    "title": "Eloise Chic Cuisine - Review - San Ángel - Mexico City - The Infatuation",
    "candidates": 1,
    "rejected": [
@@ -4063,7 +3960,7 @@
   },
   "https://foodandpleasure.com/restaurantes-para-negocios-polanco": {
    "status": 200,
-   "bytes": 197840,
+   "bytes": 197841,
    "title": "8 restaurantes en Polanco perfectos para una comida de negocios",
    "candidates": 2,
    "rejected": [
@@ -4465,7 +4362,7 @@
    "status": 429
   },
   "https://nicosmexico.mx": {
-   "status": 403
+   "status": "UND_ERR_CONNECT_TIMEOUT"
   },
   "https://sud777.com.mx": {
    "status": 200,
@@ -4480,10 +4377,7 @@
    "rejected": []
   },
   "https://carmelaysal.mx": {
-   "status": 200,
-   "pages": 1,
-   "candidates": 0,
-   "rejected": []
+   "status": "ERR_TLS_CERT_ALTNAME_INVALID"
   },
   "https://chapulin.rest": {
    "status": "UND_ERR_CONNECT_TIMEOUT"
@@ -4501,7 +4395,10 @@
    "status": "ENOTFOUND"
   },
   "https://bulla.mx": {
-   "status": 403
+   "status": 202,
+   "pages": 1,
+   "candidates": 0,
+   "rejected": []
   },
   "https://campobaja.com.mx": {
    "status": "fetch failed"
@@ -4581,11 +4478,11 @@
  },
  "stats": {
   "venues": 166,
-  "withPhoto": 86,
+  "withPhoto": 84,
   "sitePhotos": 55,
   "siteImages": 437,
-  "visitorPhotos": 89,
-  "venuesWithVisitors": 24,
+  "visitorPhotos": 76,
+  "venuesWithVisitors": 18,
   "specificPress": 24,
   "pressCards": 269,
   "failedPages": 9
