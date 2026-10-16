@@ -249,9 +249,14 @@ const sizeHint = (u) => {
 };
 
 async function fetchHtml(url) {
-  const r = await getRetry(url, { headers: { Accept: 'text/html,application/xhtml+xml' } });
-  const ok = r.ok && (r.headers.get('content-type') || '').includes('html');
-  return { ok, status: r.status, html: ok ? await r.text() : '', final: r.url || url };
+  try {
+    const r = await getRetry(url, { headers: { Accept: 'text/html,application/xhtml+xml' } });
+    const ok = r.ok && (r.headers.get('content-type') || '').includes('html');
+    return { ok, status: r.status, html: ok ? await r.text() : '', final: r.url || url };
+  } catch (e) {
+    // unreachable site (DNS, TLS, timeout): skip it, never the whole run
+    return { ok: false, status: e?.name === 'AbortError' ? 'timeout' : String(e?.cause?.code || e?.message || 'error').slice(0, 60), html: '', final: url };
+  }
 }
 
 /**
@@ -463,6 +468,15 @@ async function main() {
   });
   out.stats = stats;
   out.diagnostics = out_diag;
+  // A run that finds far less than the last one (network trouble) keeps the last manifest.
+  try {
+    const prev = JSON.parse(fs.readFileSync(OUT, 'utf8'));
+    const before = prev.stats?.withPhoto || 0;
+    if (before && stats.withPhoto < before * 0.5) {
+      console.log(`only ${stats.withPhoto} venues with photos vs ${before} last time — keeping the previous manifest`, JSON.stringify(stats));
+      return;
+    }
+  } catch {}
   fs.writeFileSync(OUT, JSON.stringify(out, null, 1) + '\n');
   console.log('wrote', OUT, JSON.stringify(stats));
 }
