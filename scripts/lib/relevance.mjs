@@ -34,7 +34,7 @@ export const FOOD =
 export const CDMX =
   /\bcdmx\b|ciudad de mexico|mexico city|\bdf\b|chilango|zocalo|polanco|roma norte|roma sur|condesa|coyoacan|azcapotzalco|claveria|narvarte|juarez|cuauhtemoc|san rafael|san angel|santa maria la ribera|santa fe|lomas de chapultepec|chapultepec|tabacalera|anzures|pedregal|portales|del valle|iztacalco|iztapalapa|tlalpan|xochimilco|miguel hidalgo|benito juarez|alvaro obregon|garibaldi|reforma|insurgentes|centro historico/;
 export const ELSEWHERE =
-  /puebla|monterrey|guadalajara|tijuana|queretaro|cancun|merida|bolivia|barcelona|spain|espana|madrid|dubai|florida|santo domingo|dominican|argentina|buenos aires|colombia|bogota|italia|italy|paris|france|new york|miami|texas|california|venezuela|costa rica|honduras|guatemala|satelite|naucalpan/;
+  /puebla|monterrey|guadalajara|tijuana|queretaro|cancun|merida|bolivia|barcelona|spain|espana|madrid|dubai|florida|santo domingo|dominican|argentina|buenos aires|colombia|bogota|italia|italy|paris|france|new york|miami|texas|california|venezuela|costa rica|honduras|guatemala|satelite|naucalpan|burgos|castilla y leon|valladolid|sevilla|valencia|bilbao|malaga|lisboa|portugal|london|berlin|tokyo|kyoto|japan|japon/;
 export const TRUSTED = /gourmet de mexico|chilango|donde ir|maspormas|la ruta de la garnacha|time out|food and wine|conde nast|local traveller/;
 
 export const words = (s) => fold(s).replace(/[^a-z0-9]+/g, ' ').trim();
