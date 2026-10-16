@@ -39,6 +39,7 @@ import { ChannelComposer } from './overlays/ChannelComposer';
 import { TasteCard } from './overlays/TasteCard';
 import { PhotoImport } from './overlays/PhotoImport';
 import { VideoOverlay } from './components/VideoOverlay';
+import { DecideFab } from './components/DecideFab';
 
 const SCREENS: Record<Screen, React.ComponentType> = {
   feed: Feed,
@@ -64,6 +65,8 @@ const SCREENS: Record<Screen, React.ComponentType> = {
 };
 
 const ROOT_TABS: Screen[] = ['feed', 'log', 'board', 'you', 'table'];
+/** Browsing sections that carry the "Can't decide?" corner button. */
+const DECIDE_SCREENS: Screen[] = ['feed', 'log', 'board', 'table'];
 
 export function Root() {
   const screen = useStore((s) => s.screen);
@@ -78,6 +81,13 @@ export function Root() {
   const photoImportOpen = useStore((s) => s.photoImportOpen);
   const nearbyStatus = useStore((s) => s.nearbyStatus);
   const loadNearby = useStore((s) => s.loadNearby);
+  const hasPlaces = useStore((s) => s.nearby.length > 0);
+  const loadDecideState = useStore((s) => s.loadDecideState);
+
+  // Today's "Can't decide?" swipes / pick, remembered on the device.
+  useEffect(() => {
+    loadDecideState();
+  }, [loadDecideState]);
 
   // Pull live places for the selected city on first launch.
   useEffect(() => {
@@ -92,6 +102,7 @@ export function Root() {
     <View style={{ flex: 1, backgroundColor: C.paper50 }}>
       <Active />
       {showTabBar ? <TabBar /> : null}
+      {showTabBar && hasPlaces && DECIDE_SCREENS.includes(screen) ? <DecideFab /> : null}
       {rankOpen ? <RankFlow /> : null}
       {attachOpen ? <AttachSheet /> : null}
       {createOpen ? <CreateTable /> : null}

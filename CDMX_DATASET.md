@@ -196,7 +196,10 @@ Trayectoria), and **awards**.
   never earns another venue's award. Verified critics carry a **press
   passport** (type D): a darker cover, beat, readers and the Critic's Desk.
 - **"Can't decide?"** (`src/screens/Decide.tsx`, `src/data/decide.ts`) — a
-  swipe deck at the top of the feed that deals restaurants that fit you, best
+  swipe deck behind a small corner sticker on the browsing sections (feed, guide,
+  leaderboard, tables; `src/components/DecideFab.tsx`): it pops in as you arrive,
+  says "Can't decide?" for a few seconds, then folds to a little card fan. The
+  deck deals restaurants that fit you, best
   match first (the same quality × palate blend as "Ideal for you"; each card
   shows your rank — "#1 for you" — and a five-dot fit meter, why it fits, the
   dish to order and, when there is one, a critic's take). Swipe right (or ✓, or
@@ -204,8 +207,8 @@ Trayectoria), and **awards**.
   directions; left (✕ / ←) for **Hoy no**; **"Maybe, save for later"** (↓)
   stamps **Luego** and adds it to your want-to-try. Undo takes the last swipe
   back. The deck sits on a papel picado cut from your palate. Today's swipes and
-  pick are kept on the device and reset each day; the feed card shows today's
-  table once you've chosen.
+  pick are kept on the device and reset each day; once you've chosen, the
+  corner sticker carries a green check and names today's table.
 - **Brand marks** — each venue and chef carries an original **monogram** seal
   (initials on a deterministic colour, in the app's sticker look). These are our
   own marks, not the restaurants' trademarked logos, so they're safe to ship and
