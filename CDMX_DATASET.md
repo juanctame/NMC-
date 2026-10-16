@@ -226,11 +226,13 @@ Trayectoria), and **awards**.
   by category — you, your friends and (with the shared `favorites` table,
   SHARED_DEMO.md) every other tester — with anyone who features it in their
   **Top 4** marked and listed first, and a "Feature in my Top 4" button. Your Top
-  4 is page 2 of the passport (*Mis cuatro*): four sticker tiles with the
-  restaurants' real covers, each naming the category it's your favourite in,
-  plus your favourite in every category; tap a slot to choose or swap (search
-  your log or the city), pick the category and the slot. Friends' profiles lead
-  with their Top 4 and favourites. Real critics never get favourites assigned.
+  4 (*Mis cuatro*) is part of the first section of your profile — the
+  passport's data page, between your identity and your record: four square
+  tiles with the restaurants' real covers, each naming the category it's your
+  favourite in; tap a slot to choose or swap (search your log or the city), pick
+  the category and the slot. Page 2 (*Favoritos*) lists your favourite in every
+  category. Someone else's profile shows their Top 4 inside its header card,
+  right under their name, then their favourite in each category. Real critics never get favourites assigned.
 - **Brand marks** — each venue and chef carries an original **monogram** seal
   (initials on a deterministic colour, in the app's sticker look). These are our
   own marks, not the restaurants' trademarked logos, so they're safe to ship and

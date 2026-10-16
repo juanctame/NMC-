@@ -31,7 +31,8 @@ import { Image } from 'expo-image';
 import Svg, { Path, Circle, Ellipse, Line } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
-import { favoritesFromRanked, FAV_CATS, type TopFour } from '../data/favorites';
+import { favoritesFromRanked, FAV_CATS } from '../data/favorites';
+import { VenueCover } from '../components/Cover';
 import { TopFourGrid } from '../components/TopFour';
 import { useT } from '../i18n';
 import { fmt } from '../store/helpers';
@@ -728,44 +729,38 @@ function NotesPage({ courses, bio, canEdit, archBlurb }: { courses: Course[]; bi
   );
 }
 
-/** p.2 — Mis cuatro: the four restaurants you feature, and your favourite in each category. */
-function FavsPage({ top, ranked, canEdit }: { top: TopFour; ranked: Place[]; canEdit: boolean }) {
+/** p.2 — Favoritos: your favourite in each category (your Top 4 leads the data page). */
+function FavsPage({ ranked }: { ranked: Place[] }) {
   const openPlace = useStore((s) => s.openPlace);
   const favs = favoritesFromRanked(ranked);
-  const filled = top.filter(Boolean).length;
+  const cats = FAV_CATS.filter((c) => favs[c.id]);
   return (
-    <View accessibilityLabel="Passport Top 4 page">
-      <SerifItalic s={12.5} c={C.inkMuted} style={{ lineHeight: 17, marginBottom: 12 }}>
-        {filled
-          ? 'The four tables you’d send anyone to. They lead your profile, and they put you among each restaurant’s biggest fans.'
-          : 'Feature four restaurants — the ones you’d send anyone to. They lead your profile and make you one of their biggest fans.'}
+    <View accessibilityLabel="Passport favourites page">
+      <SerifItalic s={12.5} c={C.inkMuted} style={{ lineHeight: 17, marginBottom: 10 }}>
+        Your top-ranked place in each category. Each one makes you one of that restaurant’s biggest fans.
       </SerifItalic>
-      <TopFourGrid top={top} editable={canEdit} />
-      <View style={{ marginTop: 18, gap: 4 }}>
-        <FieldLabel>FAVORITO POR CATEGORÍA / FAVOURITE IN EACH CATEGORY</FieldLabel>
-        {FAV_CATS.filter((c) => favs[c.id]).length ? (
-          FAV_CATS.filter((c) => favs[c.id]).map((c) => {
-            const p = favs[c.id]!;
-            return (
-              <Pressable key={c.id} onPress={() => openPlace(p.id)} accessibilityLabel={`Your favourite ${c.label}: ${p.name}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 5, borderBottomWidth: 1.5, borderColor: 'rgba(42,26,6,0.14)' }}>
-                <Display s={11} c={C.ink400} style={{ width: 16, textAlign: 'center' }}>
-                  {c.glyph}
-                </Display>
-                <Mono s={8.5} c={C.inkMuted} style={{ width: 108 }} numberOfLines={1}>
-                  {c.es.toUpperCase()}
+      {cats.length ? (
+        cats.map((c) => {
+          const p = favs[c.id]!;
+          return (
+            <Pressable key={c.id} onPress={() => openPlace(p.id)} accessibilityLabel={`Your favourite ${c.label}: ${p.name}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1.5, borderColor: 'rgba(42,26,6,0.14)' }}>
+              <VenueCover place={p} style={{ width: 44, height: 44, borderWidth: 2, borderColor: C.inkBlack }} crestSize={20} credit={false} />
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <Mono s={8} c={C.ink400} numberOfLines={1}>
+                  {c.glyph} {c.es.toUpperCase()} · {c.label}
                 </Mono>
-                <Serif s={13} c={C.inkDeep} numberOfLines={1} style={{ flex: 1 }}>
+                <Serif s={14} c={C.inkDeep} numberOfLines={1}>
                   {p.name}
                 </Serif>
-              </Pressable>
-            );
-          })
-        ) : (
-          <Mono s={9} c={C.inkMuted} style={{ lineHeight: 14 }}>
-            Rank places and your favourite in each category appears here — your top-ranked tacos, seafood, fine dining…
-          </Mono>
-        )}
-      </View>
+              </View>
+            </Pressable>
+          );
+        })
+      ) : (
+        <Mono s={9} c={C.inkMuted} style={{ lineHeight: 14 }}>
+          Rank places and your favourite in each category appears here — your top-ranked tacos, seafood, fine dining…
+        </Mono>
+      )}
     </View>
   );
 }
@@ -776,7 +771,7 @@ type PageKey = 'cover' | 'data' | 'favs' | 'visas' | 'stamps' | 'bio' | 'notes' 
 const PAGES: { key: PageKey; name: string; title: string; sub: string; no: string; wash: string }[] = [
   { key: 'cover', name: 'Cover', title: '', sub: '', no: '', wash: '' },
   { key: 'data', name: 'Data page', title: '', sub: '', no: '1', wash: C.sun200 },
-  { key: 'favs', name: 'Top 4', title: 'MIS CUATRO', sub: 'Top 4 · your favourites, featured', no: '2', wash: C.ink100 },
+  { key: 'favs', name: 'Favoritos', title: 'FAVORITOS', sub: 'Your favourite in each category', no: '2', wash: C.ink100 },
   { key: 'visas', name: 'Visas', title: 'VISAS', sub: 'Guide collections · pending visits', no: '3', wash: C.sun200 },
   { key: 'stamps', name: 'Sellos', title: 'SELLOS', sub: 'Entry stamps · colonias crossed', no: '4', wash: C.ink100 },
   { key: 'bio', name: 'Biometría', title: 'BIOMETRÍA', sub: 'Palate print', no: '5', wash: C.sun200 },
@@ -1316,6 +1311,20 @@ export function Passport() {
         </View>
       </View>
 
+      {/* Mis cuatro — the four restaurants the holder features, first thing on the profile */}
+      <View style={{ marginTop: 20 }} accessibilityLabel="Your Top 4">
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 7 }}>
+          <FieldLabel>MIS CUATRO / TOP 4</FieldLabel>
+          <View style={{ flex: 1, height: 1.5, backgroundColor: C.paper300 }} />
+          {topFour.some(Boolean) ? (
+            <Mono s={7.5} c={C.inkMuted}>
+              tap to swap
+            </Mono>
+          ) : null}
+        </View>
+        <TopFourGrid top={topFour} editable variant="row" />
+      </View>
+
       {/* the holder's record */}
       <View style={{ marginTop: 18 }}>
       <StickerView offset="sm" style={{ flexDirection: 'row', borderWidth: 2, borderColor: C.inkBlack, backgroundColor: C.sun50 }}>
@@ -1426,7 +1435,7 @@ export function Passport() {
   const pages: React.ReactNode[] = [
     <CoverPage key="cover" w={area.w} h={area.h} press={critic} city={homeCity.name} joined={me.joined} onOpen={() => goTo(1)} onShare={openTasteCard} />,
     page('data', () => dataPage(), mrz),
-    page('favs', () => <FavsPage top={topFour} ranked={ranked} canEdit />),
+    page('favs', () => <FavsPage ranked={ranked} />),
     page('visas', () => <VisasPage sets={album} pending={pending} />),
     page('stamps', (w) => <StampsPage tiles={terr.tiles} visited={terr.visited} elsewhere={terr.elsewhere} ranked={ranked} width={w} />),
     page('bio', (w) => <BioPage palate={palate} avg={avg} chase={chase} seed={me.handle || me.name} width={w} />),

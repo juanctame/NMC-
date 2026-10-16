@@ -84,6 +84,15 @@ export function FoodieProfile() {
                 </Mono>
               </View>
             </View>
+            {/* their Top 4 — the first thing on their profile */}
+            {favs ? (
+              <View style={{ marginTop: 16, borderTopWidth: 2, borderColor: C.paper0, paddingTop: 12 }} accessibilityLabel={`${friend.name.split(' ')[0]}'s Top 4`}>
+                <Banner s={9} tk={0.18} c={C.sun300} style={{ marginBottom: 8 }}>
+                  {friend.name.split(' ')[0]}'s Top 4
+                </Banner>
+                <TopFourGrid top={favs.top} owner={friend.name.split(' ')[0]} variant="row" dark />
+              </View>
+            ) : null}
             {/* match with you */}
             {profile ? (
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 16, borderTopWidth: 2, borderColor: C.paper0, paddingTop: 14 }}>
@@ -110,17 +119,10 @@ export function FoodieProfile() {
           </StickerView>
         </View>
 
-        {/* their Top 4 + their favourite in each category */}
+        {/* their favourite in each category (their Top 4 leads the header card) */}
         {favs ? (
           <View style={{ paddingTop: 20, paddingHorizontal: 16 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 12 }}>
-              <Banner s={10} tk={0.16} c={C.ink400}>
-                {friend.name.split(' ')[0]}'s Top 4
-              </Banner>
-              <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
-            </View>
-            <TopFourGrid top={favs.top} owner={friend.name.split(' ')[0]} />
-            <View style={{ marginTop: 18, gap: 6 }}>
+            <View style={{ gap: 6 }}>
               <Banner s={9} tk={0.16} c={C.inkMuted}>
                 Favourite in each category
               </Banner>
