@@ -41,13 +41,26 @@ const SITE = (process.env.SITE_URL || 'https://juanctame.github.io/NMC-/').repla
 const SWEEP_HOURS = Number(process.env.SWEEP_HOURS || 20);
 const FORCE = !!process.env.FORCE;
 const PHOTO_BUDGET = Number(process.env.PHOTO_BUDGET || 160);
-const UA = 'Mozilla/5.0 (compatible; CRTQ-Discovery/1.0; +https://juanctame.github.io/NMC-/)';
+const UA = 'CRTQ-Discovery/1.1 (+https://juanctame.github.io/NMC-/; food discovery for Mexico City)';
 const CITY = { id: 'cdmx', bbox: [19.18, -99.36, 19.6, -98.94] }; // s, w, n, e
 const TILE = 0.05;
 const DAY = 864e5;
+// Time budget: discovery must never hold up a deploy. The sweep stops taking
+// new tiles after OSM_BUDGET, picture lookups stop after PHOTO_DEADLINE; what
+// was found by then is published.
+const START = Date.now();
+const OSM_BUDGET = Number(process.env.OSM_BUDGET_MIN || 14) * 6e4;
+const PHOTO_DEADLINE = Number(process.env.TOTAL_BUDGET_MIN || 19) * 6e4;
+const timeLeft = (budget) => budget - (Date.now() - START);
 const today = () => new Date().toISOString().slice(0, 10);
 
-export const OVERPASS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter', 'https://maps.mail.ru/osm/tools/overpass/api/interpreter'];
+export const OVERPASS = [
+  'https://overpass.private.coffee/api/interpreter',
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+];
+const GRID = Number(process.env.GRID || 5); // 5×5 tiles: small enough for the dense centre
 
 const NEWS_QUERIES = [
   'nuevo restaurante CDMX',
@@ -74,7 +87,7 @@ async function get(url, init = {}, ms = 20000) {
 
 // ── 1. OpenStreetMap ────────────────────────────────────────────────────────
 
-export function tiles(bbox, n = 3) {
+export function tiles(bbox, n = GRID) {
   const [s, w, nn, e] = bbox;
   const out = [];
   const dl = (nn - s) / n;
@@ -86,7 +99,7 @@ export function tiles(bbox, n = 3) {
 export function overpassQuery(b) {
   const bb = b.join(',');
   return (
-    `[out:json][timeout:120];(` +
+    `[out:json][timeout:75];(` +
     `nwr["amenity"~"^(restaurant|cafe|fast_food|bar|pub|ice_cream|food_court|biergarten)$"]["name"](${bb});` +
     `nwr["shop"~"^(bakery|pastry|coffee|deli|confectionery|tortilla)$"]["name"](${bb});` +
     `);out center meta;`
@@ -94,19 +107,31 @@ export function overpassQuery(b) {
 }
 
 async function overpass(query, label) {
+  const dead = new Set(); // mirrors that refused this run's requests outright
   for (let attempt = 0; attempt < 6; attempt++) {
-    const ep = OVERPASS[attempt % OVERPASS.length];
-    try {
-      const r = await get(ep, { method: 'POST', body: 'data=' + encodeURIComponent(query), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }, 180000);
-      if (r.ok) {
-        const d = await r.json();
-        if (Array.isArray(d.elements)) return d.elements;
-      }
-      console.log(`  ${label}: ${ep.split('/')[2]} → HTTP ${r.status}`);
-    } catch (e) {
-      console.log(`  ${label}: ${ep.split('/')[2]} → ${e.name === 'AbortError' ? 'timeout' : e.message}`);
+    if (timeLeft(OSM_BUDGET) < 20000) {
+      console.log(`  ${label}: out of time for the sweep`);
+      return null;
     }
-    await sleep(5000 * (attempt + 1));
+    const live = OVERPASS.filter((e) => !dead.has(e));
+    if (!live.length) return null;
+    const ep = live[attempt % live.length];
+    const host = ep.split('/')[2];
+    const ms = Math.min(90000, timeLeft(OSM_BUDGET));
+    try {
+      let r = await get(ep, { method: 'POST', body: 'data=' + encodeURIComponent(query), headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' } }, ms);
+      // Some instances refuse POST forms (406): the same query as a GET.
+      if (r.status === 406) r = await get(`${ep}?data=${encodeURIComponent(query)}`, { headers: { Accept: 'application/json' } }, ms);
+      if (r.ok) {
+        const d = await r.json().catch(() => null);
+        if (Array.isArray(d?.elements)) return d.elements;
+      }
+      console.log(`  ${label}: ${host} → HTTP ${r.status}`);
+      if (r.status === 406 || r.status === 403) dead.add(ep);
+    } catch (e) {
+      console.log(`  ${label}: ${host} → ${e.name === 'AbortError' ? 'timeout' : e.message}`);
+    }
+    await sleep(Math.min(3000 * (attempt + 1), Math.max(0, timeLeft(OSM_BUDGET) - 20000)));
   }
   return null;
 }
@@ -181,19 +206,22 @@ export function normalize(elements) {
 
 export async function sweepOsm(bbox) {
   const all = [];
-  let failed = 0;
-  for (const [i, b] of tiles(bbox).entries()) {
-    const els = await overpass(overpassQuery(b), `tile ${i + 1}/9`);
+  const failed = [];
+  const ts = tiles(bbox);
+  for (const [i, b] of ts.entries()) {
+    const els = await overpass(overpassQuery(b), `tile ${i + 1}/${ts.length}`);
     if (!els) {
-      failed++;
+      failed.push(b);
       continue;
     }
-    console.log(`  tile ${i + 1}/9: ${els.length} elements`);
+    console.log(`  tile ${i + 1}/${ts.length}: ${els.length} elements`);
     all.push(...els);
-    await sleep(2500);
+    await sleep(1500);
   }
-  return { spots: normalize(all), failedTiles: failed };
+  return { spots: normalize(all), failedTiles: failed.length, failedBoxes: failed };
 }
+
+const inBox = (s, b) => s.la >= b[0] && s.lo >= b[1] && s.la < b[2] && s.lo < b[3];
 
 /** Neighbourhood names (place=neighbourhood/suburb/quarter) for spots the map doesn't place in one. */
 export async function hoods(bbox) {
@@ -278,6 +306,7 @@ export function parseRss(xml) {
 async function headlines() {
   const seen = new Map();
   for (const q of NEWS_QUERIES) {
+    if (timeLeft(PHOTO_DEADLINE) < 120000) break;
     const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q + ' when:60d')}&hl=es-419&gl=MX&ceid=MX:es-419`;
     try {
       const r = await get(url, {}, 20000);
@@ -387,14 +416,15 @@ async function websitePhotos(cands, prevMedia) {
   let i = 0;
   await Promise.all(
     Array.from({ length: 6 }, async () => {
-      while (i < cands.length) {
+      while (i < cands.length && timeLeft(PHOTO_DEADLINE) > 60000) {
         const s = cands[i++];
-        const u = await unfurl(s.w, true).catch(() => null);
+        const u = await Promise.race([unfurl(s.w, true).catch(() => null), sleep(25000).then(() => null)]);
         tried[s.id] = u?.image ? { img: u.image, src: 'their website', at: today() } : { none: true, at: today() };
       }
     }),
   );
   const found = Object.values(tried).filter((x) => x.img).length;
+  // (sites not reached before the deadline are simply tried next run)
   console.log(`  pictures: ${found} found on ${cands.length} websites`);
   return { ...prevMedia, ...tried };
 }
@@ -413,6 +443,7 @@ export function commonsMatch(spot, pages) {
 async function commonsNearby(cands) {
   const out = {};
   for (const s of cands) {
+    if (timeLeft(PHOTO_DEADLINE) < 30000) break;
     try {
       const r = await get(`https://commons.wikimedia.org/w/api.php?action=query&format=json&list=geosearch&gscoord=${s.la}|${s.lo}&gsradius=40&gsnamespace=6&gslimit=30`, { headers: { Accept: 'application/json' } }, 15000);
       const d = r.ok ? await r.json() : null;
@@ -492,9 +523,28 @@ export async function main() {
   const prevMedia = mediaRes.data?.items || {};
 
   console.log('sweeping OpenStreetMap…');
-  const { spots, failedTiles } = await sweepOsm(CITY.bbox);
+  const { spots, failedTiles, failedBoxes } = await sweepOsm(CITY.bbox);
+  // Areas the sweep couldn't reach this time keep last sweep's spots (no holes in the map).
+  if (failedBoxes.length && prevIndex.data?.tiles) {
+    let carried = 0;
+    const have = new Set(spots.map((s) => s.id));
+    for (const k of Object.keys(prevIndex.data.tiles)) {
+      const [a, o] = k.split('_').map(Number);
+      const centre = { la: (a + 0.5) * TILE, lo: (o + 0.5) * TILE };
+      if (!failedBoxes.some((b) => inBox(centre, b))) continue;
+      const r = await prevJson(`data/spots/${k}.json`);
+      for (const s of r.data || []) {
+        if (have.has(s.id)) continue;
+        delete s.new; // not re-judged this run
+        spots.push(s);
+        have.add(s.id);
+        carried++;
+      }
+    }
+    console.log(`  carried ${carried} spots over from the last sweep for ${failedBoxes.length} unreachable tiles`);
+  }
   const prevCount = ledger?.count || 0;
-  if (!spots.length || failedTiles > 2 || (prevCount && spots.length < prevCount * 0.6)) {
+  if (!spots.length || (prevCount && spots.length < prevCount * 0.6)) {
     console.log(`sweep incomplete (${spots.length} spots, ${failedTiles} tiles failed, ${prevCount} last time)`);
     if (prevIndex.data && (await republish(prevIndex.data))) return;
     if (!spots.length) {
@@ -510,10 +560,14 @@ export async function main() {
   const ids = { ...(ledger?.ids || {}) };
   const baselineAt = ledger?.baselineAt || today();
   const firstRun = !ledger;
+  // Areas never swept before (a first sweep that missed tiles) join the baseline:
+  // their spots aren't "new on the map", just newly reached.
+  const unswept = ledger?.unswept || [];
   for (const s of spots) {
-    const n = firstRun ? newness(s, null) : newness(s, ledger);
+    const baseline = firstRun || (!ids[s.id] && unswept.some((b) => inBox(s, b)));
+    const n = baseline ? newness(s, null) : newness(s, ledger);
     if (n) s.new = n;
-    if (!ids[s.id]) ids[s.id] = firstRun ? baselineAt : today();
+    if (!ids[s.id]) ids[s.id] = baseline ? baselineAt : today();
   }
 
   console.log('reading the press…');
@@ -567,7 +621,7 @@ export async function main() {
   const newCount = all.filter((s) => s.new).length;
   const buzzCount = all.filter((s) => s.buzz).length;
   write('spots-new.json', { generated_at: new Date().toISOString(), city: CITY.id, spots: pool });
-  write('spots-ledger.json', { v: 1, city: CITY.id, baselineAt, count: spots.length, ids });
+  write('spots-ledger.json', { v: 1, city: CITY.id, baselineAt, count: spots.length, ids, unswept: failedBoxes });
   write('spots-media.json', { v: 1, items: media });
   write('news.json', { generated_at: new Date().toISOString(), items: news.slice(0, 200).map((i) => ({ title: i.title.slice(0, 160), link: i.link, source: i.source, date: i.date })), matched: Object.fromEntries(hits) });
   const index = {
@@ -581,6 +635,7 @@ export async function main() {
     suggested: all.filter((s) => s.sug).length,
     with_photo: all.filter((s) => s.img).length,
     first_run: firstRun,
+    unreachable_tiles: failedTiles,
     sources: { osm: spots.length, news: news.length, suggestions: sugs.length },
     tiles: Object.fromEntries(Object.entries(byTile).map(([k, v]) => [k, v.length])),
   };
