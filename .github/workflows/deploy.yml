@@ -15,6 +15,10 @@ name: Deploy site (GitHub Pages)
 # older than a week (or on demand), and saves the refreshed manifest back to the
 # branch. Collection needs open internet, which CI has; failures never block a
 # deploy (the app falls back to freely-licensed and generated covers).
+#
+# It also sweeps the city for spots (scripts/discover-spots.mjs → dist/data/,
+# at most every 20 h; otherwise the live files are re-published) and stamps the
+# build (dist/version.json) so open apps know a newer one is live.
 
 on:
   push:
@@ -65,8 +69,21 @@ jobs:
         timeout-minutes: 15
         env:
           FORCE: ${{ github.event.inputs.force_media == 'true' && '1' || '' }}
+      - name: Discover spots (OpenStreetMap sweep, press buzz, diners' suggestions, pictures)
+        run: node scripts/discover-spots.mjs
+        continue-on-error: true
+        timeout-minutes: 25
+        env:
+          OUT_DIR: .discovery
+          FORCE: ${{ github.event.inputs.force_media == 'true' && '1' || '' }}
       - name: Export web bundle
-        run: npx expo export -p web
+        run: EXPO_PUBLIC_BUILD="${GITHUB_SHA::7}" npx expo export -p web
+      - name: Publish live data + build stamp
+        run: |
+          mkdir -p dist/data
+          [ -d .discovery ] && cp -r .discovery/. dist/data/ || echo "no discovered spots this deploy"
+          printf '{"build":"%s","built_at":"%s"}\n' "${GITHUB_SHA::7}" "$(date -u +%FT%TZ)" > dist/version.json
+          ls dist/data | head -20
       - name: Save refreshed media + clip manifests to the branch
         continue-on-error: true
         run: |

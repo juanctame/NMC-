@@ -49,6 +49,7 @@ export function FanChip({ fan, line, star, quiet }: { fan: Fan; line: string; st
         </Banner>
         <Mono s={7} c={C.inkMuted} numberOfLines={1}>
           {line}
+          {fan.kind === 'friend' ? ' · sample' : ''}
         </Mono>
       </View>
     </Pressable>

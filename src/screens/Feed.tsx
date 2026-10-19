@@ -30,6 +30,7 @@ import { StickerView, StickerPressable } from '../components/Sticker';
 import { Photo } from '../components/Photo';
 import { Monogram } from '../components/Monogram';
 import { PlaceCover, VenueCover } from '../components/Cover';
+import { FreshFinds } from '../components/FreshFinds';
 import { CacheChip } from '../components/CacheChip';
 import { Grain } from '../components/Grain';
 import { ScreenIn } from '../components/Anim';
@@ -722,6 +723,9 @@ export function Feed() {
             ) : null}
           </View>
         ) : null}
+
+        {/* Fresh finds — a new hand of discovered spots on every visit */}
+        {city.id === 'cdmx' ? <FreshFinds /> : null}
 
         {/* New & rising — 2026 openings and newly acclaimed CDMX spots (guide) */}
         {city.id === 'cdmx' && CARTE_RISING.length ? (

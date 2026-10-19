@@ -56,7 +56,8 @@ import {
 import {
   registerProfile,
   fetchProfileByHandle,
-  fetchProfileByEmail,
+  fetchMyProfile,
+  ownerOfHandle,
   handleFromEmail,
   uniqueHandle,
 } from '../data/accounts';
@@ -70,6 +71,9 @@ import {
   type AuthUser,
 } from '../data/auth';
 import { type TrendingVideo, type VideoMeta } from '../data/videos';
+import * as cloud from '../data/cloud';
+import { loadMine, saveMine } from '../data/mine';
+import { categoryOf } from '../data/favorites';
 import { searchPlaceVideos } from '../data/videosLive';
 import { computeMonthlyTrending } from '../data/trendingLive';
 import type { BuzzResult } from '../data/trending';
@@ -282,6 +286,10 @@ export type State = {
   authUser: AuthUser | null;
   session: Session | null;
   authError: string | null;
+  // Trial backend: is this person's data on the server, and when it last synced
+  cloud: cloud.CloudState;
+  cloudNote: string;
+  syncedAt: number | null;
 
   // Language (flag-picked i18n)
   lang: Lang;
@@ -456,7 +464,8 @@ export type Actions = {
   stepDownCritic: () => void;
   setBio: (text: string) => void;
   signOut: () => void;
-  connectAccount: (handle: string) => Promise<boolean>;
+  connectAccount: (handle: string) => Promise<boolean | 'google'>;
+  syncNow: () => Promise<void>;
   signInWithGoogle: () => void;
   // language
   setLang: (lang: Lang) => void;
@@ -499,6 +508,11 @@ const registeredPlaces: Record<string, Place> = {};
 
 /** Entities we've already attempted a Wikipedia/Wikimedia lookup for (fetch once). */
 const wikiTried = new Set<string>();
+
+/** Make places from outside the guide (e.g. discovered spots) openable anywhere. */
+export function registerPlaces(ps: Place[]): void {
+  ps.forEach((p) => (registeredPlaces[p.id] = registeredPlaces[p.id] || p));
+}
 
 export function resolvePlace(id: string | null, nearbyById: Record<string, Place>): Place | undefined {
   if (!id) return undefined;
@@ -580,6 +594,9 @@ const initialState = (): State => ({
   hydrated: false,
   authUser: null,
   session: null,
+  cloud: cloud.cloudConfigured() ? 'connecting' : 'off',
+  cloudNote: '',
+  syncedAt: null,
   authError: null,
   lang: 'en',
   placeVideos: {},
@@ -666,32 +683,146 @@ function rankRow(s: State, id: string) {
 }
 
 /**
- * Resolve the app profile for a signed-in Google user: reuse their existing
- * account (matched by email) or create a fresh one from their Google identity
- * with a unique handle. Always returns a usable profile, even offline.
+ * Resolve the passport for a signed-in user: their own on the server (by user,
+ * or — first Google sign-in — a pilot passport registered with that email),
+ * else the one on this device (a device account that hasn't synced yet), else
+ * — for Google — a fresh one from their identity with a unique handle. Null
+ * means "make a passport" (onboarding).
  */
-async function profileForAuthUser(user: AuthUser): Promise<Profile> {
-  const existing = user.email ? await fetchProfileByEmail(user.email) : null;
+async function profileForAuthUser(user: AuthUser, local: Profile | null): Promise<Profile | null> {
+  const existing = await fetchMyProfile();
   if (existing) {
-    const merged: Profile = {
+    return {
       ...existing,
-      userId: existing.userId || user.id,
-      email: existing.email || user.email,
+      userId: user.id,
+      email: user.email || existing.email,
       avatarUrl: user.avatarUrl || existing.avatarUrl,
     };
-    void registerProfile(merged);
-    return merged;
   }
+  if (local) return { ...local, userId: user.id, ...(user.email ? { email: user.email } : {}), ...(user.avatarUrl && !local.avatarUrl ? { avatarUrl: user.avatarUrl } : {}) };
+  if (user.anonymous) return null;
   const handle = await uniqueHandle(handleFromEmail(user.email, user.name));
-  const p = makeProfileFromAuth({
-    userId: user.id,
-    email: user.email,
-    name: user.name,
-    handle,
-    avatarUrl: user.avatarUrl,
-  });
-  void registerProfile(p);
-  return p;
+  return makeProfileFromAuth({ userId: user.id, email: user.email, name: user.name, handle, avatarUrl: user.avatarUrl });
+}
+
+// ── your data: on the device, and on the server ─────────────────────────────
+
+/** Persistence + sync only run once a passport's data has been loaded (never for the preview). */
+let mineOwner: string | null = null;
+let pushTimer: ReturnType<typeof setTimeout> | null = null;
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+/** A ranked place known only by id + name (from another device): enough to list it. */
+function placeFromRow(r: cloud.RankRow): Place {
+  let h = 0;
+  for (const c of r.place_id) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return {
+    id: r.place_id,
+    name: r.place_name || r.place_id,
+    cuisine: '',
+    hood: '',
+    price: '',
+    photo: PHOTO_POOL[h % PHOTO_POOL.length],
+    addr: '',
+    blurb: '',
+    openInfo: '',
+    ...(r.score != null ? { score: Number(r.score) } : {}),
+  };
+}
+
+/** Merge what the server holds into what's on the device (union; the device wins a tie). */
+function mergeMine(get: () => State, set: (p: Partial<State>) => void, remote: { rankings: cloud.RankRow[]; wants: string[]; follows: string[] }): void {
+  const s = get();
+  const have = new Set(s.ranked.map((p) => p.id));
+  const fromServer = remote.rankings
+    .filter((r) => !have.has(r.place_id))
+    .map((r) => {
+      const known = resolvePlace(r.place_id, s.nearbyById);
+      const p = known ? { ...known, score: r.score != null ? Number(r.score) : known.score } : placeFromRow(r);
+      registeredPlaces[p.id] = p;
+      return { p, pos: r.position ?? 999 };
+    });
+  const ranked = s.ranked.length
+    ? [...s.ranked, ...fromServer.map((x) => x.p)].sort((a, b) => (b.score || 0) - (a.score || 0))
+    : fromServer.sort((a, b) => a.pos - b.pos).map((x) => x.p);
+  const wantIds = [...new Set([...s.wantIds, ...remote.wants])].filter((id) => !ranked.some((p) => p.id === id));
+  const follows = { ...s.follows };
+  remote.follows.forEach((k) => (follows[k] = true));
+  set({ ranked, wantIds, follows });
+}
+
+/**
+ * Open a passport's data: what's on the device first (instantly), then the
+ * server — signing this device in as a real user if it isn't yet, registering
+ * the passport, merging their data from other devices and sending up anything
+ * only this device had. `fresh` = a brand-new passport (starts empty).
+ */
+async function startAccount(set: (p: Partial<State>) => void, get: () => State, opts: { fresh?: boolean } = {}): Promise<void> {
+  let p = get().profile;
+  if (!p) return;
+  const local = opts.fresh ? null : await loadMine(p.handle);
+  if (local) {
+    local.ranked.forEach((x) => (registeredPlaces[x.id] = x));
+    set({ ranked: local.ranked, wantIds: local.wantIds, saved: local.saved, follows: local.follows, userReviews: local.userReviews });
+  } else if (opts.fresh || mineOwner !== p.handle) {
+    // A real passport starts empty — the demo list is only for the preview.
+    set({ ranked: [], wantIds: [], saved: {}, follows: {}, userReviews: [] });
+  }
+  mineOwner = p.handle;
+  void persistMine(get);
+
+  if (!cloud.cloudConfigured()) return;
+  set({ cloud: 'connecting', cloudNote: '' });
+  let sess = cloud.currentSession();
+  if (!sess) {
+    sess = await cloud.signInAnonymously();
+    if (sess) {
+      cloud.setSession(sess);
+      set({ session: sess, authUser: sess.user });
+    }
+  }
+  if (!sess) {
+    const st = cloud.cloudState();
+    set({ cloud: st.state === 'connecting' ? 'local' : st.state, cloudNote: st.note });
+    return;
+  }
+  // The passport on the server: keep the handle unique (someone else may own it).
+  if (!(await registerProfile(p))) {
+    const owner = await ownerOfHandle(p.handle);
+    if (owner && owner !== sess.user.id) {
+      const handle = await uniqueHandle(p.handle);
+      const moved: Profile = { ...p, handle };
+      const m = await loadMine(p.handle);
+      if (m) await saveMine(handle, m);
+      p = moved;
+      mineOwner = handle;
+      saveProfile(moved);
+      set({ profile: moved });
+      await registerProfile(moved);
+    }
+  }
+  const remote = await cloud.pullMine();
+  if (!remote) {
+    set({ cloud: 'offline', cloudNote: 'Saved on this device — it will sync when the server answers.' });
+    return;
+  }
+  cloud.markSynced(remote);
+  mergeMine(get, set, remote);
+  const ok = await pushNow(get);
+  void cloud.touchSession();
+  set({ cloud: ok ? 'synced' : 'offline', cloudNote: ok ? '' : 'Some changes are waiting to sync.', syncedAt: ok ? Date.now() : get().syncedAt });
+}
+
+async function persistMine(get: () => State): Promise<void> {
+  const s = get();
+  if (!s.profile || mineOwner !== s.profile.handle) return;
+  await saveMine(s.profile.handle, { ranked: s.ranked, wantIds: s.wantIds, saved: s.saved, follows: s.follows, userReviews: s.userReviews });
+}
+
+async function pushNow(get: () => State): Promise<boolean> {
+  const s = get();
+  if (!s.profile || mineOwner !== s.profile.handle || !cloud.currentSession()) return false;
+  return cloud.pushMine({ ranked: s.ranked, wantIds: s.wantIds, follows: Object.keys(s.follows).filter((k) => s.follows[k]) }, (p) => categoryOf(p));
 }
 
 let decideLoaded = false;
@@ -1149,7 +1280,7 @@ export const useStore = create<State & Actions>((set, get) => ({
     };
     set({ userReviews: [rev, ...s.userReviews], reviewOpen: false, reviewDraftText: '', reviewDraftDish: '' });
     // Publish to the shared backend so other testers see it (no-op if disabled).
-    void pushSharedReview(rev);
+    void pushSharedReview(rev, s.profile?.handle);
   },
   loadSharedReviews: async (placeId) => {
     const incoming = await fetchSharedReviews(placeId);
@@ -1189,7 +1320,13 @@ export const useStore = create<State & Actions>((set, get) => ({
       if (user && user.id) {
         const full: Session = { ...session, user };
         await saveSession(full);
-        const prof = await profileForAuthUser(user);
+        cloud.setSession(full);
+        const prof = await profileForAuthUser(user, await loadProfile());
+        if (!prof) {
+          // A device account with no passport yet: make one.
+          set({ authUser: user, session: full, screen: 'onboard', hydrated: true });
+          return;
+        }
         saveProfile(prof);
         set({
           authUser: user,
@@ -1200,6 +1337,7 @@ export const useStore = create<State & Actions>((set, get) => ({
           nearbyStatus: 'idle',
           hydrated: true,
         });
+        void startAccount(set, get);
         return;
       }
       // Token no longer valid — drop it and fall through to local/guest.
@@ -1208,16 +1346,19 @@ export const useStore = create<State & Actions>((set, get) => ({
 
     // 4) No auth session: fall back to the local (handle-based) profile as before.
     const p = await loadProfile();
-    if (p) set({ profile: p, city: cityById(p.cityId), screen: 'feed', nearbyStatus: 'idle' });
-    else set({ screen: SKIP_ONBOARDING ? 'feed' : 'onboard' });
-    set({ hydrated: true });
+    if (p) {
+      set({ profile: p, city: cityById(p.cityId), screen: 'feed', nearbyStatus: 'idle', hydrated: true });
+      void startAccount(set, get);
+      return;
+    }
+    set({ screen: SKIP_ONBOARDING ? 'feed' : 'onboard', hydrated: true, cloud: cloud.cloudConfigured() ? 'local' : 'off' });
   },
   createProfile: (input) => {
     const p = makeProfile(input);
     saveProfile(p);
-    // Register the username in the central directory (no-op if backend off).
-    void registerProfile(p);
     set({ profile: p, city: cityById(p.cityId), nearby: [], nearbyById: {}, nearbyStatus: 'idle' });
+    // A new passport starts empty, signs this device in and registers the username.
+    void startAccount(set, get, { fresh: true });
   },
   becomeCritic: (beat) => {
     const s = get();
@@ -1247,9 +1388,11 @@ export const useStore = create<State & Actions>((set, get) => ({
   signOut: () => {
     const s = get();
     if (s.session) void signOutRemote(s.session.access_token);
+    mineOwner = null;
+    cloud.setSession(null);
     clearProfile();
     clearSession();
-    set({ profile: null, authUser: null, session: null, authError: null, screen: 'onboard', obStep: 0, tastes: [], stamped: false });
+    set({ profile: null, authUser: null, session: null, authError: null, screen: 'onboard', obStep: 0, tastes: [], stamped: false, cloud: cloud.cloudConfigured() ? 'local' : 'off', syncedAt: null });
   },
   signInWithGoogle: () => {
     set({ authError: null });
@@ -1258,6 +1401,9 @@ export const useStore = create<State & Actions>((set, get) => ({
   connectAccount: async (handle) => {
     const found = await fetchProfileByHandle(handle);
     if (!found) return false;
+    // A passport that belongs to a signed-in user comes back through their Google
+    // sign-in, never by typing its handle.
+    if (found.userId && found.userId !== cloud.currentSession()?.user.id) return 'google';
     saveProfile(found);
     set({
       profile: found,
@@ -1268,7 +1414,20 @@ export const useStore = create<State & Actions>((set, get) => ({
       nearbyById: {},
       nearbyStatus: 'idle',
     });
+    void startAccount(set, get);
     return true;
+  },
+  syncNow: async () => {
+    if (!get().profile) return;
+    const remote = await cloud.pullMine();
+    if (!remote) {
+      if (cloud.currentSession()) set({ cloud: 'offline' });
+      return;
+    }
+    cloud.markSynced(remote);
+    mergeMine(get, set, remote);
+    const ok = await pushNow(get);
+    set({ cloud: ok ? 'synced' : 'offline', syncedAt: ok ? Date.now() : get().syncedAt });
   },
 
   // ── language ──
@@ -1523,6 +1682,41 @@ export const useStore = create<State & Actions>((set, get) => ({
   openTasteCard: () => set({ tasteCardOpen: true }),
   closeTasteCard: () => set({ tasteCardOpen: false }),
 }));
+
+// Your data follows every change: saved on the device right away, sent to the
+// server a moment later (batched), and refreshed when the app comes back.
+useStore.subscribe((s, prev) => {
+  if (!s.profile || mineOwner !== s.profile.handle) return;
+  const dataChanged = s.ranked !== prev.ranked || s.wantIds !== prev.wantIds || s.follows !== prev.follows;
+  if (dataChanged || s.saved !== prev.saved || s.userReviews !== prev.userReviews) {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => void persistMine(useStore.getState), 300);
+  }
+  if (dataChanged && cloud.currentSession()) {
+    if (pushTimer) clearTimeout(pushTimer);
+    pushTimer = setTimeout(async () => {
+      const ok = await pushNow(useStore.getState);
+      useStore.setState(ok ? { cloud: 'synced', syncedAt: Date.now() } : { cloud: 'offline', cloudNote: 'Some changes are waiting to sync.' });
+    }, 1500);
+  }
+});
+
+// A refreshed token is remembered (so the session survives a reload).
+cloud.onSessionChange((sess) => {
+  if (sess) {
+    void saveSession(sess);
+    useStore.setState({ session: sess });
+  }
+});
+
+// Each time the app comes back to the foreground (after a minute away), pull the latest.
+if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+  let hiddenAt = 0;
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') hiddenAt = Date.now();
+    else if (hiddenAt && Date.now() - hiddenAt > 60_000) void useStore.getState().syncNow();
+  });
+}
 
 /** Loose venue-name slug for matching a curated place to its Google twin. */
 function nameSlug(s: string): string {

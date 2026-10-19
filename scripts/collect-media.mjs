@@ -488,7 +488,7 @@ async function main() {
   console.log('wrote', OUT, JSON.stringify(stats));
 }
 
-export { harvestSite, commonsVisitorPhotos };
+export { harvestSite, commonsVisitorPhotos, unfurl };
 
 // Run when invoked directly (the functions above are importable for tests).
 if (process.argv[1] && import.meta.url.endsWith(process.argv[1].split('/').pop())) {

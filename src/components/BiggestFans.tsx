@@ -115,7 +115,7 @@ export function BiggestFans({ place }: { place: Place }) {
                       </Banner>
                       <Mono s={8.5} c={C.inkMuted} numberOfLines={1}>
                         {e.featured ? `Featured in ${e.fan.kind === 'me' ? 'your' : 'their'} Top 4${e.slot != null ? ` · Nº${e.slot + 1}` : ''}` : `${e.fan.kind === 'me' ? 'Your' : 'Their'} top-ranked ${catLabel(g.category).toLowerCase()}`}
-                        {e.fan.kind === 'community' ? ' · CRTQ tester' : ''}
+                        {e.fan.kind === 'community' ? ' · on CRTQ' : e.fan.kind === 'friend' ? ' · sample diner' : ''}
                       </Mono>
                     </View>
                     {e.featured ? (

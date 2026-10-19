@@ -91,7 +91,8 @@ export function Onboarding() {
     setConnErr('');
     const ok = await connectAccount(connHandle);
     setConnBusy(false);
-    if (!ok) setConnErr(t('you.notFound'));
+    if (ok === 'google') setConnErr('That passport is protected — continue with Google to restore it.');
+    else if (!ok) setConnErr(t('you.notFound'));
   };
 
   const handleVal = handleEdited ? handleRaw : suggestHandle(name);
@@ -449,6 +450,9 @@ export function Onboarding() {
         </StickerView>
 
         <View style={{ flex: 1, minHeight: 20 }} />
+        <Mono s={9} c={C.inkMuted} accessibilityLabel="Trial notice" style={{ marginTop: 14, lineHeight: 14 }}>
+          CRTQ is in a public trial. Your passport name, rankings, reviews and favourites are visible to others on CRTQ; your want-to-try list stays private. Your data is saved to your account so it follows you, and crash reports (no personal content) help us fix things. You can sign out any time from your passport.
+        </Mono>
         <StickerPressable offset="sm" radius={999} onPress={submit} style={{ marginTop: 20, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.stampGreen, paddingVertical: 14 }}>
           <Banner s={14} tk={0.1} c={C.paper0}>
             Stamp me in

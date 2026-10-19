@@ -42,6 +42,8 @@ import { VideoOverlay } from './components/VideoOverlay';
 import { DecideFab } from './components/DecideFab';
 import { TopFourPicker } from './overlays/TopFourPicker';
 import { favoritesFromRanked, publishFavorites } from './data/favorites';
+import { ErrorBoundary, installGlobalErrorReporting } from './components/ErrorBoundary';
+import { StatusBanner } from './components/StatusBanner';
 import { identity } from './data/profile';
 
 const SCREENS: Record<Screen, React.ComponentType> = {
@@ -73,6 +75,7 @@ const DECIDE_SCREENS: Screen[] = ['feed', 'log', 'board', 'table'];
 
 export function Root() {
   const screen = useStore((s) => s.screen);
+  useEffect(() => installGlobalErrorReporting(() => useStore.getState().screen), []);
   const rankOpen = useStore((s) => s.rankOpen);
   const attachOpen = useStore((s) => s.attachOpen);
   const createOpen = useStore((s) => s.createOpen);
@@ -98,16 +101,17 @@ export function Root() {
     loadTopFourState();
   }, [loadDecideState, loadTopFourState]);
 
+  const cloudState = useStore((s) => s.cloud);
   // Publish your favourites + Top 4 so you show up among each place's biggest fans
   // for other testers (no-op until the shared `favorites` table exists).
   useEffect(() => {
-    if (!profile?.handle) return;
+    if (!profile?.handle || cloudState !== 'synced') return;
     const t = setTimeout(() => {
       const me = identity(profile);
       void publishFavorites({ handle: me.handle, name: me.name, initials: me.initials, color: me.color, avatarUrl: me.avatarUrl }, favoritesFromRanked(ranked), topFour);
     }, 2500);
     return () => clearTimeout(t);
-  }, [profile, ranked, topFour]);
+  }, [profile, ranked, topFour, cloudState]);
 
   // Pull live places for the selected city on first launch.
   useEffect(() => {
@@ -120,8 +124,11 @@ export function Root() {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.paper50 }}>
-      <Active />
+      <ErrorBoundary screen={screen} onRecover={() => useStore.setState({ screen: 'feed', tab: 'feed', profileStack: [] })}>
+        <Active />
+      </ErrorBoundary>
       {showTabBar ? <TabBar /> : null}
+      <StatusBanner />
       {showTabBar && hasPlaces && DECIDE_SCREENS.includes(screen) ? <DecideFab /> : null}
       {rankOpen ? <RankFlow /> : null}
       {attachOpen ? <AttachSheet /> : null}

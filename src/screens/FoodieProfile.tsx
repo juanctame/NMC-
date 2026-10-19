@@ -59,7 +59,7 @@ export function FoodieProfile() {
   const favs: PersonFavs | undefined = friendRow ? friendFavs(friendRow.id) : remote && remote !== 'loading' ? remote : undefined;
   // One shape for a friend and for any other tester.
   const friend = friendRow
-    ? { ...friendRow, avatarUrl: undefined as string | undefined, handle: '@' + friendRow.name.split(' ')[0].toLowerCase(), line: `${friendRow.year} ${t('foodie.placesYear')}` }
+    ? { ...friendRow, avatarUrl: undefined as string | undefined, handle: '@' + friendRow.name.split(' ')[0].toLowerCase(), line: `Sample diner · ${friendRow.year} ${t('foodie.placesYear')}` }
     : favs
       ? {
           id: favs.person.id,

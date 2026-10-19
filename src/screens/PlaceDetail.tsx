@@ -836,6 +836,18 @@ export function PlaceDetail() {
         <View style={{ paddingHorizontal: 18 }}>
           {tab === 'overview' ? (
             <>
+            {/^(osm|sug)-/.test(base.id) ? (
+              <View accessibilityLabel="Where this spot comes from" style={{ marginTop: 12, borderLeftWidth: 3, borderColor: C.stampBlue, paddingLeft: 10, gap: 2 }}>
+                <Banner s={8.5} tk={0.14} c={C.stampBlue}>
+                  {base.id.startsWith('sug-') ? 'Found by a diner' : 'Found by the city sweep'}
+                </Banner>
+                <Mono s={8.5} c={C.inkMuted} style={{ lineHeight: 13 }}>
+                  {base.id.startsWith('sug-')
+                    ? 'Someone on CRTQ told us about it. Nobody has ranked it yet — be the first.'
+                    : 'New on the map, in the news or off the beaten path. Nobody on CRTQ has ranked it yet — be the first. Map data © OpenStreetMap contributors.'}
+                </Mono>
+              </View>
+            ) : null}
             {/* the lowdown — Google's own words about the place (when available) */}
             {details?.summary ? (
               <View style={{ marginTop: 14, flexDirection: 'row', gap: 10 }}>

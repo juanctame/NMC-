@@ -22,8 +22,9 @@ import type { Place } from '../store/data';
 import { FRIENDS, byId as seedById } from '../store/data';
 import { CARTE_CDMX } from './carte';
 import { CHEFS, type Chef } from './chefs';
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config';
+import { SUPABASE_URL } from '../config';
 import { sharedEnabled } from './shared';
+import { authHeaders, currentSession, readHeaders } from './cloud';
 
 export type FavCat = 'tacos' | 'seafood' | 'fine' | 'mexican' | 'cafe' | 'bar' | 'world';
 
@@ -265,11 +266,13 @@ export async function publishFavorites(me: { handle: string; name: string; initi
   top.forEach((t) => {
     if (t && !seen.has(t.placeId + t.category)) rows.push({ handle: me.handle, name: me.name, initials: me.initials, color: me.color, avatar_url: me.avatarUrl, place_id: t.placeId, category: t.category, featured: true });
   });
-  const h = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' };
+  const uid = currentSession()?.user.id;
+  const h = await authHeaders();
+  if (!uid || !h) return;
   try {
     // Replace this person's rows wholesale (their favourites change as they rank).
-    await fetch(`${SUPABASE_URL}/rest/v1/favorites?handle=eq.${encodeURIComponent(me.handle)}`, { method: 'DELETE', headers: h });
-    if (rows.length) await fetch(`${SUPABASE_URL}/rest/v1/favorites`, { method: 'POST', headers: { ...h, Prefer: 'return=minimal' }, body: JSON.stringify(rows) });
+    await fetch(`${SUPABASE_URL}/rest/v1/favorites?user_id=eq.${uid}`, { method: 'DELETE', headers: h });
+    if (rows.length) await fetch(`${SUPABASE_URL}/rest/v1/favorites`, { method: 'POST', headers: { ...h, Prefer: 'return=minimal' }, body: JSON.stringify(rows.map((r) => ({ ...r, user_id: uid }))) });
   } catch {
     // best effort
   }
@@ -280,7 +283,7 @@ export async function fetchSharedFans(placeId: string, exceptHandle?: string): P
   if (!sharedEnabled()) return [];
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/favorites?place_id=eq.${encodeURIComponent(placeId)}&select=*&limit=60`, {
-      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
+      headers: await readHeaders(),
     });
     if (!res.ok) return [];
     const rows = (await res.json()) as FavRow[];
@@ -418,7 +421,7 @@ export async function fetchPersonFavs(handle: string): Promise<PersonFavs | null
   if (!sharedEnabled()) return null;
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/favorites?handle=eq.${encodeURIComponent(handle)}&select=*&order=id.asc&limit=40`, {
-      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
+      headers: await readHeaders(),
     });
     if (!res.ok) return null;
     const rows = (await res.json()) as FavRow[];

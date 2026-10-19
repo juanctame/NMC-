@@ -1,5 +1,10 @@
 # Shared demo (usernames + reviews across everyone)
 
+> **Superseded by [TRIAL_RUN.md](TRIAL_RUN.md).** The tables below (and more)
+> are now created automatically by `supabase/migrations/0002_trial.sql`, with
+> stricter rules: every write belongs to a signed-in user. Don't run the SQL
+> here by hand — it would re-open the permissive pilot policies.
+
 By default the app is **local-only**: each tester's username and reviews live in
 their own browser. Turning on a tiny Supabase backend makes **usernames and
 reviews shared** — every username people create is registered in one central

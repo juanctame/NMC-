@@ -24,6 +24,7 @@
  * Verified critics carry a PRESS passport (type D): a darker cover, beat and
  * readers on the data page, and the Critic's Desk for hosting events.
  */
+import { TrialPanel } from '../components/TrialPanel';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, ScrollView, Pressable, TextInput, Animated, PanResponder, Easing } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -1406,6 +1407,10 @@ export function Passport() {
         </View>
       ) : null}
       <View>
+        <SectionLabel>TRIAL & SYNC</SectionLabel>
+        <TrialPanel />
+      </View>
+      <View>
         <SectionLabel>{t('you.language').toUpperCase()}</SectionLabel>
         <LangPicker showLabels size={42} />
       </View>
@@ -1417,7 +1422,7 @@ export function Passport() {
               {me.handle}
             </Banner>
             <Mono s={9} c={C.inkMuted} style={{ marginTop: 2 }} numberOfLines={1}>
-              {profile && me.email ? `${t('you.googleAccount')} · ${me.email}` : critic ? 'Verified Critic · this device' : profile ? 'Local account · this device' : 'Guest · demo identity'}
+              {profile && me.email ? `${t('you.googleAccount')} · ${me.email}` : critic ? 'Verified Critic' : profile ? 'Passport' : 'Guest · demo identity'}
             </Mono>
           </View>
           <View style={{ flexDirection: 'row', gap: 8 }}>
