@@ -262,6 +262,13 @@ Trayectoria), and **awards**.
   credits to a chef is on at least one friend's shortlist and every chef has at
   least one fan: today all 71 chefs have fans (1.3 on average) and 118 of 166
   restaurants have supporters. Real critics never get favourites assigned.
+- **Discovered spots (beyond the guide)** — every deploy sweeps the whole city
+  on OpenStreetMap (restaurants, cafés, bars, street food, bakeries…), keeps a
+  first-seen ledger between runs, reads recent Google News headlines about
+  openings, and folds in spots diners send from the app. The result is
+  published as `data/*.json` and read fresh by the app's **Fresh finds** —
+  a different hand every visit (newness, buzz, your taste, distance, minus what
+  you've already been shown). Details and safeguards in TRIAL_RUN.md.
 - **Brand marks** — each venue and chef carries an original **monogram** seal
   (initials on a deterministic colour, in the app's sticker look). These are our
   own marks, not the restaurants' trademarked logos, so they're safe to ship and

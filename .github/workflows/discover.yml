@@ -1,0 +1,67 @@
+name: Discover spots
+
+# Sweeps Mexico City for places to eat (OpenStreetMap), reads the press and
+# diners' suggestions, finds pictures, and publishes the result to the live
+# site's data/ folder (gh-pages) — the app reads it fresh on every launch.
+# Runs on its own clock so a slow map server never holds up a deploy: on push
+# of the script, on demand, and daily once this file is on the default branch.
+# See TRIAL_RUN.md.
+
+on:
+  push:
+    branches: [main, claude/modern-app-interface-design-ax8tbd]
+    paths:
+      - 'scripts/discover-spots.mjs'
+      - '.github/workflows/discover.yml'
+  schedule:
+    - cron: '41 7 * * *' # daily ~01:41 CDMX (runs from the default branch)
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Sweep even if the last sweep is recent'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: discover-spots
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Sweep the city
+        run: node scripts/discover-spots.mjs
+        env:
+          OUT_DIR: .discovery
+          FORCE: ${{ github.event_name == 'schedule' && '' || (github.event.inputs.force == 'false' && '' || '1') }}
+          OSM_BUDGET_MIN: '38'
+          TOTAL_BUDGET_MIN: '50'
+          OVERPASS_TIMEOUT_S: '170'
+      - name: Publish to the live site's data/
+        run: |
+          [ -f .discovery/spots-index.json ] || { echo "nothing to publish"; exit 0; }
+          git config --global user.name  "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for i in 1 2 3 4; do
+            rm -rf site && git clone -q --depth=1 --branch gh-pages "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" site || exit 0
+            rm -rf site/data && mkdir -p site/data && cp -r .discovery/. site/data/
+            cd site
+            git add -A data
+            git diff --cached --quiet && { echo "data unchanged"; exit 0; }
+            git commit -q -m "Spots sweep $(date -u +%F)"
+            git push -q origin HEAD:gh-pages && { echo "published"; exit 0; }
+            cd ..
+            sleep $((i * 5))
+          done
+          echo "could not publish (gh-pages kept moving)"; exit 1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -2,8 +2,8 @@
 /**
  * Spot discovery — always finding new places to eat in Mexico City.
  *
- * Every deploy (at most every SWEEP_HOURS) sweeps the whole city for places to
- * eat and drink and works out which ones are NEW, which are TALKED ABOUT, and
+ * The Discover spots workflow (.github/workflows/discover.yml) sweeps the
+ * whole city for places to eat and drink and works out which ones are NEW, which are TALKED ABOUT, and
  * which diners TOLD US about:
  *
  *  1. OpenStreetMap (Overpass): every named restaurant, café, bar, taquería
@@ -99,7 +99,7 @@ export function tiles(bbox, n = GRID) {
 export function overpassQuery(b) {
   const bb = b.join(',');
   return (
-    `[out:json][timeout:75];(` +
+    `[out:json][timeout:${Math.max(60, Number(process.env.OVERPASS_TIMEOUT_S || 75) - 10)}];(` +
     `nwr["amenity"~"^(restaurant|cafe|fast_food|bar|pub|ice_cream|food_court|biergarten)$"]["name"](${bb});` +
     `nwr["shop"~"^(bakery|pastry|coffee|deli|confectionery|tortilla)$"]["name"](${bb});` +
     `);out center meta;`
@@ -117,7 +117,7 @@ async function overpass(query, label) {
     if (!live.length) return null;
     const ep = live[attempt % live.length];
     const host = ep.split('/')[2];
-    const ms = Math.min(90000, timeLeft(OSM_BUDGET));
+    const ms = Math.min(Number(process.env.OVERPASS_TIMEOUT_S || 90) * 1000, timeLeft(OSM_BUDGET));
     try {
       let r = await get(ep, { method: 'POST', body: 'data=' + encodeURIComponent(query), headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' } }, ms);
       // Some instances refuse POST forms (406): the same query as a GET.
@@ -216,7 +216,7 @@ export async function sweepOsm(bbox) {
     }
     console.log(`  tile ${i + 1}/${ts.length}: ${els.length} elements`);
     all.push(...els);
-    await sleep(1500);
+    await sleep(4000); // be polite to the shared Overpass servers
   }
   return { spots: normalize(all), failedTiles: failed.length, failedBoxes: failed };
 }

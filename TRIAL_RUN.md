@@ -33,7 +33,12 @@ sync*); nothing is lost, and everything syncs once the server is back.
 5. *(Recommended)* **Merge this branch into `main`.** GitHub only runs
    scheduled workflows from the default branch, so the daily refresh (clips,
    restaurant photos, the city sweep for new spots) starts once the workflows
-   are on `main`. Until then, every push re-deploys with fresh data.
+   are on `main`. Until then, run **Actions → Discover spots** by hand (or push)
+   to re-sweep.
+6. *(Optional, for many more spots)* Public OpenStreetMap servers are often
+   overloaded, so a sweep can take several runs to cover the whole city. A
+   Google Places key with billing enabled (GOOGLE_PLACES.md) would add a much
+   faster second source.
 
 ## What's built
 
@@ -75,8 +80,12 @@ today / 7 days, rankings, reviews, spots sent).
 - Your own data syncs on launch, on return, and after every change.
 
 ### Always finding new spots
-`scripts/discover-spots.mjs` runs on every deploy (a full sweep at most every
-20 h; in between it re-publishes the last one):
+`scripts/discover-spots.mjs` runs in its own workflow (**Actions → Discover
+spots**: on push of the script, on demand, and daily once on `main`), with a
+50-minute budget so slow public map servers never hold up a deploy. It
+publishes straight into the live site's `data/`; deploys carry that forward.
+Tiles a sweep can't reach keep the previous sweep's spots, and areas reached
+for the first time join the baseline (they aren't mislabelled "new"):
 1. **OpenStreetMap** — every named restaurant, café, bar, street-food stall,
    bakery… in Mexico City, swept in 9 tiles across 3 Overpass mirrors.
 2. **A memory between runs** — `data/spots-ledger.json` (published with the
