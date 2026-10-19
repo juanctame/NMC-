@@ -15,6 +15,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import dns from 'node:dns/promises';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const cfg = fs.readFileSync(path.join(ROOT, 'src/config.ts'), 'utf8');
@@ -79,12 +80,20 @@ if (TOKEN) {
 }
 
 // ── 2. probe: what the public app sees ──────────────────────────────────────
+const why = (e) => [e?.cause?.code, e?.cause?.message || e?.message].filter(Boolean).join(' ').slice(0, 200);
+try {
+  const host = new URL(URL_).hostname;
+  out.dns = { host, addresses: (await dns.lookup(host, { all: true })).map((a) => a.address) };
+} catch (e) {
+  out.dns = { error: why(e) };
+  out.notes.push(`the project's address doesn't resolve (${why(e)}) — the Supabase project may be paused or deleted: open the dashboard and restore it`);
+}
 try {
   const r = await fetch(`${URL_}/auth/v1/settings`, { headers: anonH });
   const s = await json(r);
   out.auth = { reachable: r.ok, anonymous_sign_ins: !!s?.external?.anonymous_users, google: !!s?.external?.google, signups_disabled: !!s?.disable_signup };
 } catch (e) {
-  out.auth = { reachable: false, error: String(e).slice(0, 200) };
+  out.auth = { reachable: false, error: why(e) };
 }
 
 const TABLES = {
@@ -104,7 +113,7 @@ for (const [t, col] of Object.entries(TABLES)) {
     const total = range.includes('/') ? range.split('/')[1] : null;
     out.tables[t] = r.ok ? { ok: true, rows: total === '*' ? null : Number(total) } : { ok: false, status: r.status, error: JSON.stringify(await json(r)).slice(0, 160) };
   } catch (e) {
-    out.tables[t] = { ok: false, error: String(e).slice(0, 160) };
+    out.tables[t] = { ok: false, error: why(e) };
   }
 }
 try {
