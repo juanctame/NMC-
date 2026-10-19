@@ -72,6 +72,7 @@ import {
 } from '../data/auth';
 import { type TrendingVideo, type VideoMeta } from '../data/videos';
 import * as cloud from '../data/cloud';
+import type { ImportSource } from '../data/importers';
 import { loadMine, saveMine } from '../data/mine';
 import { categoryOf } from '../data/favorites';
 import { searchPlaceVideos } from '../data/videosLive';
@@ -339,6 +340,8 @@ export type State = {
 
   // "Build your passport from photos" — import flow state
   photoImportOpen: boolean;
+  importOpen: boolean;
+  importSource: ImportSource | null;
   photoImportStatus: PhotoImportStatus;
   photoMatches: PhotoMatch[];
   photoScanned: number; // how many photos were read in the last run
@@ -475,6 +478,9 @@ export type Actions = {
   loadPlaceDetails: (placeId: string) => Promise<void>;
   // build-from-photos import
   openPhotoImport: () => void;
+  openImport: (source?: ImportSource | null) => void;
+  closeImport: () => void;
+  applyImport: (items: { place: Place; list: 'been' | 'want'; score?: number }[]) => { been: number; want: number };
   closePhotoImport: () => void;
   runPhotoImport: () => Promise<void>;
   togglePhotoMatch: (id: string) => void;
@@ -625,6 +631,8 @@ const initialState = (): State => ({
   clipsStartId: null,
   clipsReturn: null,
   photoImportOpen: false,
+  importOpen: false,
+  importSource: null,
   photoImportStatus: 'idle',
   photoMatches: [],
   photoScanned: 0,
@@ -709,6 +717,8 @@ async function profileForAuthUser(user: AuthUser, local: Profile | null): Promis
 
 /** Persistence + sync only run once a passport's data has been loaded (never for the preview). */
 let mineOwner: string | null = null;
+/** Want-to-try places brought in by an import (kept when a new passport starts). */
+const importedWants = new Set<string>();
 let pushTimer: ReturnType<typeof setTimeout> | null = null;
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -765,8 +775,12 @@ async function startAccount(set: (p: Partial<State>) => void, get: () => State, 
     local.ranked.forEach((x) => (registeredPlaces[x.id] = x));
     set({ ranked: local.ranked, wantIds: local.wantIds, saved: local.saved, follows: local.follows, userReviews: local.userReviews });
   } else if (opts.fresh || mineOwner !== p.handle) {
-    // A real passport starts empty — the demo list is only for the preview.
-    set({ ranked: [], wantIds: [], saved: {}, follows: {}, userReviews: [] });
+    // A real passport starts empty — the demo list is only for the preview — except
+    // for what they brought in while making it (photos, Beli, Google Maps, notes).
+    const s0 = get();
+    const ranked = opts.fresh ? s0.ranked.filter((x) => x.provisional || x.importedFrom) : [];
+    const wantIds = opts.fresh ? s0.wantIds.filter((id) => importedWants.has(id)) : [];
+    set({ ranked, wantIds, saved: Object.fromEntries(wantIds.map((id) => [id, true])), follows: {}, userReviews: [] });
   }
   mineOwner = p.handle;
   void persistMine(get);
@@ -1515,6 +1529,49 @@ export const useStore = create<State & Actions>((set, get) => ({
       placeDetails: { ...st.placeDetails, [placeId]: det },
       placeDetailsStatus: { ...st.placeDetailsStatus, [placeId]: has ? 'ready' : 'empty' },
     }));
+  },
+
+  // ── bring your places (Beli, Google Maps, notes, files) ──
+  openImport: (source) => set({ importOpen: true, importSource: source ?? null }),
+  closeImport: () => set({ importOpen: false }),
+  applyImport: (items) => {
+    const s = get();
+    const ranked = s.ranked.slice();
+    const pos = new Map(ranked.map((p, i) => [p.id, i]));
+    const want = new Set(s.wantIds);
+    const saved = { ...s.saved };
+    let been = 0;
+    let wanted = 0;
+    for (const it of items) {
+      const p = it.place;
+      registeredPlaces[p.id] = registeredPlaces[p.id] || p;
+      if (it.list === 'been') {
+        const at = pos.get(p.id);
+        if (at != null) {
+          // already on the list: it's theirs now (even if the preview had it), and
+          // their own score replaces a provisional or sample one
+          const cur = ranked[at];
+          const own = it.score != null && (cur.provisional || !s.profile);
+          ranked[at] = { ...cur, importedFrom: cur.importedFrom || p.importedFrom || 'import', ...(own ? { score: it.score, provisional: false } : {}) };
+          if (!s.profile) been++;
+          continue;
+        }
+        const score = it.score ?? provisionalScore(p);
+        ranked.push({ ...p, score, provisional: it.score == null, importedFrom: p.importedFrom || 'import' });
+        pos.set(p.id, ranked.length - 1);
+        want.delete(p.id);
+        delete saved[p.id];
+        been++;
+      } else if (!pos.has(p.id)) {
+        if (!want.has(p.id) || !importedWants.has(p.id)) wanted++;
+        want.add(p.id);
+        saved[p.id] = true;
+        importedWants.add(p.id);
+      }
+    }
+    ranked.sort((a, b) => (b.score || 0) - (a.score || 0));
+    set({ ranked, wantIds: [...want], saved });
+    return { been, want: wanted };
   },
 
   // ── build your passport from photos ──

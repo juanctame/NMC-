@@ -34,6 +34,7 @@ export type Place = {
   photoUrls?: string[]; // up to a few live photos (for the gallery)
   photoAttr?: string; // required attribution for that photo
   provisional?: boolean; // auto-added (e.g. from photo import) — needs a real rank
+  importedFrom?: string; // brought in from another app or list (beli, google, notes, file)
   // Curated "Carte" fields (CDMX guide dataset — Michelin/50 Best/DENUE).
   category?: string; // original guide category, e.g. "Mexicana contemporánea"
   borough?: string; // alcaldía

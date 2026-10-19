@@ -334,7 +334,7 @@ export function Log() {
   const insets = useSafeAreaInsets();
   const logSeg = useStore((s) => s.logSeg);
   const setLogSeg = useStore((s) => s.setLogSeg);
-  const openPhotoImport = useStore((s) => s.openPhotoImport);
+  const openImport = useStore((s) => s.openImport);
   const ranked = useStore((s) => s.ranked); // stable ref — derive lists below
   const wantIds = useStore((s) => s.wantIds);
   const t = useT();
@@ -373,7 +373,8 @@ export function Log() {
         </View>
         <StickerPressable
           offset="sm"
-          onPress={openPhotoImport}
+          onPress={() => openImport()}
+          accessibilityLabel="Bring your places"
           style={{ marginTop: 11, marginBottom: 14, flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 10, paddingHorizontal: 12 }}
         >
           <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-5deg' }] }}>
@@ -383,10 +384,10 @@ export function Log() {
           </View>
           <View style={{ flex: 1, minWidth: 0 }}>
             <Banner s={10.5} tk={0.08} c={C.inkDeep}>
-              Build your Guide from photos
+              Bring your places
             </Banner>
             <Mono s={9} c={C.inkSoft} style={{ marginTop: 2 }}>
-              Import food photos → we find the spots you've been
+              From Beli, Google Maps, Notes, photos or any list
             </Mono>
           </View>
           <Banner s={11} tk={0.1} c={C.ink400}>

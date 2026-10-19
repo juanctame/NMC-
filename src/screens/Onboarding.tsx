@@ -69,6 +69,8 @@ export function Onboarding() {
   const connectAccount = useStore((s) => s.connectAccount);
   const signInWithGoogle = useStore((s) => s.signInWithGoogle);
   const openPhotoImport = useStore((s) => s.openPhotoImport);
+  const openImport = useStore((s) => s.openImport);
+  const importedCount = useStore((s) => s.ranked.filter((p) => p.importedFrom || p.provisional).length + Object.values(s.saved).filter(Boolean).length);
   const authError = useStore((s) => s.authError);
   const t = useT();
 
@@ -430,23 +432,42 @@ export function Onboarding() {
             </View>
             <View style={{ flex: 1, minWidth: 0 }}>
               <SerifDisplay s={16} c={C.inkDeep} style={{ lineHeight: 18 }}>
-                Build from your photos
+                Bring your places
               </SerifDisplay>
               <Serif s={12.5} c={C.inkMuted} style={{ marginTop: 2, lineHeight: 17 }}>
-                Import your food photos and we'll fill your passport with the spots you've already been.
+                Already keep a list? Start your passport with it — read on this device, and you check every match.
               </Serif>
             </View>
           </View>
-          <StickerPressable
-            offset="sm"
-            radius={999}
-            onPress={openPhotoImport}
-            style={{ marginTop: 12, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper100, paddingVertical: 11 }}
-          >
-            <Banner s={11.5} tk={0.08} c={C.inkDeep}>
-              Choose photos →
-            </Banner>
-          </StickerPressable>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+            {(
+              [
+                ['beli', 'Beli'],
+                ['google', 'Google Maps'],
+                ['notes', 'Notes'],
+                ['photos', 'Photos'],
+                ['file', 'A file'],
+              ] as const
+            ).map(([id, label]) => (
+              <StickerPressable
+                key={id}
+                offset="sm"
+                radius={999}
+                onPress={() => (id === 'photos' ? openPhotoImport() : openImport(id))}
+                accessibilityLabel={`Import from ${label}`}
+                style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper100, paddingVertical: 8, paddingHorizontal: 13 }}
+              >
+                <Banner s={10.5} tk={0.06} c={C.inkDeep}>
+                  {label}
+                </Banner>
+              </StickerPressable>
+            ))}
+          </View>
+          {importedCount ? (
+            <Mono s={9.5} c={C.stampGreen} style={{ marginTop: 10 }}>
+              ✓ {importedCount} {importedCount === 1 ? 'place' : 'places'} ready for your passport
+            </Mono>
+          ) : null}
         </StickerView>
 
         <View style={{ flex: 1, minHeight: 20 }} />

@@ -57,6 +57,32 @@ sync*); nothing is lost, and everything syncs once the server is back.
   (a pilot passport with no owner can be claimed once; one with an owner comes
   back only through its owner's sign-in).
 
+### Bring your places (import)
+When making a passport (onboarding step 3, *Jumpstart*) or any time from the
+Guide (*Bring your places*), people can fill their passport from the lists they
+already keep. Everything is read on the device; nothing is uploaded.
+- **Beli** — screenshots of their Been / Want to Try lists, read in the browser
+  (Tesseract OCR, loaded on first use). Names, colonias and the score in each
+  ring come through; or paste a copied list.
+- **Google Maps** — a Google Takeout export: saved lists (`Saved/*.csv`, *Want
+  to go* → want to try), starred places (`Saved Places.json`), reviews
+  (`Reviews.json`, stars → score), older Timeline history (only places CRTQ
+  knows); or pasted Maps links.
+- **Notes / any list** — pasted text or a `.txt`: bullets, numbering,
+  checklists (☑ = been, ☐ = want), "9/10", "4.5/5", ★★★★, and headings like
+  "Want to try:".
+- **Photos** — the food-photo location import.
+- **Any file** — CSV / JSON with a name column (score, notes, list, coordinates
+  picked up), or KML from Google My Maps.
+
+Each entry is matched to a real place (the guide, the discovered spots, nearby)
+by name — forgiving accents, "Taquería"/"Restaurante" prefixes and OCR slips —
+plus location and colonia when given. The review screen shows every match
+(✓ matched, ? best guess with alternatives, + new to CRTQ), Been / Want per
+place, and their own scores; imports made during onboarding carry into the new
+passport. Code: `src/data/importers.ts`, `placeMatch.ts`, `ocr.web.ts`,
+`src/overlays/ImportHub.tsx`.
+
 ### The database (`supabase/migrations/0002_trial.sql`)
 | table | who reads | who writes |
 |---|---|---|

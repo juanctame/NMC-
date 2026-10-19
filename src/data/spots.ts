@@ -124,3 +124,29 @@ export async function loadSpotFeed(): Promise<SpotFeed | null> {
   }
   return memo;
 }
+
+let allMemo: Spot[] | null = null;
+
+/**
+ * Every spot the sweep knows (all map tiles, ~6k) — loaded only when needed,
+ * e.g. to recognise the places in an imported list. Falls back to the pool.
+ */
+export async function loadAllSpots(): Promise<Spot[]> {
+  if (allMemo) return allMemo;
+  const idx = await freshJson<{ tiles?: Record<string, number> }>('data/spots-index.json', 15000);
+  const keys = Object.keys(idx?.tiles || {});
+  const out: Spot[] = [];
+  let i = 0;
+  await Promise.all(
+    Array.from({ length: 6 }, async () => {
+      while (i < keys.length) {
+        const k = keys[i++];
+        const t = await freshJson<Spot[]>(`data/spots/${k}.json`, 15000);
+        if (Array.isArray(t)) out.push(...t);
+      }
+    }),
+  );
+  if (!out.length) out.push(...((await loadSpotFeed())?.spots || []));
+  allMemo = out;
+  return out;
+}

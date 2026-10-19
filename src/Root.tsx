@@ -38,6 +38,7 @@ import { CreateTable } from './overlays/CreateTable';
 import { ChannelComposer } from './overlays/ChannelComposer';
 import { TasteCard } from './overlays/TasteCard';
 import { PhotoImport } from './overlays/PhotoImport';
+import { ImportHub } from './overlays/ImportHub';
 import { VideoOverlay } from './components/VideoOverlay';
 import { DecideFab } from './components/DecideFab';
 import { TopFourPicker } from './overlays/TopFourPicker';
@@ -85,6 +86,7 @@ export function Root() {
   const channelComposerOpen = useStore((s) => s.channelComposerOpen);
   const tasteCardOpen = useStore((s) => s.tasteCardOpen);
   const photoImportOpen = useStore((s) => s.photoImportOpen);
+  const importOpen = useStore((s) => s.importOpen);
   const nearbyStatus = useStore((s) => s.nearbyStatus);
   const loadNearby = useStore((s) => s.loadNearby);
   const hasPlaces = useStore((s) => s.nearby.length > 0);
@@ -137,6 +139,7 @@ export function Root() {
       {reviewOpen ? <ReviewComposer /> : null}
       {channelComposerOpen ? <ChannelComposer /> : null}
       {tasteCardOpen ? <TasteCard /> : null}
+      {importOpen ? <ImportHub /> : null}
       {photoImportOpen ? <PhotoImport /> : null}
       {topPickerOpen ? <TopFourPicker /> : null}
       <VideoOverlay />
