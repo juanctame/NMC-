@@ -358,8 +358,12 @@ export function matchNews(items, named) {
   for (const s of named) {
     if (!matchable(s.n)) continue;
     const key = ' ' + words(s.n) + ' ';
+    // A one-word name ("Cafeteros", "Hugo") counts only as a proper noun: written
+    // with its capital, not as the headline's first word.
+    const single = words(s.n).split(' ').length === 1;
+    const proper = single ? new RegExp(`(?<=\\S.*)(?<![\\p{L}\\p{N}])${s.n.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\p{L}\\p{N}])`, 'u') : null;
     for (const h of heads) {
-      if (h.t.includes(key)) {
+      if (h.t.includes(key) && (!proper || proper.test(h.i.title))) {
         const l = hits.get(s.id) || [];
         if (l.length < 4) l.push({ title: h.i.title.slice(0, 160), link: h.i.link, source: h.i.source, date: h.i.date ? new Date(h.i.date).toISOString().slice(0, 10) : undefined });
         hits.set(s.id, l);
@@ -536,6 +540,8 @@ export async function main() {
   const ledger = ledgerRes.data || (ledgerRes.missing ? null : { ids: {}, baselineOnly: true });
   const prevMedia = mediaRes.data?.items || {};
 
+  const colonias = await hoods(CITY.bbox); // first: one small query, needed for every spot
+  console.log(`${colonias.length} colonias`);
   console.log('sweeping OpenStreetMap…');
   const { spots, failedTiles, failedBoxes } = await sweepOsm(CITY.bbox, ledger?.unswept || []);
   // Areas the sweep couldn't reach this time keep last sweep's spots (no holes in the map).
@@ -567,7 +573,7 @@ export async function main() {
     }
   }
   console.log(`${spots.length} spots`);
-  assignHoods(spots, await hoods(CITY.bbox));
+  assignHoods(spots, colonias);
   linkGuide(spots, readGuide());
 
   // newness, with the ledger carried forward
