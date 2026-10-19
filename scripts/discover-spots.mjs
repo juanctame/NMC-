@@ -204,10 +204,24 @@ export function normalize(elements) {
   return [...out.values()];
 }
 
-export async function sweepOsm(bbox) {
+const CENTRE = { la: 19.42, lo: -99.16 }; // Roma / Condesa / Juárez: where most spots are
+
+/**
+ * The order to sweep tiles in: ones a previous run couldn't reach first, then
+ * from the centre outwards — so a slow day still covers the busiest areas and
+ * every run makes progress across the city (pure; unit-tested).
+ */
+export function tileOrder(ts, unswept = []) {
+  const key = (b) => b.join(',');
+  const pending = new Set(unswept.map(key));
+  const d = (b) => distM({ la: (b[0] + b[2]) / 2, lo: (b[1] + b[3]) / 2 }, CENTRE);
+  return [...ts].sort((a, b) => Number(pending.has(key(b))) - Number(pending.has(key(a))) || d(a) - d(b));
+}
+
+export async function sweepOsm(bbox, unswept = []) {
   const all = [];
   const failed = [];
-  const ts = tiles(bbox);
+  const ts = tileOrder(tiles(bbox), unswept);
   for (const [i, b] of ts.entries()) {
     const els = await overpass(overpassQuery(b), `tile ${i + 1}/${ts.length}`);
     if (!els) {
@@ -523,7 +537,7 @@ export async function main() {
   const prevMedia = mediaRes.data?.items || {};
 
   console.log('sweeping OpenStreetMap…');
-  const { spots, failedTiles, failedBoxes } = await sweepOsm(CITY.bbox);
+  const { spots, failedTiles, failedBoxes } = await sweepOsm(CITY.bbox, ledger?.unswept || []);
   // Areas the sweep couldn't reach this time keep last sweep's spots (no holes in the map).
   if (failedBoxes.length && prevIndex.data?.tiles) {
     let carried = 0;
