@@ -1,0 +1,50 @@
+{
+  "checked_at": "2026-10-19T17:15:30.819Z",
+  "project": "psbxxcupbbgwcjzqkygb",
+  "managed": false,
+  "migrations": [],
+  "auth": {
+    "reachable": false,
+    "error": "TypeError: fetch failed"
+  },
+  "tables": {
+    "profiles": {
+      "ok": false,
+      "error": "TypeError: fetch failed"
+    },
+    "reviews": {
+      "ok": false,
+      "error": "TypeError: fetch failed"
+    },
+    "favorites": {
+      "ok": false,
+      "error": "TypeError: fetch failed"
+    },
+    "rankings": {
+      "ok": false,
+      "error": "TypeError: fetch failed"
+    },
+    "wants": {
+      "ok": false,
+      "error": "TypeError: fetch failed"
+    },
+    "follows": {
+      "ok": false,
+      "error": "TypeError: fetch failed"
+    },
+    "spot_suggestions": {
+      "ok": false,
+      "error": "TypeError: fetch failed"
+    },
+    "places": {
+      "ok": false,
+      "error": "TypeError: fetch failed"
+    }
+  },
+  "stats": null,
+  "notes": [
+    "No SUPABASE_ACCESS_TOKEN secret: probed only. Add it to apply the migrations and auth settings automatically (TRIAL_RUN.md).",
+    "missing or unreadable: profiles, reviews, favorites, rankings, wants, follows, spot_suggestions, places"
+  ],
+  "ready": false
+}
