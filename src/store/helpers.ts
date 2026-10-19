@@ -25,5 +25,5 @@ export function fmt(s: number): string {
 }
 
 export function metaOf(p: { cuisine: string; hood: string; price: string }): string {
-  return `${p.cuisine} · ${p.hood} · ${p.price}`;
+  return [p.cuisine, p.hood, p.price].filter((x) => x && x.trim()).join(' · ');
 }

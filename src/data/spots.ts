@@ -42,7 +42,8 @@ export type SpotFeed = { generated_at: string; city: string; spots: Spot[] };
 
 const CACHE = 'nmc.spots.v1';
 
-const cap = (s: string) => s.replace(/\b\w/g, (m) => m.toUpperCase());
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const title = (s: string) => s.replace(/(^|\s)\w/g, (m) => m.toUpperCase());
 
 function hash(s: string): number {
   let h = 0;
@@ -70,9 +71,9 @@ export function spotReason(s: Spot): string {
 
 /** A discovered spot as a place the app can show, open, rank and save. */
 export function spotToPlace(s: Spot): Place {
-  const kind = s.c?.length ? `${cap(s.c[0])} · ${s.k}` : s.k;
+  const kind = s.c?.length ? `${title(s.c[0])} · ${s.k}` : s.k;
   const facts = [
-    s.new ? spotReason(s) : '',
+    s.new ? spotReason(s) + '.' : '',
     s.buzz?.length ? `“${s.buzz[0].title}”` : '',
     s.sug?.note ? `A diner says: “${s.sug.note}”` : '',
     s.vegan ? 'Vegan options.' : '',

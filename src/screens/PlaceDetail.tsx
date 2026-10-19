@@ -771,11 +771,13 @@ export function PlaceDetail() {
                 </Banner>
               </InfoChip>
             ) : null}
-            <InfoChip>
-              <Mono s={10} c={C.inkDeep}>
-                {priceLabel(base, details)}
-              </Mono>
-            </InfoChip>
+            {priceLabel(base, details) ? (
+              <InfoChip>
+                <Mono s={10} c={C.inkDeep}>
+                  {priceLabel(base, details)}
+                </Mono>
+              </InfoChip>
+            ) : null}
             {openNow !== undefined ? (
               <InfoChip bg={openNow ? C.stampGreen : C.paper0}>
                 <Banner s={9.5} tk={0.06} c={openNow ? C.paper0 : C.inkMuted}>
