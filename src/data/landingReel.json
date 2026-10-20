@@ -1,8 +1,8 @@
 {
  "version": 1,
- "generatedAt": "2026-10-20T16:20:01.414Z",
- "took": "29s",
- "checked": 18,
+ "generatedAt": "2026-10-20T16:45:24.235Z",
+ "took": "31s",
+ "checked": 3,
  "fromPlatform": 2,
  "clips": [
   {
@@ -67,48 +67,6 @@
    "placeId": null,
    "via": "commons",
    "start": 10
-  },
-  {
-   "id": "commons:File:Man with masa in tortillería.webm",
-   "title": "Man with masa in tortillería",
-   "creator": "Armando Gómez",
-   "license": "CC BY-SA 4.0",
-   "page": "https://commons.wikimedia.org/wiki/File:Man_with_masa_in_tortiller%C3%ADa.webm",
-   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Man_with_masa_in_tortiller%C3%ADa.webm/1280px--Man_with_masa_in_tortiller%C3%ADa.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
-   "sources": [
-    {
-     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/2/26/Man_with_masa_in_tortiller%C3%ADa.webm/Man_with_masa_in_tortiller%C3%ADa.webm.1080p.vp9.webm",
-     "type": "video/webm",
-     "height": 1080
-    }
-   ],
-   "width": 1920,
-   "height": 1080,
-   "durationSec": 8,
-   "placeId": null,
-   "via": "commons",
-   "start": 0
-  },
-  {
-   "id": "commons:File:Tortilla baking process.webm",
-   "title": "Tortilla baking process",
-   "creator": "Armando Gómez",
-   "license": "CC BY-SA 4.0",
-   "page": "https://commons.wikimedia.org/wiki/File:Tortilla_baking_process.webm",
-   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Tortilla_baking_process.webm/1280px--Tortilla_baking_process.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
-   "sources": [
-    {
-     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/f/ff/Tortilla_baking_process.webm/Tortilla_baking_process.webm.1080p.vp9.webm",
-     "type": "video/webm",
-     "height": 1080
-    }
-   ],
-   "width": 1920,
-   "height": 1080,
-   "durationSec": 15,
-   "placeId": null,
-   "via": "commons",
-   "start": 0
   }
  ]
 }
