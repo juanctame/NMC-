@@ -1,0 +1,41 @@
+name: Read a public Beli profile
+
+# One-off research helper: fetches a public Beli profile link the way a browser
+# and a link-preview bot would, and saves what comes back (headers, page, any
+# data URLs it references) to research/beli/ so the profile can be imported.
+on:
+  push:
+    branches: [claude/modern-app-interface-design-ax8tbd]
+    paths: ['.github/workflows/probe-beli.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch
+        run: |
+          mkdir -p research/beli && cd research/beli
+          H=tametitoeats
+          for url in "https://beliapp.co/app/$H" "https://www.beliapp.co/app/$H" "https://beliapp.com/app/$H" "https://www.beliapp.com/app/$H" "https://beliapp.co/$H" "https://app.beliapp.com/$H"; do
+            n=$(echo "$url" | sed 's#https://##; s#[/.]#_#g')
+            for ua in "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)"; do
+              tag=$( [ "${ua:0:8}" = "facebook" ] && echo bot || echo browser )
+              curl -sS -L -m 30 -A "$ua" -D "$n.$tag.headers.txt" -o "$n.$tag.html" -w "%{http_code} %{url_effective} %{size_download}\n" "$url" >> summary.txt 2>&1 || echo "fail $url" >> summary.txt
+            done
+          done
+          # any JSON / API URLs the pages mention
+          grep -hoE 'https?://[^"'"'"' <>]+(api|json|graphql|profile|user)[^"'"'"' <>]*' *.html 2>/dev/null | sort -u | head -40 > referenced-urls.txt || true
+          dig +short beliapp.co beliapp.com www.beliapp.co >> summary.txt 2>&1 || true
+          ls -la >> summary.txt
+      - name: Save
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/beli
+          git commit -q -m "Beli profile probe [skip ci]" || exit 0
+          for i in 1 2 3; do git pull -q --rebase origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 5; done
