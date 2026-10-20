@@ -66,10 +66,11 @@ function fromCommonsPages(pages, ctx = {}) {
   for (const p of Object.values(pages || {})) {
     const vi = (p.videoinfo || [])[0];
     if (!vi || !/^video\/|application\/ogg/.test(vi.mime || '')) continue;
-    if ((vi.height || 0) < 720 || (vi.width || 0) < 960) continue; // the original itself must be HD
+    if (Math.min(vi.height || 0, vi.width || 0) < 720) continue; // the original itself must be HD (landscape or portrait)
     const secs = Number(vi.duration || 0);
     if (secs && (secs < 6 || secs > 1800)) continue;
-    const ders = (vi.derivatives || []).filter((x) => x.src && /\/transcoded\//.test(x.src) && playable(x.type) && (x.height || 0) >= 720);
+    const short = (x) => Math.min(x.height || 0, x.width || 1e9);
+    const ders = (vi.derivatives || []).filter((x) => x.src && /\/transcoded\//.test(x.src) && playable(x.type) && (x.height || 0) >= 720 && short(x) >= 720);
     if (!ders.length) continue;
     const em = vi.extmetadata || {};
     const title = String(p.title || '').replace(/^File:/, '').replace(/\.[a-z0-9]+$/i, '').replace(/_/g, ' ');
@@ -204,30 +205,38 @@ async function main() {
   for (const [k, c] of own) if (k.startsWith('archive:') && left() > 0) add(await archiveItem(k.slice(8), { placeId: c.scope === 'venue' ? c.placeId : null, via: 'restaurant page' }));
   const fromPlatform = found.size;
 
-  // 2. Commons footage of Mexico City food.
-  const CATS = [
-    ['Videos of Mexican cuisine', { mexican: true }],
-    ['Videos of food of Mexico', { mexican: true }],
-    ['Videos of street food in Mexico', { mexican: true }],
-    ['Videos of tacos', {}],
-    ['Videos of tortillas', {}],
-    ['Videos of markets in Mexico', { mexican: true }],
-    ['Videos of Mexico City', {}],
-    ['Videos of Centro Histórico (Mexico City)', {}],
-    ['Videos of Coyoacán', {}],
-    ['Videos of Xochimilco', {}],
-  ];
-  for (const [cat, ctx] of CATS) {
+  // 2. Commons footage of Mexico City food: its real video categories (found by
+  // name, not guessed), then plain searches by dish, market and neighbourhood.
+  const cats = new Map();
+  for (const q of ['Videos Mexico City', 'Videos Mexican cuisine', 'Videos food Mexico', 'Videos markets Mexico', 'Videos tacos', 'Videos tortillas', 'Videos street food Mexico', 'Videos Ciudad de México']) {
+    if (left() < 0) break;
+    const d = await getJson(`${API}&list=search&srnamespace=14&srlimit=10&srsearch=${encodeURIComponent(q)}`);
+    for (const r of d?.query?.search || []) {
+      const name = String(r.title).replace(/^Category:/, '');
+      const f = fold(name);
+      if (!/^videos? /.test(f)) continue;
+      if (!(/mexic|cdmx|ciudad de mexico/.test(f) || FOODY.test(f))) continue;
+      if (ELSEWHERE.test(f)) continue;
+      cats.set(name, { mexican: /mexic/.test(f) });
+    }
+    await sleep(200);
+  }
+  for (const [cat, ctx] of cats) {
     if (left() < 0 || found.size >= MAX * 3) break;
     add(await commonsCategory(cat, ctx));
     await sleep(250);
   }
-  const QUERIES = ['tacos Ciudad de México', 'taquería Mexico City', 'tortillas comal México', 'mercado Ciudad de México comida', 'street food Mexico City', 'comida callejera Ciudad de México', 'elotes esquites', 'tamales México', 'cocina mexicana'];
+  const QUERIES = [
+    'tacos', 'taquería', 'tortillas', 'tortillería', 'comal', 'tamales', 'elotes', 'pozole', 'mole', 'churros', 'pan de muerto', 'quesadillas',
+    'Mexico City food', 'Ciudad de México comida', 'street food Mexico', 'comida callejera', 'mercado México',
+    'Mercado de la Merced', 'Mercado de Jamaica', 'Mercado de San Juan', 'Mercado de Coyoacán', 'Mercado de Sonora', 'Xochimilco', 'Coyoacán', 'Garibaldi',
+  ];
   for (const q of QUERIES) {
     if (left() < 0 || found.size >= MAX * 3) break;
     add(await commonsSearch(q, {}));
     await sleep(250);
   }
+  console.log(`  categories found: ${[...cats.keys()].join(' · ') || 'none'}`);
 
   // Pick: the platform's own first, then 1080p before 720p, then wider shots; one per title stem.
   const stem = (c) => fold(c.title).replace(/[^a-z]+/g, ' ').split(' ').slice(0, 3).join(' ');
