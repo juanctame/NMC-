@@ -18,15 +18,21 @@ export type PhotoPoint = {
 export type PhotoMatch = {
   place: Place;
   count: number; // how many of the user's photos landed here
-  preview: string; // one photo thumbnail to show
+  preview: string; // one photo thumbnail to show (the most food-like)
   distM: number; // metres from the photo to the matched venue
   picked: boolean; // included in the import
+  visits?: number; // distinct days with photos here
+  foodPhotos?: number; // photos the food scan says are a meal
+  confidence?: 'high' | 'medium' | 'low';
+  labels?: string[]; // what the food scan saw ("seafood", "a dish"…)
+  alts?: Place[]; // other places that close, to correct the match
 };
 
 export type PhotoImportStatus =
   | 'idle'
   | 'picking'
   | 'matching'
+  | 'scanning' // the on-device food scan
   | 'review'
   | 'done'
   | 'nogps' // photos had no location tags (common on mobile browsers)

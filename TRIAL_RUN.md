@@ -58,7 +58,9 @@ sync*); nothing is lost, and everything syncs once the server is back.
   back only through its owner's sign-in).
 
 ### Bring your places (import)
-When making a passport (onboarding step 3, *Jumpstart*) or any time from the
+When making a passport — its own step (*Bring your places*, step 3 of 4, before
+House rules), which also opens the account in the background so everything
+brought in is synced the moment the passport is stamped — or any time from the
 Guide (*Bring your places*), people can fill their passport from the lists they
 already keep. Everything is read on the device; nothing is uploaded.
 - **Beli** — screenshots of their Been / Want to Try lists, read in the browser
@@ -71,7 +73,16 @@ already keep. Everything is read on the device; nothing is uploaded.
 - **Notes / any list** — pasted text or a `.txt`: bullets, numbering,
   checklists (☑ = been, ☐ = want), "9/10", "4.5/5", ★★★★, and headings like
   "Want to try:".
-- **Photos** — the food-photo location import.
+- **Photos** — pick a camera roll's worth of photos (up to 800). Each photo's
+  location (EXIF GPS, read on-device) is matched to the places CRTQ knows (the
+  guide + every discovered spot), and an on-device **food scan** (TensorFlow.js
+  + MobileNet v2, loaded on first use, ~14 MB) checks which photos are meals.
+  Photos taken within a few hours and a short walk of each other count as one
+  meal (so one drifted photo can't move it next door); meals on different days
+  are separate visits. Places with a meal photographed right there, or several
+  visits, are ticked as *Been here*; a nearby meal is *Likely*; only non-food
+  photos close by is *Maybe* (not ticked). Each match can be switched to the
+  next-closest place. Code: `src/data/visits.ts`, `foodScan.web.ts`.
 - **Any file** — CSV / JSON with a name column (score, notes, list, coordinates
   picked up), or KML from Google My Maps.
 

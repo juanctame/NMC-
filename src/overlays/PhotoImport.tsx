@@ -67,12 +67,16 @@ export function PhotoImport() {
   const added = useStore((s) => s.photoAdded);
   const run = useStore((s) => s.runPhotoImport);
   const toggle = useStore((s) => s.togglePhotoMatch);
+  const swap = useStore((s) => s.swapPhotoMatch);
+  const progress = useStore((s) => s.photoProgress);
   const confirm = useStore((s) => s.confirmPhotoMatches);
   const close = useStore((s) => s.closePhotoImport);
   const go = useStore((s) => s.go);
 
   const pickedCount = matches.filter((m) => m.picked).length;
   const photoTotal = matches.reduce((n, m) => n + m.count, 0);
+  const visitTotal = matches.reduce((n, m) => n + (m.visits || 1), 0);
+  const BADGE = { high: ['Been here', C.stampGreen], medium: ['Likely', C.ink400], low: ['Maybe', C.inkSoft] } as const;
 
   return (
     <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 60 }}>
@@ -103,24 +107,24 @@ export function PhotoImport() {
                       Private by design
                     </Banner>
                     <Serif s={13} c={C.inkDeep} style={{ marginTop: 4, lineHeight: 19 }}>
-                      Your photos never leave your device. We read only each photo's location tag, then ask which restaurant sits there.
+                      Your photos never leave your device. We read each photo's location tag, find the restaurant there, and a food scan on your phone checks it's a meal — so you only get the places you actually ate at.
                     </Serif>
                   </View>
                 </View>
                 <Primary label="Choose photos →" onPress={run} bg={C.sun400} fg={C.inkDeep} />
                 <Mono s={9.5} c={C.inkSoft} style={{ textAlign: 'center', lineHeight: 15 }}>
-                  Works best with photos taken at the table. Screenshots & location-stripped photos are skipped.
+                  Pick as many as you like — a whole month or year of your camera roll. Screenshots & location-stripped photos are skipped.
                 </Mono>
               </View>
             ) : null}
 
             {status === 'picking' ? <Busy text="Opening your photos…" /> : null}
-            {status === 'matching' ? <Busy text={`Reading locations & matching… (${scanned} photo${scanned === 1 ? '' : 's'})`} /> : null}
+            {status === 'matching' || status === 'scanning' ? <Busy text={progress || `Reading locations… (${scanned} photo${scanned === 1 ? '' : 's'})`} /> : null}
 
             {status === 'review' ? (
               <View style={{ gap: 12, paddingTop: 2 }}>
                 <SerifItalic s={13.5} c={C.inkMuted} style={{ lineHeight: 20 }}>
-                  {`Matched ${photoTotal} photo${photoTotal === 1 ? '' : 's'} to ${matches.length} spot${matches.length === 1 ? '' : 's'}. Uncheck anything that isn't right, then add the rest.`}
+                  {`${matches.length} place${matches.length === 1 ? '' : 's'} you've been — ${visitTotal} visit${visitTotal === 1 ? '' : 's'} across ${photoTotal} photo${photoTotal === 1 ? '' : 's'}. The sure ones are ticked; check the rest, then add them.`}
                 </SerifItalic>
                 <View style={{ gap: 9 }}>
                   {matches.map((m) => (
@@ -128,6 +132,7 @@ export function PhotoImport() {
                       key={m.place.id}
                       offset="sm"
                       onPress={() => toggle(m.place.id)}
+                      accessibilityLabel={`Photo match: ${m.place.name}`}
                       style={{ flexDirection: 'row', alignItems: 'center', gap: 11, backgroundColor: m.picked ? C.paper0 : C.paper100, borderWidth: 2.5, borderColor: C.inkBlack, paddingVertical: 9, paddingHorizontal: 11, opacity: m.picked ? 1 : 0.6 }}
                     >
                       <Image source={{ uri: m.preview }} style={{ width: 52, height: 52, borderWidth: 2, borderColor: C.inkBlack }} contentFit="cover" />
@@ -138,9 +143,29 @@ export function PhotoImport() {
                         <Mono s={9} c={C.inkMuted} style={{ marginTop: 3 }} numberOfLines={1}>
                           {metaOf(m.place)}
                         </Mono>
-                        <Mono s={8.5} c={C.inkSoft} style={{ marginTop: 2 }}>
-                          {m.distM} m away · {m.count} photo{m.count === 1 ? '' : 's'}
+                        <Mono s={8.5} c={C.inkSoft} style={{ marginTop: 2 }} numberOfLines={1}>
+                          {[
+                            m.visits && m.visits > 1 ? `${m.visits} visits` : '1 visit',
+                            m.foodPhotos ? `${m.foodPhotos} food photo${m.foodPhotos === 1 ? '' : 's'}` : `${m.count} photo${m.count === 1 ? '' : 's'}`,
+                            m.labels?.length ? m.labels.join(', ') : `${m.distM} m away`,
+                          ].join(' · ')}
                         </Mono>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                          {m.confidence ? (
+                            <View accessibilityLabel={`Confidence: ${BADGE[m.confidence][0]}`} style={{ backgroundColor: BADGE[m.confidence][1], borderWidth: 1.5, borderColor: C.inkBlack, paddingVertical: 1, paddingHorizontal: 6 }}>
+                              <Banner s={7.5} tk={0.08} c={C.paper0}>
+                                {BADGE[m.confidence][0]}
+                              </Banner>
+                            </View>
+                          ) : null}
+                          {m.alts?.length ? (
+                            <Pressable onPress={() => swap(m.place.id)} accessibilityLabel={`Not ${m.place.name}? Try ${m.alts[0].name}`} hitSlop={6}>
+                              <Mono s={8.5} c={C.ink400} style={{ textDecorationLine: 'underline' }} numberOfLines={1}>
+                                Not here? → {m.alts[0].name}
+                              </Mono>
+                            </Pressable>
+                          ) : null}
+                        </View>
                       </View>
                       <View style={{ width: 26, height: 26, borderRadius: 13, borderWidth: 2, borderColor: C.inkBlack, backgroundColor: m.picked ? C.stampGreen : C.paper0, alignItems: 'center', justifyContent: 'center' }}>
                         {m.picked ? (

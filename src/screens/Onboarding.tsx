@@ -71,6 +71,13 @@ export function Onboarding() {
   const openPhotoImport = useStore((s) => s.openPhotoImport);
   const openImport = useStore((s) => s.openImport);
   const importedCount = useStore((s) => s.ranked.filter((p) => p.importedFrom || p.provisional).length + Object.values(s.saved).filter(Boolean).length);
+  const session = useStore((s) => s.session);
+  const cloudState = useStore((s) => s.cloud);
+  const prepareSync = useStore((s) => s.prepareSync);
+  const importedBy = useStore((s) => s.importCounts);
+  React.useEffect(() => {
+    if (obStep === 3) void prepareSync();
+  }, [obStep, prepareSync]);
   const authError = useStore((s) => s.authError);
   const t = useT();
 
@@ -238,7 +245,7 @@ export function Onboarding() {
       <View style={{ flex: 1, backgroundColor: C.paper50 }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top + 40, paddingBottom: insets.bottom + 24, paddingHorizontal: 24 }} keyboardShouldPersistTaps="handled">
           <Banner s={11} tk={0.16} c={C.ink400}>
-            Step 1 of 3
+            Step 1 of 4
           </Banner>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 8 }}>
             <StickerView offset="sm" radius={999} style={{ transform: [{ rotate: '-4deg' }] }}>
@@ -346,7 +353,7 @@ export function Onboarding() {
       <View style={{ flex: 1, backgroundColor: C.paper50 }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top + 40, paddingBottom: insets.bottom + 24, paddingHorizontal: 24 }}>
           <Banner s={11} tk={0.16} c={C.ink400}>
-            Step 2 of 3
+            Step 2 of 4
           </Banner>
           <Display s={32} c={C.inkDeep} style={{ marginTop: 8, lineHeight: 32 }}>
             What do you chase?
@@ -391,12 +398,79 @@ export function Onboarding() {
     );
   }
 
-  // Step 3 — house rules
+  // Step 3 — bring your places (sync is set up here, before the passport is stamped)
+  if (obStep === 3) {
+    const SRC: { id: 'beli' | 'google' | 'notes' | 'photos' | 'file'; label: string; sub: string }[] = [
+      { id: 'photos', label: 'Photos', sub: 'Your camera roll — we find the places you ate at' },
+      { id: 'beli', label: 'Beli', sub: 'Screenshots of your lists, scores included' },
+      { id: 'google', label: 'Google Maps', sub: 'Saved lists, starred places, reviews' },
+      { id: 'notes', label: 'Notes', sub: 'Any list you keep — paste it' },
+      { id: 'file', label: 'A file', sub: 'CSV, JSON or KML' },
+    ];
+    const syncLine = session ? '● Sync ready — everything you bring in is saved to your account when you stamp your passport.' : cloudState === 'connecting' ? '◌ Opening your account…' : '◐ Saved on this device for now — it syncs once the server is reachable.';
+    return (
+      <View style={{ flex: 1, backgroundColor: C.paper50 }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top + 40, paddingBottom: insets.bottom + 24, paddingHorizontal: 24 }}>
+          <Banner s={11} tk={0.16} c={C.ink400}>
+            Step 3 of 4
+          </Banner>
+          <Display s={32} c={C.inkDeep} style={{ marginTop: 8, lineHeight: 32 }}>
+            Bring your places
+          </Display>
+          <Serif s={14} c={C.inkMuted} style={{ marginTop: 10, marginBottom: 6, lineHeight: 20 }}>
+            Start your passport with where you’ve already been. Read on this device — you check every match.
+          </Serif>
+          <Mono s={9.5} c={session ? C.stampGreen : C.inkMuted} accessibilityLabel="Sync status" style={{ marginBottom: 16, lineHeight: 14 }}>
+            {syncLine}
+          </Mono>
+          <View style={{ gap: 10 }}>
+            {SRC.map((src) => {
+              const n = importedBy[src.id] || 0;
+              return (
+                <StickerPressable
+                  key={src.id}
+                  offset="sm"
+                  onPress={() => (src.id === 'photos' ? openPhotoImport() : openImport(src.id))}
+                  accessibilityLabel={`Import from ${src.label}`}
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: n ? C.sun100 : C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 11, paddingHorizontal: 13 }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <SerifDisplay s={16} c={C.inkDeep}>
+                      {src.label}
+                    </SerifDisplay>
+                    <Mono s={9} c={C.inkMuted}>
+                      {src.sub}
+                    </Mono>
+                  </View>
+                  <Banner s={10} tk={0.06} c={n ? C.stampGreen : C.ink400}>
+                    {n ? `✓ ${n}` : 'Add →'}
+                  </Banner>
+                </StickerPressable>
+              );
+            })}
+          </View>
+          {importedCount ? (
+            <Mono s={10} c={C.stampGreen} style={{ marginTop: 12 }}>
+              ✓ {importedCount} {importedCount === 1 ? 'place' : 'places'} ready for your passport
+            </Mono>
+          ) : null}
+          <View style={{ flex: 1, minHeight: 20 }} />
+          <StickerPressable offset="sm" radius={999} onPress={obNext} accessibilityLabel="Continue to house rules" style={{ marginTop: 20, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink400, paddingVertical: 14 }}>
+            <Banner s={14} tk={0.1} c={C.paper0}>
+              {importedCount ? 'Continue →' : 'Skip for now →'}
+            </Banner>
+          </StickerPressable>
+        </ScrollView>
+      </View>
+    );
+  }
+
+  // Step 4 — house rules
   return (
     <View style={{ flex: 1, backgroundColor: C.paper50 }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top + 40, paddingBottom: insets.bottom + 24, paddingHorizontal: 24 }}>
         <Banner s={11} tk={0.16} c={C.ink400}>
-          Step 3 of 3
+          Step 4 of 4
         </Banner>
         <Display s={32} c={C.inkDeep} style={{ marginTop: 8, lineHeight: 32 }}>
           House rules
@@ -419,56 +493,6 @@ export function Onboarding() {
         <Mono s={11} c={C.inkMuted} style={{ marginTop: 16, lineHeight: 18 }}>
           Every table has a named, verified host and a guest list. Report anything off — we read every flag.
         </Mono>
-
-        <StickerView offset="sm" style={{ marginTop: 18, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, padding: 14 }}>
-          <Banner s={9} tk={0.16} c={C.inkMuted}>
-            Jumpstart · optional
-          </Banner>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 9 }}>
-            <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-6deg' }] }}>
-              <Display s={18} c={C.inkDeep}>
-                ＋
-              </Display>
-            </View>
-            <View style={{ flex: 1, minWidth: 0 }}>
-              <SerifDisplay s={16} c={C.inkDeep} style={{ lineHeight: 18 }}>
-                Bring your places
-              </SerifDisplay>
-              <Serif s={12.5} c={C.inkMuted} style={{ marginTop: 2, lineHeight: 17 }}>
-                Already keep a list? Start your passport with it — read on this device, and you check every match.
-              </Serif>
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
-            {(
-              [
-                ['beli', 'Beli'],
-                ['google', 'Google Maps'],
-                ['notes', 'Notes'],
-                ['photos', 'Photos'],
-                ['file', 'A file'],
-              ] as const
-            ).map(([id, label]) => (
-              <StickerPressable
-                key={id}
-                offset="sm"
-                radius={999}
-                onPress={() => (id === 'photos' ? openPhotoImport() : openImport(id))}
-                accessibilityLabel={`Import from ${label}`}
-                style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.paper100, paddingVertical: 8, paddingHorizontal: 13 }}
-              >
-                <Banner s={10.5} tk={0.06} c={C.inkDeep}>
-                  {label}
-                </Banner>
-              </StickerPressable>
-            ))}
-          </View>
-          {importedCount ? (
-            <Mono s={9.5} c={C.stampGreen} style={{ marginTop: 10 }}>
-              ✓ {importedCount} {importedCount === 1 ? 'place' : 'places'} ready for your passport
-            </Mono>
-          ) : null}
-        </StickerView>
 
         <View style={{ flex: 1, minHeight: 20 }} />
         <Mono s={9} c={C.inkMuted} accessibilityLabel="Trial notice" style={{ marginTop: 14, lineHeight: 14 }}>

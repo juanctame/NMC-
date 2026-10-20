@@ -2,14 +2,14 @@
  * Photo import (web) — lets a new user build their passport from the food photos
  * already on their device. We open the system photo/file picker, read each
  * image's **EXIF GPS tag in the browser** (nothing is uploaded), and hand back
- * the coordinates; the store then asks the places provider which restaurant sits
- * at each point. HEIC/screenshots/stripped photos simply yield no GPS and are
+ * the coordinates; the store then matches each point to the places CRTQ knows
+ * and runs the on-device food scan on the ones that land at a restaurant. HEIC/screenshots/stripped photos simply yield no GPS and are
  * skipped. Privacy: only the location tag is read on-device — the photos
  * themselves never leave the browser.
  */
 import type { PhotoPoint } from './photoImportTypes';
 
-const MAX_FILES = 40; // keep the scan snappy
+const MAX_FILES = 800; // a camera roll's worth — only the location header is read up front
 const HEAD_BYTES = 131072; // EXIF APP1 is capped at 64 KB and sits at the file start
 
 export function photoImportSupported(): boolean {

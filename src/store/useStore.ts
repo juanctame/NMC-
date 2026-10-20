@@ -74,6 +74,9 @@ import { type TrendingVideo, type VideoMeta } from '../data/videos';
 import * as cloud from '../data/cloud';
 import type { ImportSource } from '../data/importers';
 import { loadMine, saveMine } from '../data/mine';
+import { loadAllSpots, spotToPlace } from '../data/spots';
+import { gridOf, nearestPlace, findVisits, type PhotoObs } from '../data/visits';
+import { scanFood, foodScanSupported, type FoodScore } from '../data/foodScan';
 import { categoryOf } from '../data/favorites';
 import { searchPlaceVideos } from '../data/videosLive';
 import { computeMonthlyTrending } from '../data/trendingLive';
@@ -341,8 +344,10 @@ export type State = {
   // "Build your passport from photos" — import flow state
   photoImportOpen: boolean;
   importOpen: boolean;
+  importCounts: Record<string, number>; // places brought in, by source (this session)
   importSource: ImportSource | null;
   photoImportStatus: PhotoImportStatus;
+  photoProgress: string;
   photoMatches: PhotoMatch[];
   photoScanned: number; // how many photos were read in the last run
   photoAdded: number; // how many places the last import registered
@@ -469,6 +474,7 @@ export type Actions = {
   signOut: () => void;
   connectAccount: (handle: string) => Promise<boolean | 'google'>;
   syncNow: () => Promise<void>;
+  prepareSync: () => Promise<void>;
   signInWithGoogle: () => void;
   // language
   setLang: (lang: Lang) => void;
@@ -484,6 +490,7 @@ export type Actions = {
   closePhotoImport: () => void;
   runPhotoImport: () => Promise<void>;
   togglePhotoMatch: (id: string) => void;
+  swapPhotoMatch: (id: string) => void;
   confirmPhotoMatches: () => void;
   openVideo: (url: string, meta?: VideoMeta) => void;
   closeVideo: () => void;
@@ -632,8 +639,10 @@ const initialState = (): State => ({
   clipsReturn: null,
   photoImportOpen: false,
   importOpen: false,
+  importCounts: {},
   importSource: null,
   photoImportStatus: 'idle',
+  photoProgress: '',
   photoMatches: [],
   photoScanned: 0,
   photoAdded: 0,
@@ -1431,6 +1440,22 @@ export const useStore = create<State & Actions>((set, get) => ({
     void startAccount(set, get);
     return true;
   },
+  // Before the passport is stamped: open the account (so everything brought in syncs
+  // the moment it's created) and warm up the places index used to match imports.
+  prepareSync: async () => {
+    void loadAllSpots();
+    if (!cloud.cloudConfigured() || cloud.currentSession()) return;
+    set({ cloud: 'connecting', cloudNote: '' });
+    const sess = await cloud.signInAnonymously();
+    if (sess) {
+      cloud.setSession(sess);
+      await saveSession(sess);
+      set({ session: sess, authUser: sess.user, cloud: 'local', cloudNote: 'Account ready — syncs when your passport is stamped.' });
+    } else {
+      const st = cloud.cloudState();
+      set({ cloud: st.state === 'connecting' ? 'local' : st.state, cloudNote: st.note });
+    }
+  },
   syncNow: async () => {
     if (!get().profile) return;
     const remote = await cloud.pullMine();
@@ -1570,7 +1595,8 @@ export const useStore = create<State & Actions>((set, get) => ({
       }
     }
     ranked.sort((a, b) => (b.score || 0) - (a.score || 0));
-    set({ ranked, wantIds: [...want], saved });
+    const src = items[0]?.place.importedFrom || 'file';
+    set({ ranked, wantIds: [...want], saved, importCounts: { ...s.importCounts, [src]: (s.importCounts[src] || 0) + been + wanted } });
     return { been, want: wanted };
   },
 
@@ -1579,13 +1605,11 @@ export const useStore = create<State & Actions>((set, get) => ({
     set({ photoImportOpen: true, photoImportStatus: 'idle', photoMatches: [], photoScanned: 0, photoAdded: 0 }),
   closePhotoImport: () => set({ photoImportOpen: false }),
   runPhotoImport: async () => {
-    const provider = getProvider();
-    if (!photoImportSupported() || !provider.findNearest) {
+    if (!photoImportSupported()) {
       set({ photoImportStatus: 'unsupported' });
       return;
     }
-    const findNear = provider.findNearest;
-    set({ photoImportStatus: 'picking', photoMatches: [] });
+    set({ photoImportStatus: 'picking', photoMatches: [], photoProgress: '' });
     let picked: { points: PhotoPoint[]; scanned: number };
     try {
       picked = await pickFoodPhotos();
@@ -1597,37 +1621,78 @@ export const useStore = create<State & Actions>((set, get) => ({
       set({ photoImportStatus: picked.scanned ? 'nogps' : 'idle', photoScanned: picked.scanned });
       return;
     }
-    set({ photoImportStatus: 'matching', photoScanned: picked.scanned });
-    const pts = dedupePoints(picked.points);
-    const byPlace: Record<string, PhotoMatch> = {};
-    for (const pt of pts) {
-      let place: Place | null = null;
-      try {
-        place = await findNear(pt.lat, pt.lon);
-      } catch {
-        place = null;
-      }
-      if (!place || place.lat == null || place.lon == null) continue;
-      const d = haversine(pt.lat, pt.lon, place.lat, place.lon);
-      if (d > 180) continue; // too far from any restaurant to be a dining photo
-      const ex = byPlace[place.id];
-      if (ex) ex.count += pt.weight;
-      else byPlace[place.id] = { place, count: pt.weight, preview: pt.preview, distM: Math.round(d), picked: true };
+    // 1) where were they taken? — against every place CRTQ knows
+    set({ photoImportStatus: 'matching', photoScanned: picked.scanned, photoProgress: 'Finding the places…' });
+    const s0 = get();
+    const spots = (await loadAllSpots()).filter((x) => !x.guide).map(spotToPlace);
+    const grid = gridOf([...CARTE_CDMX, ...Object.values(byId), ...s0.nearby, ...spots]);
+    const atPlace = picked.points.filter((pt) => !!nearestPlace(grid, pt.lat, pt.lon, 120));
+    // 2) which of those are meals? — the on-device food scan (only photos at a place; capped)
+    let foodScanned = false;
+    const scores: (FoodScore | null)[] = atPlace.map(() => null);
+    if (atPlace.length && foodScanSupported()) {
+      set({ photoImportStatus: 'scanning', photoProgress: `Looking for food in ${atPlace.length} photo${atPlace.length === 1 ? '' : 's'}…` });
+      const batch = atPlace.slice(0, 250);
+      const res = await scanFood(
+        batch.map((p) => p.preview),
+        (done, total) => set({ photoProgress: `Looking for food… ${done} of ${total}` }),
+      );
+      res.forEach((r, i) => (scores[i] = r));
+      foodScanned = res.some((r) => r != null);
     }
-    const matches = Object.values(byPlace).sort((a, b) => b.count - a.count);
-    set({ photoMatches: matches, photoImportStatus: matches.length ? 'review' : 'nomatch' });
+    const obs: PhotoObs[] = atPlace.map((p, i) => ({ lat: p.lat, lon: p.lon, time: p.time, preview: p.preview, food: scores[i]?.food ?? null, label: scores[i]?.label }));
+    // 3) visits: meals grouped by place and day
+    const visits = findVisits(obs, grid, { foodScanned });
+    const matches: PhotoMatch[] = visits.map((v) => ({
+      place: v.place,
+      count: v.photos,
+      preview: v.preview,
+      distM: v.distM,
+      picked: v.picked,
+      visits: v.visits,
+      foodPhotos: v.foodPhotos,
+      confidence: v.confidence,
+      labels: v.labels,
+      alts: v.alts,
+    }));
+    // 4) photos nowhere near a known place: ask the live places provider, when there is one
+    const provider = getProvider();
+    if (provider.findNearest) {
+      const far = dedupePoints(picked.points.filter((pt) => !atPlace.includes(pt))).slice(0, 25);
+      for (const pt of far) {
+        let place: Place | null = null;
+        try {
+          place = await provider.findNearest(pt.lat, pt.lon);
+        } catch {
+          place = null;
+        }
+        if (!place || place.lat == null || place.lon == null || matches.some((m) => m.place.id === place!.id)) continue;
+        const d = haversine(pt.lat, pt.lon, place.lat, place.lon);
+        if (d <= 120) matches.push({ place, count: pt.weight, preview: pt.preview, distM: Math.round(d), picked: d <= 60, confidence: d <= 60 ? 'medium' : 'low' });
+      }
+    }
+    set({ photoMatches: matches, photoImportStatus: matches.length ? 'review' : 'nomatch', photoProgress: '' });
   },
+  swapPhotoMatch: (id) =>
+    set((s) => ({
+      photoMatches: s.photoMatches.map((m) => {
+        if (m.place.id !== id || !m.alts?.length) return m;
+        // cycle through the places that close: the next becomes the match
+        const [next, ...rest] = m.alts;
+        return { ...m, place: next, alts: [...rest, m.place], picked: true };
+      }),
+    })),
   togglePhotoMatch: (id) =>
     set((s) => ({ photoMatches: s.photoMatches.map((m) => (m.place.id === id ? { ...m, picked: !m.picked } : m)) })),
   confirmPhotoMatches: () => {
     const s = get();
-    const chosen = s.photoMatches.filter((m) => m.picked).map((m) => m.place);
+    const chosen = s.photoMatches.filter((m) => m.picked).map((m) => ({ ...m.place, importedFrom: 'photos' }));
     if (!chosen.length) {
       set({ photoImportStatus: 'done', photoAdded: 0 });
       return;
     }
     addVisitedPlaces(set, get, chosen);
-    set({ photoImportStatus: 'done', photoAdded: chosen.length });
+    set({ photoImportStatus: 'done', photoAdded: chosen.length, importCounts: { ...s.importCounts, photos: (s.importCounts.photos || 0) + chosen.length } });
   },
 
   // ── monthly trending (most mentioned this month) ──
