@@ -19,6 +19,7 @@ import { computePalate, tasteMatch, PALATE_AXES } from '../data/palate';
 import { useT } from '../i18n';
 import { PalateRadar } from '../components/PalateRadar';
 import { HouseTag, VerdictStamp, VERDICT_COLOR } from '../components/CriticMarks';
+import { CriticPassportScreen, ProfileSwitch, issuedOn, type CriticPassportSubject } from './CriticPassport';
 import { C } from '../theme/tokens';
 import { Display, Banner, Serif, SerifItalic, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
@@ -374,6 +375,7 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
   const t = useT();
   const [live, setLive] = React.useState<HouseEntry[] | null>(null);
   const [photoOk, setPhotoOk] = React.useState(!!c.photo);
+  const [mode, setMode] = React.useState<'profile' | 'passport'>('profile');
 
   React.useEffect(() => {
     let on = true;
@@ -413,6 +415,22 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
     ...c.links.map((l) => ({ platform: l.platform, label: l.platform === 'Beli' || l.platform === 'World of Mouth' ? c.handle : l.url, url: l.url })),
     ...(c.maps?.[0]?.url ? [{ platform: 'Google My Maps', label: mapTitle(c), url: c.maps[0].url }] : []),
   ];
+  if (mode === 'passport') {
+    const passport: CriticPassportSubject = {
+      id: c.id,
+      name: c.name,
+      handle: c.handle,
+      photo: c.photo,
+      house: true,
+      beat: 'Specialty coffee · México',
+      signature: c.bio || summary,
+      places,
+      avg: houseAvg(critic),
+      joined: issuedOn(c.asOf) || 'CRTQ',
+    };
+    return <CriticPassportScreen s={passport} onBack={close} onProfile={() => setMode('profile')} top={insets.top} bottom={insets.bottom} />;
+  }
+
   const stats: [string, string][] = [
     [String(all.length), 'places ranked'],
     [String(words), 'in his words'],
@@ -429,9 +447,10 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
                 ←
               </Display>
             </Pressable>
-            <Banner s={10} tk={0.16} c={C.inkMuted}>
+            <Banner s={10} tk={0.16} c={C.inkMuted} numberOfLines={1} style={{ flex: 1 }}>
               House critic · critic profile
             </Banner>
+            <ProfileSwitch mode="profile" onChange={setMode} />
           </View>
 
           {/* header — same as every critic's, with the house badge */}

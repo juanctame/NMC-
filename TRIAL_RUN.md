@@ -167,6 +167,17 @@ Mexico City food. Only true HD counts — a ≥720p rendition a browser plays, o
 reduced motion or Data Saver shows a still; if nothing plays, the yellow brand
 cover shows as before.
 
+### Every critic carries a passport
+Each critic page has a **Profile | Passport** switch. The passport is the same
+booklet as *You* (`src/screens/Passport.tsx`, its parts and page-turning shared
+via `useBookletPager`), issued read-only by `src/screens/CriticPassport.tsx`:
+cover, data page (holder, beat, accreditation, their Top 4, record —
+veredictos · colonias · visas · promedio —, signature, machine-readable zone),
+visas, entry stamps for the colonias they cover, and their palate print, all in
+the third person. Creators and outlets get the vermillion **press passport**
+(type D · PRENSA), its scores marked SIM; house critics get the green
+**PASAPORTE DE LA CASA** (type D · CASA), marked HOUSE, with their photo.
+
 ### House critics
 Real people whose scores are their own, unlike the simulated creator profiles
 (`src/data/houseCritics.ts`). The first is **Juan Carlos Tame

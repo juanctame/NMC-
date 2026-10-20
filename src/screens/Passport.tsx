@@ -61,7 +61,7 @@ const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
 // ── small parts ───────────────────────────────────────────────────────────────
 
 /** A bilingual passport field label. */
-function FieldLabel({ children }: { children: React.ReactNode }) {
+export function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
     <Banner s={7.5} tk={0.14} c={C.inkMuted}>
       {children}
@@ -77,7 +77,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Chevron({ color = C.inkBlack, dir = 'right' }: { color?: string; dir?: 'right' | 'left' | 'down' | 'up' }) {
+export function Chevron({ color = C.inkBlack, dir = 'right' }: { color?: string; dir?: 'right' | 'left' | 'down' | 'up' }) {
   const d = dir === 'right' ? 'M9 6l6 6-6 6' : dir === 'left' ? 'M15 6l-6 6 6 6' : dir === 'down' ? 'M6 9l6 6 6-6' : 'M6 15l6-6 6 6';
   return (
     <Svg width={14} height={14} viewBox="0 0 24 24">
@@ -178,12 +178,12 @@ const VISA_STYLE: Record<string, { band: string; tint: string; ink: string; issu
 };
 const VISA_SLOTS = 10;
 
-function VisasPage({ sets, pending }: { sets: AlbumSet[]; pending: Place[] }) {
+export function VisasPage({ sets, pending, third }: { sets: AlbumSet[]; pending: Place[]; third?: boolean }) {
   const openPlace = useStore((s) => s.openPlace);
   return (
     <View style={{ gap: 16 }}>
       <Serif s={13} c={C.inkMuted} style={{ lineHeight: 18 }}>
-        Each guide is a visa: every table you rank from it stamps an entry.
+        {third ? 'Each guide is a visa: every table they’ve covered from it stamps an entry.' : 'Each guide is a visa: every table you rank from it stamps an entry.'}
       </Serif>
       {sets.map((s) => {
         const st = VISA_STYLE[s.key] || VISA_STYLE.stars;
@@ -316,7 +316,7 @@ function EntryStamp({ p, i, colW }: { p: Place; i: number; colW: number }) {
   );
 }
 
-function StampsPage({ tiles, visited, elsewhere, ranked, width }: { tiles: HoodTile[]; visited: number; elsewhere: Place[]; ranked: Place[]; width: number }) {
+export function StampsPage({ tiles, visited, elsewhere, ranked, width, third }: { tiles: HoodTile[]; visited: number; elsewhere: Place[]; ranked: Place[]; width: number; third?: boolean }) {
   const openPlace = useStore((s) => s.openPlace);
   const firstVisited = useMemo(() => tiles.slice().sort((a, b) => b.mine.length - a.mine.length)[0]?.key, [tiles]);
   const [sel, setSel] = useState<string | undefined>(firstVisited);
@@ -350,7 +350,7 @@ function StampsPage({ tiles, visited, elsewhere, ranked, width }: { tiles: HoodT
                   <Pressable
                     key={t.key}
                     onPress={() => setSel(t.key)}
-                    accessibilityLabel={`${t.name}${on ? `, ${t.mine.length} of yours` : ''}`}
+                    accessibilityLabel={`${t.name}${on ? `, ${t.mine.length} of ${third ? 'theirs' : 'yours'}` : ''}`}
                     style={{
                       position: 'absolute',
                       left: t.col * (tile + gap),
@@ -390,7 +390,7 @@ function StampsPage({ tiles, visited, elsewhere, ranked, width }: { tiles: HoodT
                 {cur.name}
               </SerifDisplay>
               <Mono s={9} c={C.inkMuted}>
-                {cur.mine.length ? `${cur.mine.length} yours · ` : ''}
+                {cur.mine.length ? `${cur.mine.length} ${third ? 'theirs' : 'yours'} · ` : ''}
                 {cur.guide.length} in the guide
               </Mono>
             </View>
@@ -410,7 +410,7 @@ function StampsPage({ tiles, visited, elsewhere, ranked, width }: { tiles: HoodT
             {toTry.length ? (
               <>
                 <Banner s={8} tk={0.16} c={C.inkMuted} style={{ marginTop: cur.mine.length ? 4 : 0 }}>
-                  {cur.mine.length ? 'STILL TO TRY HERE' : 'START HERE'}
+                  {third ? 'ALSO IN THE GUIDE HERE' : cur.mine.length ? 'STILL TO TRY HERE' : 'START HERE'}
                 </Banner>
                 {toTry.map((g) => (
                   <Pressable key={g.id} onPress={() => openPlace(g.id)} style={{ flexDirection: 'row', alignItems: 'center', gap: 9, minHeight: 28 }}>
@@ -454,7 +454,7 @@ function StampsPage({ tiles, visited, elsewhere, ranked, width }: { tiles: HoodT
 
 // ── Biometría ─────────────────────────────────────────────────────────────────
 
-function BioPage({ palate, avg, chase, seed, width }: { palate: Palate; avg: string; chase: string[]; seed: string; width: number }) {
+export function BioPage({ palate, avg, chase, seed, width, third }: { palate: Palate; avg: string; chase: string[]; seed: string; width: number; third?: boolean }) {
   const openFoodie = useStore((s) => s.openFoodie);
   const openTasteCard = useStore((s) => s.openTasteCard);
   const t = useT();
@@ -477,20 +477,22 @@ function BioPage({ palate, avg, chase, seed, width }: { palate: Palate; avg: str
           <Banner s={9} tk={0.18} c={C.sun300}>
             HUELLA DE SABOR · TASTE PRINT
           </Banner>
-          <Pressable onPress={openTasteCard} hitSlop={8}>
-            <Banner s={9} tk={0.1} c={C.ink100}>
-              share ⤴
-            </Banner>
-          </Pressable>
+          {third ? null : (
+            <Pressable onPress={openTasteCard} hitSlop={8}>
+              <Banner s={9} tk={0.1} c={C.ink100}>
+                share ⤴
+              </Banner>
+            </Pressable>
+          )}
         </View>
         <View style={{ marginTop: 8 }}>
           <PapelPicado palate={palate} seed={seed} width={Math.max(0, width - 28)} height={86} hole={C.ink700} />
         </View>
         <Mono s={9.5} c={C.ink100} style={{ marginTop: 6 }}>
-          {motifs.length ? motifs.map((m) => `${MOTIF_GLYPH[m.key]} ${t('axis.' + m.key)}`).join('   ') : 'rank a few places to cut yours'}
+          {motifs.length ? motifs.map((m) => `${MOTIF_GLYPH[m.key]} ${t('axis.' + m.key)}`).join('   ') : third ? '—' : 'rank a few places to cut yours'}
         </Mono>
         <SerifItalic s={13.5} c={C.paper0} style={{ marginTop: 6, lineHeight: 19 }}>
-          Colours from the cuisines you eat most, cut-outs from your strongest axes. It changes as you rank.
+          {third ? 'Colours from the cuisines they cover most, cut-outs from their strongest axes.' : 'Colours from the cuisines you eat most, cut-outs from your strongest axes. It changes as you rank.'}
         </SerifItalic>
       </StickerView>
 
@@ -557,7 +559,7 @@ function BioPage({ palate, avg, chase, seed, width }: { palate: Palate; avg: str
 
       {closest.length ? (
         <View>
-          <SectionLabel>COMPATIBLES · PALATES LIKE YOURS</SectionLabel>
+          <SectionLabel>{third ? 'COMPATIBLES · PALATES LIKE THEIRS' : 'COMPATIBLES · PALATES LIKE YOURS'}</SectionLabel>
           <View style={{ borderWidth: 2, borderColor: C.inkBlack, backgroundColor: C.paper0 }}>
             {closest.map(({ f, m }, i) => {
               const fp = friendPalate(f);
@@ -820,7 +822,7 @@ function PageLight({ dark }: { dark?: boolean }) {
  * the table, the back board peeking out (sun-yellow; vermillion for the press),
  * and the page block's edges.
  */
-function BookletBase({ w, h, press }: { w: number; h: number; press: boolean }) {
+export function BookletBase({ w, h, press }: { w: number; h: number; press: boolean }) {
   const x = PAGE_PAD.paddingLeft, y = PAGE_PAD.paddingTop;
   const pw = w - PAGE_PAD.paddingLeft - PAGE_PAD.paddingRight;
   const ph = h - PAGE_PAD.paddingTop - PAGE_PAD.paddingBottom;
@@ -850,7 +852,7 @@ function BookletBase({ w, h, press }: { w: number; h: number; press: boolean }) 
  * page being left lifts around the spine (perspective rotateY), shading as it
  * turns, revealing the next page beneath it.
  */
-function TurnPage({ i, w, h, pos, active, children }: { i: number; w: number; h: number; pos: Animated.Value; active: boolean; children: React.ReactNode }) {
+export function TurnPage({ i, w, h, pos, active, children }: { i: number; w: number; h: number; pos: Animated.Value; active: boolean; children: React.ReactNode }) {
   const pivot = w / 2 - PAGE_PAD.paddingLeft; // spine = the page's left edge
   const rotateY = pos.interpolate({ inputRange: [i, i + 1], outputRange: ['0deg', '-88deg'], extrapolate: 'clamp' });
   const shade = pos.interpolate({ inputRange: [i, i + 1], outputRange: [0, 0.5], extrapolate: 'clamp' });
@@ -880,7 +882,7 @@ function TurnPage({ i, w, h, pos, active, children }: { i: number; w: number; h:
 }
 
 /** The table from the render: vermillion stock (near-black for the press), grain, a vignette, and brand stickers peeking from under the booklet. */
-function Table({ press, city, joined }: { press: boolean; city: string; joined: string }) {
+export function Table({ press, city, joined }: { press: boolean; city: string; joined: string }) {
   return (
     <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: press ? C.inkDeep : C.ink400 }}>
       <Grain opacity={0.12} />
@@ -913,7 +915,7 @@ function Table({ press, city, joined }: { press: boolean; city: string; joined: 
  * watermark, the document number perforated through every page, and the page
  * number on a round sticker.
  */
-function PassportPage({
+export function PassportPage({
   w,
   h,
   wash,
@@ -1009,8 +1011,8 @@ function PassportPage({
 }
 
 /** The cover: a CRTQ sticker — sun-yellow stock (vermillion for the press), the mascot, a slanted title band. */
-function CoverPage({ w, h, press, city, joined, onOpen, onShare }: { w: number; h: number; press: boolean; city: string; joined: string; onOpen: () => void; onShare: () => void }) {
-  const stock = press ? C.ink400 : C.sun400;
+export function CoverPage({ w, h, press, house, city, joined, onOpen, onShare }: { w: number; h: number; press: boolean; house?: boolean; city: string; joined: string; onOpen: () => void; onShare?: () => void }) {
+  const stock = house ? C.stampGreen : press ? C.ink400 : C.sun400;
   const band = press ? C.inkDeep : C.ink400;
   const ink = press ? C.paper0 : C.inkDeep;
   return (
@@ -1028,7 +1030,7 @@ function CoverPage({ w, h, press, city, joined, onOpen, onShare }: { w: number; 
                 CRTQ
               </Display>
               <Banner s={9.5} tk={0.3} c={ink}>
-                {press ? 'CRITICS · PRESS CORPS' : 'TASTE TRAVELLERS'}
+                {house ? 'CRITICS · HOUSE CRITIC' : press ? 'CRITICS · PRESS CORPS' : 'TASTE TRAVELLERS'}
               </Banner>
             </View>
 
@@ -1042,10 +1044,10 @@ function CoverPage({ w, h, press, city, joined, onOpen, onShare }: { w: number; 
             {/* the slanted title band */}
             <View style={{ alignSelf: 'stretch', marginHorizontal: -8, backgroundColor: band, borderTopWidth: 2.5, borderBottomWidth: 2.5, borderColor: C.inkBlack, paddingVertical: 10, alignItems: 'center', transform: [{ rotate: '-3deg' }] }}>
               <Display s={press ? 20 : 26} c={C.paper0}>
-                {press ? 'PASAPORTE DE PRENSA' : 'PASAPORTE'}
+                {house ? 'PASAPORTE DE LA CASA' : press ? 'PASAPORTE DE PRENSA' : 'PASAPORTE'}
               </Display>
               <Display s={press ? 11 : 15} c={press ? C.sun300 : C.sun300}>
-                {press ? 'PRESS PASSPORT' : 'GASTRONÓMICO'}
+                {house ? 'HOUSE CRITIC PASSPORT' : press ? 'PRESS PASSPORT' : 'GASTRONÓMICO'}
               </Display>
               {!press ? (
                 <Banner s={8.5} tk={0.3} c={C.ink100} style={{ marginTop: 3 }}>
@@ -1083,16 +1085,63 @@ function CoverPage({ w, h, press, city, joined, onOpen, onShare }: { w: number; 
             </Banner>
           </View>
 
+          {onShare ? (
           <Pressable onPress={onShare} accessibilityLabel="Share your passport" hitSlop={4} style={{ position: 'absolute', top: 12, right: 12, width: 44, height: 44, borderRadius: 22, borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.paper0, alignItems: 'center', justifyContent: 'center' }}>
             <Svg width={18} height={18} viewBox="0 0 24 24">
               <Path d="M12 15V3M7 8l5-5 5 5M5 13v7h14v-7" stroke={C.ink400} strokeWidth={2.4} fill="none" strokeLinecap="round" strokeLinejoin="round" />
             </Svg>
           </Pressable>
+          ) : null}
           <PageLight dark />
         </View>
       </View>
     </View>
   );
+}
+
+/**
+ * The booklet's pager: drag sideways to turn (the page follows your finger
+ * around the spine), or call goTo from a page control. `pos` is the open page
+ * as a float while turning; `onTurn` hears each settled page.
+ */
+export function useBookletPager(count: number, width: number, start = 0, onTurn?: (i: number) => void) {
+  const [idx, setIdx] = useState(start);
+  const pos = useRef(new Animated.Value(start)).current;
+  const last = count - 1;
+  const turnRef = useRef(onTurn);
+  turnRef.current = onTurn;
+  const goTo = (i: number) => {
+    const n = Math.max(0, Math.min(last, i));
+    turnRef.current?.(n);
+    setIdx(n);
+    Animated.timing(pos, { toValue: n, duration: 460, easing: Easing.out(Easing.cubic), useNativeDriver: false }).start();
+  };
+  const drag = useRef({ start, w: 1 });
+  drag.current.w = width || 1;
+  const pan = useMemo(
+    () =>
+      PanResponder.create({
+        // only claim clearly horizontal drags, so inner pages still scroll vertically
+        onMoveShouldSetPanResponder: (_e, g) => Math.abs(g.dx) > 12 && Math.abs(g.dx) > Math.abs(g.dy) * 1.4,
+        onMoveShouldSetPanResponderCapture: (_e, g) => Math.abs(g.dx) > 18 && Math.abs(g.dx) > Math.abs(g.dy) * 2,
+        onPanResponderTerminationRequest: () => false, // keep the turn once it has started
+        onShouldBlockNativeResponder: () => true,
+        onPanResponderGrant: () => {
+          pos.stopAnimation((v: number) => (drag.current.start = v));
+        },
+        onPanResponderMove: (_e, g) => {
+          const v = drag.current.start - g.dx / drag.current.w;
+          pos.setValue(Math.max(-0.08, Math.min(last + 0.08, v)));
+        },
+        onPanResponderRelease: (_e, g) => {
+          const v = drag.current.start - g.dx / drag.current.w - g.vx * 0.35;
+          goTo(Math.round(v));
+        },
+        onPanResponderTerminate: () => goTo(Math.round(drag.current.start)),
+      }),
+    [width, last], // goTo and pos are stable for the gesture's lifetime
+  );
+  return { idx, pos, goTo, pan };
 }
 
 // ── Screen ────────────────────────────────────────────────────────────────────
@@ -1124,8 +1173,7 @@ export function Passport() {
   useEffect(() => {
     if (passportAt) useStore.setState({ passportAt: null });
   }, [passportAt]);
-  const [idx, setIdx] = useState(lastPage);
-  const pos = useRef(new Animated.Value(lastPage)).current; // the open page, as a float while turning
+  const { idx, pos, goTo, pan } = useBookletPager(PAGES.length, area.w, lastPage, (n) => (lastPage = n));
 
   const me = identity(profile);
   const critic = isCritic(profile);
@@ -1166,41 +1214,6 @@ export function Passport() {
         { v: avg, l: 'PROMEDIO' },
       ];
   const header = critic ? 'PASAPORTE DE PRENSA · PRESS' : 'PASAPORTE · FOOD PASSPORT';
-
-  // Pages: drag sideways to turn (the page follows your finger around the
-  // spine), or use the page control. The open page is remembered for the session.
-  const last = PAGES.length - 1;
-  const goTo = (i: number) => {
-    const n = Math.max(0, Math.min(last, i));
-    lastPage = n;
-    setIdx(n);
-    Animated.timing(pos, { toValue: n, duration: 460, easing: Easing.out(Easing.cubic), useNativeDriver: false }).start();
-  };
-  const drag = useRef({ start: lastPage, w: 1 });
-  drag.current.w = area.w || 1;
-  const pan = useMemo(
-    () =>
-      PanResponder.create({
-        // only claim clearly horizontal drags, so inner pages still scroll vertically
-        onMoveShouldSetPanResponder: (_e, g) => Math.abs(g.dx) > 12 && Math.abs(g.dx) > Math.abs(g.dy) * 1.4,
-        onMoveShouldSetPanResponderCapture: (_e, g) => Math.abs(g.dx) > 18 && Math.abs(g.dx) > Math.abs(g.dy) * 2,
-        onPanResponderTerminationRequest: () => false, // keep the turn once it has started
-        onShouldBlockNativeResponder: () => true,
-        onPanResponderGrant: () => {
-          pos.stopAnimation((v: number) => (drag.current.start = v));
-        },
-        onPanResponderMove: (_e, g) => {
-          const v = drag.current.start - g.dx / drag.current.w;
-          pos.setValue(Math.max(-0.08, Math.min(last + 0.08, v)));
-        },
-        onPanResponderRelease: (_e, g) => {
-          const v = drag.current.start - g.dx / drag.current.w - g.vx * 0.35;
-          goTo(Math.round(v));
-        },
-        onPanResponderTerminate: () => goTo(Math.round(drag.current.start)),
-      }),
-    [area.w], // goTo and pos are stable for the gesture's lifetime
-  );
 
   const hostEvent = () => {
     go('table');

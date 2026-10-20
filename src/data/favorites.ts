@@ -48,7 +48,7 @@ const fold = (s: string) =>
 /** The favourite category a restaurant competes in. */
 export function categoryOf(p: Pick<Place, 'name' | 'cuisine' | 'price'> & { category?: string; awards?: string }): FavCat {
   const t = fold([p.category, p.cuisine, p.name].filter(Boolean).join(' '));
-  if (/panader|bakery|pasteler|cafe|cafeteria|brunch|desayun|dessert|postre/.test(t)) return 'cafe';
+  if (/panader|bakery|pasteler|cafe|cafeteria|coffee|espresso|tostador|roaster|brunch|desayun|dessert|postre/.test(t)) return 'cafe';
   if (/\bbar\b|mezcal|cantina|vino|wine|cocktail|coctel|pulque|cerveza/.test(t)) return 'bar';
   if (/seafood|marisc|pescad|ostion|ceviche|oyster|mar y |del mar/.test(t)) return 'seafood';
   if (/taquer|tacos?\b|antojit|garnacha|torta|canasta|barbacoa|birria|carnitas|street/.test(t)) return 'tacos';

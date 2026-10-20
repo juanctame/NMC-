@@ -28,6 +28,7 @@ import { PlayIcon } from '../components/icons';
 import { SimTag, VerdictStamp, VERDICT_COLOR } from '../components/CriticMarks';
 import { houseCriticById } from '../data/houseCritics';
 import { HouseCriticProfile } from './HouseCriticProfile';
+import { CriticPassportScreen, ProfileSwitch, issuedOn, type CriticPassportSubject } from './CriticPassport';
 
 const ACCOUNT_LABEL: Record<string, string> = { ...SOURCE_LABEL, web: 'Website' };
 
@@ -132,6 +133,9 @@ export function CriticProfile() {
   const tastes = useStore((s) => s.tastes);
   const userReviews = useStore((s) => s.userReviews);
   const t = useT();
+  const nearbyById = useStore((s) => s.nearbyById);
+  const [mode, setMode] = React.useState<'profile' | 'passport'>('profile');
+  React.useEffect(() => setMode('profile'), [id]);
 
   const house = houseCriticById(id);
   if (house) return <HouseCriticProfile c={house} />;
@@ -141,6 +145,23 @@ export function CriticProfile() {
   const mine = computePalate(ranked, tastes, userReviews);
   const match = tasteMatch(mine, critic.palate);
   const axisLabels = PALATE_AXES.map((k) => t('axis.' + k));
+
+  if (mode === 'passport') {
+    const places = critic.takes.map((tk) => resolvePlace(tk.placeId, nearbyById) && { ...resolvePlace(tk.placeId, nearbyById)!, score: tk.score }).filter((p): p is NonNullable<typeof p> => !!p);
+    const dates = critic.takes.map((tk) => tk.date).filter(Boolean).sort() as string[];
+    const passport: CriticPassportSubject = {
+      id: critic.id,
+      name: critic.name,
+      handle: critic.handle,
+      house: false,
+      beat: [critic.kind === 'outlet' ? 'Food media' : 'Creator', critic.hoods[0]].filter(Boolean).join(' · '),
+      signature: critic.bio || critic.summary,
+      places,
+      avg: critic.avg,
+      joined: issuedOn(dates[0]) || 'CRTQ',
+    };
+    return <CriticPassportScreen s={passport} onBack={close} onProfile={() => setMode('profile')} top={insets.top} bottom={insets.bottom} />;
+  }
 
   const stats: [string, string][] = [
     [String(critic.takes.length), critic.takes.length === 1 ? 'restaurant' : 'restaurants'],
@@ -158,9 +179,10 @@ export function CriticProfile() {
                 ←
               </Display>
             </Pressable>
-            <Banner s={10} tk={0.16} c={C.inkMuted}>
+            <Banner s={10} tk={0.16} c={C.inkMuted} numberOfLines={1} style={{ flex: 1 }}>
               {critic.kind === 'outlet' ? 'Food media' : 'Creator'} · critic profile
             </Banner>
+            <ProfileSwitch mode="profile" onChange={setMode} />
           </View>
 
           {/* header */}
