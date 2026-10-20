@@ -58,6 +58,9 @@ const FOODY =
 const CITY = /ciudad de mexico|mexico city|\bcdmx\b|\bdf\b|coyoacan|xochimilco|zocalo|centro historico|merced|jamaica|roma|condesa|tlalpan|iztapalapa|garibaldi|polanco|mexico\b|mexican|mexicana|mexicano/;
 const NOPE = /matanza|slaughter|sacrific|sangre|blood|protest|marcha|accidente|police|policia|funeral|hospital|covid|sismo|earthquake|incendio|fire\b|disparo|balacera|lecture|conferencia|entrevista|interview|timelapse of traffic/;
 
+// Places that aren't Mexico (beyond relevance.mjs's list) — markets and street food abound worldwide.
+const FAR = /thailand|tailandia|bangkok|damnoen|vietnam|hanoi|saigon|india|delhi|mumbai|china|beijing|taiwan|taipei|korea|seoul|indonesia|bali|philippines|manila|peru|lima|chile\b|santiago de chile|ecuador|cuba|habana|morocco|marruecos|marrakech|turkey|turquia|istanbul|egypt|egipto|nigeria|kenya|brasil|brazil|rio de janeiro|sao paulo|uruguay|el salvador|nicaragua|panama|puerto rico|oaxaca de juarez|chiapas|yucatan|jalisco|michoacan|veracruz/;
+
 const playable = (t) => /^video\/webm/.test(t || '') || (/^video\/mp4/.test(t || '') && !/mp4v/.test(t || ''));
 
 /** Commons pages (with videoinfo) → HD reel clips. */
@@ -79,7 +82,12 @@ function fromCommonsPages(pages, ctx = {}) {
     const text = fold([title, desc, cats].join(' '));
     if (NOPE.test(text)) continue;
     if (!ctx.trusted) {
-      if (!FOODY.test(text)) continue;
+      // the footage itself must be about food: a food word in its own title
+      // ("Mercado" only as a market — "mercado de…", "en el mercado" — never a surname)
+      const ft = fold(title).replace(/\bmercado\b(?! de| del| en| municipal| popular| flotante)/g, '');
+      if (!FOODY.test(ft) && !/\b(?:el|un|al) mercado\b/.test(fold(title))) continue;
+      if (secs > 300) continue;
+      if (FAR.test(text)) continue;
       if (!CITY.test(text) && !ctx.mexican) continue;
       if (ELSEWHERE.test(text) && !/ciudad de mexico|mexico city|cdmx/.test(text)) continue;
     }
