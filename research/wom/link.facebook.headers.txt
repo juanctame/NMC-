@@ -1,0 +1,17 @@
+HTTP/2 200 
+content-type: text/html; charset=utf-8
+content-length: 16379
+server: openresty
+date: Tue, 20 Oct 2026 16:51:31 GMT
+accept-ch: Sec-CH-UA-Platform-Version,Sec-CH-UA-Model
+x-content-type-options: nosniff
+set-cookie: _s=V6ItJ0611g80uchq3p5yFYuEzQfcHKl5Zd0kg9XbyBRRAGsuClugVA4UKjsu9ZVT; Max-Age=31536000; Domain=.app.link; Path=/; Expires=Wed, 20 Oct 2027 16:51:31 GMT; Secure
+last-modified: Tue, 20 Oct 2026 16:51:31 GMT
+content-security-policy: frame-ancestors 'self'
+etag: W/"3ffb-QzJmEdrJms7Hg1ibJLhG/UMXzaQ"
+strict-transport-security: max-age=31536000; includeSubDomains
+x-cache: Miss from cloudfront
+via: 1.1 33f79df4121ee0706df1acf90de7d018.cloudfront.net (CloudFront)
+x-amz-cf-pop: SFO53-P9
+x-amz-cf-id: 7OujamN6mdia_mqxvvFssIf7XTkHlVPZYTzyjKQJRcKy7CoClsFyQQ==
+

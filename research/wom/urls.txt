@@ -1,0 +1,5 @@
+http://branch-assets-usw2.s3.us-west-2.amazonaws.com/b_stripes-small.png
+https://fonts.googleapis.com/css?family=Open+Sans:700,300
+https://production-data.worldofmouth.app/images/7d2a911a-3abd-4b92-b1d0-f3e08dd2a7ce-share.jpg
+https://worldofmouth-alternate.app.link/q3jDDxzzo7b?__branch_flow_type&#x3D;viewapp&amp;__branch_flow_id&#x3D;1641134119791776823&amp;__branch_mobile_deepview_type&#x3D;1
+https://worldofmouth-alternate.app.link/q3jDDxzzo7b?__branch_flow_type=viewapp&__branch_flow_id=1641134120080717766&dont_publish_click=true&_t=1641134120009414593
