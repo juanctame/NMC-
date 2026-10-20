@@ -6,9 +6,11 @@
  * straight to the app.
  */
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Pressable, Image, TextInput } from 'react-native';
+import { View, ScrollView, Pressable, Image, TextInput, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useStore } from '../store/useStore';
+import { useStore, resolvePlace } from '../store/useStore';
+import { LandingReel } from '../components/LandingReel';
+import type { ReelClip } from '../data/landingReel';
 import { useT } from '../i18n';
 import { sharedEnabled } from '../data/shared';
 import { handleAvailable } from '../data/accounts';
@@ -80,6 +82,7 @@ export function Onboarding() {
   }, [obStep, prepareSync]);
   const authError = useStore((s) => s.authError);
   const t = useT();
+  const [reelClip, setReelClip] = useState<ReelClip | null>(null);
 
   // Account draft (kept in local state across the step switch).
   const [name, setName] = useState('');
@@ -134,25 +137,30 @@ export function Onboarding() {
     stampMe();
   };
 
-  // Step 0 — cover
+  // Step 0 — cover (the landing reel loops behind it on web)
   if (obStep === 0) {
+    const onReel = !!reelClip;
+    const soft = onReel ? C.paper0 : C.ink600;
+    const rule = onReel ? 'rgba(255,248,232,0.35)' : 'rgba(42,26,6,0.25)';
+    const reelPlace = reelClip?.placeId ? resolvePlace(reelClip.placeId, {}) : undefined;
     return (
       <View style={{ flex: 1, backgroundColor: C.sun400 }}>
         <Grain opacity={0.06} />
+        <LandingReel onClip={setReelClip} />
         <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', gap: 16, paddingTop: insets.top + 40, paddingBottom: insets.bottom + 40, paddingHorizontal: 30 }}>
           <Image source={BRAND.logo} style={{ width: 138, height: 138, transform: [{ rotate: '-6deg' }] }} resizeMode="contain" />
-          <Banner s={11} tk={0.22} c={C.ink500} style={{ textAlign: 'center' }}>
+          <Banner s={11} tk={0.22} c={onReel ? C.sun300 : C.ink500} style={{ textAlign: 'center' }}>
             {t('ob.tagline')}
           </Banner>
-          <Display s={88} c={C.inkDeep} style={{ textAlign: 'center', lineHeight: 82 }}>
+          <Display s={88} c={onReel ? C.sun400 : C.inkDeep} style={{ textAlign: 'center', lineHeight: 82 }}>
             CRTQ
           </Display>
-          <Serif s={16} style={{ textAlign: 'center', maxWidth: 282, lineHeight: 25 }}>
+          <Serif s={16} c={onReel ? C.paper0 : undefined} style={{ textAlign: 'center', maxWidth: 282, lineHeight: 25 }}>
             {t('ob.blurb')}
           </Serif>
           {connecting ? (
             <View style={{ width: '100%', maxWidth: 320, gap: 10, alignItems: 'center' }}>
-              <Banner s={12} tk={0.1} c={C.ink600} style={{ textAlign: 'center' }}>
+              <Banner s={12} tk={0.1} c={soft} style={{ textAlign: 'center' }}>
                 {t('you.connect')}
               </Banner>
               <TextInput
@@ -166,7 +174,7 @@ export function Onboarding() {
                 style={{ ...inputStyle, width: '100%', textAlign: 'center' }}
               />
               {connErr ? (
-                <Mono s={10} c={C.ink600} style={{ textAlign: 'center' }}>
+                <Mono s={10} c={soft} style={{ textAlign: 'center' }}>
                   {connErr}
                 </Mono>
               ) : null}
@@ -176,7 +184,7 @@ export function Onboarding() {
                 </Banner>
               </StickerPressable>
               <Pressable onPress={() => { setConnecting(false); setConnErr(''); }}>
-                <Mono s={11} c={C.ink600} style={{ textDecorationLine: 'underline' }}>
+                <Mono s={11} c={soft} style={{ textDecorationLine: 'underline' }}>
                   {t('common.back')}
                 </Mono>
               </Pressable>
@@ -197,16 +205,16 @@ export function Onboarding() {
                     </Banner>
                   </StickerPressable>
                   {authError ? (
-                    <Mono s={10} c={C.ink600} style={{ textAlign: 'center' }}>
+                    <Mono s={10} c={soft} style={{ textAlign: 'center' }}>
                       {t('auth.failed')}
                     </Mono>
                   ) : null}
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, width: '70%' }}>
-                    <View style={{ flex: 1, height: 1.5, backgroundColor: 'rgba(42,26,6,0.25)' }} />
-                    <Mono s={10} c={C.ink600}>
+                    <View style={{ flex: 1, height: 1.5, backgroundColor: rule }} />
+                    <Mono s={10} c={soft}>
                       {t('auth.or')}
                     </Mono>
-                    <View style={{ flex: 1, height: 1.5, backgroundColor: 'rgba(42,26,6,0.25)' }} />
+                    <View style={{ flex: 1, height: 1.5, backgroundColor: rule }} />
                   </View>
                 </View>
               ) : null}
@@ -216,15 +224,15 @@ export function Onboarding() {
                 </Banner>
               </StickerPressable>
               <Pressable onPress={obSkip}>
-                <Mono s={11} c={C.ink600} style={{ textDecorationLine: 'underline' }}>
+                <Mono s={11} c={soft} style={{ textDecorationLine: 'underline' }}>
                   {t('ob.look')}
                 </Mono>
               </Pressable>
               {sharedEnabled() ? (
                 <Pressable onPress={() => setConnecting(true)} style={{ marginTop: 2 }}>
-                  <Mono s={11} c={C.ink600}>
+                  <Mono s={11} c={soft}>
                     {t('you.have')}{'  '}
-                    <Mono s={11} c={C.ink400} style={{ textDecorationLine: 'underline' }}>
+                    <Mono s={11} c={onReel ? C.sun300 : C.ink400} style={{ textDecorationLine: 'underline' }}>
                       {t('you.connectCta')}
                     </Mono>
                   </Mono>
@@ -234,7 +242,19 @@ export function Onboarding() {
           )}
           <View style={{ height: 8 }} />
           <LangPicker showLabels size={38} />
+          {reelClip ? <View style={{ height: 22 }} /> : null}
         </ScrollView>
+        {reelClip ? (
+          <Pressable
+            onPress={() => Linking.openURL(reelClip.page)}
+            accessibilityLabel={`Video: ${reelClip.title}, by ${reelClip.creator}`}
+            style={{ position: 'absolute', left: 12, right: 12, bottom: insets.bottom + 8, alignItems: 'center' }}
+          >
+            <Mono s={8.5} c="rgba(255,248,232,0.82)" numberOfLines={1}>
+              ▶ {[reelPlace?.name || reelClip.title, reelClip.creator, reelClip.license].filter(Boolean).join(' · ')}
+            </Mono>
+          </Pressable>
+        ) : null}
       </View>
     );
   }

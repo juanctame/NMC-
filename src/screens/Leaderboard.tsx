@@ -10,6 +10,8 @@
 import React, { useState } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { HOUSE_CRITICS } from '../data/houseCritics';
+import { HouseCriticCard } from '../components/HouseCriticCard';
 import { useStore } from '../store/useStore';
 import { useT } from '../i18n';
 import { FRIENDS, byId, type Place } from '../store/data';
@@ -253,6 +255,16 @@ function CriticsBoard() {
         </ScrollView>
       </View>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 14, paddingBottom: insets.bottom + 100, gap: 10 }} showsVerticalScrollIndicator={false}>
+        {kind !== 'outlet'
+          ? HOUSE_CRITICS.map((h) => (
+              <View key={h.id} style={{ gap: 6, marginBottom: 6 }}>
+                <Mono s={8.5} c={C.inkSoft} style={{ paddingHorizontal: 2 }}>
+                  HOUSE CRITIC · real scores, pinned
+                </Mono>
+                <HouseCriticCard c={h} width="100%" />
+              </View>
+            ))
+          : null}
         <SerifItalic s={13} c={C.inkMuted} style={{ paddingHorizontal: 2 }}>
           {caption}
         </SerifItalic>

@@ -9,6 +9,8 @@ import { useStore, resolvePlace } from '../store/useStore';
 import { useT } from '../i18n';
 import { FEED, RECS, byId, type Place } from '../store/data';
 import { FEATURED_CRITICS, criticForClip, type Critic } from '../data/critics';
+import { HOUSE_CRITICS } from '../data/houseCritics';
+import { HouseCriticCard } from '../components/HouseCriticCard';
 import { VerdictStamp, SimTag, VERDICT_COLOR } from '../components/CriticMarks';
 import { embedUrlFor, SOURCE_LABEL } from '../data/videos';
 import type { BuzzResult } from '../data/trending';
@@ -826,10 +828,13 @@ export function Feed() {
               {t('feed.tastemakers')}
             </Banner>
             <Mono s={9} c={C.inkSoft}>
-              real creators · simulated reads
+              house critics · real creators
             </Mono>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 4, paddingRight: 4 }}>
+            {HOUSE_CRITICS.map((c) => (
+              <HouseCriticCard key={c.id} c={c} />
+            ))}
             {FEATURED_CRITICS.map((c) => (
               <CriticCard key={c.id} critic={c} />
             ))}

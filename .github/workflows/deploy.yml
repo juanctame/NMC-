@@ -68,6 +68,10 @@ jobs:
         timeout-minutes: 15
         env:
           FORCE: ${{ github.event.inputs.force_media == 'true' && '1' || '' }}
+      - name: Collect the landing reel (HD clips behind sign-in)
+        run: node scripts/collect-landing-reel.mjs
+        continue-on-error: true
+        timeout-minutes: 6
       - name: Export web bundle
         run: EXPO_PUBLIC_BUILD="${GITHUB_SHA::7}" npx expo export -p web
       - name: Carry the live data forward + stamp the build
@@ -84,10 +88,10 @@ jobs:
       - name: Save refreshed media + clip manifests to the branch
         continue-on-error: true
         run: |
-          if git diff --quiet -- src/data/media.json src/data/videos.json src/data/clipsOpen.json; then echo "manifests unchanged"; exit 0; fi
+          if git diff --quiet -- src/data/media.json src/data/videos.json src/data/clipsOpen.json src/data/landingReel.json; then echo "manifests unchanged"; exit 0; fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/media.json src/data/videos.json src/data/clipsOpen.json
+          git add src/data/media.json src/data/videos.json src/data/clipsOpen.json src/data/landingReel.json
           git commit -q -m "Refresh restaurant media + clip manifests [skip ci]"
           git push origin "HEAD:${GITHUB_REF_NAME}"
       - name: Publish to gh-pages

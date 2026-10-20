@@ -59,7 +59,7 @@ function baseHeaders(token?: string, extra: Record<string, string> = {}): Record
   return { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token || SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', ...extra };
 }
 
-async function timed(url: string, init: RequestInit = {}, ms = 9000): Promise<Response | null> {
+export async function timed(url: string, init: RequestInit = {}, ms = 9000): Promise<Response | null> {
   try {
     const ctl = new AbortController();
     const to = setTimeout(() => ctl.abort(), ms);

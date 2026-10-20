@@ -155,6 +155,31 @@ seen it starts over — it's never empty and never the same twice in a row.
   trial numbers, and a feedback box (→ `feedback`).
 - The sample friends are labelled *sample diner* wherever they appear.
 
+### The landing reel
+The sign-in screen loops HD clips behind the buttons on web
+(`src/components/LandingReel.web.tsx`): muted, ~7 s from each clip (past its
+intro), crossfading into the next, with the clip's credit along the bottom.
+The clips are picked at each deploy by `scripts/collect-landing-reel.mjs` into
+`src/data/landingReel.json`: the platform's own restaurant-page clips
+(Wikimedia Commons / Internet Archive files) first, then Commons footage of
+Mexico City food. Only true HD counts — a ≥720p rendition a browser plays, of a
+≥720p original (1080p on big or dense screens). A clip that fails is skipped;
+reduced motion or Data Saver shows a still; if nothing plays, the yellow brand
+cover shows as before.
+
+### House critics
+Real people whose scores are their own, unlike the simulated creator profiles
+(`src/data/houseCritics.ts`). The first is **Juan Carlos Tame
+([@tametitoeats](https://beliapp.co/app/tametitoeats) on Beli)**: pinned first
+in the feed's critics rail and on the critics board, with his own page and his
+score on any place he's ranked.
+- Beli shows lists only inside its app — the public link returns just his name
+  and photo — so his list can't be copied from the web. It goes into
+  `src/data/critics/tametitoeats.json` from his Beli screenshots or a copied
+  list (read with the same OCR/matching as the import), never made up.
+- When he keeps a CRTQ passport as `@tametitoeats` and imports his Beli list
+  there (*Bring your places → Beli*), his critic page reads that list live.
+
 ## Checking on the trial
 - Supabase → **Table editor**: `profiles`, `rankings`, `feedback`,
   `client_errors`, `spot_suggestions`.

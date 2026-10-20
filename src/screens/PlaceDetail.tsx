@@ -13,6 +13,8 @@ import { RANK } from '../store/data';
 import { scoreStyle, verdictOf, fmt, metaOf } from '../store/helpers';
 import { embedUrlFor, isPlayable, SOURCE_LABEL, type TrendingVideo } from '../data/videos';
 import { takesForPlace, consensusFor } from '../data/critics';
+import { houseTakesFor } from '../data/houseCritics';
+import { HouseAvatar } from '../components/HouseCriticCard';
 import { BiggestFans } from '../components/BiggestFans';
 import { VerdictStamp, SimTag, VERDICT_COLOR } from '../components/CriticMarks';
 import { hashtagOf } from '../data/hashtags';
@@ -598,6 +600,7 @@ export function PlaceDetail() {
   const tag = hashtagOf(base);
   const videos = placeVideosMap[activePlaceId] || [];
   const criticTakes = takesForPlace(base.id);
+  const houseTakes = houseTakesFor(base.id);
   const consensus = consensusFor(base.id);
   const videosStatus = placeVideosStatusMap[activePlaceId] || 'idle';
 
@@ -901,6 +904,30 @@ export function PlaceDetail() {
                 </View>
               </StickerPressable>
             ) : null}
+
+            {/* house critics — their own scores, not simulated */}
+            {houseTakes.map(({ critic: h, entry }) => (
+              <StickerPressable
+                key={h.id}
+                offset="sm"
+                onPress={() => openCritic(h.id)}
+                accessibilityLabel={`${h.name} scores it ${entry.score!.toFixed(1)}`}
+                style={{ marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: C.inkDeep, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 9, paddingHorizontal: 11 }}
+              >
+                <HouseAvatar c={h} size={34} />
+                <View style={{ flex: 1, minWidth: 0 }}>
+                  <Banner s={10} tk={0.06} c={C.paper0} numberOfLines={1}>
+                    {h.name}
+                  </Banner>
+                  <Mono s={8} c={C.sun200} numberOfLines={1}>
+                    House critic · his {h.source} score{entry.note ? ` · ${entry.note}` : ''}
+                  </Mono>
+                </View>
+                <Display s={18} c={C.sun300}>
+                  {entry.score!.toFixed(1)}
+                </Display>
+              </StickerPressable>
+            ))}
 
             {/* what critics say — real creators' takes, read by CRTQ (simulated) */}
             {criticTakes.length ? (

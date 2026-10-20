@@ -26,6 +26,8 @@ import { Grain } from '../components/Grain';
 import { ScreenIn } from '../components/Anim';
 import { PlayIcon } from '../components/icons';
 import { SimTag, VerdictStamp, VERDICT_COLOR } from '../components/CriticMarks';
+import { houseCriticById } from '../data/houseCritics';
+import { HouseCriticProfile } from './HouseCriticProfile';
 
 const ACCOUNT_LABEL: Record<string, string> = { ...SOURCE_LABEL, web: 'Website' };
 
@@ -131,6 +133,8 @@ export function CriticProfile() {
   const userReviews = useStore((s) => s.userReviews);
   const t = useT();
 
+  const house = houseCriticById(id);
+  if (house) return <HouseCriticProfile c={house} />;
   const critic = criticById(id);
   if (!critic) return <View style={{ flex: 1, backgroundColor: C.paper50 }} />;
   const following = !!follows['critic:' + critic.id];
