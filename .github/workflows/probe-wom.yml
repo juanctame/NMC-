@@ -28,7 +28,13 @@ jobs:
           echo "$(wc -l < restaurants.txt) CDMX restaurant pages" > found.txt
           while read r; do curl -sS -L -m 30 -A "$UA" -o "r_$(basename $r).html" "$B$r" || true; sleep 0.4; done < restaurants.txt
           echo "--- pages naming him:" >> found.txt
-          grep -il -E 'tame|juan carlos|carte abhyad|84214' *.html >> found.txt || echo none >> found.txt
+          for f in *.html; do
+            t=$(sed 's/<[^>]*>/\n/g' "$f" | sed 's/&#x27;/'"'"'/g; s/&quot;/"/g; s/&amp;/\&/g' | grep -v '^\s*$')
+            if echo "$t" | grep -qE '\bTame\b|Juan Carlos Tame|Carte Abhyad'; then
+              echo "=== $f" >> found.txt
+              echo "$t" | grep -n -B12 -A12 -E '\bTame\b|Juan Carlos Tame|Carte Abhyad' >> found.txt
+            fi
+          done
           echo "--- who is quoted on restaurant pages (sample):" >> found.txt
           r=$(ls r_*.html | head -1); sed 's/<[^>]*>/\n/g' "$r" | grep -v '^\s*$' | head -120 > sample-restaurant.txt
           # keep only the evidence, not every page
@@ -38,5 +44,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add research/wom
-          git commit -q -m "World of Mouth CDMX probe [skip ci]" || exit 0
+          git commit -q -m "World of Mouth CDMX probe (snippets) [skip ci]" || exit 0
           for i in 1 2 3; do git pull -q --rebase origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 5; done
