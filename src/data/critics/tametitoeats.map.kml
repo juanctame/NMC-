@@ -16335,7 +16335,6 @@ Su propuesta de café es técnica y clara: microlotes mexicanos cuidadosamente s
       </Placemark>
       <Placemark>
         <name>Malcriado</name>
-        <address>Malcriado Ciudad de México C. Atlixco 127, Hipódromo Condesa, Cuauhtémoc, 06170 Ciudad de México, CDMX, Mexico https://www.instagram.com/malcriado____/?hl=es</address>
         <description><![CDATA[Id: 84<br>Url: https://malcriado.mx/<br>Address: Ciudad de México<br>Created at: 2025-07-27 16:49:42 UTC<br>Updated at: 2025-07-27 16:49:42 UTC<br>Description: Ubicado en dos de los barrios más vibrantes de la Ciudad de México, Condesa y Polanco, Malcriado Café se ha consolidado como un espacio distinto, donde el café de especialidad y el vino conviven con una actitud desafiante, elegante y decididamente urbana. Desde el primer paso, el lugar transmite una vibra relajada y moderna, con terrazas abiertas, luz natural y diseño sobrio que prioriza lo esencial.<br><br>En la barra, el café es tratado con el respeto que merece. Cada grano es catado con precisión, los métodos son ejecutados con técnica impecable y la oferta se mantiene enfocada en cafés bien seleccionados de origen chiapaneco, siempre frescos y balanceados. No es una carta extensa, pero sí intencional: cada bebida es resultado de un proceso riguroso que prioriza la limpieza sensorial y la consistencia en taza.<br><br><br>Full address: C. Atlixco 127, Hipódromo Condesa, Cuauhtémoc, 06170 Ciudad de México, CDMX, Mexico<br>Social media: https://www.instagram.com/malcriado____/?hl=es<br>Status: candidate<br>Gid: ChIJj79DVEL_0YURJFOsXozpJe0<br>Columna 1: <br>Columna 2: ]]></description>
         <styleUrl>#icon-1899-673AB7</styleUrl>
         <ExtendedData>
@@ -16380,6 +16379,11 @@ En la barra, el café es tratado con el respeto que merece. Cada grano es catado
             <value/>
           </Data>
         </ExtendedData>
+        <Point>
+          <coordinates>
+            -99.1758473,19.410607,0
+          </coordinates>
+        </Point>
       </Placemark>
       <Placemark>
         <name>Comando Café</name>
