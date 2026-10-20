@@ -1,0 +1,64 @@
+200 https://hbxz6.app.link/01izzTtrdLb?_p=c11335dc9a0360eee31888e3e0b1 4735
+200 https://beliapp.co/app/tametitoeats 13241
+curl: (60) SSL: no alternative certificate subject name matches target hostname 'www.beliapp.co'
+More details here: https://curl.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the webpage mentioned above.
+000 https://www.beliapp.co/app/tametitoeats 0
+fail https://www.beliapp.co/app/tametitoeats
+curl: (60) SSL: no alternative certificate subject name matches target hostname 'www.beliapp.co'
+More details here: https://curl.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the webpage mentioned above.
+000 https://www.beliapp.co/app/tametitoeats 0
+fail https://www.beliapp.co/app/tametitoeats
+404 https://beliapp.com/app/tametitoeats 101853
+404 https://beliapp.com/app/tametitoeats 101853
+404 https://beliapp.com/app/tametitoeats 101853
+404 https://beliapp.com/app/tametitoeats 101853
+curl: (1) The redirect target URL could not be parsed: Unsupported URL scheme
+301 https://apps.apple.com/app/id1478375386 0
+fail https://beliapp.co/tametitoeats
+200 https://beliapp.co/tametitoeats 6143
+200 https://app.beliapp.com/tametitoeats 9058
+200 https://app.beliapp.com/tametitoeats 9058
+44.230.115.150
+44.252.253.233
+35.167.216.18
+198.185.159.144
+198.49.23.145
+198.185.159.145
+198.49.23.144
+35.167.216.18
+44.252.253.233
+44.230.115.150
+total 512
+drwxr-xr-x 2 runner runner   4096 Oct 20 15:08 .
+drwxr-xr-x 3 runner runner   4096 Oct 20 15:08 ..
+-rw-r--r-- 1 runner runner    555 Oct 20 15:08 app_beliapp_com_tametitoeats.bot.headers.txt
+-rw-r--r-- 1 runner runner   9058 Oct 20 15:08 app_beliapp_com_tametitoeats.bot.html
+-rw-r--r-- 1 runner runner    557 Oct 20 15:08 app_beliapp_com_tametitoeats.browser.headers.txt
+-rw-r--r-- 1 runner runner   9058 Oct 20 15:08 app_beliapp_com_tametitoeats.browser.html
+-rw-r--r-- 1 runner runner    615 Oct 20 15:08 beliapp_co_app_tametitoeats.bot.headers.txt
+-rw-r--r-- 1 runner runner  13241 Oct 20 15:08 beliapp_co_app_tametitoeats.bot.html
+-rw-r--r-- 1 runner runner   1282 Oct 20 15:08 beliapp_co_app_tametitoeats.browser.headers.txt
+-rw-r--r-- 1 runner runner   4735 Oct 20 15:08 beliapp_co_app_tametitoeats.browser.html
+-rw-r--r-- 1 runner runner    561 Oct 20 15:08 beliapp_co_tametitoeats.bot.headers.txt
+-rw-r--r-- 1 runner runner   6143 Oct 20 15:08 beliapp_co_tametitoeats.bot.html
+-rw-r--r-- 1 runner runner   2498 Oct 20 15:08 beliapp_co_tametitoeats.browser.headers.txt
+-rw-r--r-- 1 runner runner    423 Oct 20 15:08 beliapp_com_app_tametitoeats.bot.headers.txt
+-rw-r--r-- 1 runner runner 101853 Oct 20 15:08 beliapp_com_app_tametitoeats.bot.html
+-rw-r--r-- 1 runner runner    423 Oct 20 15:08 beliapp_com_app_tametitoeats.browser.headers.txt
+-rw-r--r-- 1 runner runner 101853 Oct 20 15:08 beliapp_com_app_tametitoeats.browser.html
+-rw-r--r-- 1 runner runner    456 Oct 20 15:08 referenced-urls.txt
+-rw-r--r-- 1 runner runner   1658 Oct 20 15:08 summary.txt
+-rw-r--r-- 1 runner runner      0 Oct 20 15:08 www_beliapp_co_app_tametitoeats.bot.headers.txt
+-rw-r--r-- 1 runner runner      0 Oct 20 15:08 www_beliapp_co_app_tametitoeats.browser.headers.txt
+-rw-r--r-- 1 runner runner    734 Oct 20 15:08 www_beliapp_com_app_tametitoeats.bot.headers.txt
+-rw-r--r-- 1 runner runner 101853 Oct 20 15:08 www_beliapp_com_app_tametitoeats.bot.html
+-rw-r--r-- 1 runner runner    734 Oct 20 15:08 www_beliapp_com_app_tametitoeats.browser.headers.txt
+-rw-r--r-- 1 runner runner 101853 Oct 20 15:08 www_beliapp_com_app_tametitoeats.browser.html

@@ -1,0 +1,57 @@
+HTTP/1.1 307 Temporary Redirect
+Server: openresty
+Date: Tue, 20 Oct 2026 15:08:22 GMT
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Content-Type-Options: nosniff
+Set-Cookie: _s=zxPE7CTC1OB3mOgqq%2Bl%2BdWMOy50SREzmBl7Pdr%2BonLrTUfcRonY3VJcy4E7yySSF; Max-Age=31536000; Path=/; Expires=Wed, 20 Oct 2027 15:08:22 GMT; Secure
+Last-Modified: Tue, 20 Oct 2026 15:08:22 GMT
+Location: https://apps.apple.com/app/id1478375386
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+Accept-CH: Sec-CH-UA-Platform-Version,Sec-CH-UA-Model
+
+HTTP/2 301 
+server: daiquiri/5
+content-type: text/html; charset=UTF-8
+x-apple-jingle-correlation-key: FNR56LKI5IYHVGTHDGMHX74DLM
+x-apple-request-uuid: 2b63df2d-48ea-307a-9a67-19987bff835b
+x-apple-translated-wo-url: /WebObjects/MZStore.woa/wa/viewSoftware?id=1478375386&urlDesc=
+apple-tk: false
+x-b3-spanid: 028cf2db952a8d3f
+edge-control: cache-maxage=0s, cache-maxage=0s
+x-apple-lokamai-no-cache: true
+x-apple-lokamai-no-cache: true
+b3: 2b63df2d48ea307a9a6719987bff835b-028cf2db952a8d3f
+cache-control: max-age=0, max-age=0, no-store
+x-apple-aka-ttl: Generated Tue Oct 20 08:08:22 PDT 2026, Expires Tue Oct 20 08:08:22 PDT 2026, TTL 0s, cache-maxage=0s
+x-b3-traceid: 2b63df2d48ea307a9a6719987bff835b
+x-webobjects-loadaverage: 0
+last-modified: Tue, 20 Oct 2026 15:08:22 GMT
+apple-seq: 0.0
+access-control-allow-origin: *
+apple-originating-system: MZStore
+strict-transport-security: max-age=31536000; includeSubDomains
+x-frame-options: SAMEORIGIN
+x-apple-orig-url: https://apps.apple.com/app/id1478375386
+x-apple-application-site: MR22
+apple-timing-app: 1 ms
+location: itms-appss://apps.apple.com/app/id1478375386
+x-apple-application-instance: 3500328
+x-responding-instance: MZStore:3500328:::
+x-daiquiri-instance: daiquiri:11896014:mr50p00it-qujn12082902:7987:26HOTFIX47:daiquiri-amp-store-l7shared-int-001-mr
+x-daiquiri-debug-worker-pid: 42211
+x-daiquiri-instance: daiquiri:11896002:mr47p00it-qujn06090102:7987:26HOTFIX47:daiquiri-amp-store-l7shared-int-001-mr
+x-daiquiri-debug-worker-pid: 113139
+x-daiquiri-instance: daiquiri:12282001:mr47p00it-qujn06080702:7987:26HOTFIX47:daiquiri-amp-store-l7shared-ext-001-mr
+x-daiquiri-debug-worker-pid: 129646
+accept-ranges: bytes
+date: Tue, 20 Oct 2026 15:08:22 GMT
+via: 1.1 varnish
+x-cdn: fsly
+x-served-by: cache-chi-kmdw8640049-CHI
+x-cache-hits: 0
+x-timer: S1792508903.618149,VS0,VE46
+set-cookie: geo=US; domain=apple.com
+x-cache: MISS fsly
+content-length: 0
+

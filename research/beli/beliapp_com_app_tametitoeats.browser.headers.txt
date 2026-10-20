@@ -1,0 +1,13 @@
+HTTP/2 404 
+age: 0
+content-type: text/html;charset=utf-8
+date: Tue, 20 Oct 2026 15:08:20 GMT
+etag: W/"15f930e8eda7a856c93ef9cae8ec932c"
+expires: Thu, 01 Jan 1970 00:00:00 GMT
+server: Squarespace
+set-cookie: crumb=BaxZG9Vqb1JEZmQ4NzQ0YmNmY2VmNTFhNjQxNGQxZDI0MzFiNmZi;Secure;Path=/
+strict-transport-security: max-age=15552000
+vary: Accept-Encoding
+x-content-type-options: nosniff
+x-contextid: EjgVsbtA/wyjHCpd4
+

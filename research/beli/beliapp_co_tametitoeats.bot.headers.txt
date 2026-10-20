@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+Server: openresty
+Date: Tue, 20 Oct 2026 15:08:22 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 6143
+Connection: keep-alive
+X-Content-Type-Options: nosniff
+Set-Cookie: _s=IDGqeBBR5F9p69AoqZyoYTqGeXuDp%2BetKRzT2fj%2BDrIWqSAwb7q7sh7T5xpLD0fc; Max-Age=31536000; Path=/; Expires=Wed, 20 Oct 2027 15:08:22 GMT; Secure
+Last-Modified: Tue, 20 Oct 2026 15:08:22 GMT
+ETag: W/"17ff-nycC/epHlu4Nu5krAEQbb6l2Sjc"
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+Accept-CH: Sec-CH-UA-Platform-Version,Sec-CH-UA-Model
+
