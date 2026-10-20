@@ -69,7 +69,7 @@ function fromCommonsPages(pages, ctx = {}) {
     if ((vi.height || 0) < 720 || (vi.width || 0) < 960) continue; // the original itself must be HD
     const secs = Number(vi.duration || 0);
     if (secs && (secs < 6 || secs > 1800)) continue;
-    const ders = (vi.derivatives || []).filter((x) => x.src && playable(x.type) && (x.height || 0) >= 720);
+    const ders = (vi.derivatives || []).filter((x) => x.src && /\/transcoded\//.test(x.src) && playable(x.type) && (x.height || 0) >= 720);
     if (!ders.length) continue;
     const em = vi.extmetadata || {};
     const title = String(p.title || '').replace(/^File:/, '').replace(/\.[a-z0-9]+$/i, '').replace(/_/g, ' ');
@@ -109,17 +109,47 @@ function fromCommonsPages(pages, ctx = {}) {
 const VIINFO = '&prop=videoinfo&viprop=url|mime|size|mediatype|extmetadata|derivatives&viurlwidth=1280';
 const API = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&formatversion=1';
 
-async function commonsByTitles(titles, ctx) {
-  const d = await getJson(`${API}&titles=${encodeURIComponent(titles.join('|'))}${VIINFO}`);
-  return fromCommonsPages(d?.query?.pages, ctx);
+const stats = {};
+const tally = (k, raw, kept) => ((stats[k] = stats[k] || { files: 0, hd: 0 }), (stats[k].files += raw), (stats[k].hd += kept));
+
+/**
+ * The API hands videoinfo for a big page set over several `continue` rounds
+ * (extmetadata is costly), so follow them until every page has its info.
+ */
+async function queryAll(url) {
+  const pages = {};
+  let cont = '';
+  for (let i = 0; i < 10 && left() > 0; i++) {
+    const d = await getJson(url + cont);
+    for (const [id, p] of Object.entries(d?.query?.pages || {})) {
+      const had = pages[id];
+      pages[id] = had ? { ...had, videoinfo: had.videoinfo || p.videoinfo } : p;
+    }
+    // done once this page set is complete (don't page the generator onwards)
+    if (!d?.continue || 'batchcomplete' in d) break;
+    cont = '&' + new URLSearchParams(d.continue).toString();
+    await sleep(200);
+  }
+  return pages;
+}
+
+async function commonsByTitles(titles, ctx, k = 'restaurant pages') {
+  const pages = await queryAll(`${API}&titles=${encodeURIComponent(titles.join('|'))}${VIINFO}`);
+  const out = fromCommonsPages(pages, ctx);
+  tally(k, Object.keys(pages).length, out.length);
+  return out;
 }
 async function commonsCategory(cat, ctx) {
-  const d = await getJson(`${API}&generator=categorymembers&gcmtype=file&gcmlimit=100&gcmtitle=${encodeURIComponent('Category:' + cat)}${VIINFO}`);
-  return fromCommonsPages(d?.query?.pages, ctx);
+  const pages = await queryAll(`${API}&generator=categorymembers&gcmtype=file&gcmlimit=50&gcmtitle=${encodeURIComponent('Category:' + cat)}${VIINFO}`);
+  const out = fromCommonsPages(pages, ctx);
+  tally('Category:' + cat, Object.keys(pages).length, out.length);
+  return out;
 }
 async function commonsSearch(q, ctx) {
-  const d = await getJson(`${API}&generator=search&gsrnamespace=6&gsrlimit=40&gsrsearch=${encodeURIComponent(q + ' filetype:video')}${VIINFO}`);
-  return fromCommonsPages(d?.query?.pages, ctx);
+  const pages = await queryAll(`${API}&generator=search&gsrnamespace=6&gsrlimit=30&gsrsearch=${encodeURIComponent(q + ' filetype:video')}${VIINFO}`);
+  const out = fromCommonsPages(pages, ctx);
+  tally('search: ' + q, Object.keys(pages).length, out.length);
+  return out;
 }
 
 /** An Internet Archive item → an HD MP4 rendition, if it has one. */
@@ -222,6 +252,7 @@ async function main() {
     return;
   }
   fs.writeFileSync(OUT, JSON.stringify(out, null, 1) + '\n');
+  for (const [k, v] of Object.entries(stats)) console.log(`  ${k}: ${v.files} files, ${v.hd} HD + on topic`);
   console.log(`landing reel: ${picked.length} HD clips (${fromPlatform} HD from restaurant pages, ${found.size} HD candidates)`);
   for (const c of picked) console.log(` - ${c.sources[0].height}p ${c.title} — ${c.creator} (${c.license || 'no licence tag'})${c.placeId ? ' @' + c.placeId : ''}`);
 }
