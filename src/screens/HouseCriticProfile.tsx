@@ -1,89 +1,38 @@
 /**
- * House critic profile — a real person whose scores are their own
- * (data/houseCritics.ts). Unlike the simulated creator profiles, nothing here is
- * CRTQ's reading: the list is theirs, copied from the app they rank in (Beli),
- * and read live from their CRTQ passport when they keep one under the same
- * handle. If the viewer *is* that critic, their own ranked list shows here and
- * they can bring their Beli list in from screenshots.
+ * House critic profile — laid out like every critic's (header, how it's made,
+ * connected accounts, palate, takes), for a real person whose list is their
+ * own (data/houseCritics.ts). Their takes are a serialized ranking by category
+ * (data/houseRanking.ts): their preference — their own score when they've given
+ * one, else read from their own words and choices — weighed with how each place
+ * ranks overall, marked HOUSE where other critics carry SIM. Their whole map
+ * and written recommendations follow. If the viewer *is* that critic, their own
+ * passport feeds the ranking and they can bring their Beli list in.
  */
 import React from 'react';
 import { View, ScrollView, Pressable, Linking } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useStore, resolvePlace } from '../store/useStore';
-import { beenOf, fetchLiveList, mapByCity, mapEntries, mapTitle, placeOf, type HouseCritic, type HouseEntry } from '../data/houseCritics';
+import { useStore } from '../store/useStore';
+import { fetchLiveList, mapByCity, mapEntries, mapTitle, placeOf, type HouseCritic, type HouseEntry } from '../data/houseCritics';
+import { HOUSE_CATEGORIES, houseAvg, rankedIn, type HouseCategory, type HouseTake } from '../data/houseRanking';
+import { computePalate, tasteMatch, PALATE_AXES } from '../data/palate';
+import { useT } from '../i18n';
+import { PalateRadar } from '../components/PalateRadar';
+import { HouseTag, VerdictStamp, VERDICT_COLOR } from '../components/CriticMarks';
 import { C } from '../theme/tokens';
-import { Display, Banner, Serif, Mono } from '../components/Text';
+import { Display, Banner, Serif, SerifItalic, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
 import { Monogram } from '../components/Monogram';
 import { Grain } from '../components/Grain';
 import { ScreenIn } from '../components/Anim';
 
 const norm = (h?: string | null) => (h || '').trim().toLowerCase().replace(/^@/, '');
-
-function scoreColor(s: number): string {
-  if (s >= 8.5) return C.stampGreen;
-  if (s >= 7) return C.sun400;
-  return C.ink200;
-}
-
-function EntryRow({ e, rank }: { e: HouseEntry; rank: number }) {
-  const openPlace = useStore((s) => s.openPlace);
-  const nearbyById = useStore((s) => s.nearbyById);
-  const place = placeOf(e) || resolvePlace(e.placeId || null, nearbyById);
-  const hood = e.hood || place?.hood;
-  const body = (
-    <>
-      <Mono s={10} c={C.inkSoft} style={{ width: 22, textAlign: 'right' }}>
-        {rank}
-      </Mono>
-      <Monogram name={place?.name || e.name} size={34} rot={rank % 2 ? '-4deg' : '3deg'} />
-      <View style={{ flex: 1, minWidth: 0 }}>
-        <Serif s={14} c={C.inkDeep} numberOfLines={1}>
-          {place?.name || e.name}
-        </Serif>
-        <Mono s={8} c={C.inkMuted} numberOfLines={1} style={{ marginTop: 1 }}>
-          {[hood, place?.price, e.note].filter(Boolean).join(' · ') || 'Mexico City'}
-        </Mono>
-      </View>
-      {e.score != null ? (
-        <View
-          style={{
-            width: 38,
-            height: 38,
-            borderRadius: 19,
-            backgroundColor: scoreColor(e.score),
-            borderWidth: 2,
-            borderColor: C.inkBlack,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Display s={13} c={e.score >= 8.5 ? C.paper0 : C.inkDeep}>
-            {e.score.toFixed(1)}
-          </Display>
-        </View>
-      ) : null}
-    </>
-  );
-  const style = {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    gap: 10,
-    paddingVertical: 9,
-    paddingHorizontal: 10,
-    backgroundColor: C.paper0,
-    borderWidth: 2,
-    borderColor: C.inkBlack,
-  };
-  return place ? (
-    <Pressable onPress={() => openPlace(place.id)} accessibilityLabel={`${place.name}, ${e.score != null ? e.score.toFixed(1) : 'unscored'}`} style={style}>
-      {body}
-    </Pressable>
-  ) : (
-    <View style={style}>{body}</View>
-  );
-}
+const fold = (s: string) =>
+  s
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/^heroica /, '');
 
 /** One place on their map: name, colonia · city, their note; opens its page. */
 function MapRow({ e, c }: { e: HouseEntry; c: HouseCritic }) {
@@ -264,6 +213,154 @@ function Section({ title, n, dot }: { title: string; n?: number; dot: string }) 
   );
 }
 
+/** One place in their ranking — the same card every critic's take uses, numbered. */
+function HouseTakeCard({ t, rank }: { t: HouseTake; rank: number }) {
+  const openPlace = useStore((s) => s.openPlace);
+  const col = VERDICT_COLOR[t.verdict];
+  const p = t.place;
+  const where = [t.entry.hood || p?.hood, t.entry.city && !/ciudad de m[eé]xico/i.test(t.entry.city) ? t.entry.city : ''].filter(Boolean).join(' · ');
+  return (
+    <StickerView offset={rank <= 3 ? 'lg' : 'sm'} style={{ backgroundColor: rank <= 3 ? C.sun100 : C.paper0, borderWidth: 2, borderColor: C.inkBlack }}>
+      <Pressable
+        onPress={() => p && openPlace(p.id)}
+        accessibilityLabel={`#${rank} ${t.entry.name}, house score ${t.score.toFixed(1)}`}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 10, borderBottomWidth: 1.5, borderColor: C.ink100 }}
+      >
+        <View style={{ width: 30, alignItems: 'center' }}>
+          <Display s={rank < 10 ? 20 : 16} c={rank <= 3 ? C.ink400 : C.inkSoft}>
+            {rank}
+          </Display>
+        </View>
+        <Monogram name={t.entry.name} size={36} rot={rank % 2 ? '-4deg' : '3deg'} />
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <Serif s={14} c={C.inkDeep} numberOfLines={1}>
+            {t.entry.name}
+          </Serif>
+          <Mono s={8} c={C.inkMuted} numberOfLines={1} style={{ marginTop: 1 }}>
+            {where || 'Mexico'}
+          </Mono>
+        </View>
+        <View style={{ alignItems: 'center', gap: 3 }}>
+          <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: col.bg, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+            <Display s={14} c={col.fg}>
+              {t.score.toFixed(1)}
+            </Display>
+          </View>
+          <HouseTag />
+        </View>
+      </Pressable>
+      <View style={{ padding: 10, gap: 7 }}>
+        <VerdictStamp v={t.verdict} small />
+        {t.quote ? (
+          <Serif s={12.5} c={C.inkDeep} style={{ lineHeight: 17, fontStyle: 'italic' }} numberOfLines={4}>
+            {t.entry.note ? `“${t.quote}”` : t.quote}
+          </Serif>
+        ) : null}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+          <Mono s={8} c={C.inkDeep}>
+            {t.own ? 'His score' : 'His preference'} {t.pref.toFixed(1)}
+          </Mono>
+          <Mono s={8} c={C.inkSoft}>
+            ·
+          </Mono>
+          <Mono s={8} c={C.inkDeep}>
+            Overall {t.overall.toFixed(1)}
+          </Mono>
+          {t.why.length ? (
+            <Mono s={8} c={C.inkSoft} numberOfLines={1} style={{ flexShrink: 1 }}>
+              · {t.why.join(', ')}
+            </Mono>
+          ) : null}
+        </View>
+      </View>
+    </StickerView>
+  );
+}
+
+const RANK_PAGE = 10;
+
+/** Their serialized ranking: one category at a time (or overall), CDMX or all of Mexico. */
+function RankingSection({ c }: { c: HouseCritic }) {
+  const [scope, setScope] = React.useState<'cdmx' | 'mx'>('cdmx');
+  const [cat, setCat] = React.useState<HouseCategory | 'all'>('all');
+  const [shown, setShown] = React.useState(RANK_PAGE);
+  const cats: { id: HouseCategory | 'all'; label: string; blurb: string }[] = [{ id: 'all', label: 'Overall', blurb: 'Every place, one list' }, ...HOUSE_CATEGORIES];
+  const counts = Object.fromEntries(cats.map((x) => [x.id, rankedIn(c, x.id, scope).length]));
+  const list = rankedIn(c, cat, scope);
+  const chip = (on: boolean) => ({ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 12, backgroundColor: on ? C.ink400 : C.paper0 });
+  return (
+    <View style={{ paddingTop: 22 }}>
+      <View style={{ paddingHorizontal: 16 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+          <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.ink400 }} />
+          <Banner s={10} tk={0.16} c={C.inkMuted}>
+            His ranking
+          </Banner>
+          <HouseTag />
+          <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+          <View style={{ flexDirection: 'row', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, overflow: 'hidden' }}>
+            {(['cdmx', 'mx'] as const).map((k) => (
+              <Pressable
+                key={k}
+                onPress={() => {
+                  setScope(k);
+                  setShown(RANK_PAGE);
+                }}
+                accessibilityLabel={k === 'cdmx' ? 'Rank in CDMX' : 'Rank across Mexico'}
+                style={{ paddingVertical: 4, paddingHorizontal: 10, backgroundColor: scope === k ? C.inkDeep : C.paper0 }}
+              >
+                <Banner s={8.5} tk={0.08} c={scope === k ? C.paper0 : C.inkDeep}>
+                  {k === 'cdmx' ? 'CDMX' : 'México'}
+                </Banner>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      </View>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 16, paddingBottom: 8 }}>
+        {cats
+          .filter((x) => counts[x.id])
+          .map((x) => (
+            <Pressable
+              key={x.id}
+              onPress={() => {
+                setCat(x.id);
+                setShown(RANK_PAGE);
+              }}
+              accessibilityLabel={`Ranking: ${x.label}`}
+              style={chip(cat === x.id)}
+            >
+              <Banner s={9.5} tk={0.08} c={cat === x.id ? C.paper0 : C.inkDeep}>
+                {x.label} {counts[x.id]}
+              </Banner>
+            </Pressable>
+          ))}
+      </ScrollView>
+      <View style={{ paddingHorizontal: 16, gap: 12 }}>
+        <SerifItalic s={12.5} c={C.inkMuted}>
+          {cats.find((x) => x.id === cat)?.blurb} — {scope === 'cdmx' ? 'Mexico City' : 'all of Mexico'}, his #1 to #{list.length}.
+        </SerifItalic>
+        {list.slice(0, shown).map((t, i) => (
+          <HouseTakeCard key={t.entry.id || t.entry.name} t={t} rank={i + 1} />
+        ))}
+        {list.length > shown ? (
+          <Pressable onPress={() => setShown(shown + RANK_PAGE * 2)} accessibilityLabel="Show more of his ranking" style={{ alignItems: 'center', paddingVertical: 10, borderWidth: 2, borderStyle: 'dashed', borderColor: C.inkSoft }}>
+            <Banner s={9.5} tk={0.1} c={C.inkDeep}>
+              Show #{shown + 1}–#{Math.min(list.length, shown + RANK_PAGE * 2)} of {list.length}
+            </Banner>
+          </Pressable>
+        ) : null}
+      </View>
+    </View>
+  );
+}
+
+const ACCOUNT_EVIDENCE: Record<string, string> = {
+  Beli: 'His Beli profile — scores join his ranking as he shares them',
+  'World of Mouth': 'His World of Mouth profile',
+  'Google My Maps': 'His public map — the places below',
+};
+
 export function HouseCriticProfile({ c }: { c: HouseCritic }) {
   const insets = useSafeAreaInsets();
   const close = useStore((s) => s.closeCritic);
@@ -272,8 +369,9 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
   const openImport = useStore((s) => s.openImport);
   const profile = useStore((s) => s.profile);
   const ranked = useStore((s) => s.ranked);
-  const wantIds = useStore((s) => s.wantIds);
-  const nearbyById = useStore((s) => s.nearbyById);
+  const tastes = useStore((s) => s.tastes);
+  const userReviews = useStore((s) => s.userReviews);
+  const t = useT();
   const [live, setLive] = React.useState<HouseEntry[] | null>(null);
   const [photoOk, setPhotoOk] = React.useState(!!c.photo);
 
@@ -286,107 +384,60 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
   }, [c.id]);
 
   const isMe = !!profile && norm(profile.handle) === norm(c.handle);
-  // Their own device: their ranked list is the freshest copy there is.
-  const mine: HouseEntry[] | null = isMe
-    ? [
-        ...ranked.map((p) => ({
-          placeId: p.id,
-          name: p.name,
-          hood: p.hood,
-          score: p.score,
-          list: 'been' as const,
-        })),
-        ...wantIds
-          .map((id) => resolvePlace(id, nearbyById))
-          .flatMap((p) =>
-            p
-              ? [
-                  {
-                    placeId: p.id,
-                    name: p.name,
-                    hood: p.hood,
-                    list: 'want' as const,
-                  },
-                ]
-              : [],
-          ),
-      ]
-    : null;
-  const list = (mine && mine.length ? mine : live) || c.list;
-  const from = mine && mine.length ? 'your passport' : live ? 'their CRTQ passport, live' : c.asOf ? `${c.source}, ${c.asOf}` : c.source;
-  const been = beenOf(c, list);
-  const wants = list.filter((e) => e.list === 'want');
-  const avg = been.length ? been.reduce((a, e) => a + (e.score || 0), 0) / been.length : null;
-  const following = !!follows['critic:' + c.id];
+  // Their scores — from their passport (live, or this device when it's them) — join the ranking.
+  const scored: HouseEntry[] = isMe ? ranked.filter((p) => p.score != null).map((p) => ({ placeId: p.id, name: p.name, hood: p.hood, score: p.score, list: 'been' as const })) : live || [];
+  const critic = React.useMemo<HouseCritic>(() => {
+    if (!scored.length) return c;
+    const own = new Set(scored.map((e) => e.placeId));
+    return { ...c, list: [...scored, ...c.list.filter((e) => !(e.placeId && own.has(e.placeId)))] };
+  }, [c, live, isMe && ranked]);
 
-  const onMap = mapEntries(c);
-  const recs = c.list.filter((e) => e.list === 'rec');
-  const cities = new Set(
-    onMap.map((e) =>
-      (e.city || '')
-        .normalize('NFKD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase(),
-    ),
-  ).size;
-  const stats: [string, string][] = onMap.length
-    ? [
-        [String(onMap.length), 'on his map'],
-        [String(cities), cities === 1 ? 'city' : 'cities'],
-        been.length ? [String(been.length), 'ranked'] : [String(onMap.filter((e) => /ciudad de m[eé]xico/i.test(e.city || '')).length), 'in CDMX'],
-      ]
-    : [
-        [String(been.length), been.length === 1 ? 'place ranked' : 'places ranked'],
-        [avg != null ? avg.toFixed(1) : '—', 'avg score'],
-        [String(wants.length), 'want to try'],
-      ];
+  const all = rankedIn(critic, 'all', 'mx');
+  const cdmxTop = rankedIn(critic, 'all', 'cdmx')[0];
+  const onMap = mapEntries(critic);
+  const recs = critic.list.filter((e) => e.list === 'rec');
+  const words = critic.list.filter((e) => (e.note || '').replace(/[.\s]/g, '')).length;
+  const cities = new Set(all.map((x) => fold(x.entry.city || 'cdmx'))).size;
+  const following = !!follows['critic:' + c.id];
+  const counts = all.reduce<Record<string, number>>((m, x) => ((m[x.verdict] = (m[x.verdict] || 0) + 1), m), {});
+  const summary = `${all.length} places across ${cities} ${cities === 1 ? 'city' : 'cities'} — ${counts.rave || 0} raves, ${counts.recommends || 0} recommends${cdmxTop ? `; his #1 in CDMX is ${cdmxTop.entry.name}` : ''}.`;
+
+  // Palate, like every critic's: the places he ranks, weighted by his house score.
+  const places = all.filter((x) => x.place).map((x) => ({ ...x.place!, score: x.score }));
+  const palate = computePalate(places);
+  const mine = computePalate(ranked, tastes, userReviews);
+  const match = tasteMatch(mine, palate);
+  const axisLabels = PALATE_AXES.map((k) => t('axis.' + k));
+
+  const accounts = [
+    ...c.links.map((l) => ({ platform: l.platform, label: l.platform === 'Beli' || l.platform === 'World of Mouth' ? c.handle : l.url, url: l.url })),
+    ...(c.maps?.[0]?.url ? [{ platform: 'Google My Maps', label: mapTitle(c), url: c.maps[0].url }] : []),
+  ];
+  const stats: [string, string][] = [
+    [String(all.length), 'places ranked'],
+    [String(words), 'in his words'],
+    [houseAvg(critic).toFixed(1), 'house avg'],
+  ];
 
   return (
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 40 }} showsVerticalScrollIndicator={false}>
         <View style={{ paddingTop: insets.top + 8, paddingHorizontal: 16 }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 12,
-              gap: 8,
-            }}
-          >
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12, gap: 8 }}>
             <Pressable onPress={close} accessibilityLabel="Back" style={{ paddingRight: 4, paddingVertical: 4 }}>
               <Display s={20} c={C.ink400}>
                 ←
               </Display>
             </Pressable>
             <Banner s={10} tk={0.16} c={C.inkMuted}>
-              CRTQ critic · real scores
+              House critic · critic profile
             </Banner>
           </View>
 
-          <StickerView
-            offset="lg"
-            style={{
-              backgroundColor: C.inkDeep,
-              borderWidth: 2.5,
-              borderColor: C.inkBlack,
-              padding: 18,
-              overflow: 'hidden',
-            }}
-          >
+          {/* header — same as every critic's, with the house badge */}
+          <StickerView offset="lg" style={{ backgroundColor: C.ink700, borderWidth: 2.5, borderColor: C.inkBlack, padding: 18, overflow: 'hidden' }}>
             <Grain opacity={0.08} />
-            <View
-              style={{
-                position: 'absolute',
-                top: 12,
-                right: 12,
-                transform: [{ rotate: '6deg' }],
-                backgroundColor: C.stampGreen,
-                borderWidth: 2,
-                borderColor: C.inkBlack,
-                paddingVertical: 2,
-                paddingHorizontal: 7,
-              }}
-            >
+            <View style={{ position: 'absolute', top: 12, right: 12, transform: [{ rotate: '6deg' }], backgroundColor: C.stampGreen, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 2, paddingHorizontal: 7 }}>
               <Banner s={8} tk={0.14} c={C.paper0}>
                 House critic
               </Banner>
@@ -394,46 +445,31 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
               <StickerView offset="sm" radius={999} style={{ transform: [{ rotate: '-4deg' }] }}>
                 {photoOk && c.photo ? (
-                  <View
-                    style={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: 32,
-                      overflow: 'hidden',
-                      borderWidth: 2,
-                      borderColor: C.inkBlack,
-                      backgroundColor: C.ink700,
-                    }}
-                  >
+                  <View style={{ width: 60, height: 60, borderRadius: 30, overflow: 'hidden', borderWidth: 2, borderColor: C.inkBlack, backgroundColor: C.ink700 }}>
                     <Image source={{ uri: c.photo }} style={{ width: '100%', height: '100%' }} contentFit="cover" onError={() => setPhotoOk(false)} accessibilityLabel={c.name} />
                   </View>
                 ) : (
-                  <Monogram name={c.name} size={64} fg={C.paper0} />
+                  <Monogram name={c.name} size={60} fg={C.paper0} />
                 )}
               </StickerView>
-              <View style={{ flex: 1, minWidth: 0, paddingRight: 60 }}>
+              <View style={{ flex: 1, minWidth: 0, paddingRight: 64 }}>
                 <Display s={21} c={C.paper0} style={{ lineHeight: 23 }} numberOfLines={2}>
                   {c.name}
                 </Display>
                 <Mono s={9.5} c={C.sun300} style={{ marginTop: 4 }} numberOfLines={1}>
                   {[c.handle, 'CDMX'].join(' · ')}
                 </Mono>
-                {c.bio ? (
-                  <Serif s={12} c={C.paper0} style={{ marginTop: 4 }} numberOfLines={2}>
-                    {c.bio}
-                  </Serif>
-                ) : null}
               </View>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 16,
-                borderTopWidth: 2,
-                borderColor: C.paper0,
-                paddingTop: 12,
-              }}
-            >
+            {c.bio ? (
+              <Serif s={12.5} c={C.paper0} style={{ marginTop: 12, lineHeight: 18 }}>
+                {c.bio}
+              </Serif>
+            ) : null}
+            <SerifItalic s={12} c={C.sun200} style={{ marginTop: c.bio ? 6 : 12, lineHeight: 17 }}>
+              {summary}
+            </SerifItalic>
+            <View style={{ flexDirection: 'row', marginTop: 14, borderTopWidth: 2, borderColor: C.paper0, paddingTop: 12 }}>
               {stats.map(([n, l]) => (
                 <View key={l} style={{ flex: 1, alignItems: 'center' }}>
                   <Display s={20} c={C.paper0}>
@@ -451,59 +487,108 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
                 radius={999}
                 onPress={() => toggleFollow('critic:' + c.id)}
                 accessibilityLabel={following ? `Following ${c.name}` : `Follow ${c.name}`}
-                style={{
-                  flex: 1,
-                  alignItems: 'center',
-                  borderWidth: 2,
-                  borderColor: C.inkBlack,
-                  borderRadius: 999,
-                  backgroundColor: following ? C.stampGreen : C.sun400,
-                  paddingVertical: 10,
-                }}
+                style={{ alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: following ? C.stampGreen : C.sun400, paddingVertical: 10 }}
               >
                 <Banner s={10} tk={0.1} c={following ? C.paper0 : C.inkDeep}>
-                  {following ? 'Following' : 'Follow'}
+                  {following ? 'Following on CRTQ' : 'Follow on CRTQ'}
                 </Banner>
               </StickerPressable>
             </View>
-            {c.links.length ? (
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
-                {c.links.map((l) => (
-                  <Pressable
-                    key={l.url}
-                    onPress={() => Linking.openURL(l.url)}
-                    accessibilityLabel={`${c.name} on ${l.platform}`}
-                    style={{ borderWidth: 2, borderColor: C.paper0, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 12 }}
-                  >
-                    <Banner s={9} tk={0.1} c={C.paper0}>
-                      {l.platform} ↗
-                    </Banner>
-                  </Pressable>
-                ))}
-              </View>
-            ) : null}
           </StickerView>
         </View>
 
-        <View
-          style={{
-            marginTop: 14,
-            marginHorizontal: 16,
-            borderWidth: 2,
-            borderStyle: 'dashed',
-            borderColor: C.inkSoft,
-            padding: 11,
-            gap: 4,
-          }}
-        >
+        {/* what "house" means */}
+        <View style={{ marginTop: 14, marginHorizontal: 16, borderWidth: 2, borderStyle: 'dashed', borderColor: C.inkSoft, padding: 11, gap: 4 }}>
           <Banner s={8.5} tk={0.14} c={C.inkDeep}>
             How this profile is made
           </Banner>
           <Serif s={11.5} c={C.inkMuted} style={{ lineHeight: 16 }}>
-            {onMap.length ? `His places come straight from his own map${c.maps?.[0]?.source ? ` on ${c.maps[0].source}` : ''}, with his notes as he wrote them, and follow it as he edits it. ` : ''}
-            Any score is his own, from his {c.source} list — nothing is estimated by CRTQ. When he ranks on CRTQ as {c.handle}, this page follows his passport live.
+            {c.name} is a CRTQ house critic: the places are his own — his map, his notes, his lists. His ranking (<Mono s={9} c={C.stampGreen}>HOUSE</Mono>) weighs his preference
+            (60%) with how each place ranks overall (40%: the guide’s acclaim and the critics’ consensus). His preference is his own score where he’s given one (Beli, or his CRTQ
+            passport as {c.handle}); elsewhere CRTQ reads it from his choices and his own words. Quotes are his, as written.
           </Serif>
         </View>
+
+        {/* connected accounts */}
+        <View style={{ paddingTop: 20, paddingHorizontal: 16, gap: 8 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.stampBlue }} />
+            <Banner s={10} tk={0.16} c={C.inkMuted}>
+              Connected accounts
+            </Banner>
+            <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+            <Mono s={9} c={C.inkSoft}>
+              {accounts.length}
+            </Mono>
+          </View>
+          {accounts.map((a) => (
+            <Pressable
+              key={a.url}
+              onPress={() => Linking.openURL(a.url)}
+              accessibilityLabel={`${a.platform}: ${a.label}`}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 9, paddingHorizontal: 11, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack }}
+            >
+              <View style={{ minWidth: 76, backgroundColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8, alignItems: 'center' }}>
+                <Banner s={8} tk={0.08} c={C.paper0} numberOfLines={1}>
+                  {a.platform}
+                </Banner>
+              </View>
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <Mono s={10.5} c={C.inkDeep} numberOfLines={1}>
+                  {a.label}
+                </Mono>
+                <Mono s={7.5} c={C.inkMuted} numberOfLines={1} style={{ marginTop: 1 }}>
+                  ✓ {ACCOUNT_EVIDENCE[a.platform] || 'Linked by him'}
+                </Mono>
+              </View>
+              <Display s={14} c={C.inkSoft}>
+                ↗
+              </Display>
+            </Pressable>
+          ))}
+        </View>
+
+        {/* palate */}
+        {places.length ? (
+          <View style={{ paddingTop: 20, paddingHorizontal: 16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+              <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.sun500 }} />
+              <Banner s={10} tk={0.16} c={C.inkMuted}>
+                His palate
+              </Banner>
+              <HouseTag />
+              <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+            </View>
+            <StickerView offset="sm" style={{ backgroundColor: C.sun100, borderWidth: 2, borderColor: C.inkBlack, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <PalateRadar axes={palate.axes} labels={axisLabels} size={118} showLabels={false} fill={C.stampGreen} />
+              <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
+                <Display s={16} c={C.inkDeep} style={{ lineHeight: 18 }}>
+                  {t('arch.' + palate.archId + '.t')}
+                </Display>
+                <Mono s={8.5} c={C.inkMuted} numberOfLines={2}>
+                  {HOUSE_CATEGORIES.filter((x) => rankedIn(critic, x.id, 'mx').length)
+                    .sort((a, b) => rankedIn(critic, b.id, 'mx').length - rankedIn(critic, a.id, 'mx').length)
+                    .map((x) => x.label)
+                    .slice(0, 3)
+                    .join(' · ')}
+                </Mono>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                  <View style={{ backgroundColor: C.inkDeep, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 9 }}>
+                    <Banner s={9} tk={0.06} c={C.sun300}>
+                      {match}% match
+                    </Banner>
+                  </View>
+                  <Mono s={8} c={C.inkSoft}>
+                    with your palate
+                  </Mono>
+                </View>
+              </View>
+            </StickerView>
+          </View>
+        ) : null}
+
+        {/* his takes: the serialized ranking by category */}
+        {all.length ? <RankingSection c={critic} /> : null}
 
         {recs.length ? (
           <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
@@ -513,106 +598,30 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
             </Mono>
             <View style={{ gap: 8 }}>
               {recs.map((e) => (
-                <MapRow key={e.id || e.name} e={e} c={c} />
+                <MapRow key={e.id || e.name} e={e} c={critic} />
               ))}
             </View>
           </View>
         ) : null}
 
-        {onMap.length ? <MapSection c={c} /> : null}
+        {onMap.length ? <MapSection c={critic} /> : null}
 
-        {!been.length && onMap.length ? (
+        {isMe && !critic.list.some((e) => e.score != null) ? (
           <View style={{ paddingTop: 18, paddingHorizontal: 16, gap: 8 }}>
             <Mono s={8.5} c={C.inkSoft} style={{ lineHeight: 13 }}>
-              His {c.source} scores join this page when he imports them into his CRTQ passport ({c.handle}) or shares his {c.source} screenshots.
+              Your own {c.source} scores replace the read-from-your-words preference in your ranking.
             </Mono>
-            {isMe ? (
-              <StickerPressable
-                offset="sm"
-                radius={999}
-                onPress={() => openImport('beli')}
-                accessibilityLabel="Import my Beli list"
-                style={{
-                  alignSelf: 'flex-start',
-                  borderWidth: 2,
-                  borderColor: C.inkBlack,
-                  borderRadius: 999,
-                  backgroundColor: C.inkDeep,
-                  paddingVertical: 9,
-                  paddingHorizontal: 16,
-                }}
-              >
-                <Banner s={10} tk={0.1} c={C.paper0}>
-                  Import my Beli list →
-                </Banner>
-              </StickerPressable>
-            ) : null}
-          </View>
-        ) : (
-          <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
-            <Section title="His list" n={been.length} dot={C.stampGreen} />
-            {been.length ? (
-              <>
-                <Mono s={8.5} c={C.inkSoft} style={{ marginBottom: 8 }}>
-                  From {from}
-                </Mono>
-                <View style={{ gap: 8 }}>
-                  {been.map((e, i) => (
-                    <EntryRow key={(e.placeId || e.name) + i} e={e} rank={i + 1} />
-                  ))}
-                </View>
-              </>
-            ) : (
-              <StickerView
-                offset="sm"
-                style={{
-                  backgroundColor: C.sun100,
-                  borderWidth: 2,
-                  borderColor: C.inkBlack,
-                  padding: 14,
-                  gap: 8,
-                }}
-              >
-                <Display s={16} c={C.inkDeep}>
-                  His {c.source} list is on its way
-                </Display>
-                <Serif s={12} c={C.inkMuted} style={{ lineHeight: 17 }}>
-                  {c.source} keeps lists inside its app, so they can’t be read from the web. It lands here as soon as it’s brought in from his {c.source} screenshots — or when he imports it into his CRTQ passport.
-                </Serif>
-                {isMe ? (
-                  <StickerPressable
-                    offset="sm"
-                    radius={999}
-                    onPress={() => openImport('beli')}
-                    accessibilityLabel="Import my Beli list"
-                    style={{
-                      alignSelf: 'flex-start',
-                      borderWidth: 2,
-                      borderColor: C.inkBlack,
-                      borderRadius: 999,
-                      backgroundColor: C.inkDeep,
-                      paddingVertical: 9,
-                      paddingHorizontal: 16,
-                    }}
-                  >
-                    <Banner s={10} tk={0.1} c={C.paper0}>
-                      Import my Beli list →
-                    </Banner>
-                  </StickerPressable>
-                ) : null}
-              </StickerView>
-            )}
-          </View>
-        )}
-
-        {wants.length ? (
-          <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
-            <Section title="Wants to try" n={wants.length} dot={C.sun500} />
-            <View style={{ gap: 8 }}>
-              {wants.map((e, i) => (
-                <EntryRow key={(e.placeId || e.name) + 'w' + i} e={e} rank={i + 1} />
-              ))}
-            </View>
+            <StickerPressable
+              offset="sm"
+              radius={999}
+              onPress={() => openImport('beli')}
+              accessibilityLabel="Import my Beli list"
+              style={{ alignSelf: 'flex-start', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.inkDeep, paddingVertical: 9, paddingHorizontal: 16 }}
+            >
+              <Banner s={10} tk={0.1} c={C.paper0}>
+                Import my Beli list →
+              </Banner>
+            </StickerPressable>
           </View>
         ) : null}
       </ScrollView>

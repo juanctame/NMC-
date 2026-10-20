@@ -13,10 +13,11 @@ import { RANK } from '../store/data';
 import { scoreStyle, verdictOf, fmt, metaOf } from '../store/helpers';
 import { embedUrlFor, isPlayable, SOURCE_LABEL, type TrendingVideo } from '../data/videos';
 import { takesForPlace, consensusFor } from '../data/critics';
-import { houseTakesFor, mapTitle } from '../data/houseCritics';
+import { HOUSE_CRITICS } from '../data/houseCritics';
+import { HOUSE_CATEGORIES, houseTakeFor } from '../data/houseRanking';
 import { HouseAvatar } from '../components/HouseCriticCard';
 import { BiggestFans } from '../components/BiggestFans';
-import { VerdictStamp, SimTag, VERDICT_COLOR } from '../components/CriticMarks';
+import { VerdictStamp, SimTag, HouseTag, VERDICT_COLOR } from '../components/CriticMarks';
 import { hashtagOf } from '../data/hashtags';
 import { computePalate } from '../data/palate';
 import { drawAndKnow, priceLabel, fitFor, type GReview } from '../data/placeDetails';
@@ -600,7 +601,7 @@ export function PlaceDetail() {
   const tag = hashtagOf(base);
   const videos = placeVideosMap[activePlaceId] || [];
   const criticTakes = takesForPlace(base.id);
-  const houseTakes = houseTakesFor(base.id);
+  const houseTakes = HOUSE_CRITICS.map((h) => ({ critic: h, ...houseTakeFor(h, base.id)! })).filter((x) => x.take);
   const consensus = consensusFor(base.id);
   const videosStatus = placeVideosStatusMap[activePlaceId] || 'idle';
 
@@ -905,38 +906,40 @@ export function PlaceDetail() {
               </StickerPressable>
             ) : null}
 
-            {/* house critics — their own scores, not simulated */}
-            {houseTakes.map(({ critic: h, entry }) => (
+            {/* house critics — their ranking: rank in its category, verdict, house score */}
+            {houseTakes.map(({ critic: h, take: ht, rank, of }) => (
               <StickerPressable
                 key={h.id}
                 offset="sm"
                 onPress={() => openCritic(h.id)}
-                accessibilityLabel={entry.score != null ? `${h.name} scores it ${entry.score.toFixed(1)}` : `On ${h.name}’s map`}
-                style={{ marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: C.inkDeep, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 9, paddingHorizontal: 11 }}
+                accessibilityLabel={`${h.name} ranks it #${rank} of ${of}, house score ${ht.score.toFixed(1)}`}
+                style={{ marginTop: 16, backgroundColor: C.inkDeep, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 10, paddingHorizontal: 11, gap: 7 }}
               >
-                <HouseAvatar c={h} size={34} />
-                <View style={{ flex: 1, minWidth: 0 }}>
-                  <Banner s={10} tk={0.06} c={C.paper0} numberOfLines={1}>
-                    {h.name}
-                  </Banner>
-                  <Mono s={8} c={C.sun200} numberOfLines={1}>
-                    {entry.score != null ? `House critic · his ${h.source} score` : `House critic · on his map — ${mapTitle(h)}`}
-                  </Mono>
-                  {entry.note ? (
-                    <Serif s={11.5} c={C.paper0} numberOfLines={3} style={{ marginTop: 4, lineHeight: 16, fontStyle: 'italic' }}>
-                      “{entry.note}”
-                    </Serif>
-                  ) : null}
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <HouseAvatar c={h} size={34} />
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <Banner s={10} tk={0.06} c={C.paper0} numberOfLines={1}>
+                      {h.name}
+                    </Banner>
+                    <Mono s={8} c={C.sun200} numberOfLines={1}>
+                      House critic · #{rank} of {of} in {HOUSE_CATEGORIES.find((x) => x.id === ht.category)?.label}
+                    </Mono>
+                  </View>
+                  <View style={{ alignItems: 'center', gap: 3 }}>
+                    <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: VERDICT_COLOR[ht.verdict].bg, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+                      <Display s={14} c={VERDICT_COLOR[ht.verdict].fg}>
+                        {ht.score.toFixed(1)}
+                      </Display>
+                    </View>
+                    <HouseTag dark />
+                  </View>
                 </View>
-                {entry.score != null ? (
-                  <Display s={18} c={C.sun300}>
-                    {entry.score.toFixed(1)}
-                  </Display>
-                ) : (
-                  <Display s={16} c={C.sun300}>
-                    ✓
-                  </Display>
-                )}
+                <VerdictStamp v={ht.verdict} small />
+                {ht.entry.note ? (
+                  <Serif s={11.5} c={C.paper0} numberOfLines={3} style={{ lineHeight: 16, fontStyle: 'italic' }}>
+                    “{ht.quote}”
+                  </Serif>
+                ) : null}
               </StickerPressable>
             ))}
 

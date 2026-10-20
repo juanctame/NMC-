@@ -173,6 +173,18 @@ Real people whose scores are their own, unlike the simulated creator profiles
 ([@tametitoeats](https://beliapp.co/app/tametitoeats) on Beli)**: pinned first
 in the feed's critics rail and on the critics board, with his own page and his
 score on any place he's ranked.
+- **His profile follows every critic's** — header (house badge, bio, summary,
+  stats), how it's made, connected accounts (Beli, World of Mouth, his map),
+  palate with your match — and his takes are a **serialized ranking by
+  category** (`src/data/houseRanking.ts`): Overall, Specialty bars, Roasters,
+  Bakery & brunch, Neighbourhood cafés, in CDMX or all of Mexico, #1 down.
+  House score = 60% his preference + 40% overall standing. His preference is
+  his own score where he gives one (Beli, or his CRTQ passport); elsewhere
+  it's read from his choices and his own words (he wrote about it, how
+  strongly, pinned by hand). Overall is the guide's acclaim and the critics'
+  consensus on CRTQ. Marked **HOUSE** wherever it shows (other critics carry
+  SIM); every card shows both parts. Place pages show his rank in the
+  category ("#1 of 11 in Specialty bars") and verdict.
 - **His map** — his public Google My Maps map *TBCS México — Nominados* (409
   coffee shops across Mexico) fills his page, city by city with CDMX first,
   with his own notes. **Actions → Import a critic's Google My Maps list**

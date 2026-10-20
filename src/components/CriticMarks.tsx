@@ -40,3 +40,14 @@ export function VerdictStamp({ v, small }: { v: Verdict; small?: boolean }) {
     </View>
   );
 }
+
+/** The house critic's mark: a real critic's ranking — their own scores, else CRTQ's reading of their own list. */
+export function HouseTag({ dark }: { dark?: boolean }) {
+  return (
+    <View style={{ backgroundColor: dark ? C.stampGreen : C.paper0, borderWidth: 1.5, borderColor: dark ? C.paper0 : C.stampGreen, borderRadius: 3, paddingHorizontal: 4, paddingVertical: 0.5 }}>
+      <Mono s={7} c={dark ? C.paper0 : C.stampGreen}>
+        HOUSE
+      </Mono>
+    </View>
+  );
+}

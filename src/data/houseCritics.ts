@@ -143,16 +143,6 @@ export { mapTitle };
 /** Their been-list, best first. */
 export const beenOf = (c: HouseCritic, list = c.list) => list.filter((e) => e.list !== 'want' && e.score != null).sort((a, b) => (b.score || 0) - (a.score || 0));
 
-/** Their score — or their map pin — for a place (for its page). */
-export function houseTakesFor(placeId: string): { critic: HouseCritic; entry: HouseEntry }[] {
-  const out: { critic: HouseCritic; entry: HouseEntry }[] = [];
-  for (const c of HOUSE_CRITICS) {
-    const e = c.list.find((x) => x.score != null && x.placeId === placeId) || c.list.find((x) => x.list === 'map' && (x.placeId === placeId || x.id === placeId));
-    if (e) out.push({ critic: c, entry: e });
-  }
-  return out;
-}
-
 /** Their current list from their CRTQ passport (same handle), when the backend has it. */
 export async function fetchLiveList(c: HouseCritic): Promise<HouseEntry[] | null> {
   if (!cloudConfigured()) return null;
