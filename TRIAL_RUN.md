@@ -173,8 +173,17 @@ Real people whose scores are their own, unlike the simulated creator profiles
 ([@tametitoeats](https://beliapp.co/app/tametitoeats) on Beli)**: pinned first
 in the feed's critics rail and on the critics board, with his own page and his
 score on any place he's ranked.
+- **His map** — his public Google My Maps map *TBCS México — Nominados* (409
+  coffee shops across Mexico) fills his page, city by city with CDMX first,
+  with his own notes. **Actions → Import a critic's Google My Maps list**
+  (`scripts/import-critic-map.mjs`; on push, by hand, weekly once on `main`)
+  downloads the map's KML export, locates each place (the map's pin, else its
+  address, its name or its colonia via OpenStreetMap — results checked against
+  the place's city, cached in `tametitoeats.geo.json`), links guide pages, and
+  redeploys the site when the list changed. Every place opens as a page; ones
+  not yet located show their address without a map pin.
 - Beli shows lists only inside its app — the public link returns just his name
-  and photo — so his list can't be copied from the web. It goes into
+  and photo — so his Beli scores can't be copied from the web. They go into
   `src/data/critics/tametitoeats.json` from his Beli screenshots or a copied
   list (read with the same OCR/matching as the import), never made up.
 - When he keeps a CRTQ passport as `@tametitoeats` and imports his Beli list

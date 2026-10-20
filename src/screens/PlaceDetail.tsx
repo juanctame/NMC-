@@ -13,7 +13,7 @@ import { RANK } from '../store/data';
 import { scoreStyle, verdictOf, fmt, metaOf } from '../store/helpers';
 import { embedUrlFor, isPlayable, SOURCE_LABEL, type TrendingVideo } from '../data/videos';
 import { takesForPlace, consensusFor } from '../data/critics';
-import { houseTakesFor } from '../data/houseCritics';
+import { houseTakesFor, mapTitle } from '../data/houseCritics';
 import { HouseAvatar } from '../components/HouseCriticCard';
 import { BiggestFans } from '../components/BiggestFans';
 import { VerdictStamp, SimTag, VERDICT_COLOR } from '../components/CriticMarks';
@@ -911,7 +911,7 @@ export function PlaceDetail() {
                 key={h.id}
                 offset="sm"
                 onPress={() => openCritic(h.id)}
-                accessibilityLabel={`${h.name} scores it ${entry.score!.toFixed(1)}`}
+                accessibilityLabel={entry.score != null ? `${h.name} scores it ${entry.score.toFixed(1)}` : `On ${h.name}’s map`}
                 style={{ marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: C.inkDeep, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 9, paddingHorizontal: 11 }}
               >
                 <HouseAvatar c={h} size={34} />
@@ -920,12 +920,23 @@ export function PlaceDetail() {
                     {h.name}
                   </Banner>
                   <Mono s={8} c={C.sun200} numberOfLines={1}>
-                    House critic · his {h.source} score{entry.note ? ` · ${entry.note}` : ''}
+                    {entry.score != null ? `House critic · his ${h.source} score` : `House critic · on his map — ${mapTitle(h)}`}
                   </Mono>
+                  {entry.note ? (
+                    <Serif s={11.5} c={C.paper0} numberOfLines={3} style={{ marginTop: 4, lineHeight: 16, fontStyle: 'italic' }}>
+                      “{entry.note}”
+                    </Serif>
+                  ) : null}
                 </View>
-                <Display s={18} c={C.sun300}>
-                  {entry.score!.toFixed(1)}
-                </Display>
+                {entry.score != null ? (
+                  <Display s={18} c={C.sun300}>
+                    {entry.score.toFixed(1)}
+                  </Display>
+                ) : (
+                  <Display s={16} c={C.sun300}>
+                    ✓
+                  </Display>
+                )}
               </StickerPressable>
             ))}
 

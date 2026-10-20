@@ -6,7 +6,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { Image } from 'expo-image';
 import { useStore } from '../store/useStore';
-import { beenOf, placeOf, type HouseCritic } from '../data/houseCritics';
+import { beenOf, mapEntries, placeOf, type HouseCritic } from '../data/houseCritics';
 import { C } from '../theme/tokens';
 import { Banner, Display, Mono, Serif } from './Text';
 import { StickerPressable } from './Sticker';
@@ -29,6 +29,9 @@ export function HouseCriticCard({ c, width = 286 }: { c: HouseCritic; width?: nu
   const been = beenOf(c);
   const top = been[0];
   const topName = top ? placeOf(top)?.name || top.name : null;
+  const map = mapEntries(c);
+  const onMap = map.length;
+  const cdmx = map.filter((e) => /ciudad de m[eé]xico/i.test(e.city || '')).length;
   return (
     <StickerPressable offset="lg" onPress={() => openCritic(c.id)} accessibilityLabel={`Critic: ${c.name}`} style={{ width, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 11, paddingHorizontal: 12 }}>
@@ -66,7 +69,7 @@ export function HouseCriticCard({ c, width = 286 }: { c: HouseCritic; width?: nu
             </Serif>
           ) : (
             <Mono s={8.5} c={C.sun200} numberOfLines={1}>
-              real scores · {c.source} list coming in
+              {onMap ? `${onMap} coffee shops on his map · ${cdmx} in CDMX` : `real scores · ${c.source} list coming in`}
             </Mono>
           )}
         </View>

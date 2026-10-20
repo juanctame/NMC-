@@ -36,6 +36,7 @@ import {
 } from '../data/wikiPhotos';
 import type { PhotoMatch, PhotoImportStatus, PhotoPoint } from '../data/photoImportTypes';
 import { CARTE_CDMX } from '../data/carte';
+import { houseMapPlaces } from '../data/houseCritics';
 import { REVIEWS, DISH_PHOTOS, type Review } from '../data/reviews';
 import { fetchSharedReviews, pushSharedReview } from '../data/shared';
 import { makeProfile, makeProfileFromAuth, identity, type Profile } from '../data/profile';
@@ -526,6 +527,9 @@ const wikiTried = new Set<string>();
 export function registerPlaces(ps: Place[]): void {
   ps.forEach((p) => (registeredPlaces[p.id] = registeredPlaces[p.id] || p));
 }
+
+// House critics' map places open from anywhere (their page, search, a friend's list).
+registerPlaces(houseMapPlaces());
 
 export function resolvePlace(id: string | null, nearbyById: Record<string, Place>): Place | undefined {
   if (!id) return undefined;

@@ -92,23 +92,65 @@ const handleOf = (s) => {
 };
 const linkOf = (s) => (/^https?:\/\//.test(String(s || '').trim()) ? String(s).trim() : '');
 
-async function nominatim(q) {
+async function getJson(url) {
   for (let i = 0; i < 3; i++) {
     try {
-      const r = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=mx&accept-language=es&q=${encodeURIComponent(q)}`, {
-        headers: { 'User-Agent': UA },
-        signal: AbortSignal.timeout(20000),
-      });
+      const r = await fetch(url, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(20000) });
       if (r.status === 429 || r.status >= 500) {
         await sleep(5000 * (i + 1));
         continue;
       }
-      if (!r.ok) return null;
-      const j = await r.json();
-      return j[0] ? { lat: +j[0].lat, lon: +j[0].lon, kind: j[0].addresstype || j[0].type } : null;
+      return r.ok ? await r.json() : null;
     } catch {
       await sleep(2000);
     }
+  }
+  return null;
+}
+
+/** Does a geocoder's address agree with the place's city / state / postcode? */
+const sameArea = (addr, want) => {
+  const have = fold(Object.values(addr || {}).join(' | '));
+  return [want.postcode, want.city, want.state].filter(Boolean).some((w) => have.includes(fold(w).replace(/^heroica /, '').replace(/\.$/, '')));
+};
+
+/** Nominatim (free-form or structured), kept only when it lands in the right city. */
+async function nominatim(params, want) {
+  const qs = typeof params === 'string' ? `q=${encodeURIComponent(params)}` : new URLSearchParams(params).toString();
+  const j = await getJson(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=3&countrycodes=mx&accept-language=es&${qs}`);
+  await sleep(1100);
+  const hit = (j || []).find((x) => !want || sameArea(x.address, want));
+  return hit ? { lat: +hit.lat, lon: +hit.lon } : null;
+}
+
+/** Photon (OpenStreetMap search, good at business names) — a café or shop of that name in that city. */
+async function photon(name, want) {
+  const j = await getJson(`https://photon.komoot.io/api/?limit=5&lang=default&q=${encodeURIComponent([name, want.city, want.state, 'México'].filter(Boolean).join(', '))}`);
+  await sleep(600);
+  const w = words(name);
+  const hit = (j?.features || []).find((f) => {
+    const pr = f.properties || {};
+    return pr.countrycode === 'MX' && w && words(pr.name || '').includes(w.split(' ')[0]) && sameArea({ c: pr.city, s: pr.state, p: pr.postcode, d: pr.district, l: pr.locality }, want);
+  });
+  return hit ? { lat: hit.geometry.coordinates[1], lon: hit.geometry.coordinates[0] } : null;
+}
+
+/** Locate a place: its address, then the street alone, then its name, then its colonia (approximate). */
+async function locate(name, full, cityHint) {
+  const pa = partsOf(full, cityHint);
+  const postcode = (/\b(\d{5})\b/.exec(full) || [])[1] || '';
+  const want = { city: pa.city || cityHint, state: pa.state, postcode };
+  const street = String(full).split(',')[0].replace(/-?\s*(local|loc|int|interior)\b.*$/i, '').trim();
+  const tries = [
+    ['address', () => (full ? nominatim(cleanAddr(full), want) : null)],
+    ['address', () => (street && /\d/.test(street) ? nominatim({ street, city: want.city || '', state: want.state || '', ...(postcode ? { postalcode: postcode } : {}) }, want) : null)],
+    ['name', () => photon(name, want)],
+    ['name', () => nominatim([name, want.city, want.state].filter(Boolean).join(', '), want)],
+    ['area', () => (pa.hood ? nominatim([pa.hood, postcode, want.city, want.state].filter(Boolean).join(', '), want) : null)],
+  ];
+  for (const [precision, run] of tries) {
+    const g = await run();
+    if (g) return { lat: +g.lat.toFixed(6), lon: +g.lon.toFixed(6), precision, v: 2 };
   }
   return null;
 }
@@ -149,21 +191,15 @@ async function main() {
     const full = d['Full address'] || '';
     const key = gid || fold(p.name + ' ' + full);
     let lat = p.lat, lon = p.lon, precision = lat != null ? 'pin' : null;
-    if (lat == null && geo[key]) ({ lat, lon, precision } = geo[key]);
-    if (lat == null && geo[key] === undefined && Date.now() - t0 < BUDGET_MS) {
-      // the full street address first, then the name in its city
-      let g = full ? await nominatim(cleanAddr(full)) : null;
-      await sleep(1100);
+    if (lat == null && geo[key]?.lat != null) ({ lat, lon, precision } = geo[key]);
+    // look up what isn't known yet; earlier misses get one more go with every strategy
+    const missed = geo[key] === null || geo[key]?.miss === 1 || (geo[key]?.precision === 'name' && !geo[key].v);
+    if (missed && geo[key]?.lat != null) lat = lon = precision = null;
+    if (lat == null && (geo[key] === undefined || missed) && Date.now() - t0 < BUDGET_MS) {
       looked++;
-      let prec = 'address';
-      if (!g) {
-        const { city, state } = partsOf(full, d.Address);
-        g = await nominatim([p.name, city || d.Address, state].filter(Boolean).join(', '));
-        await sleep(1100);
-        prec = 'name';
-      }
-      geo[key] = g ? { lat: +g.lat.toFixed(6), lon: +g.lon.toFixed(6), precision: prec } : null;
-      if (g) ({ lat, lon, precision } = geo[key]), found++;
+      const g = await locate(p.name, full, d.Address);
+      geo[key] = g || { miss: 2 };
+      if (g) (lat = g.lat), (lon = g.lon), (precision = g.precision), found++;
     }
     const { hood, borough, city, state } = partsOf(full, d.Address);
     const e = {
