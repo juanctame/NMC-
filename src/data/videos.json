@@ -1,7 +1,7 @@
 {
  "version": 1,
- "generatedAt": "2026-10-20T15:25:53.922Z",
- "status": "api-disabled",
- "note": "site key: accessNotConfigured — YouTube Data API v3 has not been used in project 545170702116 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/youtube.googleapis.com/overview?project=545170702116 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.",
+ "generatedAt": "2026-10-20T15:27:58.640Z",
+ "status": "forbidden",
+ "note": "site key: forbidden — Requests to this API youtube method youtube.api.v3.V3DataVideoService.List are blocked.",
  "venues": {}
 }

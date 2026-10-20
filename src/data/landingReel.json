@@ -1,8 +1,8 @@
 {
  "version": 1,
- "generatedAt": "2026-10-20T15:26:05.082Z",
- "took": "11s",
- "checked": 2,
+ "generatedAt": "2026-10-20T15:28:30.038Z",
+ "took": "31s",
+ "checked": 21,
  "fromPlatform": 2,
  "clips": [
   {
@@ -46,6 +46,132 @@
    "placeId": null,
    "via": "restaurant page",
    "start": 11
+  },
+  {
+   "id": "commons:File:Quesadilla - no audio.webm",
+   "title": "Quesadilla - no audio",
+   "creator": "rosatrieu",
+   "license": "CC BY-SA 3.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Quesadilla_-_no_audio.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Quesadilla_-_no_audio.webm/1280px--Quesadilla_-_no_audio.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/b/b9/Quesadilla_-_no_audio.webm/Quesadilla_-_no_audio.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 1920,
+   "height": 1080,
+   "durationSec": 68,
+   "placeId": null,
+   "via": "commons",
+   "start": 10
+  },
+  {
+   "id": "commons:File:Man with masa in tortillería.webm",
+   "title": "Man with masa in tortillería",
+   "creator": "Armando Gómez",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Man_with_masa_in_tortiller%C3%ADa.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Man_with_masa_in_tortiller%C3%ADa.webm/1280px--Man_with_masa_in_tortiller%C3%ADa.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/2/26/Man_with_masa_in_tortiller%C3%ADa.webm/Man_with_masa_in_tortiller%C3%ADa.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 1920,
+   "height": 1080,
+   "durationSec": 8,
+   "placeId": null,
+   "via": "commons",
+   "start": 0
+  },
+  {
+   "id": "commons:File:Tortilla baking process.webm",
+   "title": "Tortilla baking process",
+   "creator": "Armando Gómez",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Tortilla_baking_process.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Tortilla_baking_process.webm/1280px--Tortilla_baking_process.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/f/ff/Tortilla_baking_process.webm/Tortilla_baking_process.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 1920,
+   "height": 1080,
+   "durationSec": 15,
+   "placeId": null,
+   "via": "commons",
+   "start": 0
+  },
+  {
+   "id": "commons:File:Tortilla shapping machinery for making tortillas.webm",
+   "title": "Tortilla shapping machinery for making tortillas",
+   "creator": "Armando Gómez",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Tortilla_shapping_machinery_for_making_tortillas.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a7/Tortilla_shapping_machinery_for_making_tortillas.webm/1280px--Tortilla_shapping_machinery_for_making_tortillas.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/a/a7/Tortilla_shapping_machinery_for_making_tortillas.webm/Tortilla_shapping_machinery_for_making_tortillas.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 1920,
+   "height": 1080,
+   "durationSec": 14,
+   "placeId": null,
+   "via": "commons",
+   "start": 0
+  },
+  {
+   "id": "commons:File:Weighting kilos of tortilla to be sold.webm",
+   "title": "Weighting kilos of tortilla to be sold",
+   "creator": "Armando Gómez",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Weighting_kilos_of_tortilla_to_be_sold.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Weighting_kilos_of_tortilla_to_be_sold.webm/1280px--Weighting_kilos_of_tortilla_to_be_sold.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/6/65/Weighting_kilos_of_tortilla_to_be_sold.webm/Weighting_kilos_of_tortilla_to_be_sold.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 1920,
+   "height": 1080,
+   "durationSec": 10,
+   "placeId": null,
+   "via": "commons",
+   "start": 0
+  },
+  {
+   "id": "commons:File:Tortillas baked exiting Celorio machine.webm",
+   "title": "Tortillas baked exiting Celorio machine",
+   "creator": "Armando Gómez",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Tortillas_baked_exiting_Celorio_machine.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c1/Tortillas_baked_exiting_Celorio_machine.webm/1280px--Tortillas_baked_exiting_Celorio_machine.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c1/Tortillas_baked_exiting_Celorio_machine.webm/Tortillas_baked_exiting_Celorio_machine.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 1920,
+   "height": 1080,
+   "durationSec": 11,
+   "placeId": null,
+   "via": "commons",
+   "start": 0
   }
  ]
 }
