@@ -1,5 +1,56 @@
 {
  "version": 1,
- "generatedAt": null,
- "clips": []
+ "generatedAt": "2026-10-20T15:24:08.917Z",
+ "took": "15s",
+ "checked": 2,
+ "fromPlatform": 2,
+ "clips": [
+  {
+   "id": "commons:File:Celorio Machinery for making tortillas.webm",
+   "title": "Celorio Machinery for making tortillas",
+   "creator": "Armando Gómez",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Celorio_Machinery_for_making_tortillas.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/Celorio_Machinery_for_making_tortillas.webm/1280px--Celorio_Machinery_for_making_tortillas.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Celorio_Machinery_for_making_tortillas.webm?utm_source=commons.wikimedia.org&utm_campaign=api&utm_content=original",
+     "type": "video/webm",
+     "height": 1080
+    },
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c7/Celorio_Machinery_for_making_tortillas.webm/Celorio_Machinery_for_making_tortillas.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 1920,
+   "height": 1080,
+   "durationSec": 12,
+   "placeId": null,
+   "via": "restaurant page",
+   "start": 0
+  },
+  {
+   "id": "commons:File:Avenida 16 de septiembre - Centro Histórico - Ciudad de México.webm",
+   "title": "Avenida 16 de septiembre - Centro Histórico - Ciudad de México",
+   "creator": "ProtoplasmaKid",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Avenida_16_de_septiembre_-_Centro_Hist%C3%B3rico_-_Ciudad_de_M%C3%A9xico.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Avenida_16_de_septiembre_-_Centro_Hist%C3%B3rico_-_Ciudad_de_M%C3%A9xico.webm/1280px--Avenida_16_de_septiembre_-_Centro_Hist%C3%B3rico_-_Ciudad_de_M%C3%A9xico.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/7/7c/Avenida_16_de_septiembre_-_Centro_Hist%C3%B3rico_-_Ciudad_de_M%C3%A9xico.webm/Avenida_16_de_septiembre_-_Centro_Hist%C3%B3rico_-_Ciudad_de_M%C3%A9xico.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 3840,
+   "height": 2160,
+   "durationSec": 70,
+   "placeId": null,
+   "via": "restaurant page",
+   "start": 11
+  }
+ ]
 }
