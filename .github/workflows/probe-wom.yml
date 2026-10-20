@@ -17,25 +17,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch
+      - name: Search Mexico City pages for his recommendations
         run: |
-          mkdir -p research/wom && cd research/wom
+          mkdir -p research/wom/cdmx && cd research/wom/cdmx
           UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
-          get() { n=$(echo "$1" | sed 's#https\?://##; s#[^A-Za-z0-9._-]#_#g' | cut -c1-90); curl -sS -L -m 30 -A "$UA" -o "p.$n" -w "%{http_code} %{content_type} %{size_download} $1 -> %{url_effective}\n" "$1" >> summary2.txt 2>&1 || echo "fail $1" >> summary2.txt; }
-          for u in https://www.worldofmouth.app/ https://www.worldofmouth.app/robots.txt https://www.worldofmouth.app/sitemap.xml https://www.worldofmouth.app/sitemap_index.xml \
-                   "https://www.worldofmouth.app/user-profile?userId=84214" https://www.worldofmouth.app/users/84214 https://www.worldofmouth.app/user/84214 https://www.worldofmouth.app/profile/84214 https://www.worldofmouth.app/profiles/84214 \
-                   https://www.worldofmouth.app/juan-carlos-tame https://www.worldofmouth.app/profiles/juan-carlos-tame https://www.worldofmouth.app/people/juan-carlos-tame https://www.worldofmouth.app/insiders/juan-carlos-tame \
-                   https://api.worldofmouth.app/ https://production-api.worldofmouth.app/ "https://production-data.worldofmouth.app/"; do get "$u"; done
-          # the site's scripts: API base URLs and page routes
-          grep -hoE '(src|href)="[^"]+\.js[^"]*"' p.www.worldofmouth.app_ 2>/dev/null | sed -E 's/^(src|href)="//; s/"$//' | sort -u | head -25 > scripts.txt || true
-          while read s; do case "$s" in http*) u="$s";; /*) u="https://www.worldofmouth.app$s";; *) u="https://www.worldofmouth.app/$s";; esac; get "$u"; done < scripts.txt
-          cat p.* 2>/dev/null | grep -aoE 'https?://[a-zA-Z0-9.-]*worldofmouth[a-zA-Z0-9.-]*[^"'"'"' <>\\)]*' | sort -u | head -120 > wom-urls.txt || true
-          cat p.* 2>/dev/null | grep -aoE '"/(api|v[0-9]|graphql|users?|profiles?|restaurants?|recommendations?|insiders?|people|lists?)[^"]{0,80}"' | sort -u | head -120 > routes.txt || true
-          ls -la >> summary2.txt
+          B=https://www.worldofmouth.app
+          pages="destinations/mexico-city articles/best-casual-restaurants-in-mexico-city articles/best-fine-dining-restaurants-in-mexico-city articles/best-local-restaurants-in-mexico-city articles/best-places-for-brunch-and-breakfast-in-mexico-city articles/best-seafood-restaurants-in-mexico-city articles/best-tacos-in-mexico-city articles/mexico-city-top-picks-by-anais-martinez articles/mexico-citys-best-cocktail-bars articles/mexico-citys-best-michelin-star-restaurants articles/mexico-citys-best-natural-wine-restaurants articles/mexico-citys-best-wine-bars articles/mexico-citys-most-romantic-restaurants articles/the-best-lunch-places-in-mexico-city articles/the-best-street-food-places-in-mexico-city articles/the-best-walk-in-restaurants-in-mexico-city"
+          for p in $pages; do curl -sS -L -m 30 -A "$UA" -o "$(echo $p | tr / _).html" "$B/$p" || true; sleep 0.5; done
+          cat *.html | grep -oE 'href="/restaurants/[^"#?]+' | sed 's/href="//' | sort -u > restaurants.txt
+          echo "$(wc -l < restaurants.txt) CDMX restaurant pages" > found.txt
+          while read r; do curl -sS -L -m 30 -A "$UA" -o "r_$(basename $r).html" "$B$r" || true; sleep 0.4; done < restaurants.txt
+          echo "--- pages naming him:" >> found.txt
+          grep -il -E 'tame|juan carlos|carte abhyad|84214' *.html >> found.txt || echo none >> found.txt
+          echo "--- who is quoted on restaurant pages (sample):" >> found.txt
+          r=$(ls r_*.html | head -1); sed 's/<[^>]*>/\n/g' "$r" | grep -v '^\s*$' | head -120 > sample-restaurant.txt
+          # keep only the evidence, not every page
+          mkdir -p ../keep && cp found.txt restaurants.txt sample-restaurant.txt ../keep/ && cd .. && rm -rf cdmx && mv keep cdmx
       - name: Save
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add research/wom
-          git commit -q -m "World of Mouth probe [skip ci]" || exit 0
+          git commit -q -m "World of Mouth CDMX probe [skip ci]" || exit 0
           for i in 1 2 3; do git pull -q --rebase origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 5; done
