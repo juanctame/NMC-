@@ -21,7 +21,8 @@ export type HouseEntry = {
   score?: number;
   hood?: string;
   note?: string; // their own words about it
-  list?: 'been' | 'want' | 'map';
+  list?: 'been' | 'want' | 'map' | 'rec'; // rec: a written recommendation (World of Mouth)
+  source?: string; // the app it came from, for recs
   // from a map they keep (Google My Maps)
   kind?: string;
   borough?: string;
@@ -48,6 +49,7 @@ export type HouseCritic = {
   name: string;
   handle: string;
   photo?: string;
+  bio?: string; // as they describe themselves on their own profile
   links: { platform: string; url: string }[];
   city: string;
   source: string; // where the scored list comes from ("Beli")
@@ -99,11 +101,11 @@ export const placeOf = (e: HouseEntry, c: HouseCritic = HOUSE_CRITICS[0]): Place
   return built[e.id];
 };
 
-/** Every map place that needs its own page (so it opens from anywhere). */
+/** Every map place and recommendation that needs its own page (so it opens from anywhere). */
 export const houseMapPlaces = (): Place[] =>
   HOUSE_CRITICS.flatMap((c) =>
     c.list
-      .filter((e) => e.list === 'map' && !e.placeId)
+      .filter((e) => (e.list === 'map' || e.list === 'rec') && !e.placeId)
       .map((e) => placeOf(e, c))
       .filter((p): p is Place => !!p),
   );

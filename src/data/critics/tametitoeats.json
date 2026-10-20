@@ -3,15 +3,29 @@
  "name": "Juan Carlos Tame",
  "handle": "@tametitoeats",
  "photo": "https://photos2.beliapp.cloud/file/beli-b2/profilephotos/5c8304c0-66e4-48a3-9b73-e6602337c5ab/w8e0cnba6yp8138mgf.jpeg",
+ "bio": "Founder · Carte Abhyad",
  "links": [
   {
    "platform": "Beli",
    "url": "https://beliapp.co/app/tametitoeats"
+  },
+  {
+   "platform": "World of Mouth",
+   "url": "https://worldofmouth.app.link/q3jDDxzzo7b"
   }
  ],
  "city": "cdmx",
  "source": "Beli",
  "asOf": "2026-10-20",
+ "maps": [
+  {
+   "title": "TBCS MEXICO - NOMINADOS",
+   "folder": "COFFEE SHOPS TBCS - FINAL",
+   "url": "https://www.google.com/maps/d/viewer?mid=1UbVGXz0IAO4ogOnXpBekYzzxeEg44II",
+   "count": 409,
+   "source": "Google My Maps"
+  }
+ ],
  "list": [
   {
    "id": "tametitoeats-ChIJl3Ce9_Ajx4URYngMMzrV4rU",
@@ -6106,15 +6120,6 @@
    "lat": 18.8990537,
    "lon": -96.9965554,
    "precision": "pin"
-  }
- ],
- "maps": [
-  {
-   "title": "TBCS MEXICO - NOMINADOS",
-   "folder": "COFFEE SHOPS TBCS - FINAL",
-   "url": "https://www.google.com/maps/d/viewer?mid=1UbVGXz0IAO4ogOnXpBekYzzxeEg44II",
-   "count": 409,
-   "source": "Google My Maps"
   }
  ]
 }

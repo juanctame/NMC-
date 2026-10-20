@@ -182,6 +182,14 @@ score on any place he's ranked.
   the place's city, cached in `tametitoeats.geo.json`), links guide pages, and
   redeploys the site when the list changed. Every place opens as a page; ones
   not yet located show their address without a map pin.
+- **World of Mouth** — his profile link
+  ([worldofmouth.app.link/q3jDDxzzo7b](https://worldofmouth.app.link/q3jDDxzzo7b))
+  publicly gives only his name and bio (*Founder · Carte Abhyad*), now on his
+  page with the link. His recommendations and their text live only in the app
+  (the website publishes no member profiles, and his name appears on none of
+  its Mexico City pages). They go into `tametitoeats.json` as `list: "rec"`
+  entries (name, city/colonia, his words, `source: "World of Mouth"`) from his
+  screenshots or a copied list, and show as *His recommendations*; never made up.
 - Beli shows lists only inside its app — the public link returns just his name
   and photo — so his Beli scores can't be copied from the web. They go into
   `src/data/critics/tametitoeats.json` from his Beli screenshots or a copied

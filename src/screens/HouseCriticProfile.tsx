@@ -318,9 +318,9 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
   const wants = list.filter((e) => e.list === 'want');
   const avg = been.length ? been.reduce((a, e) => a + (e.score || 0), 0) / been.length : null;
   const following = !!follows['critic:' + c.id];
-  const beli = c.links.find((l) => l.platform === 'Beli');
 
   const onMap = mapEntries(c);
+  const recs = c.list.filter((e) => e.list === 'rec');
   const cities = new Set(
     onMap.map((e) =>
       (e.city || '')
@@ -416,8 +416,13 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
                   {c.name}
                 </Display>
                 <Mono s={9.5} c={C.sun300} style={{ marginTop: 4 }} numberOfLines={1}>
-                  {[c.handle, c.source, 'CDMX'].join(' · ')}
+                  {[c.handle, 'CDMX'].join(' · ')}
                 </Mono>
+                {c.bio ? (
+                  <Serif s={12} c={C.paper0} style={{ marginTop: 4 }} numberOfLines={2}>
+                    {c.bio}
+                  </Serif>
+                ) : null}
               </View>
             </View>
             <View
@@ -440,7 +445,7 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
                 </View>
               ))}
             </View>
-            <View style={{ flexDirection: 'row', gap: 10, marginTop: 14 }}>
+            <View style={{ marginTop: 14 }}>
               <StickerPressable
                 offset="sm"
                 radius={999}
@@ -460,26 +465,23 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
                   {following ? 'Following' : 'Follow'}
                 </Banner>
               </StickerPressable>
-              {beli ? (
-                <Pressable
-                  onPress={() => Linking.openURL(beli.url)}
-                  accessibilityLabel={`${c.name} on Beli`}
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderWidth: 2,
-                    borderColor: C.paper0,
-                    borderRadius: 999,
-                    paddingVertical: 10,
-                    paddingHorizontal: 16,
-                  }}
-                >
-                  <Banner s={10} tk={0.1} c={C.paper0}>
-                    Beli ↗
-                  </Banner>
-                </Pressable>
-              ) : null}
             </View>
+            {c.links.length ? (
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
+                {c.links.map((l) => (
+                  <Pressable
+                    key={l.url}
+                    onPress={() => Linking.openURL(l.url)}
+                    accessibilityLabel={`${c.name} on ${l.platform}`}
+                    style={{ borderWidth: 2, borderColor: C.paper0, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 12 }}
+                  >
+                    <Banner s={9} tk={0.1} c={C.paper0}>
+                      {l.platform} ↗
+                    </Banner>
+                  </Pressable>
+                ))}
+              </View>
+            ) : null}
           </StickerView>
         </View>
 
@@ -502,6 +504,20 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
             Any score is his own, from his {c.source} list — nothing is estimated by CRTQ. When he ranks on CRTQ as {c.handle}, this page follows his passport live.
           </Serif>
         </View>
+
+        {recs.length ? (
+          <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
+            <Section title="His recommendations" n={recs.length} dot={C.ink400} />
+            <Mono s={8.5} c={C.inkSoft} style={{ marginBottom: 8 }}>
+              In his words, from {[...new Set(recs.map((e) => e.source).filter(Boolean))].join(' · ') || 'his recommendations'}
+            </Mono>
+            <View style={{ gap: 8 }}>
+              {recs.map((e) => (
+                <MapRow key={e.id || e.name} e={e} c={c} />
+              ))}
+            </View>
+          </View>
+        ) : null}
 
         {onMap.length ? <MapSection c={c} /> : null}
 
