@@ -1,0 +1,42 @@
+name: Read a public World of Mouth link
+
+# Research helper: resolves a World of Mouth share link (branch.io) the way a
+# browser and a link-preview bot would, and saves what comes back to
+# research/wom/ so the recommendations can be imported.
+on:
+  push:
+    branches: [claude/modern-app-interface-design-ax8tbd]
+    paths: ['.github/workflows/probe-wom.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch
+        run: |
+          mkdir -p research/wom && cd research/wom
+          URL="https://worldofmouth.app.link/q3jDDxzzo7b"
+          for ua in "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36" "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)" "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"; do
+            tag=$(echo "$ua" | cut -c1-8 | tr -dc 'a-zA-Z')
+            curl -sS -L -m 30 -A "$ua" -D "link.$tag.headers.txt" -o "link.$tag.html" -w "%{http_code} %{url_effective} %{size_download}\n" "$URL" >> summary.txt 2>&1 || echo "fail $tag" >> summary.txt
+          done
+          # every URL the pages point at (the web profile, API, data)
+          cat *.html *.headers.txt | grep -hoE 'https?://[^"'"'"' <>\\)]+' | sort -u > urls.txt || true
+          # follow anything on worldofmouth.app (the web version of the link)
+          grep -E 'worldofmouth\.(app|com)' urls.txt | grep -vE '\.(png|jpe?g|svg|css|ico|woff2?)(\?|$)' | head -15 | while read u; do
+            n=$(echo "$u" | md5sum | cut -c1-8)
+            curl -sS -L -m 30 -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36" -o "wom.$n.html" -w "%{http_code} $u -> %{url_effective} %{size_download}\n" "$u" >> summary.txt 2>&1 || true
+          done
+          ls -la >> summary.txt
+      - name: Save
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/wom
+          git commit -q -m "World of Mouth link probe [skip ci]" || exit 0
+          for i in 1 2 3; do git pull -q --rebase origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 5; done
