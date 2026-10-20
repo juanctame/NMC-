@@ -241,13 +241,19 @@ async function main() {
   // Pick: the platform's own first, then 1080p before 720p, then wider shots; one per title stem.
   const stem = (c) => fold(c.title).replace(/[^a-z]+/g, ' ').split(' ').slice(0, 3).join(' ');
   const ranked = [...found.values()].sort((a, b) => (b.placeId ? 1 : 0) - (a.placeId ? 1 : 0) || (b.via === 'restaurant page' ? 1 : 0) - (a.via === 'restaurant page' ? 1 : 0) || b.sources[0].height - a.sources[0].height || (b.width || 0) / (b.height || 1) - (a.width || 0) / (a.height || 1));
+  // Variety: one per title stem and at most two per creator — relaxed only if
+  // that would leave the reel short.
   const picked = [];
   const stems = new Set();
-  for (const c of ranked) {
-    if (picked.length >= MAX) break;
-    if (stems.has(stem(c))) continue;
-    stems.add(stem(c));
-    picked.push(c);
+  const byCreator = {};
+  for (const perCreator of [2, MAX]) {
+    for (const c of ranked) {
+      if (picked.length >= MAX || (perCreator === MAX && picked.length >= 5)) break;
+      if (picked.includes(c) || stems.has(stem(c)) || (byCreator[c.creator] || 0) >= perCreator) continue;
+      stems.add(stem(c));
+      byCreator[c.creator] = (byCreator[c.creator] || 0) + 1;
+      picked.push(c);
+    }
   }
   // A slow run never shrinks the reel: keep earlier clips it didn't get to.
   for (const c of prev.clips || []) if (picked.length < MAX && !picked.some((x) => x.id === c.id) && (left() < 0 || picked.length < 3)) picked.push(c);
