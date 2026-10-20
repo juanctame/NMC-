@@ -20,23 +20,22 @@ jobs:
       - name: Fetch
         run: |
           mkdir -p research/wom && cd research/wom
-          URL="https://worldofmouth.app.link/q3jDDxzzo7b"
-          for ua in "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36" "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)" "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"; do
-            tag=$(echo "$ua" | cut -c1-8 | tr -dc 'a-zA-Z')
-            curl -sS -L -m 30 -A "$ua" -D "link.$tag.headers.txt" -o "link.$tag.html" -w "%{http_code} %{url_effective} %{size_download}\n" "$URL" >> summary.txt 2>&1 || echo "fail $tag" >> summary.txt
-          done
-          # every URL the pages point at (the web profile, API, data)
-          cat *.html *.headers.txt | grep -hoE 'https?://[^"'"'"' <>\\)]+' | sort -u > urls.txt || true
-          # follow anything on worldofmouth.app (the web version of the link)
-          grep -E 'worldofmouth\.(app|com)' urls.txt | grep -vE '\.(png|jpe?g|svg|css|ico|woff2?)(\?|$)' | head -15 | while read u; do
-            n=$(echo "$u" | md5sum | cut -c1-8)
-            curl -sS -L -m 30 -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36" -o "wom.$n.html" -w "%{http_code} $u -> %{url_effective} %{size_download}\n" "$u" >> summary.txt 2>&1 || true
-          done
-          ls -la >> summary.txt
+          UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+          get() { n=$(echo "$1" | sed 's#https\?://##; s#[^A-Za-z0-9._-]#_#g' | cut -c1-90); curl -sS -L -m 30 -A "$UA" -o "p.$n" -w "%{http_code} %{content_type} %{size_download} $1 -> %{url_effective}\n" "$1" >> summary2.txt 2>&1 || echo "fail $1" >> summary2.txt; }
+          for u in https://www.worldofmouth.app/ https://www.worldofmouth.app/robots.txt https://www.worldofmouth.app/sitemap.xml https://www.worldofmouth.app/sitemap_index.xml \
+                   "https://www.worldofmouth.app/user-profile?userId=84214" https://www.worldofmouth.app/users/84214 https://www.worldofmouth.app/user/84214 https://www.worldofmouth.app/profile/84214 https://www.worldofmouth.app/profiles/84214 \
+                   https://www.worldofmouth.app/juan-carlos-tame https://www.worldofmouth.app/profiles/juan-carlos-tame https://www.worldofmouth.app/people/juan-carlos-tame https://www.worldofmouth.app/insiders/juan-carlos-tame \
+                   https://api.worldofmouth.app/ https://production-api.worldofmouth.app/ "https://production-data.worldofmouth.app/"; do get "$u"; done
+          # the site's scripts: API base URLs and page routes
+          grep -hoE '(src|href)="[^"]+\.js[^"]*"' p.www.worldofmouth.app_ 2>/dev/null | sed -E 's/^(src|href)="//; s/"$//' | sort -u | head -25 > scripts.txt || true
+          while read s; do case "$s" in http*) u="$s";; /*) u="https://www.worldofmouth.app$s";; *) u="https://www.worldofmouth.app/$s";; esac; get "$u"; done < scripts.txt
+          cat p.* 2>/dev/null | grep -aoE 'https?://[a-zA-Z0-9.-]*worldofmouth[a-zA-Z0-9.-]*[^"'"'"' <>\\)]*' | sort -u | head -120 > wom-urls.txt || true
+          cat p.* 2>/dev/null | grep -aoE '"/(api|v[0-9]|graphql|users?|profiles?|restaurants?|recommendations?|insiders?|people|lists?)[^"]{0,80}"' | sort -u | head -120 > routes.txt || true
+          ls -la >> summary2.txt
       - name: Save
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add research/wom
-          git commit -q -m "World of Mouth link probe [skip ci]" || exit 0
+          git commit -q -m "World of Mouth probe [skip ci]" || exit 0
           for i in 1 2 3; do git pull -q --rebase origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 5; done
