@@ -1,7 +1,7 @@
 {
  "version": 1,
- "generatedAt": "2026-10-20T15:24:08.917Z",
- "took": "15s",
+ "generatedAt": "2026-10-20T15:26:05.082Z",
+ "took": "11s",
  "checked": 2,
  "fromPlatform": 2,
  "clips": [
@@ -13,11 +13,6 @@
    "page": "https://commons.wikimedia.org/wiki/File:Celorio_Machinery_for_making_tortillas.webm",
    "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/Celorio_Machinery_for_making_tortillas.webm/1280px--Celorio_Machinery_for_making_tortillas.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
    "sources": [
-    {
-     "src": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Celorio_Machinery_for_making_tortillas.webm?utm_source=commons.wikimedia.org&utm_campaign=api&utm_content=original",
-     "type": "video/webm",
-     "height": 1080
-    },
     {
      "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c7/Celorio_Machinery_for_making_tortillas.webm/Celorio_Machinery_for_making_tortillas.webm.1080p.vp9.webm",
      "type": "video/webm",
