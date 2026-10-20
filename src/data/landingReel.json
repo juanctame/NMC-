@@ -1,7 +1,7 @@
 {
  "version": 1,
- "generatedAt": "2026-10-20T16:59:59.738Z",
- "took": "12s",
+ "generatedAt": "2026-10-20T17:11:33.840Z",
+ "took": "29s",
  "checked": 18,
  "fromPlatform": 2,
  "clips": [
@@ -48,27 +48,6 @@
    "start": 11
   },
   {
-   "id": "commons:File:Quesadilla - no audio.webm",
-   "title": "Quesadilla - no audio",
-   "creator": "rosatrieu",
-   "license": "CC BY-SA 3.0",
-   "page": "https://commons.wikimedia.org/wiki/File:Quesadilla_-_no_audio.webm",
-   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Quesadilla_-_no_audio.webm/1280px--Quesadilla_-_no_audio.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
-   "sources": [
-    {
-     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/b/b9/Quesadilla_-_no_audio.webm/Quesadilla_-_no_audio.webm.1080p.vp9.webm",
-     "type": "video/webm",
-     "height": 1080
-    }
-   ],
-   "width": 1920,
-   "height": 1080,
-   "durationSec": 68,
-   "placeId": null,
-   "via": "commons",
-   "start": 10
-  },
-  {
    "id": "commons:File:Man with masa in tortillería.webm",
    "title": "Man with masa in tortillería",
    "creator": "Armando Gómez",
@@ -88,6 +67,27 @@
    "placeId": null,
    "via": "commons",
    "start": 0
+  },
+  {
+   "id": "commons:File:Quesadilla - no audio.webm",
+   "title": "Quesadilla - no audio",
+   "creator": "rosatrieu",
+   "license": "CC BY-SA 3.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Quesadilla_-_no_audio.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Quesadilla_-_no_audio.webm/1280px--Quesadilla_-_no_audio.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/b/b9/Quesadilla_-_no_audio.webm/Quesadilla_-_no_audio.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 1920,
+   "height": 1080,
+   "durationSec": 68,
+   "placeId": null,
+   "via": "commons",
+   "start": 10
   },
   {
    "id": "commons:File:Tortilla baking process.webm",
