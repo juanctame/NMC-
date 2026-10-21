@@ -36,6 +36,8 @@ export type HouseEntry = {
   instagram?: string;
   link?: string;
   status?: string;
+  order?: number; // its position on their map
+  added?: string; // the day they added it to their map
 };
 export type HouseMap = {
   title: string;
@@ -110,34 +112,6 @@ export const houseMapPlaces = (): Place[] =>
       .filter((p): p is Place => !!p),
   );
 
-/** Their map, by city — the biggest first, home city on top. */
-export function mapByCity(c: HouseCritic): { city: string; label: string; entries: HouseEntry[] }[] {
-  const groups: Record<string, { city: string; label: string; entries: HouseEntry[] }> = {};
-  for (const e of c.list) {
-    if (e.list !== 'map') continue;
-    const city = e.city || 'Elsewhere';
-    const key = city
-      .normalize('NFKD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .replace(/^heroica /, '');
-    const label = /^ciudad de mexico$/.test(key)
-      ? 'CDMX'
-      : city
-          .replace(/^Heroica /, '')
-          .replace(/^Santiago de /, '')
-          .replace(/ de Zaragoza$/, '');
-    (groups[key] = groups[key] || { city, label, entries: [] }).entries.push(e);
-  }
-  const home = (g: { label: string }) => (g.label === 'CDMX' ? 1 : 0);
-  return Object.values(groups)
-    .map((g) => ({
-      ...g,
-      entries: g.entries.sort((a, b) => (a.hood ? 0 : 1) - (b.hood ? 0 : 1) || (a.hood || '').localeCompare(b.hood || '', 'es') || a.name.localeCompare(b.name, 'es')),
-    }))
-    .sort((a, b) => home(b) - home(a) || b.entries.length - a.entries.length || a.label.localeCompare(b.label, 'es'));
-}
-export const mapEntries = (c: HouseCritic) => c.list.filter((e) => e.list === 'map');
 export { mapTitle };
 
 /** Their been-list, best first. */

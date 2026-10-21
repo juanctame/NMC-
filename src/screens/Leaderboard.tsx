@@ -192,7 +192,7 @@ function RestaurantsBoard() {
   );
 }
 
-type CriticSort = 'coverage' | 'avg' | 'match';
+type CriticSort = 'relevance' | 'coverage' | 'avg' | 'match';
 type CriticKind = 'all' | 'creator' | 'outlet';
 
 function CriticsBoard() {
@@ -204,25 +204,91 @@ function CriticsBoard() {
   const tastes = useStore((s) => s.tastes);
   const userReviews = useStore((s) => s.userReviews);
   const [kind, setKind] = useState<CriticKind>('all');
-  const [sort, setSort] = useState<CriticSort>('coverage');
+  const [sort, setSort] = useState<CriticSort>('relevance');
+  const [showOneOffs, setShowOneOffs] = useState(false);
 
   const mine = computePalate(ranked, tastes, userReviews);
   const match: Record<string, number> = {};
   CRITICS.forEach((c) => (match[c.id] = tasteMatch(mine, c.palate)));
   const by: Record<CriticSort, (a: Critic, b: Critic) => number> = {
-    coverage: (a, b) => b.takes.length - a.takes.length || b.clipCount - a.clipCount || b.avg - a.avg,
-    avg: (a, b) => b.avg - a.avg || b.takes.length - a.takes.length,
-    match: (a, b) => match[b.id] - match[a.id] || b.takes.length - a.takes.length,
+    relevance: (a, b) => b.relevance - a.relevance || a.id.localeCompare(b.id),
+    coverage: (a, b) => b.takes.length - a.takes.length || b.clipCount - a.clipCount || b.relevance - a.relevance || a.id.localeCompare(b.id),
+    avg: (a, b) => b.adjAvg - a.adjAvg || b.takes.length - a.takes.length || a.id.localeCompare(b.id),
+    match: (a, b) => match[b.id] - match[a.id] || b.relevance - a.relevance || a.id.localeCompare(b.id),
   };
-  const list = CRITICS.filter((c) => kind === 'all' || c.kind === kind).sort(by[sort]);
+  const ofKind = CRITICS.filter((c) => kind === 'all' || c.kind === kind);
+  // Regular voices are ranked; one-off clips wait below, folded.
+  const list = ofKind.filter((c) => c.tier === 'critic').sort(by[sort]);
+  const oneOffs = ofKind.filter((c) => c.tier === 'oncamera').sort(by[sort]);
   const chip = (on: boolean) => ({ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 12, backgroundColor: on ? C.ink400 : C.paper0 });
   const KINDS: [CriticKind, string][] = [['all', 'All'], ['creator', 'Creators'], ['outlet', 'Food media']];
-  const SORTS: [CriticSort, string][] = [['coverage', 'Most covered'], ['avg', 'Highest SIM'], ['match', 'Your match']];
+  const SORTS: [CriticSort, string][] = [['relevance', 'Most relevant'], ['coverage', 'Most covered'], ['avg', 'Top rated'], ['match', 'Your match']];
   const caption = {
+    relevance: 'Ranked by how much they cover — restaurants and clips — then proven accounts and reach.',
     coverage: 'Ranked by how many guide restaurants they have on camera.',
-    avg: 'Ranked by the average of CRTQ’s simulated reading of their takes.',
+    avg: 'Ranked by their average, weighted by how much they’ve covered — one great clip doesn’t top the board.',
     match: 'Ranked by how closely their palate matches yours.',
   }[sort];
+
+  const row = (c: Critic, i: number, oneOff?: boolean) => {
+          const following = !!follows['critic:' + c.id];
+          return (
+            <StickerPressable
+              key={c.id}
+              offset={!oneOff && i < 3 ? 'lg' : 'sm'}
+              onPress={() => openCritic(c.id)}
+              accessibilityLabel={`Critic: ${c.name}`}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: !oneOff && i < 3 ? C.sun100 : C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, paddingVertical: 9, paddingHorizontal: 11 }}
+            >
+              <View style={{ width: 26, alignItems: 'center' }}>
+                <Display s={!oneOff && i < 3 ? 17 : 16} c={!oneOff && i < 3 ? C.ink400 : C.inkSoft}>
+                  {oneOff ? '·' : i < 3 ? MEDALS[i] : i + 1}
+                </Display>
+              </View>
+              <Monogram name={c.name} size={40} rot={i % 2 ? '4deg' : '-4deg'} />
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Banner s={11.5} tk={0.04} c={C.inkDeep} numberOfLines={1} style={{ flexShrink: 1 }}>
+                    {c.name}
+                  </Banner>
+                  <View style={{ backgroundColor: c.kind === 'outlet' ? C.inkBlack : C.ink400, borderRadius: 999, paddingHorizontal: 6, paddingVertical: 1 }}>
+                    <Mono s={7} c={C.paper0}>
+                      {c.kind === 'outlet' ? 'MEDIA' : 'CREATOR'}
+                    </Mono>
+                  </View>
+                </View>
+                <Mono s={8.5} c={C.inkMuted} style={{ marginTop: 2 }} numberOfLines={1}>
+                  {[c.handle, c.platforms.map((p) => SOURCE_LABEL[p]).join(' · ')].join(' · ')}
+                </Mono>
+                <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', columnGap: 8, rowGap: 2, marginTop: 4 }}>
+                  <Mono s={8.5} c={sort === 'coverage' ? C.ink400 : C.inkSoft}>
+                    {c.takes.length} {c.takes.length === 1 ? 'place' : 'places'}
+                  </Mono>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                    <Mono s={8.5} c={sort === 'avg' ? C.ink400 : C.inkSoft}>
+                      avg {c.adjAvg.toFixed(1)}
+                    </Mono>
+                    <SimTag />
+                  </View>
+                  <Mono s={8.5} c={sort === 'match' ? C.ink400 : C.inkSoft}>
+                    {match[c.id]}% match
+                  </Mono>
+                </View>
+              </View>
+              <StickerPressable
+                offset="sm"
+                radius={999}
+                onPress={() => toggleFollow('critic:' + c.id)}
+                accessibilityLabel={following ? `Following ${c.name}` : `Follow ${c.name}`}
+                style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: following ? C.stampGreen : C.paper0, paddingVertical: 6, paddingHorizontal: 10 }}
+              >
+                <Banner s={8.5} tk={0.1} c={following ? C.greenFg : C.inkDeep}>
+                  {following ? 'Following' : 'Follow'}
+                </Banner>
+              </StickerPressable>
+            </StickerPressable>
+          );
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -259,7 +325,7 @@ function CriticsBoard() {
           ? HOUSE_CRITICS.map((h) => (
               <View key={h.id} style={{ gap: 6, marginBottom: 6 }}>
                 <Mono s={8.5} c={C.inkSoft} style={{ paddingHorizontal: 2 }}>
-                  HOUSE CRITIC · real scores, pinned
+                  HOUSE CRITIC · pinned
                 </Mono>
                 <HouseCriticCard c={h} width="100%" />
               </View>
@@ -268,67 +334,25 @@ function CriticsBoard() {
         <SerifItalic s={13} c={C.inkMuted} style={{ paddingHorizontal: 2 }}>
           {caption}
         </SerifItalic>
-        {list.map((c, i) => {
-          const following = !!follows['critic:' + c.id];
-          return (
-            <StickerPressable
-              key={c.id}
-              offset={i < 3 ? 'lg' : 'sm'}
-              onPress={() => openCritic(c.id)}
-              accessibilityLabel={`Critic: ${c.name}`}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: i < 3 ? C.sun100 : C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, paddingVertical: 9, paddingHorizontal: 11 }}
-            >
-              <View style={{ width: 26, alignItems: 'center' }}>
-                <Display s={i < 3 ? 17 : 16} c={i < 3 ? C.ink400 : C.inkSoft}>
-                  {i < 3 ? MEDALS[i] : i + 1}
-                </Display>
-              </View>
-              <Monogram name={c.name} size={40} rot={i % 2 ? '4deg' : '-4deg'} />
-              <View style={{ flex: 1, minWidth: 0 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <Banner s={11.5} tk={0.04} c={C.inkDeep} numberOfLines={1} style={{ flexShrink: 1 }}>
-                    {c.name}
-                  </Banner>
-                  <View style={{ backgroundColor: c.kind === 'outlet' ? C.inkBlack : C.ink400, borderRadius: 999, paddingHorizontal: 6, paddingVertical: 1 }}>
-                    <Mono s={7} c={C.paper0}>
-                      {c.kind === 'outlet' ? 'MEDIA' : 'CREATOR'}
-                    </Mono>
-                  </View>
-                </View>
-                <Mono s={8.5} c={C.inkMuted} style={{ marginTop: 2 }} numberOfLines={1}>
-                  {[c.handle, c.platforms.map((p) => SOURCE_LABEL[p]).join(' · ')].join(' · ')}
-                </Mono>
-                <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', columnGap: 8, rowGap: 2, marginTop: 4 }}>
-                  <Mono s={8.5} c={sort === 'coverage' ? C.ink400 : C.inkSoft}>
-                    {c.takes.length} {c.takes.length === 1 ? 'place' : 'places'}
-                  </Mono>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                    <Mono s={8.5} c={sort === 'avg' ? C.ink400 : C.inkSoft}>
-                      avg {c.avg.toFixed(1)}
-                    </Mono>
-                    <SimTag />
-                  </View>
-                  <Mono s={8.5} c={sort === 'match' ? C.ink400 : C.inkSoft}>
-                    {match[c.id]}% match
-                  </Mono>
-                </View>
-              </View>
-              <StickerPressable
-                offset="sm"
-                radius={999}
-                onPress={() => toggleFollow('critic:' + c.id)}
-                accessibilityLabel={following ? `Following ${c.name}` : `Follow ${c.name}`}
-                style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: following ? C.stampGreen : C.paper0, paddingVertical: 6, paddingHorizontal: 10 }}
-              >
-                <Banner s={8.5} tk={0.1} c={following ? C.greenFg : C.inkDeep}>
-                  {following ? 'Following' : 'Follow'}
-                </Banner>
-              </StickerPressable>
-            </StickerPressable>
-          );
-        })}
+        {list.map((c, i) => row(c, i))}
+        {oneOffs.length ? (
+          <Pressable
+            onPress={() => setShowOneOffs(!showOneOffs)}
+            accessibilityLabel={showOneOffs ? 'Hide one-off clips' : `Also on camera: ${oneOffs.length}`}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8, paddingVertical: 8 }}
+          >
+            <Banner s={10} tk={0.14} c={C.inkMuted}>
+              Also on camera
+            </Banner>
+            <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+            <Mono s={9} c={C.inkSoft}>
+              {oneOffs.length} one-off {oneOffs.length === 1 ? 'clip' : 'clips'} {showOneOffs ? '▴' : '▾'}
+            </Mono>
+          </Pressable>
+        ) : null}
+        {showOneOffs ? oneOffs.map((c, i) => row(c, list.length + i, true)) : null}
         <Mono s={8} c={C.inkSoft} style={{ marginTop: 4, lineHeight: 12, paddingHorizontal: 2 }}>
-          Real creators and food media, connected from their public clips. Averages and matches come from CRTQ’s simulated reading of their content, not ratings they gave.
+          Real creators and food media, connected from their public clips; general news isn’t counted as a critic. Averages (weighted by how much they’ve covered) and matches come from CRTQ’s simulated reading of their content, not ratings they gave.
         </Mono>
       </ScrollView>
     </View>

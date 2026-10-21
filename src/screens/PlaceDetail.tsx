@@ -922,7 +922,7 @@ export function PlaceDetail() {
                       {h.name}
                     </Banner>
                     <Mono s={8} c={C.sun200} numberOfLines={1}>
-                      House critic · #{rank} of {of} in {HOUSE_CATEGORIES.find((x) => x.id === ht.category)?.label}
+                      House critic · #{rank} of {of} in {HOUSE_CATEGORIES.find((x) => x.id === ht.category)?.label}, {ht.city.label} · #{ht.rank} overall
                     </Mono>
                   </View>
                   <View style={{ alignItems: 'center', gap: 3 }}>

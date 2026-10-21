@@ -167,6 +167,23 @@ Mexico City food. Only true HD counts — a ≥720p rendition a browser plays, o
 reduced motion or Data Saver shows a still; if nothing plays, the yellow brand
 cover shows as before.
 
+### Critics: who counts, and in what order
+`src/data/critics.ts` builds critics from the clips, then keeps it clean:
+- **General news isn't a critic.** Wires, TV news, business and national press
+  (`NEWS_RE` in `creatorLinks.ts`) keep their clips in the feeds but get no
+  critic profile and no say in a restaurant's critic consensus. Food and city
+  media (Gourmet de México, Chilango, Dónde Ir, Food & Wine, Condé Nast
+  Traveler, 50 Best…) stay as outlets.
+- **Relevance** — coverage first (restaurants, clips), then proven accounts,
+  bio and reach — orders the feed rail and the board's default sort; the id
+  settles ties, so the order holds from one refresh to the next.
+- **Tiers.** Regular voices (2+ places, a bio, or 2+ proven accounts) are
+  ranked; one-off clips sit folded under *Also on camera*, stay off the feed
+  rail, and their profiles say so (no palate read from a single place).
+- **Weighted average.** Each critic's average is pulled toward everyone's by
+  how little they've covered (two takes' worth), so one 9.5 clip doesn't top
+  *Top rated*.
+
 ### Every critic carries a passport
 Each critic page has a **Profile | Passport** switch. The passport is the same
 booklet as *You* (`src/screens/Passport.tsx`, its parts and page-turning shared
@@ -187,8 +204,12 @@ score on any place he's ranked.
 - **His profile follows every critic's** — header (house badge, bio, summary,
   stats), how it's made, connected accounts (Beli, World of Mouth, his map),
   palate with your match — and his takes are a **serialized ranking by
-  category** (`src/data/houseRanking.ts`): Overall, Specialty bars, Roasters,
-  Bakery & brunch, Neighbourhood cafés, in CDMX or all of Mexico, #1 down.
+  category** (`src/data/houseRanking.ts`): everything he's listed (his map,
+  recommendations, scored lists) is in one ranking, every place with its own
+  number — #1 to #407 — by city (CDMX first, any city, or all of México) and by
+  category (Overall, Specialty bars, Roasters, Bakery & brunch, Neighbourhood
+  cafés). Ties go to his preference, overall standing, how much he wrote, then
+  his own order on the map. The top ten are full takes, the rest numbered lines.
   House score = 60% his preference + 40% overall standing. His preference is
   his own score where he gives one (Beli, or his CRTQ passport); elsewhere
   it's read from his choices and his own words (he wrote about it, how

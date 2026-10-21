@@ -185,7 +185,7 @@ async function main() {
   let looked = 0, found = 0;
 
   const list = [];
-  for (const p of map.places) {
+  for (const [order, p] of map.places.entries()) {
     const d = p.data;
     const gid = d.Gid || '';
     const full = d['Full address'] || '';
@@ -218,6 +218,9 @@ async function main() {
       ...(linkOf(d.Url || d['Social media']) ? { link: linkOf(d.Url || d['Social media']) } : {}),
       ...(d.Description && d.Description.replace(/[.\s]/g, '') ? { note: d.Description.trim() } : {}),
       ...(d.Status && d.Status !== 'candidate' ? { status: d.Status } : {}),
+      // where it sits on their map: its place in the list and the day they added it
+      order,
+      ...(d['Created at'] ? { added: d['Created at'].slice(0, 10) } : {}),
     };
     // already in the guide? same name, a short walk away
     if (lat != null) {

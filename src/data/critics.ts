@@ -17,7 +17,7 @@ import { collectedClips, collectedVenueIds } from './clips';
 import type { Clip } from './clipRank';
 import type { VideoSource } from './videos';
 import { computePalate, type Palate } from './palate';
-import { CREATOR_EXTRA, OUTLET_RE, type ExtraLink, type ReportedTake } from './creatorLinks';
+import { CREATOR_EXTRA, NEWS_RE, OUTLET_RE, type ExtraLink, type ReportedTake } from './creatorLinks';
 
 export type Verdict = 'rave' | 'recommends' | 'features' | 'weighs' | 'reports' | 'acclaim' | 'critical';
 
@@ -69,6 +69,12 @@ export type Critic = {
   palate: Palate;
   /** One-line simulated summary of their beat, derived from the takes. */
   summary: string;
+  /** Their average pulled toward everyone's by how little they've covered — one 9.5 clip doesn't top the board. */
+  adjAvg: number;
+  /** How much weight their profile carries: coverage first, then proven accounts, bio, reach. Stable across refreshes. */
+  relevance: number;
+  /** 'critic': a regular voice (2+ places, a bio, or 2+ proven accounts); 'oncamera': a one-off clip. */
+  tier: 'critic' | 'oncamera';
 };
 
 const fold = (s: string) =>
@@ -172,6 +178,8 @@ function build(): Critic[] {
     // Most used display name, preferring Mixed Case over ALL CAPS.
     const rawName = Object.entries(a.names).sort((x, y) => y[1] - x[1] || Number(x[0] === x[0].toUpperCase()) - Number(y[0] === y[0].toUpperCase()))[0][0];
     const name = extra.name || cleanName(rawName);
+    // general news reports on restaurants; it isn't a critic
+    if (NEWS_RE.test(fold(name)) || NEWS_RE.test(fold(Object.values(a.handles)[0] || k))) continue;
     const kind = extra.kind || (OUTLET_RE.test(fold(name)) ? 'outlet' : 'creator');
     const firstHandle = Object.values(a.handles)[0] || '@' + k;
     let handle = firstHandle;
@@ -243,10 +251,32 @@ function build(): Critic[] {
       shortForm: a.clips.filter((c) => c.vertical).length / Math.max(1, a.clips.length),
       palate,
       summary,
+      adjAvg: 0,
+      relevance: 0,
+      tier: 'oncamera',
     });
   }
-  // Most coverage first; independent creators before outlets on ties.
-  return out.sort((x, y) => y.takes.length - x.takes.length || Number(x.kind === 'outlet') - Number(y.kind === 'outlet') || y.clipCount - x.clipCount);
+  // Weighted average and relevance, against everyone's takes.
+  const scores = out.flatMap((c) => c.takes.map((t) => t.score));
+  const mu = scores.reduce((n, x) => n + x, 0) / Math.max(1, scores.length);
+  const K = 2; // two takes' worth of "everyone" in each critic's average
+  for (const c of out) {
+    const sum = c.takes.reduce((n, t) => n + t.score, 0);
+    c.adjAvg = Math.round(((sum + K * mu) / (c.takes.length + K)) * 10) / 10;
+    c.tier = c.takes.length >= 2 || !!c.bio || c.accounts.length >= 2 ? 'critic' : 'oncamera';
+    c.relevance =
+      Math.round(
+        (2 * Math.log1p(c.takes.length) +
+          0.6 * Math.log1p(c.clipCount) +
+          (c.bio ? 0.8 : 0) +
+          0.35 * Math.min(3, c.accounts.length - 1) +
+          0.3 * (c.platforms.length - 1) +
+          0.15 * (c.adjAvg - mu)) *
+          100,
+      ) / 100;
+  }
+  // Regular voices first, then by relevance; the id settles ties, so the order holds from one refresh to the next.
+  return out.sort((x, y) => Number(y.tier === 'critic') - Number(x.tier === 'critic') || y.relevance - x.relevance || x.id.localeCompare(y.id));
 }
 
 export const CRITICS: Critic[] = build();
@@ -275,5 +305,5 @@ export function consensusFor(placeId: string): { score: number; n: number } | nu
   return { score: Math.round((ts.reduce((n, x) => n + x.take.score, 0) / ts.length) * 10) / 10, n: ts.length };
 }
 
-/** Creators (not outlets) first — the tastemakers rail. */
-export const FEATURED_CRITICS: Critic[] = CRITICS.filter((c) => c.kind === 'creator').concat(CRITICS.filter((c) => c.kind === 'outlet')).slice(0, 12);
+/** The tastemakers rail: regular voices only, most relevant first. */
+export const FEATURED_CRITICS: Critic[] = CRITICS.filter((c) => c.tier === 'critic').slice(0, 12);

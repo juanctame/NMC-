@@ -36,6 +36,8 @@ export type HouseTake = {
   verdict: Verdict;
   quote: string; // their words (first sentences), or what the place is on their list for
   why: string[]; // what moved it up
+  city: { key: string; label: string };
+  rank: number; // their overall position across everything they've listed (#1…)
 };
 
 const fold = (s?: string) =>
@@ -93,6 +95,7 @@ export function houseTake(c: HouseCritic, e: HouseEntry): HouseTake {
       if (n.length > 450) pref += 0.25;
     }
     if (e.precision === 'pin') (pref += 0.3), why.push('pinned by hand');
+    if (e.link) (pref += 0.15), why.push('he linked a post');
   }
   // overall standing
   let overall = 7;
@@ -106,39 +109,70 @@ export function houseTake(c: HouseCritic, e: HouseEntry): HouseTake {
   const score = round1(clamp(pref * 0.6 + overall * 0.4, 0, 9.9));
   const verdict: Verdict = score >= 8.6 ? 'rave' : score >= 7.9 ? 'recommends' : 'features';
   const quote = quoteOf(e.note) || (e.list === 'map' && c.maps?.[0] ? `Nominated on his map — ${mapTitle(c)}` : '');
-  return { entry: e, place, category: categoryOf(e), pref: round1(pref), overall: round1(overall), score, own, verdict, quote, why };
+  return { entry: e, place, category: categoryOf(e), city: cityOf(e), pref: round1(pref), overall: round1(overall), score, own, verdict, quote, why, rank: 0 };
 }
 
-const isCdmx = (e: HouseEntry) => /ciudad de m[eé]xico/i.test(e.city || '') || /^cx-/.test(e.placeId || '');
+/** The city a place is in, as a key and a short label ("CDMX", "Guadalajara", "Puebla"). */
+export function cityOf(e: HouseEntry): { key: string; label: string } {
+  if (/^cx-/.test(e.placeId || '') || /ciudad de m[eé]xico/i.test(e.city || '')) return { key: 'cdmx', label: 'CDMX' };
+  const label = (e.city || 'México').replace(/^Heroica /, '').replace(/^Santiago de /, '').replace(/ de Zaragoza$/, '');
+  return { key: fold(label), label };
+}
+
+/**
+ * Best first, and every place gets its own number: ties go to their
+ * preference, then overall standing, then how much they had to say, then
+ * their own order — the places they put on their map first — and only last
+ * the alphabet.
+ */
+const byRank = (a: HouseTake, b: HouseTake) =>
+  b.score - a.score ||
+  b.pref - a.pref ||
+  b.overall - a.overall ||
+  (b.entry.note || '').length - (a.entry.note || '').length ||
+  (a.entry.added || '9999').localeCompare(b.entry.added || '9999') ||
+  (b.entry.order ?? -1) - (a.entry.order ?? -1) ||
+  a.entry.name.localeCompare(b.entry.name, 'es');
 
 let memo: { c: HouseCritic; all: HouseTake[] } | null = null;
-/** Every place on their lists, best first (their preference breaks ties). */
+/** Everything they've listed — map, recommendations, scored lists — ranked #1 to #N. */
 export function houseRanking(c: HouseCritic): HouseTake[] {
   if (memo?.c === c) return memo.all;
   const seen = new Set<string>();
   const all = c.list
     .filter((e) => e.list !== 'want')
     .filter((e) => {
-      const k = e.placeId || e.id || e.name;
+      // the same place listed twice is ranked once
+      const k = e.placeId || e.gid || e.id || e.name;
       return seen.has(k) ? false : (seen.add(k), true);
     })
     .map((e) => houseTake(c, e))
-    .sort((a, b) => b.score - a.score || b.pref - a.pref || b.overall - a.overall || a.entry.name.localeCompare(b.entry.name, 'es'));
+    .sort(byRank);
+  all.forEach((t, i) => (t.rank = i + 1));
   memo = { c, all };
   return all;
 }
 
-/** Their ranking for one category (or overall), in one scope, numbered from #1. */
-export function rankedIn(c: HouseCritic, category: HouseCategory | 'all', scope: 'cdmx' | 'mx'): HouseTake[] {
-  return houseRanking(c).filter((t) => (category === 'all' || t.category === category) && (scope === 'mx' || isCdmx(t.entry)));
+export type HouseScope = 'mx' | string; // 'mx' (all of Mexico) or a city key ('cdmx', 'guadalajara'…)
+
+/** The cities they rank in: CDMX first, then by how many places, with counts. */
+export function houseCities(c: HouseCritic): { key: string; label: string; count: number }[] {
+  const by: Record<string, { key: string; label: string; count: number }> = {};
+  for (const t of houseRanking(c)) (by[t.city.key] = by[t.city.key] || { ...t.city, count: 0 }).count++;
+  return Object.values(by).sort((a, b) => Number(b.key === 'cdmx') - Number(a.key === 'cdmx') || b.count - a.count || a.label.localeCompare(b.label, 'es'));
 }
 
-/** Their take on one place (for its page and the critics' consensus). */
+/** Their ranking for one category (or overall) in one city (or all of Mexico) — position in the list is the rank. */
+export function rankedIn(c: HouseCritic, category: HouseCategory | 'all', scope: HouseScope): HouseTake[] {
+  return houseRanking(c).filter((t) => (category === 'all' || t.category === category) && (scope === 'mx' || t.city.key === scope));
+}
+
+/** Where a place stands with them: its rank in its category and city, and overall. */
 export function houseTakeFor(c: HouseCritic, placeId: string): { take: HouseTake; rank: number; of: number } | null {
   const all = houseRanking(c);
   const t = all.find((x) => x.place?.id === placeId || x.entry.placeId === placeId || x.entry.id === placeId);
   if (!t) return null;
-  const inCat = all.filter((x) => x.category === t.category && isCdmx(x.entry) === isCdmx(t.entry));
+  const inCat = rankedIn(c, t.category, t.city.key);
   return { take: t, rank: inCat.indexOf(t) + 1, of: inCat.length };
 }
 

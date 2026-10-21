@@ -13,8 +13,8 @@ import { View, ScrollView, Pressable, Linking } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
-import { fetchLiveList, mapByCity, mapEntries, mapTitle, placeOf, type HouseCritic, type HouseEntry } from '../data/houseCritics';
-import { HOUSE_CATEGORIES, houseAvg, rankedIn, type HouseCategory, type HouseTake } from '../data/houseRanking';
+import { fetchLiveList, mapTitle, type HouseCritic, type HouseEntry } from '../data/houseCritics';
+import { HOUSE_CATEGORIES, houseAvg, houseCities, houseRanking, rankedIn, type HouseCategory, type HouseScope, type HouseTake } from '../data/houseRanking';
 import { computePalate, tasteMatch, PALATE_AXES } from '../data/palate';
 import { useT } from '../i18n';
 import { PalateRadar } from '../components/PalateRadar';
@@ -28,194 +28,9 @@ import { Grain } from '../components/Grain';
 import { ScreenIn } from '../components/Anim';
 
 const norm = (h?: string | null) => (h || '').trim().toLowerCase().replace(/^@/, '');
-const fold = (s: string) =>
-  s
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/^heroica /, '');
-
-/** One place on their map: name, colonia · city, their note; opens its page. */
-function MapRow({ e, c }: { e: HouseEntry; c: HouseCritic }) {
-  const openPlace = useStore((s) => s.openPlace);
-  const place = placeOf(e, c);
-  const body = (
-    <>
-      <Monogram name={e.name} size={32} rot={(e.name.length % 2 ? -1 : 1) * 4 + 'deg'} />
-      <View style={{ flex: 1, minWidth: 0 }}>
-        <Serif s={14} c={C.inkDeep} numberOfLines={1}>
-          {e.name}
-        </Serif>
-        <Mono s={8} c={C.inkMuted} numberOfLines={1} style={{ marginTop: 1 }}>
-          {[e.hood, e.city && !/ciudad de m[eé]xico/i.test(e.city) ? e.city : '', e.instagram].filter(Boolean).join(' · ') || e.kind || ''}
-        </Mono>
-        {e.note ? (
-          <Serif s={11} c={C.inkSoft} numberOfLines={2} style={{ marginTop: 3, lineHeight: 15, fontStyle: 'italic' }}>
-            “{e.note}”
-          </Serif>
-        ) : null}
-      </View>
-      {place ? (
-        <Display s={14} c={C.inkSoft}>
-          →
-        </Display>
-      ) : null}
-    </>
-  );
-  const style = {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    gap: 10,
-    paddingVertical: 9,
-    paddingHorizontal: 10,
-    backgroundColor: C.paper0,
-    borderWidth: 2,
-    borderColor: C.inkBlack,
-  };
-  return place ? (
-    <Pressable onPress={() => openPlace(place.id)} accessibilityLabel={`${e.name}${e.hood ? ', ' + e.hood : ''}`} style={style}>
-      {body}
-    </Pressable>
-  ) : (
-    <View style={style}>{body}</View>
-  );
-}
-
-const PAGE = 40;
-
-/** Their map, city by city (home city first), with their own notes. */
-function MapSection({ c }: { c: HouseCritic }) {
-  const groups = React.useMemo(() => mapByCity(c), [c]);
-  const [city, setCity] = React.useState(groups[0]?.label || '');
-  const [shown, setShown] = React.useState(PAGE);
-  const m = c.maps?.[0];
-  const g = groups.find((x) => x.label === city) || groups[0];
-  if (!m || !g) return null;
-  const chip = (on: boolean) => ({
-    borderWidth: 2,
-    borderColor: C.inkBlack,
-    borderRadius: 999,
-    paddingVertical: 5,
-    paddingHorizontal: 11,
-    backgroundColor: on ? C.inkDeep : C.paper0,
-  });
-  return (
-    <View style={{ paddingTop: 22 }}>
-      <View style={{ paddingHorizontal: 16 }}>
-        <Section title="His map" n={m.count} dot={C.stampBlue} />
-        <StickerView
-          offset="sm"
-          style={{
-            backgroundColor: C.sun100,
-            borderWidth: 2,
-            borderColor: C.inkBlack,
-            padding: 12,
-            gap: 4,
-            marginBottom: 12,
-          }}
-        >
-          <Display s={17} c={C.inkDeep} style={{ lineHeight: 19 }}>
-            {mapTitle(c)}
-          </Display>
-          <Mono s={8.5} c={C.inkMuted}>
-            {[
-              m.folder
-                ? m.folder
-                    .replace(/\s*-\s*FINAL$/i, '').replace(/\s+TBCS\b/i, '')
-                    .toLowerCase()
-                    .replace(/^./, (x) => x.toUpperCase())
-                : '',
-              `${m.count} places · ${groups.length} cities`,
-            ]
-              .filter(Boolean)
-              .join(' · ')}
-          </Mono>
-          {m.url ? (
-            <Pressable onPress={() => Linking.openURL(m.url)} accessibilityLabel="Open his map on Google Maps" style={{ alignSelf: 'flex-start', marginTop: 4 }}>
-              <Mono s={9} c={C.ink400} style={{ textDecorationLine: 'underline' }}>
-                {m.source} ↗
-              </Mono>
-            </Pressable>
-          ) : null}
-        </StickerView>
-      </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          gap: 7,
-          paddingHorizontal: 16,
-          paddingBottom: 10,
-        }}
-      >
-        {groups.map((x) => (
-          <Pressable
-            key={x.label}
-            onPress={() => {
-              setCity(x.label);
-              setShown(PAGE);
-            }}
-            accessibilityLabel={`${x.label}: ${x.entries.length} places`}
-            style={chip(x.label === g.label)}
-          >
-            <Banner s={9} tk={0.06} c={x.label === g.label ? C.paper0 : C.inkDeep}>
-              {x.label} {x.entries.length}
-            </Banner>
-          </Pressable>
-        ))}
-      </ScrollView>
-      <View style={{ paddingHorizontal: 16, gap: 8 }}>
-        {g.entries.slice(0, shown).map((e) => (
-          <MapRow key={e.id || e.name} e={e} c={c} />
-        ))}
-        {g.entries.length > shown ? (
-          <Pressable
-            onPress={() => setShown(shown + PAGE * 2)}
-            accessibilityLabel="Show more places"
-            style={{
-              alignItems: 'center',
-              paddingVertical: 10,
-              borderWidth: 2,
-              borderStyle: 'dashed',
-              borderColor: C.inkSoft,
-            }}
-          >
-            <Banner s={9.5} tk={0.1} c={C.inkDeep}>
-              Show more · {g.entries.length - shown} left in {g.label}
-            </Banner>
-          </Pressable>
-        ) : null}
-      </View>
-    </View>
-  );
-}
-
-function Section({ title, n, dot }: { title: string; n?: number; dot: string }) {
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 7,
-        marginBottom: 10,
-      }}
-    >
-      <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: dot }} />
-      <Banner s={10} tk={0.16} c={C.inkMuted}>
-        {title}
-      </Banner>
-      <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
-      {n != null ? (
-        <Mono s={9} c={C.inkSoft}>
-          {n}
-        </Mono>
-      ) : null}
-    </View>
-  );
-}
 
 /** One place in their ranking — the same card every critic's take uses, numbered. */
-function HouseTakeCard({ t, rank }: { t: HouseTake; rank: number }) {
+function HouseTakeCard({ t, rank, showOverall }: { t: HouseTake; rank: number; showOverall?: boolean }) {
   const openPlace = useStore((s) => s.openPlace);
   const col = VERDICT_COLOR[t.verdict];
   const p = t.place;
@@ -238,7 +53,7 @@ function HouseTakeCard({ t, rank }: { t: HouseTake; rank: number }) {
             {t.entry.name}
           </Serif>
           <Mono s={8} c={C.inkMuted} numberOfLines={1} style={{ marginTop: 1 }}>
-            {where || 'Mexico'}
+            {[where || 'Mexico', showOverall ? `#${t.rank} overall` : ''].filter(Boolean).join(' · ')}
           </Mono>
         </View>
         <View style={{ alignItems: 'center', gap: 3 }}>
@@ -278,76 +93,110 @@ function HouseTakeCard({ t, rank }: { t: HouseTake; rank: number }) {
   );
 }
 
-const RANK_PAGE = 10;
+/** Past the top ten: one line per place — rank, name, where, score. */
+function HouseRankRow({ t, rank, showOverall }: { t: HouseTake; rank: number; showOverall?: boolean }) {
+  const openPlace = useStore((s) => s.openPlace);
+  const where = [t.entry.hood || t.place?.hood, t.city.key === 'cdmx' ? '' : t.city.label].filter(Boolean).join(' · ');
+  return (
+    <Pressable
+      onPress={() => t.place && openPlace(t.place.id)}
+      accessibilityLabel={`#${rank} ${t.entry.name}, house score ${t.score.toFixed(1)}`}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, paddingHorizontal: 10, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack }}
+    >
+      <Mono s={11} c={C.inkSoft} style={{ width: 34, textAlign: 'right' }}>
+        {rank}
+      </Mono>
+      <View style={{ flex: 1, minWidth: 0 }}>
+        <Serif s={13.5} c={C.inkDeep} numberOfLines={1}>
+          {t.entry.name}
+        </Serif>
+        <Mono s={7.5} c={C.inkMuted} numberOfLines={1} style={{ marginTop: 1 }}>
+          {[where || 'Mexico', showOverall ? `#${t.rank} overall` : '', t.entry.note ? 'in his words' : ''].filter(Boolean).join(' · ')}
+        </Mono>
+      </View>
+      <View style={{ minWidth: 34, alignItems: 'center', backgroundColor: VERDICT_COLOR[t.verdict].bg, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 6 }}>
+        <Mono s={10} c={VERDICT_COLOR[t.verdict].fg}>
+          {t.score.toFixed(1)}
+        </Mono>
+      </View>
+    </Pressable>
+  );
+}
 
-/** Their serialized ranking: one category at a time (or overall), CDMX or all of Mexico. */
+const TOP_CARDS = 10;
+const MORE = 30;
+
+/**
+ * Their serialized ranking — everything they've listed, one numbered list at a
+ * time: pick a city (CDMX first, or all of Mexico) and a category (or overall).
+ * The top ten are full takes; the rest are numbered lines.
+ */
 function RankingSection({ c }: { c: HouseCritic }) {
-  const [scope, setScope] = React.useState<'cdmx' | 'mx'>('cdmx');
+  const cities = houseCities(c);
+  const total = houseRanking(c).length;
+  const [scope, setScope] = React.useState<HouseScope>(cities[0]?.key || 'mx');
   const [cat, setCat] = React.useState<HouseCategory | 'all'>('all');
-  const [shown, setShown] = React.useState(RANK_PAGE);
+  const [shown, setShown] = React.useState(TOP_CARDS + MORE);
   const cats: { id: HouseCategory | 'all'; label: string; blurb: string }[] = [{ id: 'all', label: 'Overall', blurb: 'Every place, one list' }, ...HOUSE_CATEGORIES];
   const counts = Object.fromEntries(cats.map((x) => [x.id, rankedIn(c, x.id, scope).length]));
-  const list = rankedIn(c, cat, scope);
-  const chip = (on: boolean) => ({ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 12, backgroundColor: on ? C.ink400 : C.paper0 });
+  const list = rankedIn(c, counts[cat] ? cat : 'all', scope);
+  const isOverall = scope === 'mx' && (cat === 'all' || !counts[cat]);
+  const scopes = [...cities.slice(0, 1), { key: 'mx', label: 'All México', count: total }, ...cities.slice(1)];
+  const scopeLabel = scope === 'mx' ? 'all of Mexico' : cities.find((x) => x.key === scope)?.label === 'CDMX' ? 'Mexico City' : cities.find((x) => x.key === scope)?.label;
+  const chip = (on: boolean, dark?: boolean) => ({ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 5, paddingHorizontal: 11, backgroundColor: on ? (dark ? C.inkDeep : C.ink400) : C.paper0 });
+  const pick = (f: () => void) => () => {
+    f();
+    setShown(TOP_CARDS + MORE);
+  };
   return (
     <View style={{ paddingTop: 22 }}>
-      <View style={{ paddingHorizontal: 16 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
-          <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.ink400 }} />
-          <Banner s={10} tk={0.16} c={C.inkMuted}>
-            His ranking
-          </Banner>
-          <HouseTag />
-          <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
-          <View style={{ flexDirection: 'row', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, overflow: 'hidden' }}>
-            {(['cdmx', 'mx'] as const).map((k) => (
-              <Pressable
-                key={k}
-                onPress={() => {
-                  setScope(k);
-                  setShown(RANK_PAGE);
-                }}
-                accessibilityLabel={k === 'cdmx' ? 'Rank in CDMX' : 'Rank across Mexico'}
-                style={{ paddingVertical: 4, paddingHorizontal: 10, backgroundColor: scope === k ? C.inkDeep : C.paper0 }}
-              >
-                <Banner s={8.5} tk={0.08} c={scope === k ? C.paper0 : C.inkDeep}>
-                  {k === 'cdmx' ? 'CDMX' : 'México'}
-                </Banner>
-              </Pressable>
-            ))}
-          </View>
-        </View>
+      <View style={{ paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+        <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.ink400 }} />
+        <Banner s={10} tk={0.16} c={C.inkMuted}>
+          His ranking
+        </Banner>
+        <HouseTag />
+        <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+        <Mono s={9} c={C.inkSoft}>
+          {total} ranked
+        </Mono>
       </View>
+      {/* where */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 7, paddingHorizontal: 16, paddingBottom: 8 }}>
+        {scopes.map((x) => (
+          <Pressable key={x.key} onPress={pick(() => setScope(x.key))} accessibilityLabel={`Rank in ${x.label}`} accessibilityState={{ selected: scope === x.key }} style={chip(scope === x.key, true)}>
+            <Banner s={9} tk={0.06} c={scope === x.key ? C.paper0 : C.inkDeep}>
+              {x.label} {x.count}
+            </Banner>
+          </Pressable>
+        ))}
+      </ScrollView>
+      {/* what */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 16, paddingBottom: 8 }}>
         {cats
           .filter((x) => counts[x.id])
           .map((x) => (
-            <Pressable
-              key={x.id}
-              onPress={() => {
-                setCat(x.id);
-                setShown(RANK_PAGE);
-              }}
-              accessibilityLabel={`Ranking: ${x.label}`}
-              style={chip(cat === x.id)}
-            >
+            <Pressable key={x.id} onPress={pick(() => setCat(x.id))} accessibilityLabel={`Ranking: ${x.label}`} accessibilityState={{ selected: cat === x.id }} style={chip(cat === x.id)}>
               <Banner s={9.5} tk={0.08} c={cat === x.id ? C.paper0 : C.inkDeep}>
                 {x.label} {counts[x.id]}
               </Banner>
             </Pressable>
           ))}
       </ScrollView>
-      <View style={{ paddingHorizontal: 16, gap: 12 }}>
+      <View style={{ paddingHorizontal: 16, gap: 10 }}>
         <SerifItalic s={12.5} c={C.inkMuted}>
-          {cats.find((x) => x.id === cat)?.blurb} — {scope === 'cdmx' ? 'Mexico City' : 'all of Mexico'}, his #1 to #{list.length}.
+          {cats.find((x) => x.id === cat)?.blurb} — {scopeLabel}, his #1 to #{list.length}.
         </SerifItalic>
-        {list.slice(0, shown).map((t, i) => (
-          <HouseTakeCard key={t.entry.id || t.entry.name} t={t} rank={i + 1} />
+        {list.slice(0, Math.min(shown, TOP_CARDS)).map((t, i) => (
+          <HouseTakeCard key={t.entry.id || t.entry.name} t={t} rank={i + 1} showOverall={!isOverall} />
+        ))}
+        {list.slice(TOP_CARDS, shown).map((t, i) => (
+          <HouseRankRow key={t.entry.id || t.entry.name} t={t} rank={TOP_CARDS + i + 1} showOverall={!isOverall} />
         ))}
         {list.length > shown ? (
-          <Pressable onPress={() => setShown(shown + RANK_PAGE * 2)} accessibilityLabel="Show more of his ranking" style={{ alignItems: 'center', paddingVertical: 10, borderWidth: 2, borderStyle: 'dashed', borderColor: C.inkSoft }}>
+          <Pressable onPress={() => setShown(shown + MORE * 2)} accessibilityLabel="Show more of his ranking" style={{ alignItems: 'center', paddingVertical: 10, borderWidth: 2, borderStyle: 'dashed', borderColor: C.inkSoft }}>
             <Banner s={9.5} tk={0.1} c={C.inkDeep}>
-              Show #{shown + 1}–#{Math.min(list.length, shown + RANK_PAGE * 2)} of {list.length}
+              Show #{shown + 1}–#{Math.min(list.length, shown + MORE * 2)} of {list.length}
             </Banner>
           </Pressable>
         ) : null}
@@ -396,13 +245,11 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
 
   const all = rankedIn(critic, 'all', 'mx');
   const cdmxTop = rankedIn(critic, 'all', 'cdmx')[0];
-  const onMap = mapEntries(critic);
-  const recs = critic.list.filter((e) => e.list === 'rec');
   const words = critic.list.filter((e) => (e.note || '').replace(/[.\s]/g, '')).length;
-  const cities = new Set(all.map((x) => fold(x.entry.city || 'cdmx'))).size;
+  const cities = houseCities(critic).length;
   const following = !!follows['critic:' + c.id];
   const counts = all.reduce<Record<string, number>>((m, x) => ((m[x.verdict] = (m[x.verdict] || 0) + 1), m), {});
-  const summary = `${all.length} places across ${cities} ${cities === 1 ? 'city' : 'cities'} — ${counts.rave || 0} raves, ${counts.recommends || 0} recommends${cdmxTop ? `; his #1 in CDMX is ${cdmxTop.entry.name}` : ''}.`;
+  const summary = `${all.length} places ranked across ${cities} ${cities === 1 ? 'city' : 'cities'} — ${counts.rave || 0} raves, ${counts.recommends || 0} recommends${cdmxTop ? `; his #1 in CDMX is ${cdmxTop.entry.name}` : ''}.`;
 
   // Palate, like every critic's: the places he ranks, weighted by his house score.
   const places = all.filter((x) => x.place).map((x) => ({ ...x.place!, score: x.score }));
@@ -609,21 +456,6 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
         {/* his takes: the serialized ranking by category */}
         {all.length ? <RankingSection c={critic} /> : null}
 
-        {recs.length ? (
-          <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
-            <Section title="His recommendations" n={recs.length} dot={C.ink400} />
-            <Mono s={8.5} c={C.inkSoft} style={{ marginBottom: 8 }}>
-              In his words, from {[...new Set(recs.map((e) => e.source).filter(Boolean))].join(' · ') || 'his recommendations'}
-            </Mono>
-            <View style={{ gap: 8 }}>
-              {recs.map((e) => (
-                <MapRow key={e.id || e.name} e={e} c={critic} />
-              ))}
-            </View>
-          </View>
-        ) : null}
-
-        {onMap.length ? <MapSection c={critic} /> : null}
 
         {isMe && !critic.list.some((e) => e.score != null) ? (
           <View style={{ paddingTop: 18, paddingHorizontal: 16, gap: 8 }}>

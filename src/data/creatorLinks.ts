@@ -83,6 +83,15 @@ export const CREATOR_EXTRA: Record<string, CreatorExtra> = {
   the50global: { kind: 'outlet', name: 'The World’s 50 Best', links: [{ platform: 'web', label: 'theworlds50best.com', url: 'https://www.theworlds50best.com' }] },
 };
 
-/** News, magazines and media brands — shown as outlets, not personal creators. */
+/**
+ * General news — wires, TV news, business and national press. They report on
+ * restaurants (an award, a queue, an opening) but aren't critics: their clips
+ * stay in the clip feeds; they don't get a critic profile or a say in a
+ * restaurant's critic consensus.
+ */
+export const NEWS_RE =
+  /milenio|imagen (noticias|entretenimiento|tv)|imagennoticias|imagenentretenimiento|inclusive ?tv|heraldo de mexico|heraldodemexico|economista|excelsior|nccib|pagina ?12|el pais|elpais|swns|azteca|financiero|cbs|\bafp\b|est media|business luxury|\bnoticias\b|\bnews\b/;
+
+/** Food media, city magazines and media brands — shown as outlets, not personal creators. */
 export const OUTLET_RE =
   /milenio|imagen|heraldo|economista|food and wine|donde ir|gourmet de mexico|chilango|excelsior|nccib|conde nast|pagina ?12|el pais|swns|maspormas|inclusive tv|business luxury|azteca|financiero|cbs|afp|the 50|est media|gastrolab|life & thyme|local traveller|noticias|\btv\b|media/;

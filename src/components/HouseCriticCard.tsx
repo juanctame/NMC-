@@ -89,7 +89,7 @@ export function HouseCriticCard({ c, width = 286 }: { c: HouseCritic; width?: nu
           </Banner>
         </View>
         <Mono s={8.5} c={C.inkMuted} numberOfLines={1} style={{ flexShrink: 1 }}>
-          {all.length} places · {cats} categories · avg {houseAvg(c).toFixed(1)}
+          {all.length} ranked · {cats} categories · avg {houseAvg(c).toFixed(1)}
         </Mono>
       </View>
     </StickerPressable>

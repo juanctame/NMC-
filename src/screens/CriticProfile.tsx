@@ -166,7 +166,7 @@ export function CriticProfile() {
   const stats: [string, string][] = [
     [String(critic.takes.length), critic.takes.length === 1 ? 'restaurant' : 'restaurants'],
     [String(critic.clipCount), critic.clipCount === 1 ? 'clip' : 'clips'],
-    [critic.avg.toFixed(1), 'sim. avg'],
+    [critic.adjAvg.toFixed(1), 'sim. avg'],
   ];
 
   return (
@@ -180,7 +180,7 @@ export function CriticProfile() {
               </Display>
             </Pressable>
             <Banner s={10} tk={0.16} c={C.inkMuted} numberOfLines={1} style={{ flex: 1 }}>
-              {critic.kind === 'outlet' ? 'Food media' : 'Creator'} · critic profile
+              {critic.kind === 'outlet' ? 'Food media' : 'Creator'} · {critic.tier === 'critic' ? 'critic profile' : 'one-off clip'}
             </Banner>
             <ProfileSwitch mode="profile" onChange={setMode} />
           </View>
@@ -271,7 +271,8 @@ export function CriticProfile() {
           ))}
         </View>
 
-        {/* simulated palate */}
+        {/* simulated palate — read only from two places or more */}
+        {critic.takes.length >= 2 ? (
         <View style={{ paddingTop: 20, paddingHorizontal: 16 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
             <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.sun500 }} />
@@ -306,6 +307,8 @@ export function CriticProfile() {
             </View>
           </StickerView>
         </View>
+
+        ) : null}
 
         {/* their takes */}
         <View style={{ paddingTop: 22, paddingHorizontal: 16 }}>
