@@ -19,7 +19,9 @@ import { computePalate, tasteMatch, PALATE_AXES } from '../data/palate';
 import { useT } from '../i18n';
 import { PalateRadar } from '../components/PalateRadar';
 import { HouseTag, VerdictStamp, VERDICT_COLOR } from '../components/CriticMarks';
-import { CriticPassportScreen, ProfileSwitch, issuedOn, type CriticPassportSubject } from './CriticPassport';
+import { CriticPassportScreen, issuedOn, type CriticPassportSubject } from './CriticPassport';
+import { ReviewMap, ReviewMapHeading, type MapReview } from '../components/ReviewMap';
+import { DossierCover } from '../components/DossierCover';
 import { C } from '../theme/tokens';
 import { Display, Banner, Serif, SerifItalic, Mono } from '../components/Text';
 import { StickerView, StickerPressable } from '../components/Sticker';
@@ -279,26 +281,22 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
   }
 
   const stats: [string, string][] = [
-    [String(all.length), 'places ranked'],
+    [String(all.length), 'ranked'],
+    [String(cities), cities === 1 ? 'city' : 'cities'],
     [String(words), 'in his words'],
     [houseAvg(critic).toFixed(1), 'house avg'],
   ];
+  // His map: everything ranked that has an address, by city and category.
+  const mapItems: MapReview[] = all.filter((x) => x.place).map((x) => ({ place: x.place!, score: x.score, cat: x.category, scope: x.city.key, note: x.entry.note }));
+  const mapScopes = [...houseCities(critic).slice(0, 1), { key: 'all', label: 'All México' }, ...houseCities(critic).slice(1, 12)].map((x) => ({ key: x.key, label: x.label }));
 
   return (
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 40 }} showsVerticalScrollIndicator={false}>
-        <View style={{ paddingTop: insets.top + 8, paddingHorizontal: 16 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12, gap: 8 }}>
-            <Pressable onPress={close} accessibilityLabel="Back" style={{ paddingRight: 4, paddingVertical: 4 }}>
-              <Display s={20} c={C.ink400}>
-                ←
-              </Display>
-            </Pressable>
-            <Banner s={10} tk={0.16} c={C.inkMuted} numberOfLines={1} style={{ flex: 1 }}>
-              House critic · critic profile
-            </Banner>
-            <ProfileSwitch mode="profile" onChange={setMode} />
-          </View>
+        {/* cover: the dining room of his #1 */}
+        <DossierCover place={cdmxTop?.place} top={insets.top} onBack={close} onPassport={() => setMode('passport')} credit={cdmxTop ? `His #1 in CDMX · ${cdmxTop.entry.name}` : ''} />
+
+        <View style={{ paddingTop: 16, paddingHorizontal: 16 }}>
 
           {/* header — same as every critic's, with the house badge */}
           <StickerView offset="lg" style={{ backgroundColor: C.ink700, borderWidth: 2.5, borderColor: C.inkBlack, padding: 18, overflow: 'hidden' }}>
@@ -319,7 +317,10 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
                 )}
               </StickerView>
               <View style={{ flex: 1, minWidth: 0, paddingRight: 64 }}>
-                <Display s={21} c={C.paper0} style={{ lineHeight: 23 }} numberOfLines={2}>
+                <Banner s={8.5} tk={0.2} c={C.sun300}>
+                  The house critic
+                </Banner>
+                <Display s={21} c={C.paper0} style={{ lineHeight: 23, marginTop: 2 }} numberOfLines={2}>
                   {c.name}
                 </Display>
                 <Mono s={9.5} c={C.sun300} style={{ marginTop: 4 }} numberOfLines={1}>
@@ -450,6 +451,14 @@ export function HouseCriticProfile({ c }: { c: HouseCritic }) {
                 </View>
               </View>
             </StickerView>
+          </View>
+        ) : null}
+
+        {/* his map of reviews */}
+        {mapItems.length ? (
+          <View style={{ paddingTop: 20, gap: 8 }}>
+            <ReviewMapHeading title="His map" note={`${mapItems.length} places`} />
+            <ReviewMap who={`${c.name}'s`} items={mapItems} cats={HOUSE_CATEGORIES.map((x) => ({ id: x.id, label: x.label }))} scopes={mapScopes} defaultScope="cdmx" />
           </View>
         ) : null}
 

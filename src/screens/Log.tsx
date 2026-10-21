@@ -22,6 +22,8 @@ import { Segmented } from '../components/Segmented';
 import { Roundel } from '../components/Roundel';
 import { BookmarkIcon } from '../components/icons';
 import { ScreenIn } from '../components/Anim';
+import { ReviewMap } from '../components/ReviewMap';
+import { categoryOf, FAV_CATS } from '../data/favorites';
 
 /* ---------- the visual tally ---------- */
 
@@ -361,6 +363,7 @@ export function Log() {
           <Segmented
             items={[
               { key: 'been', label: t('log.been') },
+              { key: 'map', label: 'Map' },
               { key: 'want', label: t('log.want') },
               { key: 'recs', label: t('log.recs') },
             ]}
@@ -397,6 +400,15 @@ export function Log() {
       </View>
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 14, paddingBottom: insets.bottom + 100 }} showsVerticalScrollIndicator={false}>
+        {logSeg === 'map' ? (
+          scored.length === 0 ? (
+            <EmptyState title="Your map starts here" body="Rank a spot and it lands on your map — by category, your #1 first." />
+          ) : (
+            <View style={{ marginHorizontal: -16 }}>
+              <ReviewMap who="your" items={scored.map((p) => ({ place: p, score: p.score, cat: categoryOf(p) }))} cats={FAV_CATS.map((x) => ({ id: x.id, label: x.label }))} />
+            </View>
+          )
+        ) : null}
         {logSeg === 'been' ? (
           scored.length === 0 ? (
             <EmptyState title="Your guide starts here" body="Rank your first spot and it’ll land on your podium. Every place you stamp builds your taste map." />

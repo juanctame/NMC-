@@ -167,6 +167,33 @@ Mexico City food. Only true HD counts — a ≥720p rendition a browser plays, o
 reduced motion or Data Saver shows a still; if nothing plays, the yellow brand
 cover shows as before.
 
+### The main page: five sections
+The feed (`src/screens/Feed.tsx`) runs in one order, with a jump bar under the
+header: **1 For You** (picks from the live venues for your taste — tap a
+category chip, *Tacos & street*, *Seafood*, *Bakery & café*…, to see that
+category's options), **2 New & Rising** (2026 openings and newly acclaimed
+spots, and the chefs and groups behind them), **3 Clips** (creator clips pinned
+to their restaurants, and this month's most-filmed), **4 Reviews** (the house
+critic and the critics, then your friends' latest) and **5 Fresh Finds** (a new
+hand of discovered spots every visit, and the live places near you).
+
+### Everyone's map of reviews
+`src/components/ReviewMap.tsx` puts a person's reviews on a map you can sift:
+their cities (when there are several), their categories with counts (tap one
+for its options, numbered in their order), top 10 or everything, pins showing
+the score or the rank; tap a pin or an option for the place, then open it.
+Places without an address stay in the options and are counted, not dropped.
+It's on every critic's page (*Their map*), Juan Carlos Tame's (*His map*, by
+city and coffee category), every diner's profile (their favourites by
+category) and your own Guide (*Map* tab).
+
+### Critic pages: a dossier, like the chef's
+Every critic page opens as the chef's does: a cover (the dining room of their
+#1), the header card (*The critic* / *The house critic*, name, bio, summary,
+verdict chips, a numbers row — places · clips · colonias · average), then how
+it's made, their map, their takes or ranking, palate and connected accounts.
+The Profile | Passport switch sits on the cover.
+
 ### Critics: who counts, and in what order
 `src/data/critics.ts` builds critics from the clips, then keeps it clean:
 - **General news isn't a critic.** Wires, TV news, business and national press

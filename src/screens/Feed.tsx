@@ -2,12 +2,12 @@
  * Feed (home) — social home: trending strip, friends' activity, personalized
  * recs, and (once unlocked) the Dine Club teaser.
  */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { View, ScrollView, Pressable, Image, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore, resolvePlace } from '../store/useStore';
 import { useT } from '../i18n';
-import { FEED, RECS, byId, type Place } from '../store/data';
+import { FEED, byId, type Place } from '../store/data';
 import { FEATURED_CRITICS, criticForClip, type Critic } from '../data/critics';
 import { HOUSE_CRITICS } from '../data/houseCritics';
 import { HouseCriticCard } from '../components/HouseCriticCard';
@@ -16,6 +16,7 @@ import { embedUrlFor, SOURCE_LABEL } from '../data/videos';
 import type { BuzzResult } from '../data/trending';
 import { computePalate } from '../data/palate';
 import { recommend, type Rec, type ReasonTag } from '../data/recommend';
+import { categoryOf, FAV_CATS, type FavCat } from '../data/favorites';
 import { CARTE_RISING } from '../data/carte';
 import { FEATURED_CHEFS, type Chef } from '../data/chefs';
 import { GROUPS, type Group } from '../data/groups';
@@ -460,38 +461,6 @@ function ActivityCard({ item, index }: { item: Extract<(typeof FEED)[number], { 
   );
 }
 
-function RecCard({ placeId, reason, match }: { placeId: string; reason: string; match: string }) {
-  const openPlace = useStore((s) => s.openPlace);
-  const p = byId[placeId];
-  return (
-    <StickerPressable
-      offset="lg"
-      onPress={() => openPlace(placeId)}
-      style={{ flexDirection: 'row', backgroundColor: C.ink700, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
-    >
-      <VenueCover place={p} style={{ width: 92, borderRightWidth: 2.5, borderColor: C.inkBlack }} crestSize={34} credit={false} />
-      <View style={{ flex: 1, paddingVertical: 12, paddingHorizontal: 14 }}>
-        <Banner s={9} tk={0.16} c={C.sun400}>
-          Recommended for you
-        </Banner>
-        <SerifDisplay s={17} c={C.paper0} style={{ marginTop: 4, lineHeight: 19 }}>
-          {p.name}
-        </SerifDisplay>
-        <Mono s={9.5} c={C.ink100} style={{ marginTop: 4 }}>
-          {reason}
-        </Mono>
-        <View style={{ flexDirection: 'row', marginTop: 8 }}>
-          <View style={{ backgroundColor: C.sun400, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 10 }}>
-            <Banner s={10} tk={0.08} c={C.inkDeep}>
-              {match} match
-            </Banner>
-          </View>
-        </View>
-      </View>
-    </StickerPressable>
-  );
-}
-
 function ClubTeaser() {
   const goClub = useStore((s) => s.goClub);
   return (
@@ -622,6 +591,37 @@ function CriticCard({ critic }: { critic: Critic }) {
   );
 }
 
+type FeedSection = 'foryou' | 'rising' | 'clips' | 'reviews' | 'fresh';
+const FEED_SECTIONS: { key: FeedSection; label: string }[] = [
+  { key: 'foryou', label: 'For You' },
+  { key: 'rising', label: 'New & Rising' },
+  { key: 'clips', label: 'Clips' },
+  { key: 'reviews', label: 'Reviews' },
+  { key: 'fresh', label: 'Fresh Finds' },
+];
+
+/** A feed section's heading: its number, its name, and a note or link on the right. */
+function SectionHead({ n, title, sub, right }: { n: number; title: string; sub?: string; right?: React.ReactNode }) {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+      <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: C.ink400, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+        <Mono s={9} c={C.paper0}>
+          {n}
+        </Mono>
+      </View>
+      <Banner s={12} tk={0.14} c={C.inkDeep} style={{ flexShrink: 1 }} numberOfLines={1}>
+        {title}
+      </Banner>
+      <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+      {right || (sub ? (
+        <Mono s={9} c={C.inkSoft} numberOfLines={1}>
+          {sub}
+        </Mono>
+      ) : null)}
+    </View>
+  );
+}
+
 export function Feed() {
   const insets = useSafeAreaInsets();
   const tapLogo = useStore((s) => s.tapLogo);
@@ -645,6 +645,11 @@ export function Feed() {
   const wantIds = useStore((s) => s.wantIds);
   const t = useT();
   const [behind, setBehind] = useState<'chefs' | 'groups'>('chefs');
+  const [forCat, setForCat] = useState<FavCat | 'all'>('all');
+  const scrollRef = useRef<ScrollView>(null);
+  const sectionY = useRef<Partial<Record<FeedSection, number>>>({});
+  const mark = (k: FeedSection) => (e: { nativeEvent: { layout: { y: number } } }) => (sectionY.current[k] = e.nativeEvent.layout.y);
+  const jump = (k: FeedSection) => scrollRef.current?.scrollTo({ y: Math.max(0, (sectionY.current[k] || 0) - 8), animated: true });
 
   // The ideal picks for this foodie, from the live venues (quality × taste fit).
   const recs = useMemo(() => {
@@ -652,8 +657,19 @@ export function Feed() {
     const palate = computePalate(ranked, tastes, userReviews);
     const beenIds = new Set(ranked.map((r) => r.id));
     const wantSet = new Set(wantIds);
-    return recommend(nearby, { palate, tastes, beenIds, wantIds: wantSet }).slice(0, 7);
-  }, [nearby, ranked, tastes, userReviews, wantIds]);
+    const pool = forCat === 'all' ? nearby : nearby.filter((p) => categoryOf(p) === forCat);
+    return recommend(pool, { palate, tastes, beenIds, wantIds: wantSet }).slice(0, 7);
+  }, [nearby, ranked, tastes, userReviews, wantIds, forCat]);
+  // How many options each category holds nearby — the chips say so.
+  const catCounts = useMemo(() => {
+    const m: Partial<Record<FavCat, number>> = {};
+    nearby.forEach((p) => {
+      const c = categoryOf(p);
+      m[c] = (m[c] || 0) + 1;
+    });
+    return m;
+  }, [nearby]);
+  const friendReviews = FEED.filter((it) => it.kind === 'act').slice(0, 4);
 
   // Rank the most-mentioned restaurants this month (cached; recomputes ~daily).
   useEffect(() => {
@@ -702,135 +718,158 @@ export function Feed() {
         </View>
       </View>
 
-      {/* body */}
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 100, gap: 16 }} showsVerticalScrollIndicator={false}>
-        {/* Ideal for you — quality × your taste, from the live venues */}
-        {recs.length ? (
-          <View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-              <Banner s={11} tk={0.14} c={C.inkDeep}>
-                {t('feed.forYou')}
-              </Banner>
-              <Mono s={9} c={C.inkSoft}>
-                {t('feed.forYouSub')}
+      {/* jump to a section */}
+      <View style={{ height: 46, flexShrink: 0, backgroundColor: C.paper50, borderBottomWidth: 2, borderBottomColor: C.inkBlack }}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 7, paddingHorizontal: 16, alignItems: 'center', height: 44 }}>
+        {FEED_SECTIONS.map((x, i) => (
+          <Pressable key={x.key} onPress={() => jump(x.key)} accessibilityLabel={`Go to ${x.label}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 5, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 10, backgroundColor: C.paper0 }}>
+            <Mono s={8.5} c={C.ink400}>
+              {i + 1}
+            </Mono>
+            <Banner s={9} tk={0.08} c={C.inkDeep}>
+              {x.label}
+            </Banner>
+          </Pressable>
+        ))}
+      </ScrollView>
+      </View>
+
+      {/* body: 1 For You · 2 New & Rising · 3 Clips · 4 Reviews · 5 Fresh Finds */}
+      <ScrollView ref={scrollRef} contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 100, gap: 22 }} showsVerticalScrollIndicator={false}>
+        {/* 1 — For You: quality × your taste, from the live venues; tap a category for its options */}
+        <View onLayout={mark('foryou')} style={{ gap: 10 }}>
+          <SectionHead n={1} title="For You" sub={t('feed.forYouSub')} />
+          {nearby.length ? (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 7, paddingRight: 4 }}>
+              {[{ id: 'all' as const, label: 'Everything' }, ...FAV_CATS].map((x) =>
+                x.id === 'all' || catCounts[x.id] ? (
+                  <Pressable
+                    key={x.id}
+                    onPress={() => setForCat(x.id)}
+                    accessibilityLabel={`For you: ${x.label}`}
+                    accessibilityState={{ selected: forCat === x.id }}
+                    style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 5, paddingHorizontal: 11, backgroundColor: forCat === x.id ? C.ink400 : C.paper0 }}
+                  >
+                    <Banner s={9} tk={0.06} c={forCat === x.id ? C.paper0 : C.inkDeep}>
+                      {x.label} {x.id === 'all' ? nearby.length : catCounts[x.id]}
+                    </Banner>
+                  </Pressable>
+                ) : null,
+              )}
+            </ScrollView>
+          ) : null}
+          {recs.length ? (
+            <View>
+              <TopPick rec={recs[0]} />
+              {recs.length > 1 ? (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingTop: 10, paddingBottom: 4, paddingRight: 4 }}>
+                  {recs.slice(1).map((rec) => (
+                    <RecMini key={rec.place.id} rec={rec} />
+                  ))}
+                </ScrollView>
+              ) : null}
+            </View>
+          ) : nearbyStatus === 'loading' ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <ActivityIndicator size="small" color={C.ink400} />
+              <Mono s={10} c={C.inkSoft}>
+                Finding your picks in {city.name}…
               </Mono>
             </View>
-            <TopPick rec={recs[0]} />
-            {recs.length > 1 ? (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingTop: 10, paddingBottom: 4, paddingRight: 4 }}>
-                {recs.slice(1).map((rec) => (
-                  <RecMini key={rec.place.id} rec={rec} />
-                ))}
-              </ScrollView>
-            ) : null}
-          </View>
-        ) : null}
+          ) : (
+            <Mono s={10} c={C.inkSoft}>
+              {forCat === 'all' ? 'Rank a few places and your picks land here.' : 'You’ve been to all of these nearby — try another category.'}
+            </Mono>
+          )}
+        </View>
 
-        {/* Fresh finds — a new hand of discovered spots on every visit */}
-        {city.id === 'cdmx' ? <FreshFinds /> : null}
-
-        {/* New & rising — 2026 openings and newly acclaimed CDMX spots (guide) */}
+        {/* 2 — New & Rising: 2026 openings and newly acclaimed spots, and who's behind them */}
         {city.id === 'cdmx' && CARTE_RISING.length ? (
-          <View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-              <Banner s={11} tk={0.14} c={C.inkDeep}>
-                New & rising
-              </Banner>
-              <Mono s={9} c={C.inkSoft}>
-                Guía CDMX 2026 →
-              </Mono>
-            </View>
+          <View onLayout={mark('rising')} style={{ gap: 10 }}>
+            <SectionHead n={2} title="New & Rising" sub="Guía CDMX 2026" />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
               {CARTE_RISING.slice(0, 14).map((p) => (
                 <RisingCard key={p.id} p={p} />
               ))}
             </ScrollView>
-          </View>
-        ) : null}
-
-        {/* Who's behind it — the chefs and the restaurant groups, one rail with a toggle */}
-        {city.id === 'cdmx' && (FEATURED_CHEFS.length || GROUPS.length) ? (
-          <View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-              <Banner s={11} tk={0.14} c={C.inkDeep}>
-                Who's behind it
-              </Banner>
-              <View style={{ flexDirection: 'row', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, overflow: 'hidden' }}>
-                {(['chefs', 'groups'] as const).map((k) => (
-                  <Pressable
-                    key={k}
-                    onPress={() => setBehind(k)}
-                    accessibilityRole="tab"
-                    accessibilityState={{ selected: behind === k }}
-                    style={{ paddingVertical: 4, paddingHorizontal: 11, backgroundColor: behind === k ? C.inkDeep : C.paper0 }}
-                  >
-                    <Banner s={8.5} tk={0.08} c={behind === k ? C.paper0 : C.inkDeep}>
-                      {k === 'chefs' ? `Chefs ${FEATURED_CHEFS.length}` : `Groups ${GROUPS.length}`}
-                    </Banner>
-                  </Pressable>
-                ))}
+            {FEATURED_CHEFS.length || GROUPS.length ? (
+              <View style={{ gap: 8 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Banner s={9} tk={0.14} c={C.inkMuted}>
+                    Who's behind it
+                  </Banner>
+                  <View style={{ flexDirection: 'row', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, overflow: 'hidden' }}>
+                    {(['chefs', 'groups'] as const).map((k) => (
+                      <Pressable key={k} onPress={() => setBehind(k)} accessibilityRole="tab" accessibilityState={{ selected: behind === k }} style={{ paddingVertical: 4, paddingHorizontal: 11, backgroundColor: behind === k ? C.inkDeep : C.paper0 }}>
+                        <Banner s={8.5} tk={0.08} c={behind === k ? C.paper0 : C.inkDeep}>
+                          {k === 'chefs' ? `Chefs ${FEATURED_CHEFS.length}` : `Groups ${GROUPS.length}`}
+                        </Banner>
+                      </Pressable>
+                    ))}
+                  </View>
+                </View>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+                  {behind === 'chefs' ? FEATURED_CHEFS.map((c) => <ChefChip key={c.id} chef={c} />) : GROUPS.map((g) => <GroupChip key={g.id} group={g} />)}
+                </ScrollView>
               </View>
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
-              {behind === 'chefs' ? FEATURED_CHEFS.map((c) => <ChefChip key={c.id} chef={c} />) : GROUPS.map((g) => <GroupChip key={g.id} group={g} />)}
-            </ScrollView>
+            ) : null}
           </View>
         ) : null}
 
-        {/* Clips — vertical previews of creator clips, each pinned to its restaurant */}
-        {clipFeed.length ? (
-          <View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-              <Banner s={11} tk={0.14} c={C.inkDeep}>
-                Clips
-              </Banner>
-              <Pressable onPress={() => openClips()} accessibilityLabel="Watch all clips" hitSlop={8}>
+        {/* 3 — Clips: vertical previews pinned to their restaurants, and this month's most-filmed */}
+        {clipFeed.length || trendLive || monthlyTrendingStatus === 'loading' ? (
+          <View onLayout={mark('clips')} style={{ gap: 10 }}>
+            <SectionHead
+              n={3}
+              title="Clips"
+              right={
+                clipFeed.length ? (
+                  <Pressable onPress={() => openClips()} accessibilityLabel="Watch all clips" hitSlop={8}>
+                    <Mono s={9} c={C.ink400}>
+                      watch all {clipFeed.length} →
+                    </Mono>
+                  </Pressable>
+                ) : undefined
+              }
+            />
+            {clipFeed.length ? (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+                {clipFeed.slice(0, 12).map((it) => (
+                  <ClipPreview key={it.clip.id} item={it} />
+                ))}
+              </ScrollView>
+            ) : null}
+            {trendLive || monthlyTrendingStatus === 'loading' ? (
+              <View style={{ gap: 8 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Banner s={9} tk={0.14} c={C.inkMuted}>
+                    {t('feed.trending')}
+                  </Banner>
+                  {monthlyTrendingStatus === 'loading' ? <ActivityIndicator size="small" color={C.ink400} /> : <Mono s={9} c={C.inkSoft}>{t('feed.trendingSub')}</Mono>}
+                </View>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
+                  {monthlyTrending.map((it, i) => (
+                    <MonthlyTrendCard key={it.placeId} item={it} rank={i + 1} />
+                  ))}
+                </ScrollView>
+              </View>
+            ) : null}
+          </View>
+        ) : null}
+
+        {/* 4 — Reviews: the critics (house critic first), then your friends' latest */}
+        <View onLayout={mark('reviews')} style={{ gap: 10 }}>
+          <SectionHead
+            n={4}
+            title="Reviews"
+            right={
+              <Pressable onPress={() => goBoard('board' as any)} accessibilityLabel="All critics" hitSlop={8}>
                 <Mono s={9} c={C.ink400}>
-                  watch all {clipFeed.length} →
+                  all critics →
                 </Mono>
               </Pressable>
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
-              {clipFeed.slice(0, 12).map((it) => (
-                <ClipPreview key={it.clip.id} item={it} />
-              ))}
-            </ScrollView>
-          </View>
-        ) : null}
-
-        {/* Trending now — real creator clips (third-party, HD), played in-app */}
-        {trendLive || monthlyTrendingStatus === 'loading' ? (
-        <View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-            <Banner s={11} tk={0.14} c={C.inkDeep}>
-              {t('feed.trending')}
-            </Banner>
-            {monthlyTrendingStatus === 'loading' ? (
-              <ActivityIndicator size="small" color={C.ink400} />
-            ) : (
-              <Mono s={9} c={C.inkSoft}>
-                {t('feed.trendingSub')}
-              </Mono>
-            )}
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
-            {monthlyTrending.map((it, i) => (
-              <MonthlyTrendCard key={it.placeId} item={it} rank={i + 1} />
-            ))}
-          </ScrollView>
-        </View>
-        ) : null}
-
-        {/* Tastemakers — featured creators, the content we promote */}
-        <View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-            <Banner s={11} tk={0.14} c={C.inkDeep}>
-              {t('feed.tastemakers')}
-            </Banner>
-            <Mono s={9} c={C.inkSoft}>
-              house critics · real creators
-            </Mono>
-          </View>
+            }
+          />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 4, paddingRight: 4 }}>
             {HOUSE_CRITICS.map((c) => (
               <HouseCriticCard key={c.id} c={c} />
@@ -839,60 +878,64 @@ export function Feed() {
               <CriticCard key={c.id} critic={c} />
             ))}
           </ScrollView>
+          {friendReviews.length ? (
+            <View style={{ gap: 12 }}>
+              <Banner s={9} tk={0.14} c={C.inkMuted}>
+                From your table
+              </Banner>
+              {friendReviews.map((it, i) => (it.kind === 'act' ? <ActivityCard key={i} item={it} index={i} /> : null))}
+            </View>
+          ) : null}
+          {clubUnlocked && FEED.some((it) => it.kind === 'club') ? <ClubTeaser /> : null}
         </View>
 
-        {/* Fresh near you — live places for the selected city */}
-        {nearby.length > 0 ? (
-          <View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexShrink: 1, minWidth: 0 }}>
-                <Banner s={11} tk={0.14} c={C.inkDeep}>
-                  {t('feed.fresh')}
-                </Banner>
-                <CacheChip />
-              </View>
+        {/* 5 — Fresh Finds: a new hand of discovered spots on every visit, and the live places near you */}
+        <View onLayout={mark('fresh')} style={{ gap: 10 }}>
+          <SectionHead
+            n={5}
+            title="Fresh Finds"
+            right={
               <Pressable onPress={openCitySheet} hitSlop={6}>
                 <Mono s={9} c={C.inkSoft}>
                   {city.name} · change ▾
                 </Mono>
               </Pressable>
+            }
+          />
+          {city.id === 'cdmx' ? <FreshFinds /> : null}
+          {nearby.length > 0 ? (
+            <View style={{ gap: 8 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Banner s={9} tk={0.14} c={C.inkMuted}>
+                  {t('feed.fresh')}
+                </Banner>
+                <CacheChip />
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4 }}>
+                {nearby.slice(0, 12).map((p) => (
+                  <StickerPressable key={p.id} offset="sm" onPress={() => openPlaceFromFeed(p.id)} style={{ width: 128, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
+                    <FeedCover p={p} height={84} crest={38} border />
+                    <View style={{ padding: 8 }}>
+                      <SerifDisplay s={13} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 14 }}>
+                        {p.name}
+                      </SerifDisplay>
+                      <Mono s={8.5} c={C.inkMuted} numberOfLines={1} style={{ marginTop: 3 }}>
+                        {p.cuisine} · {p.price}
+                      </Mono>
+                    </View>
+                  </StickerPressable>
+                ))}
+              </ScrollView>
             </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4 }}>
-              {nearby.slice(0, 12).map((p) => (
-                <StickerPressable
-                  key={p.id}
-                  offset="sm"
-                  onPress={() => openPlaceFromFeed(p.id)}
-                  style={{ width: 128, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
-                >
-                  <FeedCover p={p} height={84} crest={38} border />
-                  <View style={{ padding: 8 }}>
-                    <SerifDisplay s={13} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 14 }}>
-                      {p.name}
-                    </SerifDisplay>
-                    <Mono s={8.5} c={C.inkMuted} numberOfLines={1} style={{ marginTop: 3 }}>
-                      {p.cuisine} · {p.price}
-                    </Mono>
-                  </View>
-                </StickerPressable>
-              ))}
-            </ScrollView>
-          </View>
-        ) : nearbyStatus === 'loading' ? (
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 2 }}>
-            <ActivityIndicator size="small" color={C.ink400} />
-            <Mono s={10} c={C.inkSoft}>
-              Finding fresh spots near {city.name}…
-            </Mono>
-          </View>
-        ) : null}
-
-        {FEED.map((it, i) => {
-          if (it.kind === 'act') return <ActivityCard key={i} item={it} index={i} />;
-          if (it.kind === 'rec') return <RecCard key={i} placeId={it.placeId} reason={it.reason} match={it.match} />;
-          if (it.kind === 'club') return clubUnlocked ? <ClubTeaser key={i} /> : null;
-          return null;
-        })}
+          ) : nearbyStatus === 'loading' ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 2 }}>
+              <ActivityIndicator size="small" color={C.ink400} />
+              <Mono s={10} c={C.inkSoft}>
+                Finding fresh spots near {city.name}…
+              </Mono>
+            </View>
+          ) : null}
+        </View>
       </ScrollView>
     </ScreenIn>
   );

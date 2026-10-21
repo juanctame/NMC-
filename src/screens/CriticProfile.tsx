@@ -13,7 +13,10 @@ import { View, ScrollView, Pressable, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore, resolvePlace } from '../store/useStore';
 import { useT } from '../i18n';
-import { criticById, type Take, type Account } from '../data/critics';
+import { criticById, VERDICT_LABEL, type Take, type Account, type Verdict } from '../data/critics';
+import { categoryOf, FAV_CATS } from '../data/favorites';
+import { ReviewMap, ReviewMapHeading, type MapReview } from '../components/ReviewMap';
+import { DossierCover } from '../components/DossierCover';
 import { computePalate, tasteMatch, PALATE_AXES } from '../data/palate';
 import { SOURCE_LABEL } from '../data/videos';
 import { guideBadgeOf } from '../data/chefs';
@@ -28,7 +31,7 @@ import { PlayIcon } from '../components/icons';
 import { SimTag, VerdictStamp, VERDICT_COLOR } from '../components/CriticMarks';
 import { houseCriticById } from '../data/houseCritics';
 import { HouseCriticProfile } from './HouseCriticProfile';
-import { CriticPassportScreen, ProfileSwitch, issuedOn, type CriticPassportSubject } from './CriticPassport';
+import { CriticPassportScreen, issuedOn, type CriticPassportSubject } from './CriticPassport';
 
 const ACCOUNT_LABEL: Record<string, string> = { ...SOURCE_LABEL, web: 'Website' };
 
@@ -166,24 +169,24 @@ export function CriticProfile() {
   const stats: [string, string][] = [
     [String(critic.takes.length), critic.takes.length === 1 ? 'restaurant' : 'restaurants'],
     [String(critic.clipCount), critic.clipCount === 1 ? 'clip' : 'clips'],
+    [String(critic.hoods.length), critic.hoods.length === 1 ? 'colonia' : 'colonias'],
     [critic.adjAvg.toFixed(1), 'sim. avg'],
   ];
+  const coverPlace = critic.takes.map((tk) => resolvePlace(tk.placeId, nearbyById)).find(Boolean);
+  const verdicts = Object.entries(critic.takes.reduce<Record<string, number>>((m, tk) => ((m[tk.verdict] = (m[tk.verdict] || 0) + 1), m), {})) as [Verdict, number][];
+  // Their map: every take with an address, best first, in the categories diners pick favourites in.
+  const mapItems: MapReview[] = critic.takes
+    .map((tk) => ({ tk, p: resolvePlace(tk.placeId, nearbyById) }))
+    .filter((x): x is { tk: Take; p: NonNullable<typeof x.p> } => !!x.p)
+    .map(({ tk, p }) => ({ place: p, score: tk.score, cat: categoryOf(p), note: tk.quote }));
 
   return (
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 40 }} showsVerticalScrollIndicator={false}>
-        <View style={{ paddingTop: insets.top + 8, paddingHorizontal: 16 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12, gap: 8 }}>
-            <Pressable onPress={close} accessibilityLabel="Back" style={{ paddingRight: 4, paddingVertical: 4 }}>
-              <Display s={20} c={C.ink400}>
-                ←
-              </Display>
-            </Pressable>
-            <Banner s={10} tk={0.16} c={C.inkMuted} numberOfLines={1} style={{ flex: 1 }}>
-              {critic.kind === 'outlet' ? 'Food media' : 'Creator'} · {critic.tier === 'critic' ? 'critic profile' : 'one-off clip'}
-            </Banner>
-            <ProfileSwitch mode="profile" onChange={setMode} />
-          </View>
+        {/* cover: the dining room of their #1 */}
+        <DossierCover place={coverPlace} top={insets.top} onBack={close} onPassport={() => setMode('passport')} credit={coverPlace ? `Their #1 · ${coverPlace.name}` : ''} />
+
+        <View style={{ paddingTop: 16, paddingHorizontal: 16 }}>
 
           {/* header */}
           <StickerView offset="lg" style={{ backgroundColor: C.ink700, borderWidth: 2.5, borderColor: C.inkBlack, padding: 18, overflow: 'hidden' }}>
@@ -198,7 +201,11 @@ export function CriticProfile() {
                 <Monogram name={critic.name} size={60} fg={C.paper0} />
               </StickerView>
               <View style={{ flex: 1, minWidth: 0, paddingRight: 54 }}>
-                <Display s={21} c={C.paper0} style={{ lineHeight: 23 }} numberOfLines={2}>
+                <Banner s={8.5} tk={0.2} c={C.sun300}>
+                  {critic.kind === 'outlet' ? 'The critic · food media' : 'The critic · creator'}
+                  {critic.tier === 'critic' ? '' : ' · one-off clip'}
+                </Banner>
+                <Display s={21} c={C.paper0} style={{ lineHeight: 23, marginTop: 2 }} numberOfLines={2}>
                   {critic.name}
                 </Display>
                 <Mono s={9.5} c={C.sun300} style={{ marginTop: 4 }} numberOfLines={1}>
@@ -214,6 +221,16 @@ export function CriticProfile() {
             <SerifItalic s={12} c={C.sun200} style={{ marginTop: critic.bio ? 6 : 12, lineHeight: 17 }}>
               {critic.summary}
             </SerifItalic>
+            {/* verdicts, as the chef's awards */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+              {verdicts.map(([v, n]) => (
+                <View key={v} style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: VERDICT_COLOR[v].bg, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 10 }}>
+                  <Banner s={9} tk={0.08} c={VERDICT_COLOR[v].fg}>
+                    {n} {VERDICT_LABEL[v].toLowerCase()}{v === 'rave' && n > 1 ? 's' : ''}
+                  </Banner>
+                </View>
+              ))}
+            </View>
             <View style={{ flexDirection: 'row', marginTop: 14, borderTopWidth: 2, borderColor: C.paper0, paddingTop: 12 }}>
               {stats.map(([n, l]) => (
                 <View key={l} style={{ flex: 1, alignItems: 'center' }}>
@@ -226,7 +243,7 @@ export function CriticProfile() {
                 </View>
               ))}
             </View>
-            <View style={{ flexDirection: 'row', gap: 10, marginTop: 14 }}>
+            <View style={{ marginTop: 14 }}>
               <StickerPressable
                 offset="sm"
                 radius={999}
@@ -253,6 +270,14 @@ export function CriticProfile() {
             {critic.name}.
           </Serif>
         </View>
+
+        {/* their map of reviews */}
+        {mapItems.length ? (
+          <View style={{ paddingTop: 20, gap: 8 }}>
+            <ReviewMapHeading title="Their map" note={`${mapItems.length} ${mapItems.length === 1 ? 'place' : 'places'}`} />
+            <ReviewMap who={`${critic.name}'s`} items={mapItems} cats={FAV_CATS.map((x) => ({ id: x.id, label: x.label }))} />
+          </View>
+        ) : null}
 
         {/* connected social media */}
         <View style={{ paddingTop: 20, paddingHorizontal: 16, gap: 8 }}>

@@ -17,6 +17,7 @@ import { useT } from '../i18n';
 import { FRIENDS } from '../store/data';
 import { friendFavs, favPlace, FAV_CATS, fetchPersonFavs, chefsFollowedBy, type PersonFavs } from '../data/favorites';
 import { Monogram } from '../components/Monogram';
+import { ReviewMap, ReviewMapHeading, type MapReview } from '../components/ReviewMap';
 import { Image } from 'expo-image';
 import { ActivityIndicator } from 'react-native';
 import { TopFourGrid } from '../components/TopFour';
@@ -98,6 +99,10 @@ export function FoodieProfile() {
   const dnaTotal = palate.topCuisines.reduce((sum, c) => sum + c.count, 0) || 1;
 
   const matchColor = match >= 80 ? C.stampGreen : match >= 60 ? C.sun500 : C.ink400;
+  // Their map: each category's shortlist, best first (their favourite is #1 there).
+  const mapItems: MapReview[] = favs
+    ? FAV_CATS.flatMap((fc) => (favs.loves?.[fc.id] || (favs.favorites[fc.id] ? [favs.favorites[fc.id]!] : [])).map((pid) => favPlace(pid)).filter((p): p is NonNullable<typeof p> => !!p).map((p) => ({ place: p, cat: fc.id })))
+    : [];
 
   return (
     <ScreenIn style={{ backgroundColor: C.paper50 }}>
@@ -172,6 +177,14 @@ export function FoodieProfile() {
             ) : null}
           </StickerView>
         </View>
+
+        {/* their map: the places they love, category by category */}
+        {mapItems.length ? (
+          <View style={{ paddingTop: 20, gap: 8 }}>
+            <ReviewMapHeading title={`${first}'s map`} note={`${mapItems.length} places`} />
+            <ReviewMap who={`${first}'s`} items={mapItems} cats={FAV_CATS.map((x) => ({ id: x.id, label: x.label }))} />
+          </View>
+        ) : null}
 
         {/* their favourite in each category (their Top 4 leads the header card) */}
         {favs ? (

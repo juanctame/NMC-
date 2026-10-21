@@ -28,9 +28,11 @@ type Props = {
   city: City;
   selPin: { kind: string; id: string } | null;
   onSelect: (p: { kind: string; id: string }) => void;
+  /** Frame the pins (the city passed is already their bounds); no "you" marker. */
+  fit?: boolean;
 };
 
-export function MapSurface({ pins, city, selPin, onSelect }: Props) {
+export function MapSurface({ pins, city, selPin, onSelect, fit }: Props) {
   const shown = pins
     .map((p) => ({ p, pr: projectToBox(p.coord.lat, p.coord.lon, city.bbox) }))
     .filter((x) => x.pr.inside)
@@ -57,7 +59,7 @@ export function MapSurface({ pins, city, selPin, onSelect }: Props) {
         <Ellipse cx="74" cy="15" rx="5" ry="3.5" fill={C.stampGreen} opacity={0.18} stroke={C.inkBlack} strokeWidth={0.3} />
       </Svg>
 
-      {city.id === 'cdmx'
+      {city.id === 'cdmx' && !fit
         ? CDMX_HOODS.map((h) => (
             <View key={h.name} pointerEvents="none" style={{ position: 'absolute', left: `${h.x}%`, top: `${h.y}%`, transform: [{ translateX: -28 }, { translateY: -8 }, { rotate: h.rot }] }}>
               <Banner s={h.strong ? 11 : 10} tk={0.17} c={h.strong ? C.inkMuted : C.inkSoft} style={{ width: 90, textAlign: 'center' }}>
@@ -68,6 +70,7 @@ export function MapSurface({ pins, city, selPin, onSelect }: Props) {
         : null}
 
       {/* You marker */}
+      {fit ? null : (
       <View pointerEvents="none" style={{ position: 'absolute', left: '50%', top: '50%', marginLeft: -22, marginTop: -22, alignItems: 'center' }}>
         <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(216,80,26,0.16)', alignItems: 'center', justifyContent: 'center' }}>
           <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: C.ink400, borderWidth: 2.5, borderColor: C.paper0 }} />
@@ -78,6 +81,7 @@ export function MapSurface({ pins, city, selPin, onSelect }: Props) {
           </Banner>
         </View>
       </View>
+      )}
 
       {/* pins */}
       {shown.map(({ p, pr }) => {

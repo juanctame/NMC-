@@ -205,7 +205,7 @@ export type State = {
   tastes: string[];
   stamped: boolean;
 
-  logSeg: 'been' | 'want' | 'recs';
+  logSeg: 'been' | 'map' | 'want' | 'recs';
   tableSeg: 'events' | 'community';
 
   ranked: Place[];

@@ -19,6 +19,8 @@ type Props = {
   city: City;
   selPin: { kind: string; id: string } | null;
   onSelect: (p: { kind: string; id: string }) => void;
+  /** Frame the pins (a person's map of reviews) instead of the city centre, and leave out "you". */
+  fit?: boolean;
 };
 
 const loadMaps = loadGoogleMaps;
@@ -66,13 +68,14 @@ function youEl(label: string): HTMLElement {
   return wrap;
 }
 
-export function MapSurface({ pins, city, selPin, onSelect }: Props) {
+export function MapSurface({ pins, city, selPin, onSelect, fit }: Props) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const mapDivRef = useRef<HTMLDivElement | null>(null);
   const statusRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const [ready, setReady] = useState(false);
+  const fitKey = useRef('');
 
   // scaffold + load once
   useEffect(() => {
@@ -142,6 +145,22 @@ export function MapSurface({ pins, city, selPin, onSelect }: Props) {
       marker.addListener('click', () => onSelect({ kind: pin.kind, id: pin.id }));
       markersRef.current.push(marker);
     });
+    if (fit) {
+      // frame the pins (only when the set changes, not on every selection)
+      const key = pins.map((p) => p.id).join('|');
+      if (key && key !== fitKey.current) {
+        fitKey.current = key;
+        if (pins.length === 1) {
+          map.setCenter({ lat: pins[0].coord.lat, lng: pins[0].coord.lon });
+          map.setZoom(15);
+        } else {
+          const b = new maps.LatLngBounds();
+          pins.slice(0, 140).forEach((p) => b.extend({ lat: p.coord.lat, lng: p.coord.lon }));
+          map.fitBounds(b, 36);
+        }
+      }
+      return;
+    }
     const you = new maps.marker.AdvancedMarkerElement({
       map,
       position: { lat: city.center.lat, lng: city.center.lon },
@@ -150,7 +169,7 @@ export function MapSurface({ pins, city, selPin, onSelect }: Props) {
     });
     markersRef.current.push(you);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, pins, selPin, city.id]);
+  }, [ready, pins, selPin, city.id, fit]);
 
   return React.createElement('div', {
     ref: hostRef,
