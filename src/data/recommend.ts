@@ -23,6 +23,18 @@ export function bayesianQuality(rating?: number, reviews?: number): number {
   return (R * n + PRIOR_MEAN * PRIOR_WEIGHT) / (n + PRIOR_WEIGHT);
 }
 
+/**
+ * A single 0–5 quality signal for any place: Google rating when we have it,
+ * otherwise the curated `acclaim` (0–100 Michelin/50-Best prestige index) mapped
+ * to the same scale, otherwise the neutral prior. Lets curated-only datasets be
+ * ranked honestly without a fabricated star.
+ */
+export function qualityScore(p: Place): number {
+  if (typeof p.rating === 'number') return bayesianQuality(p.rating, p.reviews);
+  if (typeof p.acclaim === 'number') return Math.max(0, Math.min(5, p.acclaim / 20));
+  return PRIOR_MEAN;
+}
+
 /** How well a place fits the user's palate + stated tastes (0..1). */
 export function tasteFit(place: Place, palate: Palate | null, tastes: string[]): number {
   let fit = 0.5;
@@ -62,7 +74,7 @@ export function recommend(places: Place[], opts: RecOpts): Rec[] {
   const recs: Rec[] = [];
   for (const p of places) {
     if (opts.beenIds.has(p.id)) continue;
-    const q = bayesianQuality(p.rating, p.reviews); // 0..5
+    const q = qualityScore(p); // 0..5 (Google rating or curated acclaim)
     const qn = Math.max(0, Math.min(1, (q - 3.4) / 1.6)); // ~3.4..5 → 0..1
     const fit = tasteFit(p, opts.palate, opts.tastes);
     const open = /open/i.test(p.openInfo || '');

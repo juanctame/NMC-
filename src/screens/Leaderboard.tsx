@@ -1,18 +1,28 @@
 /**
- * Leaderboard — two boards behind a toggle:
- *   Diners      — friends ranked by places eaten this year (podium + follow).
+ * Leaderboard — three boards behind a toggle:
  *   Restaurants — the city's places ranked by an overall Critics+People score,
  *                 filterable by cuisine.
+ *   Critics     — the real creators and food media connected from their clips
+ *                 (data/critics.ts), ranked by coverage, simulated average or
+ *                 palate match with you; opens their critic profile.
+ *   Diners      — friends ranked by places eaten this year (podium + follow).
  */
 import React, { useState } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { HOUSE_CRITICS } from '../data/houseCritics';
+import { HouseCriticCard } from '../components/HouseCriticCard';
 import { useStore } from '../store/useStore';
 import { useT } from '../i18n';
 import { FRIENDS, byId, type Place } from '../store/data';
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { identity } from '../data/profile';
 import { computePalate, friendPalate, tasteMatch } from '../data/palate';
+import { VenueCover } from '../components/Cover';
+import { CRITICS, type Critic } from '../data/critics';
+import { SOURCE_LABEL } from '../data/videos';
+import { SimTag } from '../components/CriticMarks';
+import { Monogram } from '../components/Monogram';
 import { C, col } from '../theme/tokens';
 import { photo } from '../assets';
 import { Display, Banner, Serif, SerifItalic, SerifDisplay, Mono } from '../components/Text';
@@ -23,6 +33,8 @@ import { Roundel } from '../components/Roundel';
 import { ScreenIn } from '../components/Anim';
 
 const MEDALS = ['①', '②', '③'];
+
+let lastMode = 'places';
 
 const SCORED: (Place & { overall: number })[] = Object.values(byId)
   .filter((p) => p.critic != null && p.people != null)
@@ -159,7 +171,7 @@ function RestaurantsBoard() {
                   {i + 1}
                 </Display>
               </View>
-              <Photo source={photo(p.photo)} style={{ width: 52, height: 52, borderWidth: 2, borderColor: C.inkBlack }} />
+              <VenueCover place={p} style={{ width: 52, height: 52, borderWidth: 2, borderColor: C.inkBlack }} crestSize={26} credit={false} />
               <View style={{ flex: 1, minWidth: 0 }}>
                 <SerifDisplay s={15.5} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 17 }}>
                   {p.name}
@@ -180,15 +192,187 @@ function RestaurantsBoard() {
   );
 }
 
+type CriticSort = 'relevance' | 'coverage' | 'avg' | 'match';
+type CriticKind = 'all' | 'creator' | 'outlet';
+
+function CriticsBoard() {
+  const insets = useSafeAreaInsets();
+  const openCritic = useStore((s) => s.openCritic);
+  const follows = useStore((s) => s.follows);
+  const toggleFollow = useStore((s) => s.toggleFollow);
+  const ranked = useStore((s) => s.ranked);
+  const tastes = useStore((s) => s.tastes);
+  const userReviews = useStore((s) => s.userReviews);
+  const [kind, setKind] = useState<CriticKind>('all');
+  const [sort, setSort] = useState<CriticSort>('relevance');
+  const [showOneOffs, setShowOneOffs] = useState(false);
+
+  const mine = computePalate(ranked, tastes, userReviews);
+  const match: Record<string, number> = {};
+  CRITICS.forEach((c) => (match[c.id] = tasteMatch(mine, c.palate)));
+  const by: Record<CriticSort, (a: Critic, b: Critic) => number> = {
+    relevance: (a, b) => b.relevance - a.relevance || a.id.localeCompare(b.id),
+    coverage: (a, b) => b.takes.length - a.takes.length || b.clipCount - a.clipCount || b.relevance - a.relevance || a.id.localeCompare(b.id),
+    avg: (a, b) => b.adjAvg - a.adjAvg || b.takes.length - a.takes.length || a.id.localeCompare(b.id),
+    match: (a, b) => match[b.id] - match[a.id] || b.relevance - a.relevance || a.id.localeCompare(b.id),
+  };
+  const ofKind = CRITICS.filter((c) => kind === 'all' || c.kind === kind);
+  // Regular voices are ranked; one-off clips wait below, folded.
+  const list = ofKind.filter((c) => c.tier === 'critic').sort(by[sort]);
+  const oneOffs = ofKind.filter((c) => c.tier === 'oncamera').sort(by[sort]);
+  const chip = (on: boolean) => ({ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 12, backgroundColor: on ? C.ink400 : C.paper0 });
+  const KINDS: [CriticKind, string][] = [['all', 'All'], ['creator', 'Creators'], ['outlet', 'Food media']];
+  const SORTS: [CriticSort, string][] = [['relevance', 'Most relevant'], ['coverage', 'Most covered'], ['avg', 'Top rated'], ['match', 'Your match']];
+  const caption = {
+    relevance: 'Ranked by how much they cover — restaurants and clips — then proven accounts and reach.',
+    coverage: 'Ranked by how many guide restaurants they have on camera.',
+    avg: 'Ranked by their average, weighted by how much they’ve covered — one great clip doesn’t top the board.',
+    match: 'Ranked by how closely their palate matches yours.',
+  }[sort];
+
+  const row = (c: Critic, i: number, oneOff?: boolean) => {
+          const following = !!follows['critic:' + c.id];
+          return (
+            <StickerPressable
+              key={c.id}
+              offset={!oneOff && i < 3 ? 'lg' : 'sm'}
+              onPress={() => openCritic(c.id)}
+              accessibilityLabel={`Critic: ${c.name}`}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: !oneOff && i < 3 ? C.sun100 : C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, paddingVertical: 9, paddingHorizontal: 11 }}
+            >
+              <View style={{ width: 26, alignItems: 'center' }}>
+                <Display s={!oneOff && i < 3 ? 17 : 16} c={!oneOff && i < 3 ? C.ink400 : C.inkSoft}>
+                  {oneOff ? '·' : i < 3 ? MEDALS[i] : i + 1}
+                </Display>
+              </View>
+              <Monogram name={c.name} size={40} rot={i % 2 ? '4deg' : '-4deg'} />
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Banner s={11.5} tk={0.04} c={C.inkDeep} numberOfLines={1} style={{ flexShrink: 1 }}>
+                    {c.name}
+                  </Banner>
+                  <View style={{ backgroundColor: c.kind === 'outlet' ? C.inkBlack : C.ink400, borderRadius: 999, paddingHorizontal: 6, paddingVertical: 1 }}>
+                    <Mono s={7} c={C.paper0}>
+                      {c.kind === 'outlet' ? 'MEDIA' : 'CREATOR'}
+                    </Mono>
+                  </View>
+                </View>
+                <Mono s={8.5} c={C.inkMuted} style={{ marginTop: 2 }} numberOfLines={1}>
+                  {[c.handle, c.platforms.map((p) => SOURCE_LABEL[p]).join(' · ')].join(' · ')}
+                </Mono>
+                <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', columnGap: 8, rowGap: 2, marginTop: 4 }}>
+                  <Mono s={8.5} c={sort === 'coverage' ? C.ink400 : C.inkSoft}>
+                    {c.takes.length} {c.takes.length === 1 ? 'place' : 'places'}
+                  </Mono>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                    <Mono s={8.5} c={sort === 'avg' ? C.ink400 : C.inkSoft}>
+                      avg {c.adjAvg.toFixed(1)}
+                    </Mono>
+                    <SimTag />
+                  </View>
+                  <Mono s={8.5} c={sort === 'match' ? C.ink400 : C.inkSoft}>
+                    {match[c.id]}% match
+                  </Mono>
+                </View>
+              </View>
+              <StickerPressable
+                offset="sm"
+                radius={999}
+                onPress={() => toggleFollow('critic:' + c.id)}
+                accessibilityLabel={following ? `Following ${c.name}` : `Follow ${c.name}`}
+                style={{ borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: following ? C.stampGreen : C.paper0, paddingVertical: 6, paddingHorizontal: 10 }}
+              >
+                <Banner s={8.5} tk={0.1} c={following ? C.greenFg : C.inkDeep}>
+                  {following ? 'Following' : 'Follow'}
+                </Banner>
+              </StickerPressable>
+            </StickerPressable>
+          );
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={{ borderBottomWidth: 2, borderColor: C.inkBlack, backgroundColor: C.paper50 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 16, paddingTop: 10, paddingBottom: 6 }}>
+          {KINDS.map(([k, label]) => (
+            <Pressable key={k} onPress={() => setKind(k)} accessibilityLabel={`Show ${label}`} style={chip(kind === k)}>
+              <Banner s={10} tk={0.1} c={kind === k ? C.paper0 : C.inkDeep}>
+                {label}
+              </Banner>
+            </Pressable>
+          ))}
+        </ScrollView>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, paddingHorizontal: 16, paddingBottom: 10, alignItems: 'center' }}>
+          <Mono s={8.5} c={C.inkSoft}>
+            Sort
+          </Mono>
+          {SORTS.map(([k, label]) => (
+            <Pressable
+              key={k}
+              onPress={() => setSort(k)}
+              accessibilityLabel={`Sort critics: ${label}`}
+              style={{ borderBottomWidth: 2, borderColor: sort === k ? C.ink400 : 'transparent', paddingVertical: 3, paddingHorizontal: 4 }}
+            >
+              <Banner s={9} tk={0.08} c={sort === k ? C.ink400 : C.inkSoft}>
+                {label}
+              </Banner>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </View>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 14, paddingBottom: insets.bottom + 100, gap: 10 }} showsVerticalScrollIndicator={false}>
+        {kind !== 'outlet'
+          ? HOUSE_CRITICS.map((h) => (
+              <View key={h.id} style={{ gap: 6, marginBottom: 6 }}>
+                <Mono s={8.5} c={C.inkSoft} style={{ paddingHorizontal: 2 }}>
+                  HOUSE CRITIC · pinned
+                </Mono>
+                <HouseCriticCard c={h} width="100%" />
+              </View>
+            ))
+          : null}
+        <SerifItalic s={13} c={C.inkMuted} style={{ paddingHorizontal: 2 }}>
+          {caption}
+        </SerifItalic>
+        {list.map((c, i) => row(c, i))}
+        {oneOffs.length ? (
+          <Pressable
+            onPress={() => setShowOneOffs(!showOneOffs)}
+            accessibilityLabel={showOneOffs ? 'Hide one-off clips' : `Also on camera: ${oneOffs.length}`}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8, paddingVertical: 8 }}
+          >
+            <Banner s={10} tk={0.14} c={C.inkMuted}>
+              Also on camera
+            </Banner>
+            <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+            <Mono s={9} c={C.inkSoft}>
+              {oneOffs.length} one-off {oneOffs.length === 1 ? 'clip' : 'clips'} {showOneOffs ? '▴' : '▾'}
+            </Mono>
+          </Pressable>
+        ) : null}
+        {showOneOffs ? oneOffs.map((c, i) => row(c, list.length + i, true)) : null}
+        <Mono s={8} c={C.inkSoft} style={{ marginTop: 4, lineHeight: 12, paddingHorizontal: 2 }}>
+          Real creators and food media, connected from their public clips; general news isn’t counted as a critic. Averages (weighted by how much they’ve covered) and matches come from CRTQ’s simulated reading of their content, not ratings they gave.
+        </Mono>
+      </ScrollView>
+    </View>
+  );
+}
+
 export function Leaderboard() {
   const insets = useSafeAreaInsets();
   const go = useStore((s) => s.go);
-  const [mode, setMode] = useState('places');
+  // Remembered across visits, so Back from a critic / restaurant lands on the same board.
+  const [mode, setModeState] = useState(lastMode);
+  const setMode = (m: string) => {
+    lastMode = m;
+    setModeState(m);
+  };
   const t = useT();
 
   return (
     <ScreenIn>
-      <View style={{ paddingTop: insets.top + 12, paddingHorizontal: 20, paddingBottom: 4, borderBottomWidth: mode === 'places' ? 0 : 2.5, borderBottomColor: C.inkBlack }}>
+      <View style={{ paddingTop: insets.top + 12, paddingHorizontal: 20, paddingBottom: 4, borderBottomWidth: mode === 'diners' ? 2.5 : 0, borderBottomColor: C.inkBlack }}>
         <Pressable onPress={() => go('feed')} style={{ paddingBottom: 8 }}>
           <Banner s={11} tk={0.14} c={C.ink400}>
             ← CRTQ
@@ -198,12 +382,13 @@ export function Leaderboard() {
           {t('board.title')}
         </Display>
         <SerifItalic s={13} c={C.inkMuted} style={{ marginTop: 3 }}>
-          {mode === 'places' ? "The city's tables, ranked." : "Who's eaten the city this year."}
+          {mode === 'places' ? "The city's tables, ranked." : mode === 'critics' ? 'The creators who film the city, ranked.' : "Who's eaten the city this year."}
         </SerifItalic>
         <View style={{ marginTop: 12 }}>
           <Segmented
             items={[
               { key: 'places', label: t('board.restaurants') },
+              { key: 'critics', label: t('board.critics') },
               { key: 'diners', label: t('board.diners') },
             ]}
             value={mode}
@@ -214,7 +399,7 @@ export function Leaderboard() {
           />
         </View>
       </View>
-      {mode === 'places' ? <RestaurantsBoard /> : <DinersBoard />}
+      {mode === 'places' ? <RestaurantsBoard /> : mode === 'critics' ? <CriticsBoard /> : <DinersBoard />}
     </ScreenIn>
   );
 }

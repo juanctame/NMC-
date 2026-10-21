@@ -2,30 +2,26 @@
  * Central user directory (Supabase REST / PostgREST). This is the "users
  * database": every username created in the app is registered here, keyed by a
  * unique handle, so accounts live centrally instead of only on one device.
- * That lets a tester reconnect their passport on another device by handle, and
- * keeps usernames from colliding across the community.
+ * Each row belongs to a real signed-in user (anonymous on first launch, or
+ * Google), so only its owner can change it; usernames stay unique across the
+ * community.
  *
  * Uses plain fetch (no SDK) so it behaves identically on web and native, and
  * degrades to safe no-ops when SUPABASE_URL / SUPABASE_ANON_KEY are unset — the
  * app then runs local-only, exactly as before. See SHARED_DEMO.md for the SQL.
  */
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config';
+import { SUPABASE_URL } from '../config';
 import { sharedEnabled } from './shared';
+import { authHeaders, currentSession, readHeaders } from './cloud';
 import type { Profile, Role } from './profile';
+
+/** Public columns of the directory (emails are private — see 0002_trial.sql). */
+const PROFILE_COLS = 'handle,name,city_id,initials,color,passport_no,joined,role,beat,followers,user_id,avatar_url,bio';
 
 /** Normalize a handle to a stable key: lowercase, single leading '@'. */
 export function normalizeHandle(handle: string): string {
   const clean = handle.trim().toLowerCase().replace(/^@+/, '').replace(/[^a-z0-9_]/g, '');
   return clean ? '@' + clean : '';
-}
-
-function headers(extra: Record<string, string> = {}): Record<string, string> {
-  return {
-    apikey: SUPABASE_ANON_KEY,
-    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-    'Content-Type': 'application/json',
-    ...extra,
-  };
 }
 
 type ProfileRow = {
@@ -40,8 +36,9 @@ type ProfileRow = {
   beat: string | null;
   followers: number | string | null;
   user_id: string | null;
-  email: string | null;
+  email?: string | null;
   avatar_url: string | null;
+  bio?: string | null;
 };
 
 function rowToProfile(row: ProfileRow): Profile {
@@ -59,6 +56,7 @@ function rowToProfile(row: ProfileRow): Profile {
     ...(row.user_id ? { userId: row.user_id } : {}),
     ...(row.email ? { email: row.email } : {}),
     ...(row.avatar_url ? { avatarUrl: row.avatar_url } : {}),
+    ...(row.bio ? { bio: row.bio } : {}),
   };
 }
 
@@ -77,6 +75,7 @@ function profileToRow(p: Profile): ProfileRow {
     user_id: p.userId ?? null,
     email: p.email ?? null,
     avatar_url: p.avatarUrl ?? null,
+    bio: p.bio ?? null,
   };
 }
 
@@ -89,31 +88,37 @@ export async function handleAvailable(handle: string): Promise<boolean> {
   const key = normalizeHandle(handle);
   if (!key || !sharedEnabled()) return true;
   try {
-    const url = `${SUPABASE_URL}/rest/v1/profiles?handle=eq.${encodeURIComponent(key)}&select=handle`;
-    const res = await fetch(url, { headers: headers() });
+    const url = `${SUPABASE_URL}/rest/v1/profiles?handle=eq.${encodeURIComponent(key)}&select=handle,user_id`;
+    const res = await fetch(url, { headers: await readHeaders() });
     if (!res.ok) return true;
     const rows = (await res.json()) as ProfileRow[];
-    return !Array.isArray(rows) || rows.length === 0;
+    // Free, or already ours.
+    return !Array.isArray(rows) || rows.length === 0 || (!!rows[0].user_id && rows[0].user_id === currentSession()?.user.id);
   } catch {
     return true;
   }
 }
 
 /**
- * Register (or update) a username in the central directory. Upserts on handle,
- * so re-saving the same account refreshes its row instead of duplicating it.
- * Best-effort — a failure leaves the account working locally.
+ * Register (or update) this person's row in the central directory, under their
+ * signed-in user. Upserts on handle, so re-saving refreshes the row instead of
+ * duplicating it. Best-effort — without a signed-in user (backend off, offline,
+ * or accounts not open yet) the passport keeps working on the device.
  */
-export async function registerProfile(p: Profile): Promise<void> {
-  if (!sharedEnabled() || !normalizeHandle(p.handle)) return;
+export async function registerProfile(p: Profile): Promise<boolean> {
+  if (!sharedEnabled() || !normalizeHandle(p.handle)) return false;
+  const uid = currentSession()?.user.id;
+  const h = await authHeaders({ Prefer: 'resolution=merge-duplicates,return=minimal' });
+  if (!uid || !h) return false;
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/profiles`, {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/profiles?on_conflict=handle`, {
       method: 'POST',
-      headers: headers({ Prefer: 'resolution=merge-duplicates,return=minimal' }),
-      body: JSON.stringify(profileToRow(p)),
+      headers: h,
+      body: JSON.stringify({ ...profileToRow({ ...p, userId: uid }), updated_at: new Date().toISOString() }),
     });
+    return r.ok;
   } catch {
-    // Non-fatal: the account still lives on this device.
+    return false;
   }
 }
 
@@ -125,8 +130,8 @@ export async function fetchProfileByHandle(handle: string): Promise<Profile | nu
   const key = normalizeHandle(handle);
   if (!key || !sharedEnabled()) return null;
   try {
-    const url = `${SUPABASE_URL}/rest/v1/profiles?handle=eq.${encodeURIComponent(key)}&select=*&limit=1`;
-    const res = await fetch(url, { headers: headers() });
+    const url = `${SUPABASE_URL}/rest/v1/profiles?handle=eq.${encodeURIComponent(key)}&select=${PROFILE_COLS}&limit=1`;
+    const res = await fetch(url, { headers: await readHeaders() });
     if (!res.ok) return null;
     const rows = (await res.json()) as ProfileRow[];
     return Array.isArray(rows) && rows.length ? rowToProfile(rows[0]) : null;
@@ -135,16 +140,33 @@ export async function fetchProfileByHandle(handle: string): Promise<Profile | nu
   }
 }
 
-/** Find an existing account by its Google email (used to restore on sign-in). */
-export async function fetchProfileByEmail(email: string): Promise<Profile | null> {
-  const key = email.trim().toLowerCase();
-  if (!key || !sharedEnabled()) return null;
+/**
+ * The signed-in person's own passport, wherever they made it: by their user,
+ * or (first Google sign-in) a pilot passport registered with that email.
+ */
+export async function fetchMyProfile(): Promise<Profile | null> {
+  if (!sharedEnabled()) return null;
+  const h = await authHeaders();
+  if (!h) return null;
   try {
-    const url = `${SUPABASE_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(key)}&select=*&limit=1`;
-    const res = await fetch(url, { headers: headers() });
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/my_profile`, { method: 'POST', headers: h, body: '{}' });
     if (!res.ok) return null;
     const rows = (await res.json()) as ProfileRow[];
     return Array.isArray(rows) && rows.length ? rowToProfile(rows[0]) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Who owns a handle (null when it's free, legacy, or unknown). */
+export async function ownerOfHandle(handle: string): Promise<string | null> {
+  const key = normalizeHandle(handle);
+  if (!key || !sharedEnabled()) return null;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/profiles?handle=eq.${encodeURIComponent(key)}&select=user_id&limit=1`, { headers: await readHeaders() });
+    if (!res.ok) return null;
+    const rows = (await res.json()) as { user_id: string | null }[];
+    return rows?.[0]?.user_id || null;
   } catch {
     return null;
   }

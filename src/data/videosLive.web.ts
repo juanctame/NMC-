@@ -1,74 +1,94 @@
 /**
- * Live hashtag video search (web). Given a place, queries the YouTube Data API
- * v3 for real, current, embeddable clips tagged to it — using the restaurant's
- * hashtag plus its name and city for relevance — and normalizes them to the
- * app's TrendingVideo shape (with the videoId as `embedId`, so they play inside
- * the app). Native uses videosLive.ts (a no-op; the hashtag deep-links still
- * work there). Safe no-op + empty result whenever the key/API is unavailable or
- * the network is blocked, so the app never breaks on it.
+ * Creator clips for a place (web). Uses the CI-collected clips when present
+ * (data/clips.ts); otherwise searches YouTube live — by the venue's hashtag /
+ * name — and keeps only third-party, high-quality, embeddable clips (the same
+ * rules as CI, data/clipRank.ts). Results are cached per device for a day, and
+ * a disabled API / spent quota backs off for 6 h so nothing hammers the key.
+ * Clips play inside the app through YouTube's embedded player.
  */
 import type { Place } from '../store/data';
 import type { City } from './cities';
 import type { TrendingVideo } from './videos';
-import { hashtagOf } from './hashtags';
+import { collectedClips } from './clips';
+import { rankClips, clipQuery, toYtVideo, type Clip, type VenueRef } from './clipRank';
 import { YOUTUBE_API_KEY } from '../config';
+
+const CACHE = 'nmc.clips.v1';
+const DOWN = 'nmc.clips.down';
+const TTL = 24 * 36e5;
+const BACKOFF = 6 * 36e5;
 
 export function youtubeEnabled(): boolean {
   return !!YOUTUBE_API_KEY;
 }
 
-/** Decode the handful of HTML entities YouTube returns in titles. */
-function decodeEntities(s: string): string {
-  return s
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>');
+function store(): Storage | null {
+  try {
+    return typeof localStorage !== 'undefined' ? localStorage : null;
+  } catch {
+    return null;
+  }
 }
 
-/**
- * Real videos for a place, most-relevant first. `videoEmbeddable=true` keeps
- * only clips that play in the in-app player. Empty on any failure.
- */
-export async function searchPlaceVideos(place: Place, city?: City): Promise<TrendingVideo[]> {
-  if (!YOUTUBE_API_KEY) return [];
-  const tag = hashtagOf(place);
-  const q = `#${tag} ${place.name}${city ? ' ' + city.name : ''}`;
-  const params = new URLSearchParams({
-    part: 'snippet',
-    type: 'video',
-    videoEmbeddable: 'true',
-    safeSearch: 'moderate',
-    maxResults: '12',
-    order: 'relevance',
-    q,
-    key: YOUTUBE_API_KEY,
-  });
+function readCache(): Record<string, { at: number; clips: Clip[] }> {
   try {
-    const res = await fetch(`https://www.googleapis.com/youtube/v3/search?${params.toString()}`);
-    if (!res.ok) return [];
-    const data = await res.json();
-    const items: any[] = Array.isArray(data?.items) ? data.items : [];
-    return items
-      .filter((it) => it?.id?.videoId)
-      .map((it) => {
-        const vid: string = it.id.videoId;
-        const sn = it.snippet || {};
-        const thumb = sn.thumbnails?.medium?.url || sn.thumbnails?.high?.url || sn.thumbnails?.default?.url;
-        return {
-          id: 'yt-' + vid,
-          placeId: place.id,
-          platform: 'youtube' as const,
-          creator: sn.channelTitle || 'YouTube',
-          handle: '',
-          caption: decodeEntities(sn.title || ''),
-          sourceUrl: 'https://www.youtube.com/watch?v=' + vid,
-          embedId: vid,
-          thumb,
-          publishedAt: sn.publishedAt,
-        } as TrendingVideo;
-      });
+    return JSON.parse(store()?.getItem(CACHE) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function apiDown(): boolean {
+  const at = Number(store()?.getItem(DOWN) || 0);
+  return Date.now() - at < BACKOFF;
+}
+
+export function venueRef(p: Place): VenueRef {
+  return { id: p.id, name: p.name, hood: p.hood, instagram: p.instagram, website: p.website, chef: p.chef };
+}
+
+async function yt(path: string, params: Record<string, string>): Promise<any> {
+  const r = await fetch(`https://www.googleapis.com/youtube/v3/${path}?${new URLSearchParams({ ...params, key: YOUTUBE_API_KEY })}`);
+  const d = await r.json().catch(() => ({}));
+  if (d?.error) {
+    const reason = d.error.errors?.[0]?.reason || '';
+    if (/accessNotConfigured|SERVICE_DISABLED|quota|keyInvalid|forbidden|ipRefererBlocked/i.test(reason)) {
+      try {
+        store()?.setItem(DOWN, String(Date.now()));
+      } catch {}
+    }
+    throw new Error(reason || 'youtube error');
+  }
+  return d;
+}
+
+/** Best third-party HD clips about this place, best first (empty on any failure). */
+export async function searchPlaceVideos(place: Place, _city?: City): Promise<TrendingVideo[]> {
+  const collected = collectedClips(place.id);
+  if (collected) return collected;
+  if (!YOUTUBE_API_KEY || apiDown()) return [];
+  const cache = readCache();
+  const hit = cache[place.id];
+  if (hit && Date.now() - hit.at < TTL) return hit.clips;
+  try {
+    const ref = venueRef(place);
+    const s = await yt('search', {
+      part: 'snippet',
+      type: 'video',
+      q: clipQuery(ref),
+      maxResults: '25',
+      videoEmbeddable: 'true',
+      safeSearch: 'moderate',
+      regionCode: 'MX',
+      relevanceLanguage: 'es',
+    });
+    const ids: string[] = (s.items || []).map((it: any) => it?.id?.videoId).filter(Boolean);
+    const d = ids.length ? await yt('videos', { part: 'snippet,contentDetails,statistics,status', id: ids.join(',') }) : { items: [] };
+    const clips = rankClips(ref, (d.items || []).map((it: any) => toYtVideo(it)));
+    try {
+      store()?.setItem(CACHE, JSON.stringify({ ...cache, [place.id]: { at: Date.now(), clips } }));
+    } catch {}
+    return clips;
   } catch {
     return [];
   }

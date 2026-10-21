@@ -25,7 +25,7 @@ export type Place = {
   // Real-data fields (populated by live providers; absent on seed data).
   lat?: number;
   lon?: number;
-  source?: 'seed' | 'osm' | 'google';
+  source?: 'seed' | 'osm' | 'google' | 'carte';
   website?: string;
   rated?: boolean; // false for freshly-discovered places with no ratings yet
   rating?: number; // Google's 0–5 community rating (live places)
@@ -33,6 +33,25 @@ export type Place = {
   photoUrl?: string; // live Google Places photo URL (fetched at display time)
   photoUrls?: string[]; // up to a few live photos (for the gallery)
   photoAttr?: string; // required attribution for that photo
+  provisional?: boolean; // auto-added (e.g. from photo import) — needs a real rank
+  importedFrom?: string; // brought in from another app or list (beli, google, notes, file)
+  // Curated "Carte" fields (CDMX guide dataset — Michelin/50 Best/DENUE).
+  category?: string; // original guide category, e.g. "Mexicana contemporánea"
+  borough?: string; // alcaldía
+  dishes?: string[]; // real "what to order" from the guide
+  tip?: string; // insider tip (Consejo)
+  occasion?: string; // "ideal for" (Ideal para)
+  chef?: string; // chef or team
+  moment?: string; // Apertura 2026 · En ascenso · Vigente · Trayectoria
+  why?: string; // why it stands out now
+  recognition?: string; // recognition level
+  awards?: string; // Michelin / 50 Best / guide mentions
+  acclaim?: number; // 0–100 prestige index from real awards (stands in for a rating)
+  ticket?: string; // per-person spend band in MXN
+  ticketMid?: number; // representative per-person number
+  instagram?: string; // @handle
+  phone?: string; // contact number
+  sources?: { outlet: string; url: string }[]; // guide / press coverage (Michelin, Chilango, Time Out…)
 };
 
 const P = (

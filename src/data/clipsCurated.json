@@ -1,0 +1,65 @@
+{
+  "_about": "Hand-found third-party clips about guide venues (web search across YouTube, TikTok, Instagram, Vimeo, Dailymotion). scripts/collect-clips-open.mjs verifies each through the platform's oEmbed (dropping removed / private / non-embeddable ones and any posted by the venue or its chef) and fills in title, creator and thumbnail. Instagram and Vimeo searches found nothing indexable yet.",
+  "clips": [
+    { "placeId": "cx-pujol", "url": "https://www.youtube.com/watch?v=dcZ8caXqVq8", "note": "Anders Husa — full meal at Pujol" },
+    { "placeId": "cx-pujol", "url": "https://www.youtube.com/shorts/I2MfDXoutBM", "note": "What the taco omakase looks like at Pujol" },
+    { "placeId": "cx-pujol", "url": "https://www.youtube.com/watch?v=X6rNG4EtUDM", "note": "World's most expensive taco omakase" },
+    { "placeId": "cx-pujol", "url": "https://www.youtube.com/watch?v=ivgTlKa_ibk", "note": "Enrique Olvera on 25 years of Pujol (Taqueando interview)" },
+
+    { "placeId": "cx-quintonil", "url": "https://www.youtube.com/watch?v=9Ejmja9s4xw", "note": "Anders Husa — Quintonil" },
+    { "placeId": "cx-quintonil", "url": "https://www.youtube.com/watch?v=GXm7LJkuqYk", "note": "Quintonil, una historia mexicana de amor" },
+
+    { "placeId": "cx-contramar", "url": "https://www.youtube.com/shorts/xWxbJf1PkKA", "note": "Munchies — recreating Contramar's fish" },
+    { "placeId": "cx-contramar", "url": "https://www.youtube.com/shorts/-c_22cgQk2Q", "note": "Tuna tostadas inspired by Contramar" },
+    { "placeId": "cx-contramar", "url": "https://www.youtube.com/watch?v=g7ASws0qvmA", "note": "Gabriela Cámara: el secreto detrás de Contramar" },
+    { "placeId": "cx-contramar", "url": "https://www.tiktok.com/@eats.bysid/video/7635365399927721247", "note": "Honest review of Contramar" },
+    { "placeId": "cx-contramar", "url": "https://www.tiktok.com/@thefoodloopsreview/video/7361502496990203144", "note": "Tostadas de atún y pastel de fresa" },
+    { "placeId": "cx-contramar", "url": "https://www.tiktok.com/@luiscarloszara/video/7389759168388943150", "note": "One of our go-tos in Mexico City" },
+    { "placeId": "cx-contramar", "url": "https://www.tiktok.com/@caitlinjesson/video/7405354187401432366", "note": "Contramar tuna tostadas at home" },
+
+    { "placeId": "cx-el-vilsito", "url": "https://www.youtube.com/watch?v=l0fF6w2lE9k", "note": "El Vilsito, featured on Taco Chronicles" },
+    { "placeId": "cx-el-vilsito", "url": "https://www.youtube.com/shorts/Lh-9P9WTEKo", "note": "Taco shop by day, taquería by night" },
+    { "placeId": "cx-el-vilsito", "url": "https://www.youtube.com/watch?v=wm2XBCM-Bb0", "note": "Best taco al pastor in Mexico City? El Vilsito" },
+    { "placeId": "cx-el-vilsito", "url": "https://www.tiktok.com/@comidistasmx/video/7371536815951531269", "note": "Mejores tacos al pastor en CDMX: El Vilsito" },
+
+    { "placeId": "cx-expendio-de-maiz", "url": "https://www.youtube.com/watch?v=8XO6yCgGjPI", "note": "Expendio de Maíz review" },
+    { "placeId": "cx-expendio-de-maiz", "url": "https://www.youtube.com/shorts/2NCXytDVQhE", "note": "One of the best spots I ate at in Mexico City" },
+    { "placeId": "cx-expendio-de-maiz", "url": "https://www.tiktok.com/@albertomagana_/video/7464757409106398495", "note": "Visitamos Expendio de Maíz, Sin Nombre" },
+
+    { "placeId": "cx-taqueria-los-cocuyos", "url": "https://www.youtube.com/watch?v=D0LKyMyC76k", "note": "Los tacos de suadero más famosos de la CDMX" },
+    { "placeId": "cx-taqueria-los-cocuyos", "url": "https://www.youtube.com/watch?v=SN0OyAEPxpk", "note": "Anthony Bourdain's favourite taco shop" },
+
+    { "placeId": "cx-rosetta", "url": "https://www.youtube.com/watch?v=j_uwC0T-xV4", "note": "Elena Reygadas of Rosetta" },
+    { "placeId": "cx-rosetta", "url": "https://www.youtube.com/watch?v=KoFY-8D0g9c", "note": "Elena Reygadas, Rosetta: 50 Best kitchen insights" },
+    { "placeId": "cx-rosetta", "url": "https://www.youtube.com/watch?v=uyjjqcGa1xM", "note": "Hoja santa at Rosetta" },
+    { "placeId": "cx-rosetta", "url": "https://www.youtube.com/watch?v=BsTaJcEfbD8", "note": "Restaurante Rosetta review" },
+    { "placeId": "cx-rosetta", "url": "https://www.tiktok.com/@luiscarloszara/video/7390862632074513710", "note": "Rosetta by Elena Reygadas" },
+
+    { "placeId": "rosetta", "url": "https://www.youtube.com/shorts/TSJbHK_Rhg8", "note": "Panadería Rosetta guava roll taste test" },
+    { "placeId": "rosetta", "url": "https://www.tiktok.com/@hungryconnie/video/7429715458384760095", "note": "The most popular bakery in Mexico City" },
+    { "placeId": "rosetta", "url": "https://www.tiktok.com/@luiscarloszara/video/7234244442343902507", "note": "Guava roll at Panadería Rosetta" },
+
+    { "placeId": "cx-maximo", "url": "https://www.youtube.com/watch?v=VbDQXyIzmy8", "note": "Máximo Bistrot Local: a labor of love" },
+
+    { "placeId": "cx-nicos", "url": "https://www.youtube.com/watch?v=iwUYC0a3gbA", "note": "Restaurante Nicos, un homenaje a la cocina tradicional" },
+    { "placeId": "cx-nicos", "url": "https://www.youtube.com/watch?v=Pp85KXMOUGA", "note": "Nicos, la comida tradicional familiar" },
+    { "placeId": "cx-nicos", "url": "https://www.youtube.com/watch?v=TQdcfWNNtw0", "note": "Nicos en Azcapotzalco, patrimonio gastronómico" },
+    { "placeId": "cx-nicos", "url": "https://www.tiktok.com/@refrivargas/video/7178191491880275205", "note": "Restaurante Nicos — reseña" },
+    { "placeId": "cx-nicos", "url": "https://www.tiktok.com/@siguientevlog/video/7204286818248903941", "note": "Restaurante Nicos — a critical review" },
+
+    { "placeId": "cx-masala-y-maiz", "url": "https://www.youtube.com/watch?v=Nx4PfttsBGo", "note": "Husband and wife duo craft Masala y Maíz" },
+    { "placeId": "cx-masala-y-maiz", "url": "https://www.tiktok.com/@eatscoastnaan/video/7233069682419453226", "note": "My single favourite meal in Mexico City" },
+
+    { "placeId": "cx-taqueria-el-jarocho", "url": "https://www.tiktok.com/@soyelarturito/video/7372276787532811526", "note": "Taquería El Jarocho, since 1947" },
+    { "placeId": "cx-taqueria-el-jarocho", "url": "https://www.tiktok.com/@soyelarturito/video/7259130722273873157", "note": "The best campechano tacos" },
+    { "placeId": "cx-taqueria-el-jarocho", "url": "https://www.youtube.com/shorts/e88KY3O5d_I", "note": "Taquería El Jarocho, Roma Norte" },
+
+    { "placeId": "cx-taqueria-los-milanesos", "url": "https://www.tiktok.com/@jh..food/video/7515141061119839508", "note": "Tacos Los Milanesos (Glaciar branch)" },
+
+    { "placeId": "cx-taqueria-el-califa-de-leon", "url": "https://www.youtube.com/watch?v=WSHOKNOeWNA", "note": "Trying the first Michelin-star tacos" },
+
+    { "placeId": "cx-sud-777", "url": "https://www.youtube.com/shorts/-XNWpH9lEC4", "note": "Trying Sud 777" },
+
+    { "placeId": "cx-martinez", "url": "https://www.tiktok.com/@gisela.sopelana/video/7295949108337020165", "note": "Martínez, Puebla 90, Roma Norte" }
+  ]
+}

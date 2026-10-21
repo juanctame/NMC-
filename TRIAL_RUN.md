@@ -1,0 +1,300 @@
+# Trial run — real users, fresh data, new spots
+
+This is the runbook for running CRTQ as a public trial: what's built, what you
+need to switch on, and how to check it's working.
+
+## Status right now
+
+`supabase/status.json` is rewritten by every run of the **Backend (Supabase)**
+workflow. At the last check the project at
+`https://psbxxcupbbgwcjzqkygb.supabase.co` **did not resolve** from GitHub's
+servers (`ENOTFOUND`), so the project is paused or deleted. Until it answers,
+the app runs fully on each device (and says so in *Passport → Ajustes → Trial &
+sync*); nothing is lost, and everything syncs once the server is back.
+
+## Switch it on (about 10 minutes, once)
+
+1. **Restore the database.** Open <https://supabase.com/dashboard>. If the
+   project is listed as *Paused*, press **Restore**. If it's gone, create a new
+   project and paste its **Project URL** and **anon public key** (Settings →
+   API) into `src/config.ts` (the anon key is meant to be public).
+2. **Give CI a key to build it.** Supabase dashboard → your avatar → **Account
+   → Access Tokens → Generate new token**. In GitHub: repo **Settings → Secrets
+   and variables → Actions → New repository secret**, name
+   `SUPABASE_ACCESS_TOKEN`, paste the token.
+3. **Run the backend workflow.** GitHub → **Actions → Backend (Supabase) → Run
+   workflow**. It applies every migration in `supabase/migrations/` (all
+   idempotent — safe to re-run), turns on **anonymous sign-ins** and adds the
+   site to the auth redirect list, then probes everything and commits
+   `supabase/status.json`. `"ready": true` there means the trial backend is
+   live.
+4. *(Optional, for Google sign-in)* follow `AUTH_SETUP.md` §1–2 (Google OAuth
+   client → Supabase provider). Anonymous accounts work without it.
+5. *(Recommended)* **Merge this branch into `main`.** GitHub only runs
+   scheduled workflows from the default branch, so the daily refresh (clips,
+   restaurant photos, the city sweep for new spots) starts once the workflows
+   are on `main`. Until then, run **Actions → Discover spots** by hand (or push)
+   to re-sweep.
+6. *(Optional, for many more spots)* Public OpenStreetMap servers are often
+   overloaded, so a sweep can take several runs to cover the whole city. A
+   Google Places key with billing enabled (GOOGLE_PLACES.md) would add a much
+   faster second source.
+
+## What's built
+
+### Real users
+- Every person is a real **Supabase Auth user**. The moment someone makes a
+  passport, the device signs in anonymously (no form, no password). *Continue
+  with Google* keeps the same passport on any device.
+- A new passport **starts empty** — the demo list is only for the preview.
+- Everything they do is saved on the device instantly (`nmc.mine.v1.<handle>`)
+  and sent to the server a moment later: ranked list, want-to-try, follows,
+  favourites/Top 4, reviews, their profile. On every launch — and when the app
+  comes back after a minute — it pulls the latest from the server and merges
+  (so a second device gets the same list).
+- **Row-level security**: people can only write their own rows; emails and
+  want-to-try lists are private; handles are unique and can't be taken over
+  (a pilot passport with no owner can be claimed once; one with an owner comes
+  back only through its owner's sign-in).
+
+### Bring your places (import)
+When making a passport — its own step (*Bring your places*, step 3 of 4, before
+House rules), which also opens the account in the background so everything
+brought in is synced the moment the passport is stamped — or any time from the
+Guide (*Bring your places*), people can fill their passport from the lists they
+already keep. Everything is read on the device; nothing is uploaded.
+- **Beli** — screenshots of their Been / Want to Try lists, read in the browser
+  (Tesseract OCR, loaded on first use). Names, colonias and the score in each
+  ring come through; or paste a copied list.
+- **Google Maps** — a Google Takeout export: saved lists (`Saved/*.csv`, *Want
+  to go* → want to try), starred places (`Saved Places.json`), reviews
+  (`Reviews.json`, stars → score), older Timeline history (only places CRTQ
+  knows); or pasted Maps links.
+- **Notes / any list** — pasted text or a `.txt`: bullets, numbering,
+  checklists (☑ = been, ☐ = want), "9/10", "4.5/5", ★★★★, and headings like
+  "Want to try:".
+- **Photos** — pick a camera roll's worth of photos (up to 800). Each photo's
+  location (EXIF GPS, read on-device) is matched to the places CRTQ knows (the
+  guide + every discovered spot), and an on-device **food scan** (TensorFlow.js
+  + MobileNet v2, loaded on first use, ~14 MB) checks which photos are meals.
+  Photos taken within a few hours and a short walk of each other count as one
+  meal (so one drifted photo can't move it next door); meals on different days
+  are separate visits. Places with a meal photographed right there, or several
+  visits, are ticked as *Been here*; a nearby meal is *Likely*; only non-food
+  photos close by is *Maybe* (not ticked). Each match can be switched to the
+  next-closest place. Code: `src/data/visits.ts`, `foodScan.web.ts`.
+- **Any file** — CSV / JSON with a name column (score, notes, list, coordinates
+  picked up), or KML from Google My Maps.
+
+Each entry is matched to a real place (the guide, the discovered spots, nearby)
+by name — forgiving accents, "Taquería"/"Restaurante" prefixes and OCR slips —
+plus location and colonia when given. The review screen shows every match
+(✓ matched, ? best guess with alternatives, + new to CRTQ), Been / Want per
+place, and their own scores; imports made during onboarding carry into the new
+passport. Code: `src/data/importers.ts`, `placeMatch.ts`, `ocr.web.ts`,
+`src/overlays/ImportHub.tsx`.
+
+### The database (`supabase/migrations/0002_trial.sql`)
+| table | who reads | who writes |
+|---|---|---|
+| `profiles` (no email to the public) | everyone | its owner |
+| `rankings` — each person's list | everyone | its owner |
+| `reviews`, `favorites`, `follows` | everyone | their author |
+| `wants` — want-to-try | its owner | its owner |
+| `spot_suggestions` — "tell us about a spot" | everyone | signed-in people |
+| `feedback`, `client_errors` | the team (dashboard) | the app |
+| `app_opens` (via `touch_session()`) | `trial_stats()` totals only | the app |
+
+`trial_stats()` returns the public numbers shown in the app (people, active
+today / 7 days, rankings, reviews, spots sent).
+
+### Up-to-date information on every use
+- Each deploy stamps a build (`version.json`); an open app checks it at launch
+  and on return and offers **Refresh** when a newer build is live.
+- Discovered spots are **not baked into the app**: they're published as
+  `data/*.json` with each deploy and read fresh on every launch (kept on the
+  device for offline use).
+- Your own data syncs on launch, on return, and after every change.
+
+### Always finding new spots
+`scripts/discover-spots.mjs` runs in its own workflow (**Actions → Discover
+spots**: on push of the script, on demand, and daily once on `main`), with a
+50-minute budget so slow public map servers never hold up a deploy. It
+publishes straight into the live site's `data/`; deploys carry that forward.
+Tiles a sweep can't reach keep the previous sweep's spots, and areas reached
+for the first time join the baseline (they aren't mislabelled "new"):
+1. **OpenStreetMap** — every named restaurant, café, bar, street-food stall,
+   bakery… in Mexico City, swept in 9 tiles across 3 Overpass mirrors.
+2. **A memory between runs** — `data/spots-ledger.json` (published with the
+   site) remembers the day each spot was first seen. A spot that appears after
+   the first sweep is *new on the map*. Spots just added to OSM and spots with a
+   recent opening date count as new from day one.
+3. **The press** — Google News searches about openings in CDMX; a spot named in
+   a headline gets *in the news* with the article linked.
+4. **Diners** — spots people send from the app (*Know a spot we don't?*) join
+   everyone's list on the next sweep; "closed" reports drop a spot.
+5. **Pictures** — the photo OSM links, else the preview image from the spot's
+   own website (160 sites per run, remembered in `data/spots-media.json`),
+   else a Commons photo taken right there whose file name carries its name.
+
+In the app, **Fresh finds** (feed) picks a different hand each visit
+(`src/data/discover.ts`): newness + buzz + suggestions + detail, plus your
+taste (the cuisines you rank and the tastes you picked), distance (*Near me*,
+asks first), minus fatigue for spots you've already been shown, plus a small
+per-person daily shuffle. Spots you rank, save or dismiss never come back. When
+everything nearby has been seen it widens the radius; when everything has been
+seen it starts over — it's never empty and never the same twice in a row.
+
+### Stability
+- A crash on one screen shows a way back instead of a blank page, and the
+  error (no personal content) goes to `client_errors`, along with uncaught
+  errors app-wide.
+- Offline / server-down: the app keeps working on the device and says so.
+- Every network call has a timeout and fails soft.
+- Settings → **Trial & sync**: sync status, *Sync now*, build number, live
+  trial numbers, and a feedback box (→ `feedback`).
+- The sample friends are labelled *sample diner* wherever they appear.
+
+### The landing reel
+The sign-in screen loops HD clips behind the buttons on web
+(`src/components/LandingReel.web.tsx`): muted, ~7 s from each clip (past its
+intro), crossfading into the next, with the clip's credit along the bottom.
+The clips are picked at each deploy by `scripts/collect-landing-reel.mjs` into
+`src/data/landingReel.json`: the platform's own restaurant-page clips
+(Wikimedia Commons / Internet Archive files) first, then Commons footage of
+Mexico City food. Only true HD counts — a ≥720p rendition a browser plays, of a
+≥720p original (1080p on big or dense screens). A clip that fails is skipped;
+reduced motion or Data Saver shows a still; if nothing plays, the yellow brand
+cover shows as before.
+
+### The main page: five sections
+The feed (`src/screens/Feed.tsx`) runs in one order, with a jump bar under the
+header: **1 For You** (picks from the live venues for your taste — tap a
+category chip, *Tacos & street*, *Seafood*, *Bakery & café*…, to see that
+category's options), **2 New & Rising** (2026 openings and newly acclaimed
+spots, and the chefs and groups behind them), **3 Clips** (creator clips pinned
+to their restaurants, and this month's most-filmed), **4 Reviews** (the house
+critic and the critics, then your friends' latest) and **5 Fresh Finds** (a new
+hand of discovered spots every visit, and the live places near you).
+
+### Everyone's map of reviews
+`src/components/ReviewMap.tsx` puts a person's reviews on a map you can sift:
+their cities (when there are several), their categories with counts (tap one
+for its options, numbered in their order), top 10 or everything, pins showing
+the score or the rank; tap a pin or an option for the place, then open it.
+Places without an address stay in the options and are counted, not dropped.
+It's on every critic's page (*Their map*), Juan Carlos Tame's (*His map*, by
+city and coffee category), every diner's profile (their favourites by
+category) and your own Guide (*Map* tab).
+
+### Full-screen maps, and restaurants with their bubbles
+- **Full screen.** Every map of reviews has a *Full screen* button: the map
+  becomes the page, the city / category / option rows float on top, and the
+  bottom holds the options as restaurant cards. Tap one (or a pin) and the
+  restaurant rises as a sheet — its cover with its chef and dishes floating on
+  it, its rank and score, their words — with *Open the restaurant*.
+- **Floating bubbles** (`src/components/FloatingBubbles.tsx`): a restaurant's
+  chef (portrait from Wikipedia when there is one; tap to open their profile),
+  its iconic dishes (with a reference photo when Commons has one), its award,
+  New 2026 / Rising, and how many critics have it — bobbing gently around its
+  cover on the restaurant page, the New & Rising cards and the map's sheet.
+  Everything comes from the guide and the critics; reduced motion keeps them
+  still.
+- **New & Rising** is a spotlight: one new restaurant at a time, full width,
+  stamped *New · 2026* or *Rising*, its bubbles floating on the cover; swipe,
+  tap the dots, or let it turn by itself (stops when you swipe).
+- **Chef pages float too**: their restaurants (tap to open), the dishes
+  they're known for (marked with the restaurant), their top award and their
+  acclaim, bobbing around the chef's cover.
+- **The ranking comes first.** On a restaurant page, right after the cover and
+  the name, *The ranking* block shows the Critics and People rankings, the
+  critics' consensus and the house critic's rank (in category, city and
+  overall) — before the Overview / Menu / Media / Reviews / Visit tabs.
+
+### Critic pages: a dossier, like the chef's
+Every critic page opens as the chef's does: a cover (the dining room of their
+#1), the header card (*The critic* / *The house critic*, name, bio, summary,
+verdict chips, a numbers row — places · clips · colonias · average), then how
+it's made, their map, their takes or ranking, palate and connected accounts.
+The Profile | Passport switch sits on the cover.
+
+### Critics: who counts, and in what order
+`src/data/critics.ts` builds critics from the clips, then keeps it clean:
+- **General news isn't a critic.** Wires, TV news, business and national press
+  (`NEWS_RE` in `creatorLinks.ts`) keep their clips in the feeds but get no
+  critic profile and no say in a restaurant's critic consensus. Food and city
+  media (Gourmet de México, Chilango, Dónde Ir, Food & Wine, Condé Nast
+  Traveler, 50 Best…) stay as outlets.
+- **Relevance** — coverage first (restaurants, clips), then proven accounts,
+  bio and reach — orders the feed rail and the board's default sort; the id
+  settles ties, so the order holds from one refresh to the next.
+- **Tiers.** Regular voices (2+ places, a bio, or 2+ proven accounts) are
+  ranked; one-off clips sit folded under *Also on camera*, stay off the feed
+  rail, and their profiles say so (no palate read from a single place).
+- **Weighted average.** Each critic's average is pulled toward everyone's by
+  how little they've covered (two takes' worth), so one 9.5 clip doesn't top
+  *Top rated*.
+
+### Every critic carries a passport
+Each critic page has a **Profile | Passport** switch. The passport is the same
+booklet as *You* (`src/screens/Passport.tsx`, its parts and page-turning shared
+via `useBookletPager`), issued read-only by `src/screens/CriticPassport.tsx`:
+cover, data page (holder, beat, accreditation, their Top 4, record —
+veredictos · colonias · visas · promedio —, signature, machine-readable zone),
+visas, entry stamps for the colonias they cover, and their palate print, all in
+the third person. Creators and outlets get the vermillion **press passport**
+(type D · PRENSA), its scores marked SIM; house critics get the green
+**PASAPORTE DE LA CASA** (type D · CASA), marked HOUSE, with their photo.
+
+### House critics
+Real people whose scores are their own, unlike the simulated creator profiles
+(`src/data/houseCritics.ts`). The first is **Juan Carlos Tame
+([@tametitoeats](https://beliapp.co/app/tametitoeats) on Beli)**: pinned first
+in the feed's critics rail and on the critics board, with his own page and his
+score on any place he's ranked.
+- **His profile follows every critic's** — header (house badge, bio, summary,
+  stats), how it's made, connected accounts (Beli, World of Mouth, his map),
+  palate with your match — and his takes are a **serialized ranking by
+  category** (`src/data/houseRanking.ts`): everything he's listed (his map,
+  recommendations, scored lists) is in one ranking, every place with its own
+  number — #1 to #407 — by city (CDMX first, any city, or all of México) and by
+  category (Overall, Specialty bars, Roasters, Bakery & brunch, Neighbourhood
+  cafés). Ties go to his preference, overall standing, how much he wrote, then
+  his own order on the map. The top ten are full takes, the rest numbered lines.
+  House score = 60% his preference + 40% overall standing. His preference is
+  his own score where he gives one (Beli, or his CRTQ passport); elsewhere
+  it's read from his choices and his own words (he wrote about it, how
+  strongly, pinned by hand). Overall is the guide's acclaim and the critics'
+  consensus on CRTQ. Marked **HOUSE** wherever it shows (other critics carry
+  SIM); every card shows both parts. Place pages show his rank in the
+  category ("#1 of 11 in Specialty bars") and verdict.
+- **His map** — his public Google My Maps map *TBCS México — Nominados* (409
+  coffee shops across Mexico) fills his page, city by city with CDMX first,
+  with his own notes. **Actions → Import a critic's Google My Maps list**
+  (`scripts/import-critic-map.mjs`; on push, by hand, weekly once on `main`)
+  downloads the map's KML export, locates each place (the map's pin, else its
+  address, its name or its colonia via OpenStreetMap — results checked against
+  the place's city, cached in `tametitoeats.geo.json`), links guide pages, and
+  redeploys the site when the list changed. Every place opens as a page; ones
+  not yet located show their address without a map pin.
+- **World of Mouth** — his profile link
+  ([worldofmouth.app.link/q3jDDxzzo7b](https://worldofmouth.app.link/q3jDDxzzo7b))
+  publicly gives only his name and bio (*Founder · Carte Abhyad*), now on his
+  page with the link. His recommendations and their text live only in the app
+  (the website publishes no member profiles, and his name appears on none of
+  its Mexico City pages). They go into `tametitoeats.json` as `list: "rec"`
+  entries (name, city/colonia, his words, `source: "World of Mouth"`) from his
+  screenshots or a copied list, and show as *His recommendations*; never made up.
+- Beli shows lists only inside its app — the public link returns just his name
+  and photo — so his Beli scores can't be copied from the web. They go into
+  `src/data/critics/tametitoeats.json` from his Beli screenshots or a copied
+  list (read with the same OCR/matching as the import), never made up.
+- When he keeps a CRTQ passport as `@tametitoeats` and imports his Beli list
+  there (*Bring your places → Beli*), his critic page reads that list live.
+
+## Checking on the trial
+- Supabase → **Table editor**: `profiles`, `rankings`, `feedback`,
+  `client_errors`, `spot_suggestions`.
+- `select public.trial_stats();` in the SQL editor.
+- Discovery: `https://juanctame.github.io/NMC-/data/spots-index.json` (counts,
+  new, in the news, with photo, when).

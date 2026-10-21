@@ -47,6 +47,9 @@ That's it — reload the deployed app and **Continue with Google** signs you in.
 
 ## 4. Add the account columns to the users table (SQL)
 
+> Now automatic: `supabase/migrations/0002_trial.sql` adds these columns (see
+> TRIAL_RUN.md). Kept here for reference.
+
 The `profiles` table (from `SHARED_DEMO.md`) gets three columns so a profile can
 be tied to its Google user and found on return. Run in Supabase → **SQL Editor**:
 

@@ -1,15 +1,16 @@
 /**
- * Full-screen embedded video player. Shown above everything when the store's
- * `videoUrl` is set (a viewer tapped a hashtag clip). Renders the platform's
- * embed via VideoEmbed (iframe on web, WebView on native) inside a framed card
- * with a tap-away backdrop and a close button.
+ * Full-screen in-app video player. Shown above everything when the store's
+ * `videoUrl` is set (a viewer tapped a creator clip). Plays the platform's
+ * official embed via VideoEmbed (iframe on web, WebView on native) inside a
+ * framed card, with the creator credited underneath — the clip plays here,
+ * nothing redirects out.
  */
 import React from 'react';
 import { View, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { C } from '../theme/tokens';
-import { Display } from './Text';
+import { Display, Banner, Serif, Mono } from './Text';
 import { StickerView } from './Sticker';
 import { VideoEmbed } from './VideoEmbed';
 
@@ -17,7 +18,15 @@ export function VideoOverlay() {
   const insets = useSafeAreaInsets();
   const videoUrl = useStore((s) => s.videoUrl);
   const closeVideo = useStore((s) => s.closeVideo);
+  const meta = useStore((s) => s.videoMeta);
   if (!videoUrl) return null;
+  const views = meta?.views
+    ? meta.views >= 1e6
+      ? (meta.views / 1e6).toFixed(1).replace('.0', '') + 'M'
+      : meta.views >= 1e3
+        ? Math.round(meta.views / 1e3) + 'k'
+        : String(meta.views)
+    : '';
 
   return (
     <View
@@ -53,6 +62,21 @@ export function VideoOverlay() {
       >
         <VideoEmbed url={videoUrl} />
       </View>
+      {meta ? (
+        <View pointerEvents="none" style={{ width: '100%', maxWidth: 460, marginTop: 10, gap: 3 }}>
+          <Serif s={13} c={C.paper0} numberOfLines={2} style={{ lineHeight: 17 }}>
+            {meta.title}
+          </Serif>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
+            <Banner s={9} tk={0.08} c={C.sun300}>
+              {meta.creator}
+            </Banner>
+            <Mono s={8.5} c={C.ink100}>
+              {[meta.platform, views && `${views} views`, meta.hd ? 'HD' : '', meta.placeName].filter(Boolean).join(' · ')}
+            </Mono>
+          </View>
+        </View>
+      ) : null}
       <View style={{ position: 'absolute', top: insets.top + 10, right: 16 }}>
         <StickerView offset="sm" radius={999}>
           <Pressable

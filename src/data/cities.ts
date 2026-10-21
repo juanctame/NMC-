@@ -25,7 +25,7 @@ export const CITIES: City[] = [
     country: 'Mexico',
     flag: '🇲🇽',
     center: { lat: 19.4194, lon: -99.1605 },
-    bbox: [19.38, -99.2, 19.46, -99.1],
+    bbox: [19.3, -99.26, 19.47, -99.12],
     defaultHood: 'Roma · Condesa',
     weather: '24°C, sun',
   },

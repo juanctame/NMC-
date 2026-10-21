@@ -1,0 +1,114 @@
+{
+ "version": 1,
+ "generatedAt": "2026-10-21T02:15:19.056Z",
+ "took": "24s",
+ "checked": 18,
+ "fromPlatform": 2,
+ "clips": [
+  {
+   "id": "commons:File:Celorio Machinery for making tortillas.webm",
+   "title": "Celorio Machinery for making tortillas",
+   "creator": "Armando Gómez",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Celorio_Machinery_for_making_tortillas.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/Celorio_Machinery_for_making_tortillas.webm/1280px--Celorio_Machinery_for_making_tortillas.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c7/Celorio_Machinery_for_making_tortillas.webm/Celorio_Machinery_for_making_tortillas.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 1920,
+   "height": 1080,
+   "durationSec": 12,
+   "placeId": null,
+   "via": "restaurant page",
+   "start": 0
+  },
+  {
+   "id": "commons:File:Avenida 16 de septiembre - Centro Histórico - Ciudad de México.webm",
+   "title": "Avenida 16 de septiembre - Centro Histórico - Ciudad de México",
+   "creator": "ProtoplasmaKid",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Avenida_16_de_septiembre_-_Centro_Hist%C3%B3rico_-_Ciudad_de_M%C3%A9xico.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Avenida_16_de_septiembre_-_Centro_Hist%C3%B3rico_-_Ciudad_de_M%C3%A9xico.webm/1280px--Avenida_16_de_septiembre_-_Centro_Hist%C3%B3rico_-_Ciudad_de_M%C3%A9xico.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/7/7c/Avenida_16_de_septiembre_-_Centro_Hist%C3%B3rico_-_Ciudad_de_M%C3%A9xico.webm/Avenida_16_de_septiembre_-_Centro_Hist%C3%B3rico_-_Ciudad_de_M%C3%A9xico.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 3840,
+   "height": 2160,
+   "durationSec": 70,
+   "placeId": null,
+   "via": "restaurant page",
+   "start": 11
+  },
+  {
+   "id": "commons:File:Quesadilla - no audio.webm",
+   "title": "Quesadilla - no audio",
+   "creator": "rosatrieu",
+   "license": "CC BY-SA 3.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Quesadilla_-_no_audio.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Quesadilla_-_no_audio.webm/1280px--Quesadilla_-_no_audio.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/b/b9/Quesadilla_-_no_audio.webm/Quesadilla_-_no_audio.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 1920,
+   "height": 1080,
+   "durationSec": 68,
+   "placeId": null,
+   "via": "commons",
+   "start": 10
+  },
+  {
+   "id": "commons:File:Man with masa in tortillería.webm",
+   "title": "Man with masa in tortillería",
+   "creator": "Armando Gómez",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Man_with_masa_in_tortiller%C3%ADa.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Man_with_masa_in_tortiller%C3%ADa.webm/1280px--Man_with_masa_in_tortiller%C3%ADa.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/2/26/Man_with_masa_in_tortiller%C3%ADa.webm/Man_with_masa_in_tortiller%C3%ADa.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 1920,
+   "height": 1080,
+   "durationSec": 8,
+   "placeId": null,
+   "via": "commons",
+   "start": 0
+  },
+  {
+   "id": "commons:File:Tortilla baking process.webm",
+   "title": "Tortilla baking process",
+   "creator": "Armando Gómez",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Tortilla_baking_process.webm",
+   "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Tortilla_baking_process.webm/1280px--Tortilla_baking_process.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+   "sources": [
+    {
+     "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/f/ff/Tortilla_baking_process.webm/Tortilla_baking_process.webm.1080p.vp9.webm",
+     "type": "video/webm",
+     "height": 1080
+    }
+   ],
+   "width": 1920,
+   "height": 1080,
+   "durationSec": 15,
+   "placeId": null,
+   "via": "commons",
+   "start": 0
+  }
+ ]
+}

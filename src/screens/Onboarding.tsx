@@ -6,9 +6,11 @@
  * straight to the app.
  */
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Pressable, Image, TextInput } from 'react-native';
+import { View, ScrollView, Pressable, Image, TextInput, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useStore } from '../store/useStore';
+import { useStore, resolvePlace } from '../store/useStore';
+import { LandingReel } from '../components/LandingReel';
+import type { ReelClip } from '../data/landingReel';
 import { useT } from '../i18n';
 import { sharedEnabled } from '../data/shared';
 import { handleAvailable } from '../data/accounts';
@@ -68,8 +70,19 @@ export function Onboarding() {
   const createProfile = useStore((s) => s.createProfile);
   const connectAccount = useStore((s) => s.connectAccount);
   const signInWithGoogle = useStore((s) => s.signInWithGoogle);
+  const openPhotoImport = useStore((s) => s.openPhotoImport);
+  const openImport = useStore((s) => s.openImport);
+  const importedCount = useStore((s) => s.ranked.filter((p) => p.importedFrom || p.provisional).length + Object.values(s.saved).filter(Boolean).length);
+  const session = useStore((s) => s.session);
+  const cloudState = useStore((s) => s.cloud);
+  const prepareSync = useStore((s) => s.prepareSync);
+  const importedBy = useStore((s) => s.importCounts);
+  React.useEffect(() => {
+    if (obStep === 3) void prepareSync();
+  }, [obStep, prepareSync]);
   const authError = useStore((s) => s.authError);
   const t = useT();
+  const [reelClip, setReelClip] = useState<ReelClip | null>(null);
 
   // Account draft (kept in local state across the step switch).
   const [name, setName] = useState('');
@@ -90,7 +103,8 @@ export function Onboarding() {
     setConnErr('');
     const ok = await connectAccount(connHandle);
     setConnBusy(false);
-    if (!ok) setConnErr(t('you.notFound'));
+    if (ok === 'google') setConnErr('That passport is protected — continue with Google to restore it.');
+    else if (!ok) setConnErr(t('you.notFound'));
   };
 
   const handleVal = handleEdited ? handleRaw : suggestHandle(name);
@@ -123,25 +137,30 @@ export function Onboarding() {
     stampMe();
   };
 
-  // Step 0 — cover
+  // Step 0 — cover (the landing reel loops behind it on web)
   if (obStep === 0) {
+    const onReel = !!reelClip;
+    const soft = onReel ? C.paper0 : C.ink600;
+    const rule = onReel ? 'rgba(255,248,232,0.35)' : 'rgba(42,26,6,0.25)';
+    const reelPlace = reelClip?.placeId ? resolvePlace(reelClip.placeId, {}) : undefined;
     return (
       <View style={{ flex: 1, backgroundColor: C.sun400 }}>
         <Grain opacity={0.06} />
+        <LandingReel onClip={setReelClip} />
         <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', gap: 16, paddingTop: insets.top + 40, paddingBottom: insets.bottom + 40, paddingHorizontal: 30 }}>
           <Image source={BRAND.logo} style={{ width: 138, height: 138, transform: [{ rotate: '-6deg' }] }} resizeMode="contain" />
-          <Banner s={11} tk={0.22} c={C.ink500} style={{ textAlign: 'center' }}>
+          <Banner s={11} tk={0.22} c={onReel ? C.sun300 : C.ink500} style={{ textAlign: 'center' }}>
             {t('ob.tagline')}
           </Banner>
-          <Display s={88} c={C.inkDeep} style={{ textAlign: 'center', lineHeight: 82 }}>
+          <Display s={88} c={onReel ? C.sun400 : C.inkDeep} style={{ textAlign: 'center', lineHeight: 82 }}>
             CRTQ
           </Display>
-          <Serif s={16} style={{ textAlign: 'center', maxWidth: 282, lineHeight: 25 }}>
+          <Serif s={16} c={onReel ? C.paper0 : undefined} style={{ textAlign: 'center', maxWidth: 282, lineHeight: 25 }}>
             {t('ob.blurb')}
           </Serif>
           {connecting ? (
             <View style={{ width: '100%', maxWidth: 320, gap: 10, alignItems: 'center' }}>
-              <Banner s={12} tk={0.1} c={C.ink600} style={{ textAlign: 'center' }}>
+              <Banner s={12} tk={0.1} c={soft} style={{ textAlign: 'center' }}>
                 {t('you.connect')}
               </Banner>
               <TextInput
@@ -155,7 +174,7 @@ export function Onboarding() {
                 style={{ ...inputStyle, width: '100%', textAlign: 'center' }}
               />
               {connErr ? (
-                <Mono s={10} c={C.ink600} style={{ textAlign: 'center' }}>
+                <Mono s={10} c={soft} style={{ textAlign: 'center' }}>
                   {connErr}
                 </Mono>
               ) : null}
@@ -165,7 +184,7 @@ export function Onboarding() {
                 </Banner>
               </StickerPressable>
               <Pressable onPress={() => { setConnecting(false); setConnErr(''); }}>
-                <Mono s={11} c={C.ink600} style={{ textDecorationLine: 'underline' }}>
+                <Mono s={11} c={soft} style={{ textDecorationLine: 'underline' }}>
                   {t('common.back')}
                 </Mono>
               </Pressable>
@@ -186,16 +205,16 @@ export function Onboarding() {
                     </Banner>
                   </StickerPressable>
                   {authError ? (
-                    <Mono s={10} c={C.ink600} style={{ textAlign: 'center' }}>
+                    <Mono s={10} c={soft} style={{ textAlign: 'center' }}>
                       {t('auth.failed')}
                     </Mono>
                   ) : null}
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, width: '70%' }}>
-                    <View style={{ flex: 1, height: 1.5, backgroundColor: 'rgba(42,26,6,0.25)' }} />
-                    <Mono s={10} c={C.ink600}>
+                    <View style={{ flex: 1, height: 1.5, backgroundColor: rule }} />
+                    <Mono s={10} c={soft}>
                       {t('auth.or')}
                     </Mono>
-                    <View style={{ flex: 1, height: 1.5, backgroundColor: 'rgba(42,26,6,0.25)' }} />
+                    <View style={{ flex: 1, height: 1.5, backgroundColor: rule }} />
                   </View>
                 </View>
               ) : null}
@@ -205,15 +224,15 @@ export function Onboarding() {
                 </Banner>
               </StickerPressable>
               <Pressable onPress={obSkip}>
-                <Mono s={11} c={C.ink600} style={{ textDecorationLine: 'underline' }}>
+                <Mono s={11} c={soft} style={{ textDecorationLine: 'underline' }}>
                   {t('ob.look')}
                 </Mono>
               </Pressable>
               {sharedEnabled() ? (
                 <Pressable onPress={() => setConnecting(true)} style={{ marginTop: 2 }}>
-                  <Mono s={11} c={C.ink600}>
+                  <Mono s={11} c={soft}>
                     {t('you.have')}{'  '}
-                    <Mono s={11} c={C.ink400} style={{ textDecorationLine: 'underline' }}>
+                    <Mono s={11} c={onReel ? C.sun300 : C.ink400} style={{ textDecorationLine: 'underline' }}>
                       {t('you.connectCta')}
                     </Mono>
                   </Mono>
@@ -223,7 +242,19 @@ export function Onboarding() {
           )}
           <View style={{ height: 8 }} />
           <LangPicker showLabels size={38} />
+          {reelClip ? <View style={{ height: 22 }} /> : null}
         </ScrollView>
+        {reelClip ? (
+          <Pressable
+            onPress={() => Linking.openURL(reelClip.page)}
+            accessibilityLabel={`Video: ${reelClip.title}, by ${reelClip.creator}`}
+            style={{ position: 'absolute', left: 12, right: 12, bottom: insets.bottom + 8, alignItems: 'center' }}
+          >
+            <Mono s={8.5} c="rgba(255,248,232,0.82)" numberOfLines={1}>
+              ▶ {[reelPlace?.name || reelClip.title, reelClip.creator, reelClip.license].filter(Boolean).join(' · ')}
+            </Mono>
+          </Pressable>
+        ) : null}
       </View>
     );
   }
@@ -234,7 +265,7 @@ export function Onboarding() {
       <View style={{ flex: 1, backgroundColor: C.paper50 }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top + 40, paddingBottom: insets.bottom + 24, paddingHorizontal: 24 }} keyboardShouldPersistTaps="handled">
           <Banner s={11} tk={0.16} c={C.ink400}>
-            Step 1 of 3
+            Step 1 of 4
           </Banner>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 8 }}>
             <StickerView offset="sm" radius={999} style={{ transform: [{ rotate: '-4deg' }] }}>
@@ -342,7 +373,7 @@ export function Onboarding() {
       <View style={{ flex: 1, backgroundColor: C.paper50 }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top + 40, paddingBottom: insets.bottom + 24, paddingHorizontal: 24 }}>
           <Banner s={11} tk={0.16} c={C.ink400}>
-            Step 2 of 3
+            Step 2 of 4
           </Banner>
           <Display s={32} c={C.inkDeep} style={{ marginTop: 8, lineHeight: 32 }}>
             What do you chase?
@@ -387,12 +418,79 @@ export function Onboarding() {
     );
   }
 
-  // Step 3 — house rules
+  // Step 3 — bring your places (sync is set up here, before the passport is stamped)
+  if (obStep === 3) {
+    const SRC: { id: 'beli' | 'google' | 'notes' | 'photos' | 'file'; label: string; sub: string }[] = [
+      { id: 'photos', label: 'Photos', sub: 'Your camera roll — we find the places you ate at' },
+      { id: 'beli', label: 'Beli', sub: 'Screenshots of your lists, scores included' },
+      { id: 'google', label: 'Google Maps', sub: 'Saved lists, starred places, reviews' },
+      { id: 'notes', label: 'Notes', sub: 'Any list you keep — paste it' },
+      { id: 'file', label: 'A file', sub: 'CSV, JSON or KML' },
+    ];
+    const syncLine = session ? '● Sync ready — everything you bring in is saved to your account when you stamp your passport.' : cloudState === 'connecting' ? '◌ Opening your account…' : '◐ Saved on this device for now — it syncs once the server is reachable.';
+    return (
+      <View style={{ flex: 1, backgroundColor: C.paper50 }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top + 40, paddingBottom: insets.bottom + 24, paddingHorizontal: 24 }}>
+          <Banner s={11} tk={0.16} c={C.ink400}>
+            Step 3 of 4
+          </Banner>
+          <Display s={32} c={C.inkDeep} style={{ marginTop: 8, lineHeight: 32 }}>
+            Bring your places
+          </Display>
+          <Serif s={14} c={C.inkMuted} style={{ marginTop: 10, marginBottom: 6, lineHeight: 20 }}>
+            Start your passport with where you’ve already been. Read on this device — you check every match.
+          </Serif>
+          <Mono s={9.5} c={session ? C.stampGreen : C.inkMuted} accessibilityLabel="Sync status" style={{ marginBottom: 16, lineHeight: 14 }}>
+            {syncLine}
+          </Mono>
+          <View style={{ gap: 10 }}>
+            {SRC.map((src) => {
+              const n = importedBy[src.id] || 0;
+              return (
+                <StickerPressable
+                  key={src.id}
+                  offset="sm"
+                  onPress={() => (src.id === 'photos' ? openPhotoImport() : openImport(src.id))}
+                  accessibilityLabel={`Import from ${src.label}`}
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: n ? C.sun100 : C.paper0, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 11, paddingHorizontal: 13 }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <SerifDisplay s={16} c={C.inkDeep}>
+                      {src.label}
+                    </SerifDisplay>
+                    <Mono s={9} c={C.inkMuted}>
+                      {src.sub}
+                    </Mono>
+                  </View>
+                  <Banner s={10} tk={0.06} c={n ? C.stampGreen : C.ink400}>
+                    {n ? `✓ ${n}` : 'Add →'}
+                  </Banner>
+                </StickerPressable>
+              );
+            })}
+          </View>
+          {importedCount ? (
+            <Mono s={10} c={C.stampGreen} style={{ marginTop: 12 }}>
+              ✓ {importedCount} {importedCount === 1 ? 'place' : 'places'} ready for your passport
+            </Mono>
+          ) : null}
+          <View style={{ flex: 1, minHeight: 20 }} />
+          <StickerPressable offset="sm" radius={999} onPress={obNext} accessibilityLabel="Continue to house rules" style={{ marginTop: 20, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink400, paddingVertical: 14 }}>
+            <Banner s={14} tk={0.1} c={C.paper0}>
+              {importedCount ? 'Continue →' : 'Skip for now →'}
+            </Banner>
+          </StickerPressable>
+        </ScrollView>
+      </View>
+    );
+  }
+
+  // Step 4 — house rules
   return (
     <View style={{ flex: 1, backgroundColor: C.paper50 }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top + 40, paddingBottom: insets.bottom + 24, paddingHorizontal: 24 }}>
         <Banner s={11} tk={0.16} c={C.ink400}>
-          Step 3 of 3
+          Step 4 of 4
         </Banner>
         <Display s={32} c={C.inkDeep} style={{ marginTop: 8, lineHeight: 32 }}>
           House rules
@@ -415,7 +513,11 @@ export function Onboarding() {
         <Mono s={11} c={C.inkMuted} style={{ marginTop: 16, lineHeight: 18 }}>
           Every table has a named, verified host and a guest list. Report anything off — we read every flag.
         </Mono>
+
         <View style={{ flex: 1, minHeight: 20 }} />
+        <Mono s={9} c={C.inkMuted} accessibilityLabel="Trial notice" style={{ marginTop: 14, lineHeight: 14 }}>
+          CRTQ is in a public trial. Your passport name, rankings, reviews and favourites are visible to others on CRTQ; your want-to-try list stays private. Your data is saved to your account so it follows you, and crash reports (no personal content) help us fix things. You can sign out any time from your passport.
+        </Mono>
         <StickerPressable offset="sm" radius={999} onPress={submit} style={{ marginTop: 20, alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.stampGreen, paddingVertical: 14 }}>
           <Banner s={14} tk={0.1} c={C.paper0}>
             Stamp me in

@@ -1,5 +1,10 @@
 # Shared demo (usernames + reviews across everyone)
 
+> **Superseded by [TRIAL_RUN.md](TRIAL_RUN.md).** The tables below (and more)
+> are now created automatically by `supabase/migrations/0002_trial.sql`, with
+> stricter rules: every write belongs to a signed-in user. Don't run the SQL
+> here by hand — it would re-open the permissive pilot policies.
+
 By default the app is **local-only**: each tester's username and reviews live in
 their own browser. Turning on a tiny Supabase backend makes **usernames and
 reviews shared** — every username people create is registered in one central
@@ -84,6 +89,35 @@ Nothing else to wire — the app reads the same `SUPABASE_URL` / `SUPABASE_ANON_
 below. When a tester creates a username it's saved here (and checked for
 availability as they type); "Already have a passport? Connect" on the welcome
 screen restores an account by handle.
+
+## 2c. Create the favourites table (Biggest fans + Top 4)
+
+Each tester's favourite restaurant per category (their top-ranked tacos,
+seafood, fine dining…) and their profile's Top 4 are published here, so every
+restaurant's **Biggest fans** section shows everyone — not only you and your
+in-app friends. Without this table the app simply keeps them on the device.
+
+```sql
+create table if not exists public.favorites (
+  id          bigint generated always as identity primary key,
+  handle      text not null,            -- the tester's @handle
+  name        text not null,
+  initials    text,
+  color       text,
+  avatar_url  text,
+  place_id    text not null,
+  category    text not null,            -- tacos | mexican | seafood | fine | cafe | bar | world
+  featured    boolean default false,    -- in their Top 4
+  created_at  timestamptz default now()
+);
+create index if not exists favorites_place_idx on public.favorites (place_id);
+create index if not exists favorites_handle_idx on public.favorites (handle);
+
+alter table public.favorites enable row level security;
+create policy "favorites are readable by anyone"  on public.favorites for select using (true);
+create policy "testers can add favorites"         on public.favorites for insert with check (true);
+create policy "testers can replace their own"     on public.favorites for delete using (true);
+```
 
 ## 3. Paste your keys
 In **Project Settings → API**, copy the **Project URL** and the **anon public**

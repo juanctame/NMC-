@@ -1,0 +1,292 @@
+# CDMX demo dataset — the "Carte" guide
+
+The CDMX experience is powered by a **curated, sourced dataset of 166 real
+restaurants** (`src/data/carte.ts`), not a live API, so the demo is full, rich,
+and up to date the moment it loads — on the feed, the map, the recommendations,
+and every profile.
+
+## Where it comes from
+`src/data/carte.ts` is **auto-generated** from the source workbook
+`Carte_Abhyad_Restaurantes_CDMX.xlsx`, which compiles:
+
+- **Guía Michelin 2026** (stars, Bib Gourmand, selected) + the new 2026 stars
+- **The World's / Latin America's 50 Best 2025**
+- **Guía México Gastronómico 2026**
+- **INEGI · DENUE 05/2026** (official address, coordinates, phone)
+
+Each venue carries: name, guide category, price tier + **per-person ticket
+(MXN)**, neighbourhood/alcaldía, address, chef, a written review, **what to
+order (real dishes)**, an insider tip, the ideal occasion, Instagram, website,
+phone, coordinates, the "moment" (Apertura 2026 · En ascenso · Vigente ·
+Trayectoria), and **awards**.
+
+## How it's used
+- **Feed** — a "New & rising" rail (2026 openings + newly acclaimed) plus the
+  usual "Ideal for you" and "Fresh near you" rails, all drawn from the set.
+- **Map** — real coordinates (134/166) plot on the printed-paper map (the CDMX
+  bounds were widened to fit the spread).
+- **Profiles** — a dark **"From the guide"** card (awards, chef, why-now,
+  occasion, insider tip), a **What to order** section built from the guide's
+  **real dishes + real per-person MXN**, and a **Bang for your buck** value
+  ladder across same-cuisine, similar-priced peers.
+- **Real photos** — when a curated venue is opened on the web, the app resolves
+  its **live Google Maps twin by coordinate** and shows that venue's **real
+  Google photos** (hero + gallery), with attribution and live Google hours /
+  reviews. In addition — and with **no API key** — it pulls freely-licensed
+  photos from **Wikipedia + Wikimedia** (`src/data/wikiPhotos.ts`): a photo of
+  the restaurant for well-known venues, the **chef's portrait** on chef profiles,
+  and **reference plates** (a real photo of each recognised dish) in *What to
+  order*. These load straight in the visitor's browser via the CORS-friendly
+  MediaWiki API, are shown with attribution, and are never re-hosted. Anything
+  without a match keeps the generated cover — so coverage grows but nothing ever
+  looks broken.
+- **Chef profiles** — every venue that credits a chef or kitchen team links to a
+  **chef profile** (`src/data/chefs.ts`, derived at runtime). When the guide
+  credits the **same** chef at more than one restaurant — Lucho Martínez (Em ·
+  Martínez · Ultramarinos Demar), Enrique Olvera (Pujol · Pujol.itto), Edgar
+  Núñez, Eduardo "Lalo" García, … — those venues gather under **one** profile
+  (matched on an accent- and nickname-insensitive key). A feed rail ("The chefs
+  behind it") surfaces them. A profile is a full dossier built from everything
+  the guide and the collected media say about their kitchens: a cover (their
+  Wikipedia portrait, else a Commons photo of them, else their restaurant's
+  cover), awards, acclaim and a numbers row (restaurants · colonias · spend per
+  person · distinctions); **About** — the Wikipedia introduction (Spanish, then
+  English) shown only when the article is about a cook and carries their
+  surname, linked to the source; **Pictures** — Commons photos whose file names
+  carry their full name (logos and signatures dropped), with author and
+  licence, then their dining rooms; **Known for** (signature dishes, by
+  restaurant); **Awards & recognition**; **In the guide's words**; **On camera**
+  — creator clips of their restaurants, with the ones that name the chef
+  marked "Features them" and listed first; **What critics say** (the simulated
+  critics' takes, labelled SIM); **Fans & supporters** — fans crown one of their
+  kitchens, feature it in a Top 4, rank it in their top three or (friends)
+  follow the chef; supporters keep a kitchen further down their shortlist —
+  each a profile to visit; what they cook, their groups and their restaurants.
+- **Pictures from every kind of source, grouped by who took them** — each
+  restaurant's gallery (Media tab) is split into **From the restaurant** (every
+  real photo on its own website: the home page plus its gallery / menu / about
+  pages, not just the preview image), **From diners & creators** (visitors'
+  photos of the venue on Wikimedia Commons, with author and licence, and stills
+  from the third-party creator clips about it — YouTube / Dailymotion frames,
+  credited and linking to the clip), **In the press** (pages about the venue,
+  never roundups) and **Around it** (around the corner / the neighbourhood,
+  always labelled, never a cover). Every picture is credited and links back;
+  anything that fails to load falls back to a smaller copy or drops out.
+  - **Covers fit the restaurant and are unique.** A fine-dining room leads with
+    its own photography (then the press, then diners'); a taquería or fonda with
+    a diner's or creator's shot of the counter; a bakery or café with its own
+    photos. The best-known venues choose first and no two restaurants share a
+    cover — every list, card, deck and map pin uses it. With no real picture, a
+    cover is the venue's brand art (its colour, its cuisine's motif, its
+    monogram), never a stock photo of some other food.
+  - Collected in CI by `scripts/collect-media.mjs` into `src/data/media.json`
+    (weekly, on a version bump, or on demand): it reads each page's own images,
+    retries sites that rate-limit, drops logos / icons / thumbnails (anything
+    under 20 KB), keeps each photo once at its largest size, and keeps Commons
+    photos only when they're really about the venue (the same rule as the clip
+    collector, `scripts/lib/relevance.mjs`). Images are hot-linked with credit,
+    never re-hosted.
+  - **Google Maps photos** (the owner's and diners' photos on Google) plug into
+    the same groups automatically, but need **billing enabled on the Google
+    Cloud project** of the site's key — the Places API currently answers
+    "enable Billing" — so they don't appear yet.
+- **Creator clips, played in the app** — each restaurant's hashtag (e.g.
+  `#Pujol`) and name find YouTube clips, kept only if they are **about the
+  venue**, posted by **third-party creators** (never the restaurant's own channel
+  / Instagram handle / website, nor its chef) and **high quality** (HD,
+  embeddable, public, 10 s–20 min, real views); the rest are ranked by reach,
+  like ratio, recency and short-form (`src/data/clipRank.ts`). They play inside
+  the app through YouTube's privacy-enhanced embedded player — on the place's
+  Media tab, in "Trending now", and in a full-screen in-app reel — and nothing
+  redirects out. (Platforms don't offer downloadable MP4s; their official embed
+  players stream the video in place.) Clips are collected in CI into
+  `src/data/videos.json` (`scripts/collect-videos.mjs`, within the YouTube API's
+  free daily quota), with a cached live search as fallback. **Requires the
+  "YouTube Data API v3" to be enabled on the Google Cloud project of the site's
+  key**; until then the sections stay hidden rather than showing placeholders.
+- **Clips from every medium** — beyond the YouTube hashtag search, a second CI
+  collector (`scripts/collect-clips-open.mjs` → `src/data/clipsOpen.json`) needs
+  no API key:
+  - **Hand-found clips** (`src/data/clipsCurated.json`) — third-party YouTube
+    videos / Shorts and TikToks about guide venues, found by searching each
+    restaurant across YouTube, TikTok, Instagram, Vimeo and Dailymotion. Every one
+    is re-checked through the platform's **oEmbed** on each run: removed,
+    private or non-embeddable clips are dropped, as is anything posted by the
+    venue or its chef; title, creator and thumbnail come from the platform.
+  - **Dailymotion** — its public search, per restaurant. Because full-text
+    search pulls in anything sharing a venue's name (a "Máximo" record, a
+    "Hugo" interview), a clip only counts when the venue's name is in its title
+    and the context fits: ordinary-word names ("Mesa", "Brutal", "El Cardenal")
+    need a food cue *and* a Mexico City cue, one-word names need one of them,
+    the venue's chef named alongside it counts, CDMX food outlets (Gourmet de
+    México, Chilango, Dónde Ir, Máspormás…) are trusted, and anything set in
+    another city is dropped. Uploaders must be third-party.
+  - **Real video files (MP4 / WebM)** from **Wikimedia Commons** and the
+    **Internet Archive**, credited with their author and licence and played
+    natively in a `<video>` element (H.264 MP4 or WebM only — never formats
+    browsers can't play). Files go through the same relevance rule; one about the venue itself comes first;
+    otherwise footage of one of its **dishes** (e.g. tacos al pastor) or its
+    **neighbourhood** may be added (the dish or neighbourhood must be named in the
+    file's title, with a Mexico cue), always labelled **"Related · …"** /
+    **"Around · …"**. That footage is never presented as the restaurant, and it
+    never counts towards "Trending now".
+
+  The Clips feed and the Media tab play each source in place: YouTube, TikTok
+  (player v1), Vimeo and Dailymotion through their official embeds (paused,
+  resumed and muted from our own controls), Instagram reels through the reel
+  embed, and files natively. The credit line names the source (and the licence
+  for files).
+- **Clips (TikTok-style), beside the map** — a full-screen vertical feed of
+  those creator clips, opened from the button next to the map in the feed
+  header or the Map | Clips switch on the map (`src/screens/Clips.tsx`). One
+  clip per screen; swipe for the next; only the clip on screen plays (muted until
+  you turn sound on, looping, tap to pause). Every clip is **pinned to its
+  restaurant** — name, neighbourhood, award, price and hashtag — which opens it;
+  the rail saves the restaurant to want-to-try or likes the clip. Consecutive
+  clips come from different restaurants; "Watch as feed" on a restaurant's
+  Creator clips starts with that restaurant. Back always returns to where you
+  opened it. Previews lead into it from everywhere: a **Clips rail** of vertical
+  9:16 previews on the feed (views, @creator, the restaurant it's pinned to —
+  each opens the feed *at that clip*), a **top-clip card** on every restaurant's
+  Overview tab, and the Media tab's thumbnails, which open the feed at the
+  tapped clip.
+- **Critics — real creators, connected from their clips** (`src/data/critics.ts`,
+  `src/screens/CriticProfile.tsx`) — everyone whose clips are in the app (57 at
+  the last collection: 29 independent creators such as Anders & Kaitlin, Mike
+  Chen, El Arturito, Luis Carlos Zara, La Ruta de la Garnacha, and food media such
+  as Gourmet de México, Chilango, Milenio, Dónde Ir) gets a critic profile,
+  merged across platforms by handle. Each profile is **simulated, and labelled
+  so**: their words are quoted exactly as posted (the clip's own title) or, for a
+  take the press reported, paraphrased with a link to the article; CRTQ reads
+  each title into a verdict (rave · recommends · features · weighs it up ·
+  reports acclaim · critical) and a 0–10 score marked **SIM**, and derives a
+  palate (and your match with it) from where they ate. Scores are never presented
+  as ratings they gave, no follower counts are guessed, and every profile says it
+  isn't affiliated with or endorsed by them. **Connected accounts** are only ones
+  with evidence: the accounts their clips were posted from, plus links their own
+  site lists (`src/data/creatorLinks.ts`, each with its source). Profiles show
+  their takes (watch the clip in-app, or open the source), their palate, and a
+  follow button; restaurants get a **"What critics say"** block with a SIM
+  consensus; creator names in the Clips feed and the trending cards open the
+  profile; and the feed's tastemakers rail is these real critics (the earlier
+  invented creators were removed). The **Leaderboard** has a **Critics** tab: all of
+  them, filterable to creators or food media, sorted by restaurants covered,
+  highest SIM average, or palate match with you.
+- **A calmer place page** — a swipeable, credited photo hero, a compact header
+  (key chips + a collapsible blurb), and sticky tabs: **Overview** (the guide
+  card, the draw / good to know, taste match), **Menu** (what to order,
+  reference plates, bang for your buck), **Media** (all photos, in the press,
+  social, community photos, videos), **Reviews**, **Visit** (hours, contact,
+  maps, booking). Nothing was removed — it's just one section at a time.
+- **Restaurant groups** — `src/data/groups.ts` gathers the venues the guide
+  itself ties together into **group profiles**, the same way chefs are linked.
+  Signals, all from the guide's own text/data: a named group ("del **Grupo
+  Castellano**", "(**Grupo Casamata**)", "del grupo Pujol"), sister/parent
+  statements ("hermano de Rosetta y Lardo", "del equipo de Hugo Wine Bar", "de
+  los creadores de Choza", "por los chefs de Siembra Comedor", "segundo proyecto
+  de la chef de Cana"), "el grupo tiene otras sedes como…", a "(grupo)" chef
+  credit, and a shared official website. That yields 12 groups — e.g. Grupo
+  Casamata (Pujol · Pujol.itto · Molino El Pujol), Grupo Castellano (Vega ·
+  Centro Castellano · Torre de Castilla), and families like Rosetta (+ Lardo) and
+  El Tigre Silencioso (+ Fauna). Plain name mentions don't count (Em's blurb
+  mentions "Martínez" only as the chef's surname), nor do branches of one
+  restaurant. Each profile shows the guide's own words as evidence, links the
+  chefs involved, and lists sister venues the guide names but doesn't review.
+  Groups the guide doesn't name are described by their flagship ("Rosetta
+  family") rather than given an invented company name.
+- **The Food Passport** (`src/screens/Passport.tsx`, `src/data/youProfile.ts`) —
+  the You tab is one passport booklet in CRTQ's sticker stock (sun-yellow cover with the apple mascot, yellow spine and header bands, hard offset shadows, paper grain), built from where you ate (no post grid,
+  no follower counts for diners). Every page shares the same stock — stitched
+  binding, guilloché print, emblem watermark, the document number perforated
+  through every page, a running header and a page number — and you swipe
+  through it like turning pages — the booklet lies on the 3D render's vermillion table (stickers peeking from under it), every page is lit like the render (gutter shadow, sheen, page-block edges, back board, soft cast shadow), and dragging sideways lifts the page around the spine in 3D (or use the page control); the open page is
+  remembered when you step into a restaurant and come back.
+  **Cover** — leather, gold foil emblem, the e-passport chip mark (tap or swipe
+  to open). **p.1 Data page** — surname / given names, *paladar* (your palate
+  archetype), home city, issue date, the record (sellos · colonias · visas ·
+  promedio), the holder's signature (your manifesto), a ghost portrait, a
+  holographic **papel picado** cut from your palate, and the
+  **machine-readable zone** at the foot (ICAO 9303 layout, real check digits).
+  **p.2 Visas** — each guide is a visa (Michelin stars, 50 Best, Bib Gourmand,
+  2026 openings): entries collected, the next entry to collect, and your
+  want-to-try as *solicitudes en trámite*. **p.3 Sellos** — the colonias you've
+  crossed on a schematic of the guide's 28 colonias (real west→east /
+  north→south order) and one rubber entry stamp per ranked table. **p.4
+  Biometría** — the palate print (papel picado, radar, flavour DNA,
+  distinguishing marks, palates like yours). **p.5 Observaciones** — your *menú
+  degustación* endorsed from your rankings (para abrir, antojito, del mar, plato
+  fuerte = your #1, postre, sobremesa, with the dish to order from the guide)
+  and the holder's note. **p.6 Ajustes** (inside back cover) — press access,
+  language, account. Guide credit needs an exact name match, so a namesake
+  never earns another venue's award. Verified critics carry a **press
+  passport** (type D): a darker cover, beat, readers and the Critic's Desk.
+- **"Can't decide?"** (`src/screens/Decide.tsx`, `src/data/decide.ts`) — a
+  swipe deck behind a small corner sticker on the browsing sections (feed, guide,
+  leaderboard, tables; `src/components/DecideFab.tsx`): it pops in as you arrive,
+  says "Can't decide?" for a few seconds, then folds to a little card fan. The
+  deck deals restaurants that fit you, best
+  match first (the same quality × palate blend as "Ideal for you"; each card
+  shows your rank — "#1 for you" — and a five-dot fit meter, why it fits, the
+  dish to order and, when there is one, a critic's take). Swipe right (or ✓, or
+  →) for **¡Vamos hoy!** — today's table, stamped like a passport entry, with
+  directions; left (✕ / ←) for **Hoy no**; **"Maybe, save for later"** (↓)
+  stamps **Luego** and adds it to your want-to-try. Undo takes the last swipe
+  back. The deck sits on a papel picado cut from your palate. Today's swipes and
+  pick are kept on the device and reset each day; once you've chosen, the
+  corner sticker carries a green check and names today's table.
+- **Biggest fans & Top 4** (`src/data/favorites.ts`) — everyone's favourite in
+  each category (tacos & street, Mexican kitchen, seafood, fine dining, bakery &
+  café, bars & mezcal, around the world) is simply the restaurant they rank
+  highest there. Each restaurant's Overview shows its **Biggest fans**, grouped
+  by category — you, your friends and (with the shared `favorites` table,
+  SHARED_DEMO.md) every other tester — with anyone who features it in their
+  **Top 4** marked and listed first, and a "Feature in my Top 4" button. Your Top
+  4 (*Mis cuatro*) is part of the first section of your profile — the
+  passport's data page, between your identity and your record: four square
+  tiles with the restaurants' real covers, each naming the category it's your
+  favourite in; tap a slot to choose or swap (search your log or the city), pick
+  the category and the slot. Page 2 (*Favoritos*) lists your favourite in every
+  category. Someone else's profile shows their Top 4 inside its header card,
+  right under their name, then their favourite in each category. Every fan —
+  on a restaurant's Biggest fans or a chef's "Fans of their kitchens" — is a
+  profile you can visit (friends, and testers by handle through the shared
+  table); "You" opens your own passport on its data page, and Back returns to
+  where you were (a chef or restaurant opened from someone's profile returns
+  to them). Everyone also keeps a **shortlist** per category — the favourite
+  plus the runners-up behind it, up to eight deep (yours from your rankings;
+  friends' eight deep in the categories they care about, five elsewhere) — and
+  the people with a restaurant at Nº2–Nº8 there show as its **supporters**.
+  Friends' profiles list each shortlist under the favourite and the **chefs
+  they follow** (those behind a kitchen they crown, feature or rank in their
+  top three). The demo friends are seeded so that every kitchen the guide
+  credits to a chef is on at least one friend's shortlist and every chef has at
+  least one fan: today all 71 chefs have fans (1.3 on average) and 118 of 166
+  restaurants have supporters. Real critics never get favourites assigned.
+- **Discovered spots (beyond the guide)** — every deploy sweeps the whole city
+  on OpenStreetMap (restaurants, cafés, bars, street food, bakeries…), keeps a
+  first-seen ledger between runs, reads recent Google News headlines about
+  openings, and folds in spots diners send from the app. The result is
+  published as `data/*.json` and read fresh by the app's **Fresh finds** —
+  a different hand every visit (newness, buzz, your taste, distance, minus what
+  you've already been shown). Details and safeguards in TRIAL_RUN.md.
+- **Brand marks** — each venue and chef carries an original **monogram** seal
+  (initials on a deterministic colour, in the app's sticker look). These are our
+  own marks, not the restaurants' trademarked logos, so they're safe to ship and
+  render offline.
+- **Ranking** — because the guide has no Google star, quality comes from
+  `acclaim` (0–100), a prestige index derived from the **real awards** (Michelin
+  tier, 50 Best, guide mentions). We never fabricate a Google rating; profiles
+  show a **Michelin / 50 Best badge** instead of a star.
+
+## Regenerating
+The dataset is generated by a one-off script (kept with the source workbook).
+It maps the Spanish guide categories to the app's broad cuisine vocabulary for
+filters/recommendations while preserving the original category for display,
+derives `acclaim` from the awards text, parses "Qué pedir" into a dish list, and
+assigns a stock photo per venue (the workbook has no images). To refresh, re-run
+that script against an updated workbook and rebuild.
+
+> The workbook ships no images, so on the web each venue pulls its **real Google
+> Maps photos** live (by coordinate match, with attribution — never stored); the
+> bundled stock pool is only the offline/no-key fallback. Everything else
+> (dishes, prices, chefs, awards, coordinates) is real.

@@ -1,21 +1,31 @@
 /**
- * Trending short-form videos, gathered from external platforms (TikTok /
- * Instagram / YouTube Shorts) and featured in the "Trending now" corner. Each
- * entry links a real post (platform + sourceUrl), its creator, and the place
- * it's about (for the poster image + scores).
+ * The shape of a creator clip about a place, and its in-app embed player URL.
  *
- * Seeded here for the pilot. A real "gather" pipeline plugs in at this shape:
- * a backend/service polls the platform APIs (TikTok Display API, Instagram
- * Graph/oEmbed, YouTube Data API) for posts tagged to a venue and normalizes
- * them into TrendingVideo[]. In-app playback then uses each platform's embed
- * player (WebView / iframe); until then we deep-link to the post.
+ * Real clips come from the hashtag pipeline (clipRank.ts → clips.ts /
+ * videosLive.web.ts): third-party YouTube creators only, HD, embeddable, and
+ * always played inside the app through the platform's official embedded player
+ * — never by redirecting out. (Platforms don't offer downloadable MP4s; their
+ * embed players stream the video in place.)
  */
 import type { Platform } from './creators';
+
+/** Where a clip comes from: the social platforms' embed players, or open video files played natively. */
+export type VideoSource = Platform | 'vimeo' | 'dailymotion' | 'commons' | 'archive';
+
+export const SOURCE_LABEL: Record<VideoSource, string> = {
+  youtube: 'YouTube',
+  tiktok: 'TikTok',
+  instagram: 'Instagram',
+  vimeo: 'Vimeo',
+  dailymotion: 'Dailymotion',
+  commons: 'Wikimedia Commons',
+  archive: 'Internet Archive',
+};
 
 export type TrendingVideo = {
   id: string;
   placeId: string;
-  platform: Platform;
+  platform: VideoSource;
   creator: string;
   handle: string;
   caption: string;
@@ -27,27 +37,48 @@ export type TrendingVideo = {
   thumb?: string;
   /** ISO publish date (set by the live hashtag search) for a "3d ago" note. */
   publishedAt?: string;
+  /** Direct video file (Commons / Internet Archive) — played natively, as MP4 / WebM. */
+  src?: string;
+  mime?: string;
+  /** Licence of an open file (shown with the credit). */
+  license?: string;
+  /** Portrait clip (shorts, TikToks, reels). */
+  vertical?: boolean;
+  /** 'venue' = about this place; 'dish' / 'area' = related footage, labelled as such. */
+  scope?: 'venue' | 'dish' | 'area';
+  relatedTo?: string;
 };
+
+/** A clip the app can play in place (an embed id or a direct file). */
+export const isPlayable = (v: TrendingVideo) => !!(v.embedId || v.src);
 
 /** Build the platform embed-player URL for in-app playback (WebView / iframe). */
 export function embedUrlFor(v: TrendingVideo): string | null {
+  if (v.src) return v.src; // open video file — the browser / WebView plays it natively
   if (!v.embedId) return null;
   switch (v.platform) {
     case 'youtube':
-      return `https://www.youtube.com/embed/${v.embedId}?playsinline=1&rel=0&modestbranding=1`;
+      // Privacy-enhanced embed; rel=0 keeps end-screen suggestions to the same creator.
+      return `https://www.youtube-nocookie.com/embed/${v.embedId}?playsinline=1&rel=0&modestbranding=1`;
     case 'tiktok':
-      return `https://www.tiktok.com/embed/v2/${v.embedId}`;
+      return `https://www.tiktok.com/player/v1/${v.embedId}?rel=0`;
     case 'instagram':
-      return `https://www.instagram.com/reel/${v.embedId}/embed`;
+      return `https://www.instagram.com/reel/${v.embedId}/embed/?hidecaption=1`;
+    case 'vimeo':
+      return `https://player.vimeo.com/video/${v.embedId}?playsinline=1&dnt=1`;
+    case 'dailymotion':
+      return `https://www.dailymotion.com/embed/video/${v.embedId}?queue-enable=false&sharing-enable=false`;
     default:
       return null;
   }
 }
 
-export const TRENDING_VIDEOS: TrendingVideo[] = [
-  { id: 'tv-1', placeId: 'orinoco', platform: 'tiktok', creator: 'Ana Sol', handle: '@anasolcomes', caption: 'POV: the 2am chicharrón crunch you needed to hear 🌮🔊', sourceUrl: 'https://www.tiktok.com/@anasolcomes' },
-  { id: 'tv-2', placeId: 'vilsito', platform: 'tiktok', creator: 'Marco Tostado', handle: '@tacotour', caption: 'Ranking every taco at El Vilsito so you don’t have to (I did anyway)', sourceUrl: 'https://www.tiktok.com/@tacotour' },
-  { id: 'tv-3', placeId: 'turix', platform: 'instagram', creator: 'Cochinita Club', handle: '@cochinitaclub', caption: 'Cochinita pib before the pib runs out. Reel it in. 🔥', sourceUrl: 'https://www.instagram.com/reel/' },
-  { id: 'tv-4', placeId: 'contramar', platform: 'instagram', creator: 'Paola Ruiz', handle: '@laantojada', caption: 'The tuna tostada that broke my comment section', sourceUrl: 'https://www.instagram.com/laantojada' },
-  { id: 'tv-5', placeId: 'rosetta', platform: 'youtube', creator: 'Yuki Tanaka', handle: '@tokyobites', caption: 'CDMX pan dulce tour — Shorts ep. 04 🥐', sourceUrl: 'https://www.youtube.com/@tokyobites/shorts' },
-];
+/** Credits shown under the in-app player (who made it, where it's from). */
+export type VideoMeta = {
+  title: string;
+  creator: string;
+  platform: string;
+  views?: number;
+  placeName?: string;
+  hd?: boolean;
+};

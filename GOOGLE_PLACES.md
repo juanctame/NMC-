@@ -44,6 +44,54 @@ live (`placePhoto()` in `src/assets.ts`) on the Feed cards, the place hero +
 gallery, and the map card — with the required **attribution** shown over the
 hero. Photos are never downloaded or re-hosted.
 
+## Place profiles — everything to know before you go
+Opening a venue fetches **live Google Place Details**
+(`getPlaceDetails` in `src/data/placesGoogle.web.ts`, behind the provider's
+`getDetails`) and enriches the profile (`src/screens/PlaceDetail.tsx`) with:
+- **At-a-glance** chips (rating + volume, price tier, open-now, cuisine).
+- **The lowdown** — Google's own editorial summary, when it has one.
+- **The draw / Good to know** — honest pros & caveats *derived from real
+  signals* (rating, review volume, price, open state, taste fit). Nothing is
+  invented (`drawAndKnow` in `src/data/placeDetails.ts`).
+- **Your taste match** — the venue scored against the signed-in foodie's palate.
+- **Plan your visit** — full weekly hours (today highlighted) + one-tap Call,
+  Website, Directions.
+- **From Google** — up to 5 real Google reviews, shown verbatim with attribution.
+
+Details are fetched **once per place per session** and never stored. Cost note:
+each place-open is one Place Details request (Contact + Atmosphere fields,
+roughly $0.02 combined on the Basic/Contact/Atmosphere SKUs) — modest and
+user-initiated, unlike a bulk sweep. Native builds show the base profile only
+(Place Details is web-only, like the rest of the Places JS library).
+
+## What to order & bang for your buck
+Each profile also helps you *decide*:
+- **What to order** — three suggested plans (a quick solo hit, "the move" = a
+  balanced start→finish **optimal plan**, and a shareable spread), each with an
+  **estimated price** in the city's currency. Combos come from a per-cuisine kit
+  priced off the venue's tier (`src/data/combos.ts`) and are anchored on the
+  community's table-favourite dish when there is one. These are clearly flagged
+  **estimates** — Google serves no menu, so nothing here is presented as a real
+  one.
+- **Bang for your buck** — a value ladder that ranks the venue against
+  same-cuisine, similar-priced neighbours already loaded, by **quality-per-dollar**
+  (Google rating ÷ price tier). You see where it lands ("Nº 2 of 9"), a verdict,
+  and — when one exists — a cheaper spot that's just as loved. This part is built
+  entirely from real rating/price data.
+
+## Build your passport from photos (onboarding)
+New users can register where they've already been straight from their camera
+roll. The photo picker reads each image's **EXIF GPS tag in the browser**
+(`src/data/photoImport.web.ts` — nothing is uploaded; photos never leave the
+device), the store dedupes nearby points and asks the provider's `findNearest`
+for the restaurant at each coordinate (`rankBy: DISTANCE`, with a ~180 m cutoff
+so non-dining photos are dropped), and the user confirms which matches to add.
+Confirmed spots land in the log with a provisional score from Google's rating
+(flagged `provisional`, re-rankable anytime) and stay resolvable via a module
+registry even after a city reload. Entry points: the **Guide** screen and the
+onboarding house-rules step. Web-only (needs the Places JS library + a file
+picker); native is a graceful no-op until expo-media-library is added.
+
 ## What this is *not* (and why)
 - **Not "every single restaurant" as a shipped dataset.** Google has no
   "list all" endpoint (Nearby Search caps at 60/query), and the Google Maps

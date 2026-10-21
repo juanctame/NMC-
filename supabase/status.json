@@ -1,0 +1,54 @@
+{
+  "checked_at": "2026-10-19T17:20:50.134Z",
+  "project": "psbxxcupbbgwcjzqkygb",
+  "managed": false,
+  "migrations": [],
+  "auth": {
+    "reachable": false,
+    "error": "ENOTFOUND getaddrinfo ENOTFOUND psbxxcupbbgwcjzqkygb.supabase.co"
+  },
+  "tables": {
+    "profiles": {
+      "ok": false,
+      "error": "ENOTFOUND getaddrinfo ENOTFOUND psbxxcupbbgwcjzqkygb.supabase.co"
+    },
+    "reviews": {
+      "ok": false,
+      "error": "ENOTFOUND getaddrinfo ENOTFOUND psbxxcupbbgwcjzqkygb.supabase.co"
+    },
+    "favorites": {
+      "ok": false,
+      "error": "ENOTFOUND getaddrinfo ENOTFOUND psbxxcupbbgwcjzqkygb.supabase.co"
+    },
+    "rankings": {
+      "ok": false,
+      "error": "ENOTFOUND getaddrinfo ENOTFOUND psbxxcupbbgwcjzqkygb.supabase.co"
+    },
+    "wants": {
+      "ok": false,
+      "error": "ENOTFOUND getaddrinfo ENOTFOUND psbxxcupbbgwcjzqkygb.supabase.co"
+    },
+    "follows": {
+      "ok": false,
+      "error": "ENOTFOUND getaddrinfo ENOTFOUND psbxxcupbbgwcjzqkygb.supabase.co"
+    },
+    "spot_suggestions": {
+      "ok": false,
+      "error": "ENOTFOUND getaddrinfo ENOTFOUND psbxxcupbbgwcjzqkygb.supabase.co"
+    },
+    "places": {
+      "ok": false,
+      "error": "ENOTFOUND getaddrinfo ENOTFOUND psbxxcupbbgwcjzqkygb.supabase.co"
+    }
+  },
+  "stats": null,
+  "notes": [
+    "No SUPABASE_ACCESS_TOKEN secret: probed only. Add it to apply the migrations and auth settings automatically (TRIAL_RUN.md).",
+    "the project's address doesn't resolve (getaddrinfo ENOTFOUND psbxxcupbbgwcjzqkygb.supabase.co) — the Supabase project may be paused or deleted: open the dashboard and restore it",
+    "missing or unreadable: profiles, reviews, favorites, rankings, wants, follows, spot_suggestions, places"
+  ],
+  "dns": {
+    "error": "getaddrinfo ENOTFOUND psbxxcupbbgwcjzqkygb.supabase.co"
+  },
+  "ready": false
+}

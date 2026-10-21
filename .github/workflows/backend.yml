@@ -1,0 +1,51 @@
+name: Backend (Supabase)
+
+# Builds and checks the trial backend. Every run probes what the public app can
+# see (auth settings, each table, the trial numbers) and saves the result to
+# supabase/status.json. With the repo secret SUPABASE_ACCESS_TOKEN set (a
+# Supabase personal access token — see TRIAL_RUN.md) it first applies every
+# migration in supabase/migrations and turns on the auth settings the app needs
+# (anonymous sign-ins, redirect URLs). Without it, it only probes.
+
+on:
+  push:
+    branches: [main, claude/modern-app-interface-design-ax8tbd]
+    paths:
+      - 'supabase/migrations/**'
+      - 'scripts/backend.mjs'
+      - '.github/workflows/backend.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backend
+  cancel-in-progress: false
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Apply migrations (with token) and probe the backend
+        run: node scripts/backend.mjs
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      - name: Save the backend status to the branch
+        if: always()
+        run: |
+          [ -f supabase/status.json ] || exit 0
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add supabase/status.json
+          git diff --cached --quiet && { echo "status unchanged"; exit 0; }
+          git commit -q -m "Backend status [skip ci]"
+          for i in 1 2 3 4; do
+            git pull -q --rebase origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((i * 3))
+          done
+          echo "could not save status (branch moved)"; exit 0

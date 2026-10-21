@@ -9,6 +9,15 @@ name: Deploy site (GitHub Pages)
 # "Deploy from a branch" → gh-pages / root) rather than the Actions "environment"
 # deploy, because that environment restricts deployments to the default branch —
 # the branch-push approach here deploys from either branch.
+#
+# Before building, it refreshes src/data/media.json — link-preview images for
+# every restaurant (official site, Guía Michelin, press) — when the manifest is
+# older than a week (or on demand), and saves the refreshed manifest back to the
+# branch. Collection needs open internet, which CI has; failures never block a
+# deploy (the app falls back to freely-licensed and generated covers).
+#
+# It keeps the live discovered-spots data (data/, written by discover.yml) and
+# stamps the build (dist/version.json) so open apps know a newer one is live.
 
 on:
   push:
@@ -16,7 +25,14 @@ on:
     paths-ignore:
       - '**.md'
       - 'supabase/**'
+  schedule:
+    - cron: '17 9 * * *' # daily (runs on the default branch): refresh clips within the YouTube quota
   workflow_dispatch:
+    inputs:
+      force_media:
+        description: 'Re-collect restaurant media even if the manifest is fresh'
+        type: boolean
+        default: false
 
 # The built-in token needs write access to push the built site to gh-pages.
 permissions:
@@ -36,8 +52,48 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - name: Collect restaurant media (sites, guides, press)
+        run: node scripts/collect-media.mjs
+        continue-on-error: true
+        env:
+          FORCE: ${{ github.event.inputs.force_media == 'true' && '1' || '' }}
+      - name: Collect creator clips (YouTube, by hashtag; third-party, HD)
+        run: node scripts/collect-videos.mjs
+        continue-on-error: true
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      - name: Collect open clips (curated + oEmbed-verified, Dailymotion, Commons / Internet Archive MP4s)
+        run: node scripts/collect-clips-open.mjs
+        continue-on-error: true
+        timeout-minutes: 15
+        env:
+          FORCE: ${{ github.event.inputs.force_media == 'true' && '1' || '' }}
+      - name: Collect the landing reel (HD clips behind sign-in)
+        run: node scripts/collect-landing-reel.mjs
+        continue-on-error: true
+        timeout-minutes: 6
       - name: Export web bundle
-        run: npx expo export -p web
+        run: EXPO_PUBLIC_BUILD="${GITHUB_SHA::7}" npx expo export -p web
+      - name: Carry the live data forward + stamp the build
+        run: |
+          # Discovered spots live on gh-pages (written by the Discover spots workflow);
+          # a deploy keeps them rather than rebuilding them.
+          mkdir -p dist/data
+          if git fetch -q --depth=1 origin gh-pages 2>/dev/null && git cat-file -e FETCH_HEAD:data 2>/dev/null; then
+            git archive FETCH_HEAD data | tar -x -C dist && echo "kept $(ls dist/data | wc -l) data entries"
+          else
+            echo "no live data yet"
+          fi
+          printf '{"build":"%s","built_at":"%s"}\n' "${GITHUB_SHA::7}" "$(date -u +%FT%TZ)" > dist/version.json
+      - name: Save refreshed media + clip manifests to the branch
+        continue-on-error: true
+        run: |
+          if git diff --quiet -- src/data/media.json src/data/videos.json src/data/clipsOpen.json src/data/landingReel.json; then echo "manifests unchanged"; exit 0; fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/media.json src/data/videos.json src/data/clipsOpen.json src/data/landingReel.json
+          git commit -q -m "Refresh restaurant media + clip manifests [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
       - name: Publish to gh-pages
         run: |
           touch dist/.nojekyll        # keep GitHub Pages from hiding the _expo/ dir

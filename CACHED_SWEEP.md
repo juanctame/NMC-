@@ -126,7 +126,14 @@ the sweep's `?grid=` / `?pages=` / `?radius=` query params (defaults mirror the
 live sweep: 6×6 grid, 3 pages, 2.4 km).
 
 ## Cost
-One nightly run ≈ `grid² × pages` Nearby Search requests **per city** (~108 for
-CDMX at defaults), shared across **all** visitors — versus the live path's
-16–32+ requests **per visitor per load**. At Google's Basic tier (~$32/1,000)
-that's roughly a few cents a day for the whole app.
+One sweep ≈ `grid² × pages` Nearby Search requests **per city** (~108 for CDMX at
+defaults). At Google's Basic tier (~$32 / 1,000) that's **~$3–3.50 per city per
+sweep** — so a nightly run of all five cities is **roughly $10–15/day (~$300–450/
+month)** before Google Maps Platform's **$200/month free credit**. Still far
+cheaper and more predictable than the live path's 16–32+ requests **per visitor
+per load** (which scales with traffic), but it is not "pennies."
+
+Dial the cost with: fewer cities (edit the matrix in `sweep-places.yml`), a
+smaller `?grid=` / `?pages=`, or a less frequent `cron` (nightly → weekly cuts it
+~7×). The app reads whatever's in the table regardless, so a once-a-week sweep
+still removes all per-visitor quota.

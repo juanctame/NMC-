@@ -19,6 +19,7 @@ export type AuthUser = {
   email: string;
   name: string;
   avatarUrl?: string;
+  anonymous?: boolean; // a device account (no Google yet)
 };
 
 export type Session = {
@@ -108,8 +109,9 @@ export async function fetchAuthUser(accessToken: string): Promise<AuthUser | nul
     return {
       id: u.id,
       email,
-      name: meta.full_name || meta.name || (email ? email.split('@')[0] : 'New Nomad'),
+      name: meta.full_name || meta.name || (email ? email.split('@')[0] : ''),
       avatarUrl: meta.avatar_url || meta.picture || undefined,
+      anonymous: !!u.is_anonymous,
     };
   } catch {
     return null;

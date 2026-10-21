@@ -13,6 +13,7 @@ import { type City } from '../data/cities';
 import { EVENTS, OPEN, EVENT_PHOTO, byId } from '../store/data';
 import { PLACE_COORDS, PIN_COORDS, coordForId, type Pin } from '../data/geo';
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
+import { VenueCover } from '../components/Cover';
 import { C } from '../theme/tokens';
 import { photo } from '../assets';
 import { Display, Banner, SerifItalic, SerifDisplay, Mono } from '../components/Text';
@@ -45,6 +46,7 @@ function distanceMin(city: City, lat: number, lon: number): string {
 export function NearbyMap() {
   const insets = useSafeAreaInsets();
   const closeMap = useStore((s) => s.closeMap);
+  const openClips = useStore((s) => s.openClips);
   const city = useStore((s) => s.city);
   const nearby = useStore((s) => s.nearby);
   const status = useStore((s) => s.nearbyStatus);
@@ -115,6 +117,19 @@ export function NearbyMap() {
               {city.flag} {city.name} · {city.defaultHood} · {city.weather} ▾
             </Mono>
           </Pressable>
+          {/* Map | Clips — the two ways to browse, side by side */}
+          <View style={{ flexDirection: 'row', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, overflow: 'hidden' }}>
+            <View accessibilityRole="tab" accessibilityState={{ selected: true }} style={{ paddingVertical: 6, paddingHorizontal: 11, backgroundColor: C.inkDeep }}>
+              <Banner s={9} tk={0.08} c={C.paper0}>
+                Map
+              </Banner>
+            </View>
+            <Pressable onPress={() => openClips()} accessibilityRole="tab" accessibilityState={{ selected: false }} style={{ paddingVertical: 6, paddingHorizontal: 11, backgroundColor: C.paper0 }}>
+              <Banner s={9} tk={0.08} c={C.inkDeep}>
+                Clips
+              </Banner>
+            </Pressable>
+          </View>
           <StickerView offset="sm" radius={999}>
             <Pressable onPress={() => loadNearby()} style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
               <Display s={15} c={C.ink400}>
@@ -208,7 +223,7 @@ function SelectCard({
 }) {
   const sel = useStore((s) => s.selPin)!;
 
-  let content: { photo: string; photoUrl?: string; name: string; meta: string; badge: string; badgeBg: string; badgeFg: string; walk: string; cta: string; onPress: () => void; google?: string };
+  let content: { place?: import('../store/data').Place; photo: string; photoUrl?: string; name: string; meta: string; badge: string; badgeBg: string; badgeFg: string; walk: string; cta: string; onPress: () => void; google?: string };
 
   if (sel.kind === 'event') {
     const ev = EVENTS.find((e) => e.id === sel.id)!;
@@ -251,6 +266,7 @@ function SelectCard({
         ? `★ ${base.rating.toFixed(1)}${base.reviews ? ` · ${base.reviews > 999 ? (base.reviews / 1000).toFixed(1) + 'k' : base.reviews}` : ''}`
         : undefined;
     content = {
+      place: base,
       photo: base.photo,
       photoUrl: base.photoUrl,
       name: base.name,
@@ -268,7 +284,11 @@ function SelectCard({
   return (
     <View style={{ position: 'absolute', left: 14, right: 14, bottom: 14, zIndex: 25 }}>
       <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 10 }}>
-        <Photo source={content.photoUrl ? { uri: content.photoUrl } : photo(content.photo)} style={{ width: 56, height: 56, borderWidth: 2, borderColor: C.inkBlack }} />
+        {content.place ? (
+          <VenueCover place={content.place} style={{ width: 56, height: 56, borderWidth: 2, borderColor: C.inkBlack }} crestSize={26} credit={false} />
+        ) : (
+          <Photo source={content.photoUrl ? { uri: content.photoUrl } : photo(content.photo)} style={{ width: 56, height: 56, borderWidth: 2, borderColor: C.inkBlack }} />
+        )}
         <View style={{ flex: 1, minWidth: 0 }}>
           <SerifDisplay s={16} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 16 }}>
             {content.name}

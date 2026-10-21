@@ -8,18 +8,10 @@
  */
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config';
 import type { Review } from './reviews';
+import { authHeaders, currentSession, readHeaders } from './cloud';
 
 export function sharedEnabled(): boolean {
   return !!(SUPABASE_URL && SUPABASE_ANON_KEY);
-}
-
-function headers(extra: Record<string, string> = {}): Record<string, string> {
-  return {
-    apikey: SUPABASE_ANON_KEY,
-    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-    'Content-Type': 'application/json',
-    ...extra,
-  };
 }
 
 type Row = {
@@ -75,7 +67,7 @@ export async function fetchSharedReviews(placeId: string): Promise<Review[]> {
     const url =
       `${SUPABASE_URL}/rest/v1/reviews?place_id=eq.${encodeURIComponent(placeId)}` +
       `&select=*&order=created_at.desc&limit=200`;
-    const res = await fetch(url, { headers: headers() });
+    const res = await fetch(url, { headers: await readHeaders() });
     if (!res.ok) return [];
     const rows = (await res.json()) as Row[];
     return Array.isArray(rows) ? rows.map(rowToReview) : [];
@@ -84,16 +76,21 @@ export async function fetchSharedReviews(placeId: string): Promise<Review[]> {
   }
 }
 
-/** Publish a review so other testers see it. Best-effort; failures are silent. */
-export async function pushSharedReview(r: Review): Promise<void> {
-  if (!sharedEnabled()) return;
+/** Publish a review under the signed-in user so everyone sees it. Best-effort; failures are silent. */
+export async function pushSharedReview(r: Review, handle?: string): Promise<boolean> {
+  if (!sharedEnabled()) return false;
+  const uid = currentSession()?.user.id;
+  const h = await authHeaders({ Prefer: 'return=minimal' });
+  if (!uid || !h) return false;
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/reviews`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews`, {
       method: 'POST',
-      headers: headers({ Prefer: 'return=minimal' }),
+      headers: h,
       body: JSON.stringify({
         id: r.id,
         place_id: r.placeId,
+        user_id: uid,
+        handle: handle ?? null,
         author: r.author,
         initials: r.initials,
         color: r.color,
@@ -104,7 +101,9 @@ export async function pushSharedReview(r: Review): Promise<void> {
         critic: !!r.critic,
       }),
     });
+    return res.ok;
   } catch {
-    // Non-fatal: the review still lives locally for this tester.
+    // Non-fatal: the review still lives locally for this person.
+    return false;
   }
 }

@@ -7,6 +7,7 @@ import React from 'react';
 import { View, ScrollView, Pressable, TextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore, resolvePlace } from '../store/useStore';
+import { VenueCover } from '../components/Cover';
 import { CAND, WANT0, type Place } from '../store/data';
 import { scoreStyle, fmt, metaOf } from '../store/helpers';
 import { C } from '../theme/tokens';
@@ -114,7 +115,7 @@ export function RankFlow() {
                   onPress={() => pickRank(p.id)}
                   style={{ flexDirection: 'row', alignItems: 'center', gap: 11, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, paddingVertical: 8, paddingLeft: 8, paddingRight: 12 }}
                 >
-                  <Photo source={photo(p.photo)} style={{ width: 52, height: 52, borderWidth: 2, borderColor: C.inkBlack }} />
+                  <VenueCover place={p} style={{ width: 52, height: 52, borderWidth: 2, borderColor: C.inkBlack }} crestSize={26} credit={false} />
                   <View style={{ flex: 1, minWidth: 0 }}>
                     <SerifDisplay s={15} c={C.inkDeep} style={{ lineHeight: 17 }}>
                       {p.name}
@@ -136,7 +137,7 @@ export function RankFlow() {
         {step === 'bucket' && chosen ? (
           <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 22, paddingBottom: insets.bottom + 24 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 13, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, paddingVertical: 10, paddingHorizontal: 12 }}>
-              <Photo source={photo(chosen.photo)} style={{ width: 56, height: 56, borderWidth: 2, borderColor: C.inkBlack }} />
+              <VenueCover place={chosen} style={{ width: 56, height: 56, borderWidth: 2, borderColor: C.inkBlack }} crestSize={26} credit={false} />
               <View>
                 <SerifDisplay s={17} c={C.inkDeep} style={{ lineHeight: 18 }}>
                   {chosen.name}
@@ -236,7 +237,7 @@ function CompareStep({
       </View>
       <View style={{ flex: 1, justifyContent: 'center', gap: 12, paddingVertical: 14 }}>
         <StickerPressable offset="lg" onPress={onNew} style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden', flexDirection: 'row', alignItems: 'center' }}>
-          <Photo source={photo(chosen.photo)} style={{ width: 96, height: 84, borderRightWidth: 2.5, borderColor: C.inkBlack }} />
+          <VenueCover place={chosen} style={{ width: 96, height: 84, borderRightWidth: 2.5, borderColor: C.inkBlack }} crestSize={32} credit={false} />
           <View style={{ paddingVertical: 10, paddingHorizontal: 13, flex: 1 }}>
             <Banner s={8} tk={0.16} c={C.ink400}>
               The new one
@@ -261,7 +262,7 @@ function CompareStep({
         </View>
 
         <StickerPressable offset="lg" onPress={onOld} style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden', flexDirection: 'row', alignItems: 'center' }}>
-          <Photo source={photo(opp.photo)} style={{ width: 96, height: 84, borderRightWidth: 2.5, borderColor: C.inkBlack }} />
+          <VenueCover place={opp} style={{ width: 96, height: 84, borderRightWidth: 2.5, borderColor: C.inkBlack }} crestSize={32} credit={false} />
           <View style={{ paddingVertical: 10, paddingHorizontal: 13, flex: 1 }}>
             <Banner s={8} tk={0.16} c={C.inkMuted}>
               Already ranked

@@ -1,0 +1,49 @@
+name: Import a critic's Google My Maps list
+
+# Keeps a house critic's list in step with their public Google My Maps map:
+# downloads the map's KML export, locates every place (the map's pin, else its
+# address via OpenStreetMap Nominatim, cached), commits the list, and redeploys
+# the site when it changed. Runs on push of the importer, by hand, and weekly
+# once on main.
+on:
+  push:
+    branches: [claude/modern-app-interface-design-ax8tbd]
+    paths: ['.github/workflows/import-critic-map.yml', 'scripts/import-critic-map.mjs']
+  workflow_dispatch:
+  schedule:
+    - cron: '17 9 * * 1'
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: critic-map
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Fetch @tametitoeats's map (KML export)
+        run: |
+          MID=1UbVGXz0IAO4ogOnXpBekYzzxeEg44II
+          curl -sS -L -m 60 -A "Mozilla/5.0" -o /tmp/map.kml -w "%{http_code} %{size_download}\n" "https://www.google.com/maps/d/kml?mid=$MID&forcekml=1"
+          if grep -q "<kml" /tmp/map.kml; then mv /tmp/map.kml src/data/critics/tametitoeats.map.kml; else echo "not KML (map private or moved) — keeping the last copy"; fi
+      - name: Import (locate every place, link guide pages)
+        run: node scripts/import-critic-map.mjs tametitoeats src/data/critics/tametitoeats.map.kml "https://www.google.com/maps/d/viewer?mid=1UbVGXz0IAO4ogOnXpBekYzzxeEg44II"
+      - name: Save, and redeploy if the list changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/critics
+          git diff --cached --quiet -- src/data/critics/tametitoeats.json && { git commit -q -m "Refresh @tametitoeats map cache [skip ci]" || true; } || git commit -q -m "Refresh @tametitoeats's list from his map [skip ci]"
+          for i in 1 2 3; do git pull -q --rebase origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && break; sleep 5; done
+          if git log -1 --format=%s | grep -q "list from his map"; then gh workflow run deploy.yml --ref "${GITHUB_REF_NAME}"; fi

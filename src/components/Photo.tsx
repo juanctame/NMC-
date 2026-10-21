@@ -14,15 +14,18 @@ export function Photo({
   style,
   warm = 0.08,
   darken = 0,
+  onError,
 }: {
   source: ImageSource | number;
   style?: ViewStyle | ViewStyle[];
   warm?: number;
   darken?: number;
+  /** Called when a remote image fails (hotlink-protected, moved…) so callers can fall back. */
+  onError?: () => void;
 }) {
   return (
     <View style={[{ overflow: 'hidden' }, style]}>
-      <Image source={source} style={StyleSheet.absoluteFill} contentFit="cover" transition={120} />
+      <Image source={source} style={StyleSheet.absoluteFill} contentFit="cover" transition={120} onError={onError} />
       {warm > 0 ? (
         <View
           pointerEvents="none"
