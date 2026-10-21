@@ -818,6 +818,103 @@ export function PlaceDetail() {
             ) : null}
           </Pressable>
         </View>
+        {/* the ranking — the first thing after the overview, whatever tab is open */}
+        <View accessibilityLabel="The ranking" style={{ paddingHorizontal: 18, paddingTop: 4, paddingBottom: 18 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: C.ink400 }} />
+            <Banner s={10} tk={0.16} c={C.inkMuted}>
+              The ranking
+            </Banner>
+            <View style={{ flex: 1, height: 2, backgroundColor: C.ink100 }} />
+            {consensus ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                <Mono s={9} c={C.inkSoft}>
+                  critics {consensus.score.toFixed(1)}
+                </Mono>
+                <SimTag />
+              </View>
+            ) : null}
+          </View>
+          {/* rankings panel — dual verdict for rated places, "be the first" for fresh finds */}
+          <View>
+            {isRated ? (
+              <StickerView offset="lg" style={{ borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.paper0 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 9, paddingHorizontal: 13, borderBottomWidth: 2, borderColor: C.inkBlack, backgroundColor: C.ink700 }}>
+                  <Banner s={10} tk={0.14} c={C.paper0}>
+                    The rankings
+                  </Banner>
+                  <Mono s={9.5} c={C.sun300}>
+                    of {RANK.total} places
+                  </Mono>
+                </View>
+                <View style={{ flexDirection: 'row' }}>
+                  <SealColumn label="Critics' ranking" score={base.critic || 0} rot="-5deg" overall={RANK.critO[base.id] || '—'} cuisineRank={RANK.critC[base.id] || '—'} cuisine={cu} rightBorder />
+                  <SealColumn label="People's ranking" score={base.people || 0} rot="4deg" overall={RANK.popO[base.id] || '—'} cuisineRank={RANK.popC[base.id] || '—'} cuisine={cu} />
+                </View>
+              </StickerView>
+            ) : (
+              <StickerView offset="lg" style={{ borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.paper0, padding: 16, alignItems: 'center', gap: 8 }}>
+                <View style={{ transform: [{ rotate: '-4deg' }] }}>
+                  <Roundel size={58} bg={C.paper100} fg={C.inkSoft} text="?" textSize={26} dashInset={6} />
+                </View>
+                <Banner s={11} tk={0.12} c={C.inkDeep}>
+                  No verdict yet
+                </Banner>
+                <Serif s={13} style={{ textAlign: 'center', color: C.inkMuted, lineHeight: 19 }}>
+                  Fresh off the map — no Critics or People score yet. Be the first of us to rank it.
+                </Serif>
+                {base.source === 'google' && base.rating != null ? (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4, backgroundColor: C.paper100, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 11 }}>
+                    <Banner s={10} tk={0.06} c={C.sun600}>
+                      ★ {base.rating.toFixed(1)}
+                    </Banner>
+                    <Mono s={9} c={C.inkMuted}>
+                      {base.reviews ? `${base.reviews.toLocaleString()} Google reviews` : 'on Google'}
+                    </Mono>
+                  </View>
+                ) : null}
+              </StickerView>
+            )}
+          </View>
+          {/* house critics — their ranking: rank in its category, verdict, house score */}
+          {houseTakes.map(({ critic: h, take: ht, rank, of }) => (
+            <StickerPressable
+              key={h.id}
+              offset="sm"
+              onPress={() => openCritic(h.id)}
+              accessibilityLabel={`${h.name} ranks it #${rank} of ${of}, house score ${ht.score.toFixed(1)}`}
+              style={{ marginTop: 12, backgroundColor: C.inkDeep, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 10, paddingHorizontal: 11, gap: 7 }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <HouseAvatar c={h} size={34} />
+                <View style={{ flex: 1, minWidth: 0 }}>
+                  <Banner s={10} tk={0.06} c={C.paper0} numberOfLines={1}>
+                    {h.name}
+                  </Banner>
+                  <Mono s={8} c={C.sun200} numberOfLines={1}>
+                    House critic · #{rank} of {of} in {HOUSE_CATEGORIES.find((x) => x.id === ht.category)?.label}, {ht.city.label} · #{ht.rank} overall
+                  </Mono>
+                </View>
+                <View style={{ alignItems: 'center', gap: 3 }}>
+                  <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: VERDICT_COLOR[ht.verdict].bg, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+                    <Display s={14} c={VERDICT_COLOR[ht.verdict].fg}>
+                      {ht.score.toFixed(1)}
+                    </Display>
+                  </View>
+                  <HouseTag dark />
+                </View>
+              </View>
+              <VerdictStamp v={ht.verdict} small />
+              {ht.entry.note ? (
+                <Serif s={11.5} c={C.paper0} numberOfLines={3} style={{ lineHeight: 16, fontStyle: 'italic' }}>
+                  “{ht.quote}”
+                </Serif>
+              ) : null}
+            </StickerPressable>
+          ))}
+
+        </View>
+
         {/* tabs — the page's sections, one at a time (sticky) */}
         <View style={{ flexDirection: 'row', backgroundColor: C.paper50, borderBottomWidth: 2, borderColor: C.inkBlack, paddingHorizontal: 8 }}>
           {TABS.map((tb) => {
@@ -908,43 +1005,6 @@ export function PlaceDetail() {
                 </View>
               </StickerPressable>
             ) : null}
-
-            {/* house critics — their ranking: rank in its category, verdict, house score */}
-            {houseTakes.map(({ critic: h, take: ht, rank, of }) => (
-              <StickerPressable
-                key={h.id}
-                offset="sm"
-                onPress={() => openCritic(h.id)}
-                accessibilityLabel={`${h.name} ranks it #${rank} of ${of}, house score ${ht.score.toFixed(1)}`}
-                style={{ marginTop: 16, backgroundColor: C.inkDeep, borderWidth: 2, borderColor: C.inkBlack, paddingVertical: 10, paddingHorizontal: 11, gap: 7 }}
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <HouseAvatar c={h} size={34} />
-                  <View style={{ flex: 1, minWidth: 0 }}>
-                    <Banner s={10} tk={0.06} c={C.paper0} numberOfLines={1}>
-                      {h.name}
-                    </Banner>
-                    <Mono s={8} c={C.sun200} numberOfLines={1}>
-                      House critic · #{rank} of {of} in {HOUSE_CATEGORIES.find((x) => x.id === ht.category)?.label}, {ht.city.label} · #{ht.rank} overall
-                    </Mono>
-                  </View>
-                  <View style={{ alignItems: 'center', gap: 3 }}>
-                    <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: VERDICT_COLOR[ht.verdict].bg, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
-                      <Display s={14} c={VERDICT_COLOR[ht.verdict].fg}>
-                        {ht.score.toFixed(1)}
-                      </Display>
-                    </View>
-                    <HouseTag dark />
-                  </View>
-                </View>
-                <VerdictStamp v={ht.verdict} small />
-                {ht.entry.note ? (
-                  <Serif s={11.5} c={C.paper0} numberOfLines={3} style={{ lineHeight: 16, fontStyle: 'italic' }}>
-                    “{ht.quote}”
-                  </Serif>
-                ) : null}
-              </StickerPressable>
-            ))}
 
             {/* what critics say — real creators' takes, read by CRTQ (simulated) */}
             {criticTakes.length ? (
@@ -1148,47 +1208,6 @@ export function PlaceDetail() {
               ) : null}
             </View>
 
-            {/* rankings panel — dual verdict for rated places, "be the first" for fresh finds */}
-            <View style={{ marginTop: 16 }}>
-              {isRated ? (
-                <StickerView offset="lg" style={{ borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.paper0 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 9, paddingHorizontal: 13, borderBottomWidth: 2, borderColor: C.inkBlack, backgroundColor: C.ink700 }}>
-                    <Banner s={10} tk={0.14} c={C.paper0}>
-                      The rankings
-                    </Banner>
-                    <Mono s={9.5} c={C.sun300}>
-                      of {RANK.total} places
-                    </Mono>
-                  </View>
-                  <View style={{ flexDirection: 'row' }}>
-                    <SealColumn label="Critics' ranking" score={base.critic || 0} rot="-5deg" overall={RANK.critO[base.id] || '—'} cuisineRank={RANK.critC[base.id] || '—'} cuisine={cu} rightBorder />
-                    <SealColumn label="People's ranking" score={base.people || 0} rot="4deg" overall={RANK.popO[base.id] || '—'} cuisineRank={RANK.popC[base.id] || '—'} cuisine={cu} />
-                  </View>
-                </StickerView>
-              ) : (
-                <StickerView offset="lg" style={{ borderWidth: 2.5, borderColor: C.inkBlack, backgroundColor: C.paper0, padding: 16, alignItems: 'center', gap: 8 }}>
-                  <View style={{ transform: [{ rotate: '-4deg' }] }}>
-                    <Roundel size={58} bg={C.paper100} fg={C.inkSoft} text="?" textSize={26} dashInset={6} />
-                  </View>
-                  <Banner s={11} tk={0.12} c={C.inkDeep}>
-                    No verdict yet
-                  </Banner>
-                  <Serif s={13} style={{ textAlign: 'center', color: C.inkMuted, lineHeight: 19 }}>
-                    Fresh off the map — no Critics or People score yet. Be the first of us to rank it.
-                  </Serif>
-                  {base.source === 'google' && base.rating != null ? (
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4, backgroundColor: C.paper100, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 4, paddingHorizontal: 11 }}>
-                      <Banner s={10} tk={0.06} c={C.sun600}>
-                        ★ {base.rating.toFixed(1)}
-                      </Banner>
-                      <Mono s={9} c={C.inkMuted}>
-                        {base.reviews ? `${base.reviews.toLocaleString()} Google reviews` : 'on Google'}
-                      </Mono>
-                    </View>
-                  ) : null}
-                </StickerView>
-              )}
-            </View>
             </>
           ) : tab === 'menu' ? (
             <>

@@ -13,13 +13,13 @@ import { View, Pressable, Animated, Easing, AccessibilityInfo } from 'react-nati
 import { Image } from 'expo-image';
 import type { Place } from '../store/data';
 import { useStore } from '../store/useStore';
-import { chefForPlace } from '../data/chefs';
+import { chefForPlace, chefDossier, type Chef } from '../data/chefs';
 import { takesForPlace } from '../data/critics';
 import { C } from '../theme/tokens';
 import { Banner, Mono } from './Text';
 import { Monogram } from './Monogram';
 
-type Bubble = { key: string; kind: 'chef' | 'dish' | 'award' | 'new' | 'critics'; label: string; sub?: string; img?: string; onPress?: () => void };
+export type Bubble = { key: string; kind: 'chef' | 'place' | 'dish' | 'award' | 'new' | 'critics'; label: string; sub?: string; img?: string; onPress?: () => void };
 
 const short = (s: string, n = 24) => (s.length > n ? s.slice(0, n - 1).replace(/\s+\S*$/, '') + '…' : s);
 
@@ -51,6 +51,27 @@ export function useBubbles(place: Place | undefined, max = 5, skip: Bubble['kind
     if (n) out.push({ key: 'critics', kind: 'critics', label: `${n} ${n === 1 ? 'critic' : 'critics'}` });
     return out.filter((b) => !skip.includes(b.kind)).slice(0, max);
   }, [place?.id, chef?.id, chefPhotos, platePhotos, max, skip.join()]);
+}
+
+/** The bubbles a chef earns: their restaurants (each opens), the dishes they're known for, their top award and acclaim. */
+export function useChefBubbles(chef: Chef | undefined, max = 6): Bubble[] {
+  const openPlace = useStore((s) => s.openPlace);
+  const platePhotos = useStore((s) => s.platePhotos);
+  const ensurePlates = useStore((s) => s.ensurePlates);
+  const d = useMemo(() => (chef ? chefDossier(chef) : null), [chef?.id]);
+  useEffect(() => {
+    d?.places.slice(0, 2).forEach((p) => void ensurePlates(p));
+  }, [chef?.id]);
+  return useMemo(() => {
+    if (!chef || !d) return [];
+    const out: Bubble[] = [];
+    for (const p of d.places.slice(0, 2)) out.push({ key: 'place:' + p.id, kind: 'place', label: short(p.name, 20), sub: p.hood || 'Restaurant', onPress: () => openPlace(p.id) });
+    if (chef.topAward) out.push({ key: 'award', kind: 'award', label: short(chef.topAward, 22) });
+    for (const x of d.dishes.filter((x) => !/^(lo que|seg[uú]n|men[uú]|lo del d[ií]a)/i.test(x.dish.trim())).slice(0, 2))
+      out.push({ key: 'dish:' + x.dish, kind: 'dish', label: short(x.dish), sub: `Iconic · ${short(x.place.name, 14)}`, img: (platePhotos[x.place.id] || []).find((y) => y.dish === x.dish)?.img.url });
+    if (chef.acclaim > 0) out.push({ key: 'acclaim', kind: 'critics', label: `◆ ${chef.acclaim} acclaim` });
+    return out.slice(0, max);
+  }, [chef?.id, d, platePhotos, max]);
 }
 
 /** Where bubbles sit on the cover, as fractions of its box (left or right anchored). */
@@ -92,16 +113,16 @@ function FloatingBubble({ b, i, still, compact }: { b: Bubble; i: number; still:
   const dx = t.interpolate({ inputRange: [0, 1], outputRange: [0, i % 3 === 0 ? 3 : -3] });
   const rot = ['-4deg', '3deg', '-2deg', '5deg', '-6deg'][i % 5];
   const dot = compact ? 24 : 30;
-  const bg = b.kind === 'chef' ? C.paper0 : b.kind === 'dish' ? C.sun100 : b.kind === 'award' ? C.sun400 : b.kind === 'new' ? C.stampGreen : C.ink400;
+  const bg = b.kind === 'chef' || b.kind === 'place' ? C.paper0 : b.kind === 'dish' ? C.sun100 : b.kind === 'award' ? C.sun400 : b.kind === 'new' ? C.stampGreen : C.ink400;
   const fg = b.kind === 'new' || b.kind === 'critics' ? C.paper0 : C.inkDeep;
   const glyph = b.kind === 'dish' ? '◆' : b.kind === 'award' ? '★' : b.kind === 'new' ? '✦' : '◎';
   const body = (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: bg, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingLeft: b.kind === 'chef' || b.img ? 3 : 9, paddingRight: 10, transform: [{ rotate: rot }], shadowColor: C.inkBlack, shadowOffset: { width: 2, height: 2 }, shadowOpacity: 1, shadowRadius: 0 }}>
-      {b.kind === 'chef' || b.img ? (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: bg, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingLeft: b.kind === 'chef' || b.kind === 'place' || b.img ? 3 : 9, paddingRight: 10, transform: [{ rotate: rot }], shadowColor: C.inkBlack, shadowOffset: { width: 2, height: 2 }, shadowOpacity: 1, shadowRadius: 0 }}>
+      {b.kind === 'chef' || b.kind === 'place' || b.img ? (
         <View style={{ width: dot, height: dot, borderRadius: dot / 2, overflow: 'hidden', borderWidth: 1.5, borderColor: C.inkBlack, backgroundColor: C.ink700, alignItems: 'center', justifyContent: 'center' }}>
           {b.img ? <Image source={{ uri: b.img }} style={{ width: '100%', height: '100%' }} contentFit="cover" /> : <Monogram name={b.label} size={dot} />}
         </View>
-      ) : (
+      ) : b.kind === 'award' && b.label.includes('★') ? null : (
         <Banner s={compact ? 9 : 10} c={fg}>
           {glyph}
         </Banner>
@@ -121,7 +142,7 @@ function FloatingBubble({ b, i, still, compact }: { b: Bubble; i: number; still:
   return (
     <Animated.View style={{ transform: [{ translateY: dy }, { translateX: dx }] }}>
       {b.onPress ? (
-        <Pressable onPress={b.onPress} accessibilityLabel={`${b.sub || ''} ${b.label}`.trim()} hitSlop={6}>
+        <Pressable onPress={b.onPress} accessibilityLabel={b.kind === 'place' ? `Restaurant ${b.label}` : `${b.sub || ''} ${b.label}`.trim()} hitSlop={6}>
           {body}
         </Pressable>
       ) : (
@@ -133,7 +154,16 @@ function FloatingBubble({ b, i, still, compact }: { b: Bubble; i: number; still:
 
 /** The bubbles, floating over whatever cover they're placed on. */
 export function FloatingBubbles({ place, max = 5, compact, inset = 0, skip }: { place: Place | undefined; max?: number; compact?: boolean; inset?: number; skip?: Bubble['kind'][] }) {
-  const bubbles = useBubbles(place, max, skip);
+  return <BubbleLayer bubbles={useBubbles(place, max, skip)} compact={compact} inset={inset} />;
+}
+
+/** A chef's bubbles, floating over their cover. */
+export function ChefBubbles({ chef, max, inset = 0 }: { chef: Chef | undefined; max?: number; inset?: number }) {
+  return <BubbleLayer bubbles={useChefBubbles(chef, max)} inset={inset} />;
+}
+
+/** Any set of bubbles, each on its own rhythm, spread over a cover. */
+export function BubbleLayer({ bubbles, compact, inset = 0 }: { bubbles: Bubble[]; compact?: boolean; inset?: number }) {
   const still = useStill();
   const [box, setBox] = useState({ w: 0, h: 0 });
   if (!bubbles.length) return null;

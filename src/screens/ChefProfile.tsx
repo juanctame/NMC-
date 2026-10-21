@@ -26,6 +26,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../store/useStore';
 import { chefById, chefDossier, chefPeople, mentionsChef, guideBadgeOf } from '../data/chefs';
 import { groupsForChef } from '../data/groups';
+import { ChefBubbles } from '../components/FloatingBubbles';
 import { resolveChefBio, resolveChefCommons, type ChefBio, type WikiImgResolved } from '../data/wikiPhotos';
 import { collectedClips } from '../data/clips';
 import { takesForPlace } from '../data/critics';
@@ -152,6 +153,8 @@ export function ChefProfile() {
           ) : places[0] ? (
             <VenueCover place={places[0]} style={{ width: '100%', height: '100%' }} crestSize={70} darken={0.32} credit={false} />
           ) : null}
+          {/* their restaurants, signature dishes and honours, floating around them */}
+          <ChefBubbles chef={chef} max={5} inset={insets.top + 46} />
           <View style={{ position: 'absolute', top: insets.top + 8, left: 16 }}>
             <StickerView offset="sm" radius={999}>
               <Pressable onPress={closeChef} accessibilityLabel="Back" style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>

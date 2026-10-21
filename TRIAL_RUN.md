@@ -203,6 +203,13 @@ category) and your own Guide (*Map* tab).
 - **New & Rising** is a spotlight: one new restaurant at a time, full width,
   stamped *New · 2026* or *Rising*, its bubbles floating on the cover; swipe,
   tap the dots, or let it turn by itself (stops when you swipe).
+- **Chef pages float too**: their restaurants (tap to open), the dishes
+  they're known for (marked with the restaurant), their top award and their
+  acclaim, bobbing around the chef's cover.
+- **The ranking comes first.** On a restaurant page, right after the cover and
+  the name, *The ranking* block shows the Critics and People rankings, the
+  critics' consensus and the house critic's rank (in category, city and
+  overall) — before the Overview / Menu / Media / Reviews / Visit tabs.
 
 ### Critic pages: a dossier, like the chef's
 Every critic page opens as the chef's does: a cover (the dining room of their
