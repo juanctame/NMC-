@@ -3,7 +3,7 @@
  * recs, and (once unlocked) the Dine Club teaser.
  */
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { View, ScrollView, Pressable, Image, ActivityIndicator } from 'react-native';
+import { View, ScrollView, Pressable, Image, ActivityIndicator, AccessibilityInfo } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore, resolvePlace } from '../store/useStore';
 import { useT } from '../i18n';
@@ -34,6 +34,7 @@ import { Photo } from '../components/Photo';
 import { Monogram } from '../components/Monogram';
 import { PlaceCover, VenueCover } from '../components/Cover';
 import { FreshFinds } from '../components/FreshFinds';
+import { FloatingBubbles } from '../components/FloatingBubbles';
 import { CacheChip } from '../components/CacheChip';
 import { Grain } from '../components/Grain';
 import { ScreenIn } from '../components/Anim';
@@ -208,32 +209,98 @@ function FeedCover({ p, height, crest, border, darken }: { p: Place; height: num
 }
 
 /** A compact "new & rising" card for the CDMX guide rail. */
-function RisingCard({ p }: { p: Place }) {
+/**
+ * New & Rising, as a spotlight: one new restaurant at a time, full width — its
+ * cover with its chef and iconic dishes floating on it, the stamp (New 2026 /
+ * Rising), then its name and what it is. Swipe through, or let it turn on its
+ * own (it stops the moment you swipe, and never moves with reduced motion).
+ */
+function RisingSpotlight({ places }: { places: Place[] }) {
   const openPlace = useStore((s) => s.openPlace);
-  const neo = p.moment === 'Apertura 2026';
+  const [w, setW] = useState(0);
+  const [idx, setIdx] = useState(0);
+  const ref = useRef<ScrollView>(null);
+  const touched = useRef(false);
+  useEffect(() => {
+    let still = false;
+    AccessibilityInfo.isReduceMotionEnabled?.().then((v) => (still = !!v)).catch(() => {});
+    const timer = setInterval(() => {
+      if (still || touched.current || !w) return;
+      setIdx((i) => {
+        const n = (i + 1) % places.length;
+        ref.current?.scrollTo({ x: n * (w + 12), animated: true });
+        return n;
+      });
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [w, places.length]);
   return (
-    <StickerPressable
-      offset="sm"
-      onPress={() => openPlace(p.id)}
-      style={{ width: 150, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}
-    >
-      <View style={{ position: 'relative' }}>
-        <FeedCover p={p} height={88} crest={40} border />
-        <View style={{ position: 'absolute', top: 6, left: 6, backgroundColor: neo ? C.stampGreen : C.sun400, borderWidth: 1.5, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 1, paddingHorizontal: 7 }}>
-          <Banner s={7.5} tk={0.08} c={neo ? C.paper0 : C.inkDeep}>
-            {neo ? 'New · 2026' : 'Rising'}
-          </Banner>
-        </View>
+    <View onLayout={(e) => setW(e.nativeEvent.layout.width)} style={{ gap: 8 }}>
+      {w ? (
+        <ScrollView
+          ref={ref}
+          horizontal
+          snapToInterval={w + 12}
+          decelerationRate="fast"
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 12, paddingBottom: 6, paddingRight: 6 }}
+          onScrollBeginDrag={() => (touched.current = true)}
+          onScroll={(e) => setIdx(Math.round(e.nativeEvent.contentOffset.x / (w + 12)))}
+          scrollEventThrottle={64}
+        >
+          {places.map((p, i) => {
+            const neo = p.moment === 'Apertura 2026';
+            return (
+              <StickerPressable key={p.id} offset="lg" onPress={() => openPlace(p.id)} accessibilityLabel={`New & Rising: ${p.name}`} style={{ width: w, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
+                <View style={{ height: 236 }}>
+                  <VenueCover place={p} style={{ width: '100%', height: '100%' }} crestSize={74} darken={0.2} credit={false} />
+                  {Math.abs(i - idx) <= 1 ? <FloatingBubbles place={p} max={5} inset={40} skip={['new']} /> : null}
+                  <View style={{ position: 'absolute', top: 10, left: 10, backgroundColor: neo ? C.stampGreen : C.sun400, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 3, paddingHorizontal: 10, transform: [{ rotate: '-4deg' }] }}>
+                    <Banner s={9} tk={0.12} c={neo ? C.paper0 : C.inkDeep}>
+                      {neo ? 'New · 2026' : 'Rising'}
+                    </Banner>
+                  </View>
+                  <View style={{ position: 'absolute', top: 10, right: 10, backgroundColor: 'rgba(27,16,4,0.66)', borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 }}>
+                    <Mono s={9} c={C.paper0}>
+                      {i + 1} / {places.length}
+                    </Mono>
+                  </View>
+                </View>
+                <View style={{ padding: 12, gap: 4, borderTopWidth: 2.5, borderColor: C.inkBlack }}>
+                  <Display s={20} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 22 }}>
+                    {p.name}
+                  </Display>
+                  <Mono s={9} c={C.inkMuted} numberOfLines={1}>
+                    {[p.category || p.cuisine, p.hood, p.ticket].filter(Boolean).join(' · ')}
+                  </Mono>
+                  {p.why || p.blurb ? (
+                    <Serif s={12} c={C.inkSoft} numberOfLines={2} style={{ lineHeight: 16, marginTop: 2 }}>
+                      {p.why || p.blurb}
+                    </Serif>
+                  ) : null}
+                </View>
+              </StickerPressable>
+            );
+          })}
+        </ScrollView>
+      ) : null}
+      {/* the page dots */}
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 5 }}>
+        {places.map((p, i) => (
+          <Pressable
+            key={p.id}
+            onPress={() => {
+              touched.current = true;
+              setIdx(i);
+              ref.current?.scrollTo({ x: i * (w + 12), animated: true });
+            }}
+            accessibilityLabel={`Show ${p.name}`}
+            hitSlop={6}
+            style={{ width: i === idx ? 18 : 8, height: 8, borderRadius: 4, backgroundColor: i === idx ? C.ink400 : C.paper0, borderWidth: 1.5, borderColor: C.inkBlack }}
+          />
+        ))}
       </View>
-      <View style={{ padding: 8, gap: 3 }}>
-        <SerifDisplay s={13} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 14 }}>
-          {p.name}
-        </SerifDisplay>
-        <Mono s={8} c={C.inkMuted} numberOfLines={1}>
-          {p.category || p.cuisine} · {p.hood}
-        </Mono>
-      </View>
-    </StickerPressable>
+    </View>
   );
 }
 
@@ -787,11 +854,7 @@ export function Feed() {
         {city.id === 'cdmx' && CARTE_RISING.length ? (
           <View onLayout={mark('rising')} style={{ gap: 10 }}>
             <SectionHead n={2} title="New & Rising" sub="Guía CDMX 2026" />
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingBottom: 4, paddingRight: 4 }}>
-              {CARTE_RISING.slice(0, 14).map((p) => (
-                <RisingCard key={p.id} p={p} />
-              ))}
-            </ScrollView>
+            <RisingSpotlight places={CARTE_RISING.slice(0, 12)} />
             {FEATURED_CHEFS.length || GROUPS.length ? (
               <View style={{ gap: 8 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>

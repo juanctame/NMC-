@@ -14,6 +14,7 @@ import { scoreStyle, verdictOf, fmt, metaOf } from '../store/helpers';
 import { embedUrlFor, isPlayable, SOURCE_LABEL, type TrendingVideo } from '../data/videos';
 import { takesForPlace, consensusFor } from '../data/critics';
 import { HOUSE_CRITICS } from '../data/houseCritics';
+import { FloatingBubbles } from '../components/FloatingBubbles';
 import { HOUSE_CATEGORIES, houseTakeFor } from '../data/houseRanking';
 import { HouseAvatar } from '../components/HouseCriticCard';
 import { BiggestFans } from '../components/BiggestFans';
@@ -693,6 +694,8 @@ export function PlaceDetail() {
           ) : (
             <PlaceCover place={base} style={{ width: '100%', height: '100%' }} crestSize={92} eyebrow />
           )}
+          {/* its chef, iconic dishes and honours, floating around the cover */}
+          <FloatingBubbles place={base} inset={insets.top + 46} />
           {cur ? (
             <>
               <View style={{ position: 'absolute', left: 12, bottom: 10, right: 120, flexDirection: 'row', alignItems: 'center', gap: 8 }}>

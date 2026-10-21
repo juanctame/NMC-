@@ -12,14 +12,17 @@
  * are counted, not dropped silently.
  */
 import React, { useMemo, useState } from 'react';
-import { View, ScrollView, Pressable } from 'react-native';
+import { View, ScrollView, Pressable, Modal } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Place } from '../store/data';
 import type { Pin } from '../data/geo';
 import type { City } from '../data/cities';
 import { useStore } from '../store/useStore';
 import { C } from '../theme/tokens';
 import { Banner, Display, Mono, Serif } from './Text';
-import { StickerPressable } from './Sticker';
+import { StickerView, StickerPressable } from './Sticker';
+import { VenueCover } from './Cover';
+import { FloatingBubbles } from './FloatingBubbles';
 import { Monogram } from './Monogram';
 import { MapSurface } from './MapSurface';
 
@@ -72,6 +75,8 @@ export function ReviewMap({
   const [top, setTop] = useState(true);
   const [label, setLabel] = useState<'score' | 'rank'>(items.some((x) => x.score != null) ? 'score' : 'rank');
   const [sel, setSel] = useState<string | null>(null);
+  const [full, setFull] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const inScope = useMemo(() => items.filter((x) => !scopes || scope === 'all' || x.scope === scope), [items, scope, scopes]);
   const counts = useMemo(() => {
@@ -97,8 +102,9 @@ export function ReviewMap({
   const toggle = (on: boolean) => ({ paddingVertical: 4, paddingHorizontal: 10, backgroundColor: on ? C.inkDeep : C.paper0 });
   const reset = () => setSel(null);
 
-  return (
-    <View style={{ gap: 8 }} accessibilityLabel={`Map of ${who} reviews`}>
+  // where · what · options — the same rows above the inline map and floating on the full-screen one
+  const controls = (
+    <>
       {scopes && scopes.length > 1 ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 7, paddingHorizontal: 16 }}>
           {scopes.map((x) => (
@@ -149,17 +155,37 @@ export function ReviewMap({
           {shown.length} on the map{missing ? ` · ${missing} no address` : ''}
         </Mono>
       </View>
+    </>
+  );
+  const mapEl = (key: string) =>
+    city ? (
+      <MapSurface key={key} pins={pins} city={city} selPin={sel ? { kind: 'grade', id: sel } : null} onSelect={(p) => setSel(p.id === sel ? null : p.id)} fit />
+    ) : (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+        <Mono s={10} c={C.inkSoft}>
+          Nothing with an address here yet
+        </Mono>
+      </View>
+    );
+
+  return (
+    <View style={{ gap: 8 }} accessibilityLabel={`Map of ${who} reviews`}>
+      {controls}
       {/* the map */}
       <View style={{ marginHorizontal: 16, height: 290, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden', backgroundColor: C.paper100 }}>
-        {city ? (
-          <MapSurface key={scope} pins={pins} city={city} selPin={sel ? { kind: 'grade', id: sel } : null} onSelect={(p) => setSel(p.id === sel ? null : p.id)} fit />
-        ) : (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-            <Mono s={10} c={C.inkSoft}>
-              Nothing with an address here yet
-            </Mono>
-          </View>
-        )}
+        {full ? null : mapEl(scope)}
+        <Pressable
+          onPress={() => setFull(true)}
+          accessibilityLabel="Open the map full screen"
+          style={{ position: 'absolute', top: 8, right: 8, flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 5, paddingHorizontal: 10 }}
+        >
+          <Banner s={10} c={C.inkDeep}>
+            ⤢
+          </Banner>
+          <Banner s={8.5} tk={0.08} c={C.inkDeep}>
+            Full screen
+          </Banner>
+        </Pressable>
       </View>
       {/* the selected place, else the options in this category */}
       {cur ? (
@@ -218,6 +244,115 @@ export function ReviewMap({
           ))}
         </ScrollView>
       )}
+
+      {/* full screen: the map is the page; the rows float on top, the restaurant rises from the bottom */}
+      <Modal visible={full} animationType="slide" onRequestClose={() => setFull(false)} statusBarTranslucent>
+        <View style={{ flex: 1, backgroundColor: C.paper100 }} accessibilityLabel={`${who} map, full screen`}>
+          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>{full ? mapEl('full-' + scope) : null}</View>
+          {/* top: close, title, the rows */}
+          <View pointerEvents="box-none" style={{ position: 'absolute', top: 0, left: 0, right: 0, paddingTop: insets.top + 8, gap: 8 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16 }}>
+              <Pressable onPress={() => setFull(false)} accessibilityLabel="Close full screen map" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+                <Display s={16} c={C.ink400}>
+                  ✕
+                </Display>
+              </Pressable>
+              <View style={{ flexShrink: 1, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 12 }}>
+                <Banner s={10} tk={0.1} c={C.inkDeep} numberOfLines={1}>
+                  {who === 'your' ? 'Your map' : `${who} map`} · {numbered.length}
+                </Banner>
+              </View>
+            </View>
+            <View style={{ gap: 7 }}>{controls}</View>
+          </View>
+          {/* bottom: the restaurant's profile, else the options as cards */}
+          <View pointerEvents="box-none" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: Math.max(insets.bottom, 12) + 4 }}>
+            {cur ? (
+              <PlaceSheet r={cur} catLabel={cats.find((c) => c.id === cur.cat)?.label} onOpen={() => (setFull(false), openPlace(cur.place.id))} onClose={reset} />
+            ) : (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingHorizontal: 16, paddingTop: 6 }}>
+                {options.slice(0, 30).map((x) => (
+                  <StickerPressable key={x.place.id} offset="sm" onPress={() => setSel(x.place.id)} accessibilityLabel={`Card #${x.rank}: ${x.place.name}`} style={{ width: 196, backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
+                    <View style={{ height: 78 }}>
+                      <VenueCover place={x.place} style={{ width: '100%', height: '100%' }} crestSize={34} credit={false} />
+                      <View style={{ position: 'absolute', top: 6, left: 6, width: 28, height: 28, borderRadius: 14, backgroundColor: tone(x.score).bg, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+                        <Mono s={10} c={tone(x.score).fg}>
+                          {x.rank}
+                        </Mono>
+                      </View>
+                    </View>
+                    <View style={{ padding: 8 }}>
+                      <Serif s={13} c={C.inkDeep} numberOfLines={1}>
+                        {x.place.name}
+                      </Serif>
+                      <Mono s={8} c={C.inkMuted} numberOfLines={1}>
+                        {[x.place.hood, x.score != null ? x.score.toFixed(1) : '', x.place.lat == null ? 'no address' : ''].filter(Boolean).join(' · ')}
+                      </Mono>
+                    </View>
+                  </StickerPressable>
+                ))}
+              </ScrollView>
+            )}
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+}
+
+/** The restaurant, risen from the bottom of the full-screen map: its cover with its chef and dishes floating on it, then the read and a way in. */
+function PlaceSheet({ r, catLabel, onOpen, onClose }: { r: MapReview & { rank: number }; catLabel?: string; onOpen: () => void; onClose: () => void }) {
+  const t = tone(r.score);
+  return (
+    <View style={{ marginHorizontal: 12 }}>
+      <StickerView offset="lg" style={{ backgroundColor: C.paper0, borderWidth: 2.5, borderColor: C.inkBlack, overflow: 'hidden' }}>
+        <View style={{ height: 150 }}>
+          <VenueCover place={r.place} style={{ width: '100%', height: '100%' }} crestSize={52} darken={0.18} credit={false} />
+          <FloatingBubbles place={r.place} max={4} compact />
+          <Pressable onPress={onClose} accessibilityLabel="Back to the options" style={{ position: 'absolute', top: 8, right: 8, width: 32, height: 32, borderRadius: 16, backgroundColor: C.paper0, borderWidth: 2, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center' }}>
+            <Display s={13} c={C.ink400}>
+              ✕
+            </Display>
+          </Pressable>
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12 }}>
+          <View style={{ alignItems: 'center' }}>
+            <Mono s={7.5} c={C.inkSoft}>
+              RANK
+            </Mono>
+            <Display s={22} c={C.ink400}>
+              {r.rank}
+            </Display>
+          </View>
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Display s={19} c={C.inkDeep} numberOfLines={1} style={{ lineHeight: 21 }}>
+              {r.place.name}
+            </Display>
+            <Mono s={8.5} c={C.inkMuted} numberOfLines={1} style={{ marginTop: 2 }}>
+              {[r.place.hood, catLabel, r.place.lat == null ? 'not on the map' : ''].filter(Boolean).join(' · ')}
+            </Mono>
+          </View>
+          {r.score != null ? (
+            <View style={{ width: 46, height: 46, borderRadius: 23, backgroundColor: t.bg, borderWidth: 2.5, borderColor: C.inkBlack, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-6deg' }] }}>
+              <Display s={15} c={t.fg}>
+                {r.score.toFixed(1)}
+              </Display>
+            </View>
+          ) : null}
+        </View>
+        {r.note ? (
+          <Serif s={12} c={C.inkSoft} numberOfLines={3} style={{ paddingHorizontal: 12, marginTop: -4, fontStyle: 'italic', lineHeight: 16 }}>
+            “{r.note}”
+          </Serif>
+        ) : null}
+        <View style={{ padding: 12 }}>
+          <StickerPressable offset="sm" radius={999} onPress={onOpen} accessibilityLabel={`Open ${r.place.name}`} style={{ alignItems: 'center', borderWidth: 2, borderColor: C.inkBlack, borderRadius: 999, backgroundColor: C.ink400, paddingVertical: 10 }}>
+            <Banner s={10.5} tk={0.1} c={C.paper0}>
+              Open the restaurant →
+            </Banner>
+          </StickerPressable>
+        </View>
+      </StickerView>
     </View>
   );
 }

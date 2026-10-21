@@ -187,6 +187,23 @@ It's on every critic's page (*Their map*), Juan Carlos Tame's (*His map*, by
 city and coffee category), every diner's profile (their favourites by
 category) and your own Guide (*Map* tab).
 
+### Full-screen maps, and restaurants with their bubbles
+- **Full screen.** Every map of reviews has a *Full screen* button: the map
+  becomes the page, the city / category / option rows float on top, and the
+  bottom holds the options as restaurant cards. Tap one (or a pin) and the
+  restaurant rises as a sheet — its cover with its chef and dishes floating on
+  it, its rank and score, their words — with *Open the restaurant*.
+- **Floating bubbles** (`src/components/FloatingBubbles.tsx`): a restaurant's
+  chef (portrait from Wikipedia when there is one; tap to open their profile),
+  its iconic dishes (with a reference photo when Commons has one), its award,
+  New 2026 / Rising, and how many critics have it — bobbing gently around its
+  cover on the restaurant page, the New & Rising cards and the map's sheet.
+  Everything comes from the guide and the critics; reduced motion keeps them
+  still.
+- **New & Rising** is a spotlight: one new restaurant at a time, full width,
+  stamped *New · 2026* or *Rising*, its bubbles floating on the cover; swipe,
+  tap the dots, or let it turn by itself (stops when you swipe).
+
 ### Critic pages: a dossier, like the chef's
 Every critic page opens as the chef's does: a cover (the dining room of their
 #1), the header card (*The critic* / *The house critic*, name, bio, summary,
